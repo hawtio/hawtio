@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -25,6 +25,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,17 +51,17 @@ import org.slf4j.LoggerFactory;
  * A helper class to scan classes on the classpath
  */
 public class ClassScanner {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ClassScanner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClassScanner.class);
 
     // lets skip some classes which can cause ugly WARN logging when doing package scanning
-    private static final String[] SKIP_CLASSES = new String[]{"org.apache.log4j.net.ZeroConfSupport"};
+    private static final String[] SKIP_CLASSES = new String[] { "org.apache.log4j.net.ZeroConfSupport" };
 
     private final ClassLoader[] classLoaders;
 
-    private WeakHashMap<String, CacheValue> cache = new WeakHashMap<String, CacheValue>();
-    private WeakHashMap<Package, CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
-    private Map<String, ClassLoaderProvider> classLoaderProviderMap = new HashMap<String, ClassLoaderProvider>();
-    private Set<String> ignorePackages = new HashSet<String>(Arrays.asList("sun.reflect.misc"));
+    private final WeakHashMap<String, CacheValue> cache = new WeakHashMap<>();
+    private final WeakHashMap<Package, CacheValue> packageCache = new WeakHashMap<>();
+    private final Map<String, ClassLoaderProvider> classLoaderProviderMap = new HashMap<>();
+    private Set<String> ignorePackages = new HashSet<>(Collections.singletonList("sun.reflect.misc"));
 
     public static ClassScanner newInstance() {
         return new ClassScanner(Thread.currentThread().getContextClassLoader(), ClassScanner.class.getClassLoader());
@@ -103,7 +104,7 @@ public class ClassScanner {
     }
 
     public SortedSet<String> findClassNamesInDirectoryWithMethodAnnotatedWith(File dir, String annotationClassName) {
-        SortedSet<String> answer = new TreeSet<String>();
+        SortedSet<String> answer = new TreeSet<>();
         final Class<? extends Annotation> annotationClass = optionallyFindAnnotationClass(annotationClassName);
         if (annotationClass != null && dir.exists()) {
             addClassNamesInDirectoryWithMethodsAnnotatedWith(answer, dir, annotationClass, "");
@@ -132,10 +133,9 @@ public class ClassScanner {
         }
     }
 
-
     protected Class<? extends Annotation> optionallyFindAnnotationClass(String annotationClassName) {
         final Class<? extends Annotation> annotationClass = optionallyFindClass(annotationClassName).asSubclass(Annotation.class);
-        if (annotationClass != null && Annotation.class.isAssignableFrom(annotationClass)) {
+        if (Annotation.class.isAssignableFrom(annotationClass)) {
             return annotationClass;
         }
         return null;
@@ -144,35 +144,26 @@ public class ClassScanner {
     public SortedSet<String> findClassNamesMethodsAnnotatedWith(String annotationClassName, Integer limit, Map<Package, ClassLoader[]> packages) {
         final Class<? extends Annotation> annotationClass = optionallyFindAnnotationClass(annotationClassName);
         if (annotationClass != null) {
-            Predicate<String> filter = new Predicate<String>() {
-                @Override
-                public boolean evaluate(String className) {
-                    Class<?> aClass = optionallyFindClass(className);
-                    if (aClass != null) {
-                        return ReflectionHelper.hasMethodWithAnnotation(aClass, annotationClass, true);
-                    }
-                    return false;
+            Predicate<String> filter = className -> {
+                Class<?> aClass = optionallyFindClass(className);
+                if (aClass != null) {
+                    return ReflectionHelper.hasMethodWithAnnotation(aClass, annotationClass, true);
                 }
+                return false;
             };
             return findClassNames(packages, filter, limit);
         }
-        return new TreeSet<String>();
+        return new TreeSet<>();
     }
 
-
     public SortedSet<String> findClassNamesInPackages(final String search, Integer limit, Map<Package, ClassLoader[]> packages) {
-        Predicate<String> filter = new Predicate<String>() {
-            @Override
-            public boolean evaluate(String aClass) {
-                return classNameMatches(aClass, search);
-            }
-        };
+        Predicate<String> filter = aClass -> classNameMatches(aClass, search);
         return findClassNames(packages, filter, limit);
     }
 
     protected SortedSet<String> findClassNames(Map<Package, ClassLoader[]> packages, Predicate<String> filter, Integer limit) {
-        SortedSet<String> answer = new TreeSet<String>();
-        SortedSet<String> classes = new TreeSet<String>();
+        SortedSet<String> answer = new TreeSet<>();
+        SortedSet<String> classes = new TreeSet<>();
 
         Set<Map.Entry<Package, ClassLoader[]>> entries = packages.entrySet();
         for (Map.Entry<Package, ClassLoader[]> entry : entries) {
@@ -213,7 +204,6 @@ public class ClassScanner {
         return answer;
     }
 
-
     /**
      * Returns all the classes found in a sorted map
      */
@@ -226,8 +216,8 @@ public class ClassScanner {
      * Returns all the classes found in a sorted map for the given list of packages
      */
     public SortedMap<String, Class<?>> getClassesMap(Package... packages) {
-        SortedMap<String, Class<?>> answer = new TreeMap<String, Class<?>>();
-        Map<String, ClassResource> urlSet = new HashMap<String, ClassResource>();
+        SortedMap<String, Class<?>> answer = new TreeMap<>();
+        Map<String, ClassResource> urlSet = new HashMap<>();
         for (Package aPackage : packages) {
             addPackageResources(aPackage, urlSet, classLoaders);
         }
@@ -241,7 +231,7 @@ public class ClassScanner {
     }
 
     public Set<Class<?>> getClassesForPackage(ClassResource classResource, String filter, Integer limit) {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new HashSet<>();
         addClassesForPackage(classResource, filter, limit, classes);
         return classes;
     }
@@ -282,7 +272,7 @@ public class ClassScanner {
      * Tries to find as many of the class names on the class loaders as possible and return them
      */
     public List<Class<?>> optionallyFindClasses(Iterable<String> classNames) {
-        List<Class<?>> answer = new ArrayList<Class<?>>();
+        List<Class<?>> answer = new ArrayList<>();
         for (String className : classNames) {
             Class<?> aClass = optionallyFindClass(className);
             if (aClass != null) {
@@ -291,7 +281,6 @@ public class ClassScanner {
         }
         return answer;
     }
-
 
     public Set<String> getIgnorePackages() {
         return ignorePackages;
@@ -313,9 +302,8 @@ public class ClassScanner {
         }
     }
 
-
     private CacheValue createPackageCacheValue(Package aPackage, ClassLoader[] classLoaders) {
-        Map<String, ClassResource> urlSet = new HashMap<String, ClassResource>();
+        Map<String, ClassResource> urlSet = new HashMap<>();
         addPackageResources(aPackage, urlSet, classLoaders);
 
         CacheValue answer = new CacheValue();
@@ -397,7 +385,6 @@ public class ClassScanner {
             LOG.debug("IOException closing JAR '" + jarPath + "'. Reason: " + e, e);
         }
     }
-
 
     protected void addClassesForPackage(ClassResource classResource, String filter, Integer limit, Set<Class<?>> classes) {
         String packageName = classResource.getPackageName();
@@ -498,7 +485,7 @@ public class ClassScanner {
     }
 
     protected List<URL> getResources(String relPath, ClassLoader... classLoaders) {
-        List<URL> answer = new ArrayList<URL>();
+        List<URL> answer = new ArrayList<>();
         for (ClassLoader classLoader : classLoaders) {
             try {
                 Enumeration<URL> resources = classLoader.getResources(relPath);
@@ -538,14 +525,13 @@ public class ClassScanner {
         if (limit == null) {
             return true;
         } else {
-            int value = limit.intValue();
+            int value = limit;
             return value <= 0 || value > collection.size();
         }
     }
 
     public List<ClassLoader> getClassLoaders() {
-        List<ClassLoader> answer = new ArrayList<ClassLoader>();
-        answer.addAll(Arrays.asList(classLoaders));
+        List<ClassLoader> answer = new ArrayList<>(Arrays.asList(classLoaders));
 
         Collection<ClassLoaderProvider> classLoaderProviders = classLoaderProviderMap.values();
         for (ClassLoaderProvider classLoaderProvider : classLoaderProviders) {

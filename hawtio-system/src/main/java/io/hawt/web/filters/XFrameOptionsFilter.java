@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XFrameOptionsFilter extends HttpHeaderFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XFrameOptionsFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XFrameOptionsFilter.class);
 
     private String headerValue = "DENY";
 

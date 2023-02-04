@@ -19,7 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlNamespaceFinder extends DefaultHandler {
 
-    private Set<String> namespaces = new HashSet<String>();
+    private final Set<String> namespaces = new HashSet<>();
     private boolean namespaceFound = false;
     private SAXParserFactory factory;
 

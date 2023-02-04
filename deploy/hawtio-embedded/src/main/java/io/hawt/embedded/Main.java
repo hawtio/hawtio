@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -38,7 +38,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
  * A simple way to run hawtio embedded inside a JVM by booting up a Jetty server
  */
 public class Main {
-    private Options options;
+    private final Options options;
     private boolean welcome = true;
 
     public Main() {
@@ -92,7 +92,7 @@ public class Main {
         String scheme = resolveScheme(server);
         WebAppContext webapp = createHawtioWebapp(server, scheme);
 
-        // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
+        // let's set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
         String homeDir = System.getProperty("user.home", ".") + "/.hawtio";
         String tempDirPath = homeDir + "/tmp";
         File tempDir = new File(tempDirPath);
@@ -163,7 +163,7 @@ public class Main {
             } else {
                 System.out.println("Attempting to open keystore with no password...");
             }
-            try (ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf));) {
+            try (ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf))) {
                 sslconn.setPort(options.getPort());
                 server.setConnectors(new Connector[] { sslconn });
 
@@ -208,7 +208,7 @@ public class Main {
         // plugin.setParentLoaderPriority(true);
         plugin.setLogUrlOnStart(true);
 
-        // need to have private sub directory for each plugin
+        // need to have private subdirectory for each plugin
         File pluginTempDir = new File(tempDir, war.getName());
         pluginTempDir.mkdirs();
 
@@ -249,7 +249,7 @@ public class Main {
                             }
                         }
                         if (file.isDirectory()) {
-                            // lets look for a war in this directory
+                            // let's look for a war in this directory
                             File[] wars = file.listFiles((dir, name) -> isWarFileName(name));
                             if (wars != null && wars.length > 0) {
                                 return wars[0].getPath();

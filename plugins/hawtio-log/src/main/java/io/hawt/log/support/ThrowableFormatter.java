@@ -25,11 +25,11 @@ public class ThrowableFormatter {
      */
     public ThrowableFormatter() {
         try {
-            Class[] noArgs = null;
+            Class<?>[] noArgs = null;
             getStackTraceMethod = Throwable.class.getMethod("getStackTrace", noArgs);
-            Class ste = Class.forName("java.lang.StackTraceElement");
+            Class<?> ste = Class.forName("java.lang.StackTraceElement");
             getClassNameMethod = ste.getMethod("getClassName", noArgs);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

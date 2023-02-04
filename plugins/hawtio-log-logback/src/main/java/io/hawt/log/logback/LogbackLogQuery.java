@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LogbackLogQuery extends LogQueryBase implements LogbackLogQueryMBean {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LogbackLogQuery.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogbackLogQuery.class);
 
     private static final String APPENDER_NAME = "LogQuery";
 

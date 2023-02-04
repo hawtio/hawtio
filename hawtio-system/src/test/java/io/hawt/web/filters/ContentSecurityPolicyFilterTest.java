@@ -1,22 +1,21 @@
 package io.hawt.web.filters;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.Objects;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.hawt.system.ConfigManager;
+import io.hawt.web.auth.keycloak.KeycloakServlet;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.hawt.system.ConfigManager;
-import io.hawt.web.auth.keycloak.KeycloakServlet;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ContentSecurityPolicyFilterTest {
 
@@ -36,7 +35,7 @@ public class ContentSecurityPolicyFilterTest {
         configManager = mock(ConfigManager.class);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
-        keycloakConfigFile = getClass().getClassLoader().getResource("keycloak-hawtio-client.json").getFile();
+        keycloakConfigFile = Objects.requireNonNull(getClass().getClassLoader().getResource("keycloak-hawtio-client.json")).getFile();
 
         when(filterConfig.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute("ConfigManager")).thenReturn(configManager);
@@ -52,10 +51,10 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' ; frame-src 'self' ; "
-                        + "frame-ancestors 'none'");
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "connect-src 'self' ; frame-src 'self' ; "
+                + "frame-ancestors 'none'");
     }
 
     @Test
@@ -67,10 +66,10 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
-                        + "frame-ancestors 'none'");
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
+                + "frame-ancestors 'none'");
     }
 
     @Test
@@ -82,10 +81,10 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
-                        + "frame-ancestors 'none'");
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
+                + "frame-ancestors 'none'");
     }
 
     @Test
@@ -109,9 +108,9 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' ; frame-src 'self' ; "
-                        + "frame-ancestors 'self'");
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "connect-src 'self' ; frame-src 'self' ; "
+                + "frame-ancestors 'self'");
     }
 }

@@ -27,7 +27,7 @@ public final class Objects {
             return 1;
         }
         if (a instanceof Comparable) {
-            return ((Comparable) a).compareTo(b);
+            return ((Comparable<Object>) a).compareTo(b);
         }
         int answer = a.getClass().getName().compareTo(b.getClass().getName());
         if (answer == 0) {

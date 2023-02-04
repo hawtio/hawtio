@@ -7,11 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RBACRegistryTest {
 
-    private RBACRegistry rbacRegistry = new RBACRegistry();
+    private final RBACRegistry rbacRegistry = new RBACRegistry();
 
     @Before
     public void init() throws Exception {
@@ -24,17 +24,16 @@ public class RBACRegistryTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void list() throws Exception {
         Map<String, Object> result = rbacRegistry.list();
 
         assertThat(result.get("cache"), notNullValue());
-        Map<String, Map<String, Object>> domains =
-            (Map<String, Map<String, Object>>) result.get("domains");
+        Map<String, Map<String, Object>> domains = (Map<String, Map<String, Object>>) result.get("domains");
         assertThat(domains, notNullValue());
         Map<String, Object> hawtioDomain = domains.get("hawtio");
         assertThat(hawtioDomain, notNullValue());
-        assertThat(hawtioDomain.get("type=security,name=RBACRegistry"),
-            notNullValue());
+        assertThat(hawtioDomain.get("type=security,name=RBACRegistry"), notNullValue());
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * passes the rest of the URI to the underlying service.
  */
 public class ServiceServlet extends ProxyServlet {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceServlet.class);
 
     @Override
     protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
@@ -39,7 +39,7 @@ public class ServiceServlet extends ProxyServlet {
         if (Strings.isNotBlank(reqQueryString)) {
             queryPostfix = "?" + reqQueryString;
         }
-        String userName = null;
+        //String userName = null;
         String password = null;
         String serviceName = servletRequest.getPathInfo();
         if (serviceName == null) {
@@ -71,7 +71,7 @@ public class ServiceServlet extends ProxyServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Invoking: " + url + " from service: " + serviceName + " path: " + servicePath);
             }
-            return new DefaultProxyAddress(url, userName, password);
+            return new DefaultProxyAddress(url, null, password);
         }
     }
 }

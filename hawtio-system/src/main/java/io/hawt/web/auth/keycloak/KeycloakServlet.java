@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,8 +12,8 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.util.IOHelper;
-import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.ServletHelpers;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class KeycloakServlet extends HttpServlet {
 
     private static final long serialVersionUID = 3464713772839013741L;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(KeycloakServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KeycloakServlet.class);
 
     public static final String KEYCLOAK_CLIENT_CONFIG = "keycloakClientConfig";
 
@@ -111,7 +110,7 @@ public class KeycloakServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
         switch (pathInfo) {
             case "/enabled":

@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2005-2017 Red Hat, Inc.
  *
  *  Red Hat licenses this file to you under the Apache License, version
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * Copied from Fabric8 v1 io.fabric8.utils.HostUtils
  */
 public class Hosts {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Hosts.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Hosts.class);
 
     public static final String PREFERED_ADDRESS_PROPERTY_NAME = "preferred.network.address";
 
@@ -42,17 +42,15 @@ public class Hosts {
 
     /**
      * Returns a {@link Set} of {@link InetAddress} per {@link NetworkInterface} as a {@link Map}.
-     *
-     * @return
      */
     public static Map<String, Set<InetAddress>> getNetworkInterfaceAddresses(boolean includeLoopback) {
         //JVM returns interfaces in a non-predictable order, so to make this more predictable
         //let's have them sort by interface name (by using a TreeMap).
         Map<String, Set<InetAddress>> interfaceAddressMap = new TreeMap<>();
         try {
-            Enumeration ifaces = NetworkInterface.getNetworkInterfaces();
+            Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
             while (ifaces.hasMoreElements()) {
-                NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
+                NetworkInterface iface = ifaces.nextElement();
                 //We only care about usable interfaces.
                 if (!iface.isUp()) {
                     continue;
@@ -87,7 +85,6 @@ public class Hosts {
 
     /**
      * Returns a {@link Set} of {@link InetAddress} that are non-loopback or mac.
-     * @return
      */
     public static Set<InetAddress> getAddresses() {
         Set<InetAddress> allAddresses = new LinkedHashSet<>();
@@ -95,9 +92,7 @@ public class Hosts {
         for (Map.Entry<String, Set<InetAddress>> entry : interfaceAddressMap.entrySet()) {
             Set<InetAddress> addresses = entry.getValue();
             if (!addresses.isEmpty()) {
-                for (InetAddress address : addresses) {
-                    allAddresses.add(address);
-                }
+                allAddresses.addAll(addresses);
             }
         }
         return allAddresses;
@@ -106,9 +101,6 @@ public class Hosts {
     /**
      * Chooses one of the available {@link InetAddress} based on the specified preference.
      * If the preferred address is not part of the available addresses it will be ignored.
-     *
-     * @param preferred
-     * @return
      */
     private static InetAddress chooseAddress(String preferred) throws UnknownHostException {
         Set<InetAddress> addresses = getAddresses();
@@ -116,7 +108,7 @@ public class Hosts {
             //Favor preferred address if exists
             try {
                 InetAddress preferredAddress = InetAddress.getByName(preferred);
-                if (addresses != null && addresses.contains(preferredAddress)) {
+                if (addresses.contains(preferredAddress)) {
                     LOG.info("preferred address is " + preferredAddress.getHostAddress() + " for host " + preferredAddress.getHostName());
                     return preferredAddress;
                 }
@@ -128,21 +120,21 @@ public class Hosts {
                     return address;
                 }
             }
-            StringBuffer hostNameBuffer = new StringBuffer();
+            StringBuilder hostNameBuffer = new StringBuilder();
             for (InetAddress address : addresses) {
                 if (hostNameBuffer.length() > 0) {
                     hostNameBuffer.append(", ");
                 }
-                hostNameBuffer.append(address.getHostName() + "/" + address.getHostAddress());
+                hostNameBuffer.append(address.getHostName()).append("/").append(address.getHostAddress());
             }
             LOG.warn("Could not find network address for preferred '" + preferred + "' when the addresses were: " + hostNameBuffer);
         }
         if (addresses.contains(InetAddress.getLocalHost())) {
             //Then if local host address is not bound to a loop-back interface, use it.
             return InetAddress.getLocalHost();
-        } else if (addresses != null && !addresses.isEmpty()) {
+        } else if (!addresses.isEmpty()) {
             //else return the first available addrress
-            return addresses.toArray(new InetAddress[addresses.size()])[0];
+            return addresses.toArray(new InetAddress[0])[0];
         } else {
             //else we are forcedt to use the localhost address.
             return InetAddress.getLocalHost();
@@ -151,9 +143,6 @@ public class Hosts {
 
     /**
      * Returns the local hostname. It loops through the network interfaces and returns the first non loopback address
-     *
-     * @return
-     * @throws UnknownHostException
      */
     public static String getLocalHostName() throws UnknownHostException {
         String preffered = System.getProperty(PREFERED_ADDRESS_PROPERTY_NAME);
@@ -162,9 +151,6 @@ public class Hosts {
 
     /**
      * Returns the local IP. It loops through the network interfaces and returns the first non loopback address
-     *
-     * @return
-     * @throws UnknownHostException
      */
     public static String getLocalIp() throws UnknownHostException {
         String preffered = System.getProperty(PREFERED_ADDRESS_PROPERTY_NAME);

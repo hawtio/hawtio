@@ -19,7 +19,7 @@ public class SpringHawtioContextListenerTest {
         Mockito.when(event.getServletContext()).thenReturn(ctx);
 
         final SpringHawtioContextListener underTest = new SpringHawtioContextListener(
-                configManager, "foobar");
+            configManager, "foobar");
         underTest.contextInitialized(event);
 
         Mockito.verify(configManager).init(ctx);

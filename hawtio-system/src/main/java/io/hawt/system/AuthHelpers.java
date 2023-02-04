@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthHelpers {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AuthHelpers.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthHelpers.class);
 
     public static final List<String> KNOWN_PRINCIPALS = Arrays.asList(
         "UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal");

@@ -2,6 +2,7 @@ package io.hawt.springboot;
 
 import org.junit.Test;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSupport {
@@ -12,10 +13,8 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
             .hawtioExposed(false)
             .build();
 
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            getTestClient(context).get().uri(properties.getHawtioPath()).exchange()
-                .expectStatus().isNotFound();
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            getTestClient(context).get().uri(properties.getHawtioPath()).exchange().expectStatus().isNotFound());
     }
 
     @Test
@@ -59,9 +58,8 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
     @Test
     public void testConfigurationDefaults() {
         TestProperties properties = TestProperties.builder().build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -69,9 +67,8 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
         TestProperties properties = TestProperties.builder()
             .managementBasePath("/management-base-path")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -79,8 +76,7 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
         TestProperties properties = TestProperties.builder()
             .managementBasePath("/")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 }

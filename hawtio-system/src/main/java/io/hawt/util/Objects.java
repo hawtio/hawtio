@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
  * whenever we are happy to ignore JDK 1.6
  */
 public class Objects {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Objects.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Objects.class);
 
     public static boolean equals(Object a, Object b) {
         if (a == b) {
             return true;
         } else {
-            return a != null && b != null && a.equals(b);
+            return a != null && a.equals(b);
         }
     }
 
@@ -62,7 +62,7 @@ public class Objects {
      */
     public static String getVersion(Class<?> aClass, String groupId, String artifactId) {
         String version = null;
-        // lets try find the maven property - as the Java API rarely works :)
+        // let's try to find the maven property - as the Java API rarely works :)
         InputStream is = null;
         String fileName = "/META-INF/maven/" +
                 groupId + "/" + artifactId +

@@ -17,19 +17,18 @@ public class LogFilter implements Serializable {
     @Override
     public String toString() {
         return "LogFilter{" +
-                "count=" + count +
-                ", afterTimestamp=" + afterTimestamp +
-                ", matchesText='" + matchesText + '\'' +
-                '}';
+            "count=" + count +
+            ", afterTimestamp=" + afterTimestamp +
+            ", matchesText='" + matchesText + '\'' +
+            '}';
     }
 
     public Set<String> getLevelsSet() {
         if (levels == null || levels.length == 0) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
-        return new HashSet<String>(Arrays.asList(levels));
+        return new HashSet<>(Arrays.asList(levels));
     }
-
 
     // Properties
     //-------------------------------------------------------------------------

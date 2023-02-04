@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * A helper object to store the proxy location details
  */
 public class ProxyDetails implements ProxyAddress {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyDetails.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyDetails.class);
 
     private String stringProxyURL;
     private String hostAndPort;

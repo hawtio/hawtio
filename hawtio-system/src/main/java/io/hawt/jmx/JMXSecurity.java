@@ -2,6 +2,7 @@ package io.hawt.jmx;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.TabularData;
@@ -16,7 +17,7 @@ import io.hawt.util.MBeanSupport;
 public class JMXSecurity extends MBeanSupport implements JMXSecurityMBean {
 
     @Override
-    public boolean canInvoke(String objectName) throws Exception {
+    public boolean canInvoke(String objectName) {
         return true;
     }
 
@@ -38,16 +39,15 @@ public class JMXSecurity extends MBeanSupport implements JMXSecurityMBean {
             String objectName = entry.getKey();
             List<String> methods = entry.getValue();
             if (methods.size() == 0) {
-                boolean res = canInvoke(objectName);
                 CompositeData data = new CompositeDataSupport(CAN_INVOKE_RESULT_ROW_TYPE,
-                        CAN_INVOKE_RESULT_COLUMNS,
-                        new Object[]{objectName, "", true});
+                    CAN_INVOKE_RESULT_COLUMNS,
+                    new Object[] { objectName, "", true });
                 table.put(data);
             } else {
                 for (String method : methods) {
                     CompositeData data = new CompositeDataSupport(CAN_INVOKE_RESULT_ROW_TYPE,
-                            CAN_INVOKE_RESULT_COLUMNS,
-                            new Object[]{objectName, method, true});
+                        CAN_INVOKE_RESULT_COLUMNS,
+                        new Object[] { objectName, method, true });
                     table.put(data);
                 }
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  */
 public class Files {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Files.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Files.class);
 
     private static final int BUFFER_SIZE = 8192;
 
@@ -52,7 +52,7 @@ public class Files {
 
 
     /**
-     * Recursively deletes the given file whether its a file or directory returning the number
+     * Recursively deletes the given file whether it's a file or directory returning the number
      * of files deleted
      */
     public static int recursiveDelete(File file) {

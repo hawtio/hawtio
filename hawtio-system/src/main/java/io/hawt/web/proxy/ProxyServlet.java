@@ -13,6 +13,7 @@ import java.security.cert.X509Certificate;
 import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -74,17 +75,9 @@ public class ProxyServlet extends HttpServlet {
 
     private static final long serialVersionUID = 7792226114533360114L;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);
 
     /* INIT PARAMETER NAME CONSTANTS */
-
-    /**
-     * A boolean parameter name to enable logging of input and target URLs to the servlet log.
-     *
-     * @deprecated Use SLF4J {@link Logger}
-     */
-    @Deprecated
-    public static final String P_LOG = "log";
 
     /**
      * A boolean parameter name to enable forwarding of the client IP
@@ -109,7 +102,6 @@ public class ProxyServlet extends HttpServlet {
 
     protected boolean enabled = true;
 
-    protected boolean doLog = false;
     protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
 
@@ -145,11 +137,6 @@ public class ProxyServlet extends HttpServlet {
             this.doForwardIP = Boolean.parseBoolean(doForwardIPString);
         }
 
-        String doLogStr = servletConfig.getInitParameter(P_LOG);
-        if (doLogStr != null) {
-            this.doLog = Boolean.parseBoolean(doLogStr);
-        }
-
         cookieStore = new BasicCookieStore();
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
             .setDefaultCookieStore(cookieStore)
@@ -168,11 +155,7 @@ public class ProxyServlet extends HttpServlet {
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                     builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 httpClientBuilder.setSSLSocketFactory(sslsf);
-            } catch (NoSuchAlgorithmException e) {
-                throw new ServletException(e);
-            } catch (KeyStoreException e) {
-                throw new ServletException(e);
-            } catch (KeyManagementException e) {
+            } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
                 throw new ServletException(e);
             }
         }
@@ -195,7 +178,7 @@ public class ProxyServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
-        throws ServletException, IOException {
+        throws IOException {
         // returns if enabled or not so that Connect plugin can turn on/off itself
         if ("/enabled".equals(servletRequest.getPathInfo())) {
             ServletHelpers.sendJSONResponse(servletResponse, enabled);
@@ -208,7 +191,7 @@ public class ProxyServlet extends HttpServlet {
         }
 
         // Make the Request
-        //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
+        //note: we won't transfer the protocol version because I'm not sure if it would truly be compatible
         ProxyAddress proxyAddress = parseProxyAddress(servletRequest);
         if (proxyAddress == null || proxyAddress.getFullProxyUrl() == null) {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -280,9 +263,6 @@ public class ProxyServlet extends HttpServlet {
         try {
 
             // Execute the request
-            if (doLog) {
-                log("proxy " + method + " uri: " + servletRequest.getRequestURI() + " -- " + proxyRequest.getRequestLine().getUri());
-            }
             LOG.debug("proxy {} uri: {} -- {}", method, servletRequest.getRequestURI(), proxyRequest.getRequestLine().getUri());
             proxyResponse = proxyClient.execute(URIUtils.extractHost(targetUriObj), proxyRequest);
 
@@ -290,9 +270,6 @@ public class ProxyServlet extends HttpServlet {
             statusCode = proxyResponse.getStatusLine().getStatusCode();
 
             if (statusCode == 401 || statusCode == 403) {
-                if (doLog) {
-                    log("Authentication Failed on remote server " + proxyRequestUri);
-                }
                 LOG.debug("Authentication Failed on remote server {}", proxyRequestUri);
             } else if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
                 //the response is already "committed" now without any body to send
@@ -300,7 +277,7 @@ public class ProxyServlet extends HttpServlet {
                 return;
             }
 
-            // Pass the response code. This method with the "reason phrase" is deprecated but it's the only way to pass the
+            // Pass the response code. This method with the "reason phrase" is deprecated, but it's the only way to pass the
             //  reason along too.
             //noinspection deprecation
             servletResponse.setStatus(statusCode, proxyResponse.getStatusLine().getReasonPhrase());
@@ -388,7 +365,7 @@ public class ProxyServlet extends HttpServlet {
      * These are the "hop-by-hop" headers that should not be copied.
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
      * I use an HttpClient HeaderGroup class instead of Set<String> because this
-     * approach does case insensitive lookup faster.
+     * approach does case-insensitive lookup faster.
      */
     protected static final HeaderGroup hopByHopHeaders;
 
@@ -406,19 +383,19 @@ public class ProxyServlet extends HttpServlet {
      * Copy request headers from the servlet client to the proxy request.
      */
     protected void copyRequestHeaders(HttpServletRequest servletRequest, HttpRequest proxyRequest, URI targetUriObj) {
-        // Get an Enumeration of all of the header names sent by the client
-        Enumeration enumerationOfHeaderNames = servletRequest.getHeaderNames();
+        // Get an Enumeration of all the header names sent by the client
+        Enumeration<String> enumerationOfHeaderNames = servletRequest.getHeaderNames();
         while (enumerationOfHeaderNames.hasMoreElements()) {
-            String headerName = (String) enumerationOfHeaderNames.nextElement();
+            String headerName = enumerationOfHeaderNames.nextElement();
             //Instead the content-length is effectively set via InputStreamEntity
             if (headerName.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
                 continue;
             if (hopByHopHeaders.containsHeader(headerName))
                 continue;
 
-            Enumeration headers = servletRequest.getHeaders(headerName);
+            Enumeration<String> headers = servletRequest.getHeaders(headerName);
             while (headers.hasMoreElements()) {//sometimes more than one value
-                String headerValue = (String) headers.nextElement();
+                String headerValue = headers.nextElement();
                 // In case the proxy host is running multiple virtual servers,
                 // rewrite the Host header to ensure that we get content from
                 // the correct virtual server
@@ -507,7 +484,7 @@ public class ProxyServlet extends HttpServlet {
             char c = in.charAt(i);
             boolean escape = true;
             if (c < 128) {
-                if (asciiQueryChars.get((int) c)) {
+                if (asciiQueryChars.get(c)) {
                     escape = false;
                 }
             } else if (!Character.isISOControl(c) && !Character.isSpaceChar(c)) {//not-ascii
@@ -538,14 +515,14 @@ public class ProxyServlet extends HttpServlet {
         char[] c_reserved = "?/[]@".toCharArray();//plus punct
 
         asciiQueryChars = new BitSet(128);
-        for (char c = 'a'; c <= 'z'; c++) asciiQueryChars.set((int) c);
-        for (char c = 'A'; c <= 'Z'; c++) asciiQueryChars.set((int) c);
-        for (char c = '0'; c <= '9'; c++) asciiQueryChars.set((int) c);
-        for (char c : c_unreserved) asciiQueryChars.set((int) c);
-        for (char c : c_punct) asciiQueryChars.set((int) c);
-        for (char c : c_reserved) asciiQueryChars.set((int) c);
+        for (char c = 'a'; c <= 'z'; c++) asciiQueryChars.set(c);
+        for (char c = 'A'; c <= 'Z'; c++) asciiQueryChars.set(c);
+        for (char c = '0'; c <= '9'; c++) asciiQueryChars.set(c);
+        for (char c : c_unreserved) asciiQueryChars.set(c);
+        for (char c : c_punct) asciiQueryChars.set(c);
+        for (char c : c_reserved) asciiQueryChars.set(c);
 
-        asciiQueryChars.set((int) '%');//leave existing percent escapes in place
+        asciiQueryChars.set('%');//leave existing percent escapes in place
     }
 
 }

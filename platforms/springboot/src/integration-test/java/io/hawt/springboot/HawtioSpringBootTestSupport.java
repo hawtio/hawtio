@@ -1,11 +1,11 @@
 package io.hawt.springboot;
 
-import io.hawt.util.Strings;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import io.hawt.util.Strings;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -36,19 +36,19 @@ public class HawtioSpringBootTestSupport {
         contextRunner = new WebApplicationContextRunner(
             AnnotationConfigServletWebServerApplicationContext::new)
             .withConfiguration(AutoConfigurations.of(
-                DispatcherServletAutoConfiguration.class,
-                EndpointAutoConfiguration.class,
-                JolokiaEndpointAutoConfiguration.class,
-                ManagementContextAutoConfiguration.class,
-                ServletManagementContextAutoConfiguration.class,
-                ServletWebServerFactoryAutoConfiguration.class,
-                WebEndpointAutoConfiguration.class,
-                WebMvcAutoConfiguration.class,
-                HttpMessageConvertersAutoConfiguration.class,
-                HawtioEndpointAutoConfiguration.class,
-                HawtioManagementConfiguration.class
-            )
-        );
+                    DispatcherServletAutoConfiguration.class,
+                    EndpointAutoConfiguration.class,
+                    JolokiaEndpointAutoConfiguration.class,
+                    ManagementContextAutoConfiguration.class,
+                    ServletManagementContextAutoConfiguration.class,
+                    ServletWebServerFactoryAutoConfiguration.class,
+                    WebEndpointAutoConfiguration.class,
+                    WebMvcAutoConfiguration.class,
+                    HttpMessageConvertersAutoConfiguration.class,
+                    HawtioEndpointAutoConfiguration.class,
+                    HawtioManagementConfiguration.class
+                )
+            );
     }
 
     protected WebApplicationContextRunner getContextRunner() {
@@ -68,7 +68,7 @@ public class HawtioSpringBootTestSupport {
             .expectStatus().isOk()
             .expectBody()
             .consumeWith(result -> {
-                String body = new String(result.getResponseBody(), StandardCharsets.UTF_8);
+                String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
                 Assertions.assertThat(body).contains("<base href='" + properties.getHawtioPath() + "/'>");
             });
     }
@@ -116,11 +116,11 @@ public class HawtioSpringBootTestSupport {
         private String hawtioPath = "hawtio";
 
         private TestProperties(final String contextPath,
-                final String servletPath, final String managementContextPath,
-                final String managementBasePath, final String jolokiaPath,
-                final String hawtioPath, final boolean hawtioExposed, final boolean jolokiaExposed,
-                final boolean hawtioEnabled, final boolean jolokiaEnabled,
-                final boolean authenticationEnabled) {
+                               final String servletPath, final String managementContextPath,
+                               final String managementBasePath, final String jolokiaPath,
+                               final String hawtioPath, final boolean hawtioExposed, final boolean jolokiaExposed,
+                               final boolean hawtioEnabled, final boolean jolokiaEnabled,
+                               final boolean authenticationEnabled) {
 
             List<String> endpoints = new ArrayList<>();
             if (hawtioExposed) {
@@ -192,7 +192,7 @@ public class HawtioSpringBootTestSupport {
         }
 
         public String[] getProperties() {
-            return this.properties.toArray(new String[]{});
+            return this.properties.toArray(new String[] {});
         }
 
         private String getBasePath() {

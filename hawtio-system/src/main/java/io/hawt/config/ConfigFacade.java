@@ -20,7 +20,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigFacade.class);
     private static ConfigFacade singleton;
 
-    private static Map<String, URLHandler> urlStreamHandlerMap = new ConcurrentHashMap<String, URLHandler>();
+    private static final Map<String, URLHandler> urlStreamHandlerMap = new ConcurrentHashMap<>();
     private String configDir;
     private String version;
 
@@ -56,7 +56,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
      */
     public File getConfigDirectory() {
         String dirName = getConfigDir();
-        File answer = null;
+        File answer;
         if (Strings.isNotBlank(dirName)) {
             answer = new File(dirName);
         } else {

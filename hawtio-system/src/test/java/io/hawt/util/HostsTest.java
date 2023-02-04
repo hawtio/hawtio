@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 public class HostsTest {
 
     @Test
-    public void getNetworkInterfaceAddresses() throws Exception {
+    public void getNetworkInterfaceAddresses() {
         Map<String, Set<InetAddress>> includeLoopback = Hosts.getNetworkInterfaceAddresses(true);
         assertFalse(includeLoopback.isEmpty());
         assertLoopback("Should include loopback", true, includeLoopback);
@@ -34,7 +34,7 @@ public class HostsTest {
     }
 
     @Test
-    public void getAddresses() throws Exception {
+    public void getAddresses() {
         assertFalse(Hosts.getAddresses().isEmpty());
     }
 

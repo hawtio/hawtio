@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthenticationFilter implements Filter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     private int timeout;
     private AuthenticationConfiguration authConfiguration;

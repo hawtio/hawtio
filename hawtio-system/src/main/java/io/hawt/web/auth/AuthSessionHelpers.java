@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class AuthSessionHelpers {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AuthSessionHelpers.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthSessionHelpers.class);
 
     public static final int DEFAULT_SESSION_TIMEOUT = 1800; // 30 mins
 
@@ -44,7 +44,6 @@ public final class AuthSessionHelpers {
             }
         } catch (Exception e) {
             // ignore and use our own default of 1/2 hour
-            timeout = DEFAULT_SESSION_TIMEOUT;
         }
         return timeout;
     }

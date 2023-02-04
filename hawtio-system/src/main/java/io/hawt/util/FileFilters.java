@@ -30,7 +30,7 @@ public class FileFilters {
                 lastIdx = idx;
             }
             FileFilter endsWith = nameEndsWithFilter(wildcard.substring(lastIdx + 1));
-            if (idx <= 0) {
+            if (idx == 0) {
                 return endsWith;
             } else {
                 return andFilter(nameStartsWithFilter(wildcard.substring(0, idx)), endsWith);

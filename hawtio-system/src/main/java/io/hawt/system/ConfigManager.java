@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory;
  */
 public class ConfigManager {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
 
     public static final String CONFIG_MANAGER = "ConfigManager";
 
     private Context envContext = null;
 
-    private Function<String, String> propertyResolver;
+    private final Function<String, String> propertyResolver;
 
     public ConfigManager() {
         this.propertyResolver = ConfigManager::getHawtioSystemProperty;
@@ -97,7 +97,7 @@ public class ConfigManager {
                                       Function<String, String>... propertyResolvers) {
         return Arrays.stream(propertyResolvers)
             .map(resolver -> resolver.apply(name))
-            .filter(result -> result != null)
+            .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
     }

@@ -1,17 +1,13 @@
 package io.hawt.web.filters;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
-import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.Objects;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -21,6 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BaseTagHrefFilterTest {
 
@@ -101,12 +102,14 @@ public class BaseTagHrefFilterTest {
     }
 
     private String readHtml() throws IOException {
-        return IOUtils.toString(BaseTagHrefFilterTest.class.getResourceAsStream("index.html"));
+        return IOUtils.toString(
+            Objects.requireNonNull(BaseTagHrefFilterTest.class.getResourceAsStream("index.html")),
+            Charset.defaultCharset());
     }
 
     private class MockFilterChain implements FilterChain {
         @Override
-        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
+        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
             servletResponse.getOutputStream().write(readHtml().getBytes());
         }
     }

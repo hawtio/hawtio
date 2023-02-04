@@ -1,6 +1,7 @@
 package io.hawt.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -10,7 +11,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(Enclosed.class)
@@ -20,7 +21,7 @@ public abstract class StringsTest {
 
         @Test
         public void split() {
-            assertThat(Strings.split("abc", ","), is(Arrays.asList("abc")));
+            assertThat(Strings.split("abc", ","), is(Collections.singletonList("abc")));
             assertThat(Strings.split("a,b,c", ","), is(Arrays.asList("a", "b", "c")));
             assertThat(Strings.split("a, b, c", ","), is(Arrays.asList("a", "b", "c")));
             assertThat(Strings.split(",a,,b,,c,", ","), is(Arrays.asList("a", "b", "c")));

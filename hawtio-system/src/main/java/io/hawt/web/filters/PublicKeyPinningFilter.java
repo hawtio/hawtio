@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PublicKeyPinningFilter extends HttpHeaderFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PublicKeyPinningFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PublicKeyPinningFilter.class);
 
     private static final String PUBLIC_KEY_PINS = "http.publicKeyPins";
 

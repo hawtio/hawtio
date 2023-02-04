@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ReferrerPolicyFilter extends HttpHeaderFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ReferrerPolicyFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReferrerPolicyFilter.class);
 
     public static final String REFERRER_POLICY = "http.referrerPolicy";
     public static final String HAWTIO_REFERRER_POLICY = "hawtio." + REFERRER_POLICY;

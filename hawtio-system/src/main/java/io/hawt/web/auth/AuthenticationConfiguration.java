@@ -2,6 +2,7 @@ package io.hawt.web.auth;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.security.auth.login.Configuration;
 import javax.servlet.ServletContext;
 
@@ -11,13 +12,13 @@ import org.slf4j.LoggerFactory;
 
 public class AuthenticationConfiguration {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
 
     public static final String LOGIN_URL = "/auth/login";
-    public static final String[] UNSECURED_PATHS = {"/auth/login", "/auth/logout", "/css",
+    public static final String[] UNSECURED_PATHS = { "/auth/login", "/auth/logout", "/css",
         "/fonts", "/img", "/js", "/hawtconfig.json",
         "/jolokia", "/keycloak", "/oauth", "/user",
-        "/plugin", "/login.html"};
+        "/plugin", "/login.html" };
 
     // Configuration properties
     public static final String AUTHENTICATION_ENABLED = "authenticationEnabled";
@@ -129,7 +130,7 @@ public class AuthenticationConfiguration {
 
         if (this.enabled) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
-                     this.realm, this.role, this.rolePrincipalClasses);
+                this.realm, this.role, this.rolePrincipalClasses);
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
@@ -159,7 +160,7 @@ public class AuthenticationConfiguration {
                 Class<? extends AuthenticationContainerDiscovery> clazz =
                     (Class<? extends AuthenticationContainerDiscovery>) AuthenticationConfiguration.class
                         .getClassLoader().loadClass(discoveryClass.trim());
-                AuthenticationContainerDiscovery discovery = clazz.newInstance();
+                AuthenticationContainerDiscovery discovery = clazz.getDeclaredConstructor().newInstance();
                 discoveries.add(discovery);
             } catch (Exception e) {
                 LOG.warn("Couldn't instantiate discovery " + discoveryClass, e);

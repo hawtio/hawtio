@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -45,17 +47,17 @@ import org.slf4j.LoggerFactory;
  */
 public class RBACMBeanInvoker {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(RBACMBeanInvoker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RBACMBeanInvoker.class);
 
     /**
      * The length of time (in minutes) an entry in canInvokeCache is valid after creation
      */
-    private static long CAN_INVOKE_CACHE_DURATION = 10;
+    private static final long CAN_INVOKE_CACHE_DURATION = 10;
 
     /**
      * The length of time (in minutes) an entry in mbeanInfoCache is valid after creation
      */
-    private static long MBEAN_INFO_CACHE_DURATION = 10;
+    private static final long MBEAN_INFO_CACHE_DURATION = 10;
 
     protected MBeanServer mBeanServer;
     protected ObjectName securityMBean;
@@ -63,7 +65,7 @@ public class RBACMBeanInvoker {
     protected LoadingCache<CanInvokeKey, Boolean> canInvokeCache;
     protected LoadingCache<ObjectName, Map<String, MBeanAttributeInfo>> mbeanInfoCache;
 
-    protected class CanInvokeKey {
+    protected static class CanInvokeKey {
         protected String username;
         protected ObjectName objectName;
         protected String operation;
@@ -99,10 +101,7 @@ public class RBACMBeanInvoker {
         @Override
         public String toString() {
             return String.format("%s{username=%s, objectName=%s, operation=%s}",
-                getClass().getSimpleName(),
-                Objects.toString(username),
-                Objects.toString(objectName),
-                Objects.toString(operation));
+                getClass().getSimpleName(), username, objectName, operation);
         }
     }
 
@@ -138,7 +137,7 @@ public class RBACMBeanInvoker {
             .expireAfterWrite(CAN_INVOKE_CACHE_DURATION, TimeUnit.MINUTES)
             .build(new CacheLoader<CanInvokeKey, Boolean>() {
                 @Override
-                public Boolean load(CanInvokeKey key) throws Exception {
+                public Boolean load(@Nonnull CanInvokeKey key) throws Exception {
                     LOG.debug("Do invoking canInvoke() for {}", key);
                     return doCanInvoke(key.objectName, key.operation);
                 }
@@ -147,7 +146,7 @@ public class RBACMBeanInvoker {
             .expireAfterWrite(MBEAN_INFO_CACHE_DURATION, TimeUnit.MINUTES)
             .build(new CacheLoader<ObjectName, Map<String, MBeanAttributeInfo>>() {
                 @Override
-                public Map<String, MBeanAttributeInfo> load(ObjectName objectName) throws Exception {
+                public Map<String, MBeanAttributeInfo> load(@Nonnull ObjectName objectName) throws Exception {
                     LOG.debug("Do loading MBean attributes for {}", objectName);
                     return loadMBeanAttributes(objectName);
                 }

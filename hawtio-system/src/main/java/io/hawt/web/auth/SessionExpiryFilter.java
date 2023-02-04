@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SessionExpiryFilter implements Filter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SessionExpiryFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SessionExpiryFilter.class);
 
     public static final String ATTRIBUTE_LAST_ACCESS = "LastAccess";
 
@@ -63,7 +64,7 @@ public class SessionExpiryFilter implements Filter {
         }
     }
 
-    private void writeOk(HttpServletResponse response) throws IOException, ServletException {
+    private void writeOk(HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (OutputStream out = response.getOutputStream()) {
             out.write("ok".getBytes());
@@ -78,7 +79,7 @@ public class SessionExpiryFilter implements Filter {
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (context.getAttribute(AuthenticationConfiguration.AUTHENTICATION_ENABLED) == null) {
-            // most likely the authentication filter hasn't been started up yet, let this request through and it can be dealt with by the authentication filter
+            // most likely the authentication filter hasn't been started up yet, let this request through, and it can be dealt with by the authentication filter
             chain.doFilter(request, response);
             return;
         }
@@ -105,33 +106,6 @@ public class SessionExpiryFilter implements Filter {
                 writeOk(response);
             } else {
                 chain.doFilter(request, response);
-                /*
-                if (!enabled) {
-                    LOG.debug("Authentication disabled, allowing request");
-                    chain.doFilter(request, response);
-                } else if (request.getHeader(Authenticator.HEADER_AUTHORIZATION) != null) {
-                    // there's no session, but we have request with authentication attempt
-                    // let's pass it further the filter chain - if authentication will fail, user will get 403 anyway
-                    chain.doFilter(request, response);
-                } else {
-                    if (noCredentials401 && subContext.equals("jolokia")) {
-                        LOG.debug("Authentication enabled, noCredentials401 is true, allowing request for {}",
-                            subContext);
-                        chain.doFilter(request, response);
-                    } else if (subContext.equals("jolokia") ||
-                        subContext.equals("proxy") ||
-                        subContext.equals("user") ||
-                        subContext.equals("exportContext") ||
-                        subContext.equals("contextFormatter") ||
-                        subContext.equals("upload")) {
-                        LOG.debug("Authentication enabled, denying request for {}", subContext);
-                        ServletHelpers.doForbidden(response);
-                    } else {
-                        LOG.debug("Authentication enabled, but allowing request for {}", subContext);
-                        chain.doFilter(request, response);
-                    }
-                }
-                */
             }
             return;
         }

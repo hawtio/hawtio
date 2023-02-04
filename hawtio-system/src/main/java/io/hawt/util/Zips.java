@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -21,10 +21,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -47,7 +47,7 @@ public class Zips {
 
     public static void createZipFile(Logger log, File sourceDir, File outputZipFile, FileFilter filter) throws IOException {
         outputZipFile.getParentFile().mkdirs();
-        OutputStream os = new FileOutputStream(outputZipFile);
+        OutputStream os = Files.newOutputStream(outputZipFile.toPath());
         ZipOutputStream zos = new ZipOutputStream(os);
         try {
             //zos.setLevel(Deflater.DEFAULT_COMPRESSION);
@@ -66,7 +66,7 @@ public class Zips {
         // get a listing of the directory content
         File[] dirList = directory.listFiles();
         byte[] readBuffer = new byte[8192];
-        int bytesIn = 0;
+        int bytesIn;
         // loop through dirList, and zip the files
         if (dirList != null) {
             for (File f : dirList) {
@@ -79,8 +79,7 @@ public class Zips {
                 } else {
                     String entry = path + f.getName();
                     if (matches(filter, f)) {
-                        FileInputStream fis = new FileInputStream(f);
-                        try {
+                        try (FileInputStream fis = new FileInputStream(f)) {
                             ZipEntry anEntry = new ZipEntry(entry);
                             zos.putNextEntry(anEntry);
                             bytesIn = fis.read(readBuffer);
@@ -88,8 +87,6 @@ public class Zips {
                                 zos.write(readBuffer, 0, bytesIn);
                                 bytesIn = fis.read(readBuffer);
                             }
-                        } finally {
-                            fis.close();
                         }
                         if (log.isDebugEnabled()) {
                             log.debug("zipping file " + entry);
@@ -117,7 +114,7 @@ public class Zips {
                     String entryName = entry.getName();
                     File toFile = new File(toDir, entryName);
                     toFile.getParentFile().mkdirs();
-                    OutputStream os = new FileOutputStream(toFile);
+                    OutputStream os = Files.newOutputStream(toFile.toPath());
                     try {
                         try {
                             copy(zis, os);

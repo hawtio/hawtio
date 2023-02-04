@@ -4,7 +4,7 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 
 public class VMDescriptorDTO {
 
-    private VirtualMachineDescriptor descriptor;
+    private final VirtualMachineDescriptor descriptor;
     private String alias;
     private String agentUrl;
     private int port;
@@ -80,6 +80,5 @@ public class VMDescriptorDTO {
         }
         return getId() + " : [" + agentEnabled + "] " + getAlias() + " (" + getDisplayName() + ")";
     }
-
 
 }

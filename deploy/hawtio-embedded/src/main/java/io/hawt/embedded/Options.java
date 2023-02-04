@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -38,10 +38,10 @@ public class Options {
     private String keyStore = null;
     private String keyStorePass = null;
 
-    private abstract class Option {
-        private String abbreviation;
-        private String fullName;
-        private String description;
+    private abstract static class Option {
+        private final String abbreviation;
+        private final String fullName;
+        private final String description;
 
         protected Option(String abbreviation, String fullName, String description) {
             this.abbreviation = "-" + abbreviation;
@@ -108,7 +108,7 @@ public class Options {
 
         addOption(new ParameterOption("j", "join", "Join server thread") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                jointServerThread = Boolean.valueOf(parameter);
+                jointServerThread = Boolean.parseBoolean(parameter);
             }
         });
 
@@ -165,7 +165,7 @@ public class Options {
 
         addOption(new ParameterOption("ou", "openUrl", "Open the web console automatic in the web browser") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                openUrl = Boolean.valueOf(parameter);
+                openUrl = Boolean.parseBoolean(parameter);
             }
         });
         addOption(new ParameterOption("ks", "keyStore", "JKS keyStore with the keys for https") {

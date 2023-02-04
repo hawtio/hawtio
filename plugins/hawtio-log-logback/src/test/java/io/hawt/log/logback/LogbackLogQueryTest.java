@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogbackLogQueryTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LogbackLogQueryTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogbackLogQueryTest.class);
 
     private LogbackLogQuery logQuery;
 
@@ -31,7 +31,7 @@ public class LogbackLogQueryTest {
     }
 
     @Test
-    public void testGetLogResults() throws Exception {
+    public void testGetLogResults() {
         // Given
         String message = "testGetLogResults - Hello Hawtio";
         IntStream.range(0, 10).forEach(i -> LOG.info(message + " #{}", i));
@@ -48,7 +48,7 @@ public class LogbackLogQueryTest {
     }
 
     @Test
-    public void testQueryLogResults() throws Exception {
+    public void testQueryLogResults() {
         // Given
         String message = "testQueryLogResults - Hello Hawtio";
         IntStream.range(0, 10).forEach(i -> LOG.info(message + " #{}", i));

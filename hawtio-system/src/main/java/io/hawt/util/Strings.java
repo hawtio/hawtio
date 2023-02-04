@@ -30,9 +30,6 @@ public class Strings {
     /**
      * Strip out any annoying to deal with characters from a string when used as a
      * file or directory name
-     *
-     * @param name
-     * @return
      */
     public static String sanitize(String name) {
         if (isBlank(name)) {
@@ -43,9 +40,6 @@ public class Strings {
 
     /**
      * Also remove any dots in the directory name
-     *
-     * @param name
-     * @return
      */
     public static String sanitizeDirectory(String name) {
         if (isBlank(name)) {
@@ -59,8 +53,8 @@ public class Strings {
             throw new IllegalArgumentException(
                     "Both 'text' and 'delimiter' should not be null.");
         }
-        return Arrays.stream(text.split(delimiter)).map(s -> s.trim())
-                .filter(s -> isNotBlank(s)).collect(Collectors.toList());
+        return Arrays.stream(text.split(delimiter)).map(String::trim)
+                .filter(Strings::isNotBlank).collect(Collectors.toList());
     }
 
     /**
@@ -90,8 +84,6 @@ public class Strings {
      * <li>stripped from trailing '/' character(s)</li>
      * </ol>
      * 
-     * @param components
-     *            web context path components
      * @return empty string or string which starts with a "/" character but does not
      *         end with a "/" character
      */

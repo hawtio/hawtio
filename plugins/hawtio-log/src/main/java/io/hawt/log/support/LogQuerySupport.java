@@ -1,6 +1,5 @@
 package io.hawt.log.support;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Base class for any {@link LogQuerySupportMBean} implementation
  */
 public abstract class LogQuerySupport implements LogQuerySupportMBean {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LogQuerySupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogQuerySupport.class);
 
     protected ObjectMapper mapper = new ObjectMapper();
     private ObjectName mbeanName;
@@ -92,7 +91,7 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
     }
 
     @Override
-    public LogResults logResultsSince(long time) throws IOException {
+    public LogResults logResultsSince(long time) {
         LogFilter filter = new LogFilter();
         filter.setAfterTimestamp(time);
         return queryLogResults(filter);
@@ -195,7 +194,7 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
     }
 
     public String getSource(String mavenCoords, String className, String filePath) throws IOException {
-        // the fileName could be just a name and extension so we may have to use the className to make a fully qualified package
+        // the fileName could be just a name and extension, so we may have to use the className to make a fully qualified package
         String classNamePath = null;
         if (!Objects.isBlank(className)) {
             classNamePath = className.replace('.', '/') + ".java";
@@ -266,14 +265,8 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
     }
 
     protected String jarIndex(URL url) throws IOException {
-        StringBuilder buffer = new StringBuilder();
         JarURLConnection uc = (JarURLConnection) url.openConnection();
         return jarIndex(uc.getJarFile());
-    }
-
-    protected String jarIndex(File file) throws IOException {
-        JarFile jarFile = new JarFile(file);
-        return jarIndex(jarFile);
     }
 
     protected String jarIndex(JarFile jarFile) {

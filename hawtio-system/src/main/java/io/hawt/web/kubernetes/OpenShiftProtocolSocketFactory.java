@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * A custom implementation which works on PaaS environments like OpenShift
  */
 public class OpenShiftProtocolSocketFactory extends PlainConnectionSocketFactory {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OpenShiftProtocolSocketFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OpenShiftProtocolSocketFactory.class);
 
     /**
      * The factory singleton.

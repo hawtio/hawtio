@@ -17,7 +17,7 @@ public class LogoutServlet extends HttpServlet {
 
     private static final long serialVersionUID = -3504832582691232812L;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LogoutServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LogoutServlet.class);
 
     private AuthenticationConfiguration authConfiguration;
 

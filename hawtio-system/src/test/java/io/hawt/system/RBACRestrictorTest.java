@@ -16,6 +16,7 @@
 package io.hawt.system;
 
 import java.util.Arrays;
+
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
@@ -28,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RBACRestrictorTest {
 
@@ -90,9 +91,9 @@ public class RBACRestrictorTest {
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("hawtio:type=NoSuchType"), "Whatever"), is(false));
     }
 
-    private class MockJMXSecurity extends JMXSecurity {
+    private static class MockJMXSecurity extends JMXSecurity {
         @Override
-        public boolean canInvoke(String objectName, String methodName) throws Exception {
+        public boolean canInvoke(String objectName, String methodName) {
             return false;
         }
 

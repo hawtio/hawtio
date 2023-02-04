@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Resolves the service / container names to a URL to invoke HTTP / HTTPS requests
  */
 public class ServiceResolver {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceResolver.class);
 
     public static ServiceResolver singleton = new ServiceResolver();
     public static ObjectName OBJECT_NAME;

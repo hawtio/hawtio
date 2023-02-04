@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -23,7 +23,7 @@ import java.util.TreeSet;
 /**
  */
 public class CacheValue {
-    private SortedSet<String> classNames = new TreeSet<String>();
+    private SortedSet<String> classNames = new TreeSet<>();
 
     public SortedSet<String> getClassNames() {
         return classNames;

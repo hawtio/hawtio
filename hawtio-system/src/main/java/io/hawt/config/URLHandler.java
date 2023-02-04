@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -20,7 +20,7 @@ package io.hawt.config;
 import java.io.InputStream;
 
 /**
- * A facade above the URLStreamHandler interface so we can use URL handlers with different kinds of class loaders
+ * A facade above the URLStreamHandler interface, so we can use URL handlers with different kinds of class loaders
  * and registration rather than relying on the global classpath like the java.net.URL class
  */
 public interface URLHandler {

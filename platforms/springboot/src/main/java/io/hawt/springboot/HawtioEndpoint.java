@@ -30,12 +30,11 @@ public class HawtioEndpoint implements WebMvcConfigurer {
 
     /**
      * Forwards all Angular route URLs to index.html.
-     *
      * Ignores jolokia paths and paths for other Hawtio resources.
      *
      * @return The Spring Web forward directive for the Hawtio index.html resource.
      */
-    @RequestMapping(value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|\\.).)*$}/**"}, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = { "", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|\\.).)*$}/**" }, produces = MediaType.TEXT_HTML_VALUE)
     public String forwardHawtioRequestToIndexHtml() {
         final String path = endpointPath.resolve("hawtio");
         final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(path)
@@ -52,7 +51,8 @@ public class HawtioEndpoint implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry // @formatter:off
+        // @formatter:off
+        registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/plugins/**"))
             .addResourceLocations(
                 "/app/",

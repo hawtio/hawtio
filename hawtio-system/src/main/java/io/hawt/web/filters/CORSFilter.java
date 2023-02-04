@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CORSFilter extends HttpHeaderFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CORSFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CORSFilter.class);
 
     public static final String ENABLE_CORS = "http.enableCORS";
     public static final String HAWTIO_ENABLE_CORS = "hawtio." + ENABLE_CORS;

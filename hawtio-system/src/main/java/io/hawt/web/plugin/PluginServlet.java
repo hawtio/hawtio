@@ -30,14 +30,14 @@ import org.slf4j.LoggerFactory;
 public class PluginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final transient Logger LOG = LoggerFactory.getLogger(PluginServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginServlet.class);
 
     private static final String[] ATTRIBUTES = { "Context", "Domain", "Name", "Scripts" };
 
     private MBeanServer mBeanServer;
     private ObjectName pluginQuery;
-    private Converters converters = new Converters();
-    private JsonConvertOptions options = JsonConvertOptions.DEFAULT;
+    private final Converters converters = new Converters();
+    private final JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
     @Override
     public void init() throws ServletException {

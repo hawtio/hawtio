@@ -40,7 +40,7 @@ public class ConfigFacadeTest {
     }
 
     @Test
-    public void testHasVersion() throws Exception {
+    public void testHasVersion() {
         String version = facade.getVersion();
         System.out.println("Has version: " + version);
         LoggerFactory.getLogger("hawtio-core").info("Has version: {}", version);

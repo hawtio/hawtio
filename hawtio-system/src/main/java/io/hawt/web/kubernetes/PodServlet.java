@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * passes the rest of the URI to the underlying service.
  */
 public class PodServlet extends ProxyServlet {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PodServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PodServlet.class);
 
     @Override
     protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {

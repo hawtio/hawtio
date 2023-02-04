@@ -16,21 +16,22 @@
 
 package io.hawt.web.plugin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hawtio plugin
  */
 public class HawtioPlugin implements HawtioPluginMBean {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HawtioPlugin.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HawtioPlugin.class);
 
     private String name;
     private String context;

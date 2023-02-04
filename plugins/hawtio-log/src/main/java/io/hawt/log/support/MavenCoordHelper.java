@@ -1,8 +1,5 @@
 package io.hawt.log.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -10,13 +7,16 @@ import java.security.CodeSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A helper class for finding the maven coordinates
  */
 public class MavenCoordHelper {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MavenCoordHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MavenCoordHelper.class);
     // TODO need to have one of these per class loader ideally
-    private static Map<String, String> classToMavenCoordMap = new ConcurrentHashMap<String, String>();
+    private static final Map<String, String> classToMavenCoordMap = new ConcurrentHashMap<>();
 
     public static String getMavenCoordinates(String className) {
         String coordinates = null;
@@ -24,7 +24,7 @@ public class MavenCoordHelper {
             coordinates = classToMavenCoordMap.get(className);
             if (coordinates == null) {
                 try {
-                    Class cls = findClass(className);
+                    Class<?> cls = findClass(className);
                     coordinates = getMavenCoordinates(cls);
                 } catch (Throwable t) {
                     LOG.debug("Can't find maven coordinate for " + className);
@@ -34,7 +34,7 @@ public class MavenCoordHelper {
         return coordinates;
     }
 
-    public static String getMavenCoordinates(Class cls) throws IOException {
+    public static String getMavenCoordinates(Class<?> cls) throws IOException {
         StringBuilder buffer = new StringBuilder();
         try {
             CodeSource source = cls.getProtectionDomain().getCodeSource();
@@ -79,7 +79,7 @@ public class MavenCoordHelper {
                     }
                 }
             }
-        } catch (SecurityException ex) {
+        } catch (SecurityException ignored) {
         }
         buffer.append(':');
         Package pkg = cls.getPackage();
@@ -99,7 +99,7 @@ public class MavenCoordHelper {
      * @return class, will not be null.
      * @throws ClassNotFoundException thrown if class can not be found.
      */
-    protected static Class findClass(final String className) throws ClassNotFoundException {
+    protected static Class<?> findClass(final String className) throws ClassNotFoundException {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {

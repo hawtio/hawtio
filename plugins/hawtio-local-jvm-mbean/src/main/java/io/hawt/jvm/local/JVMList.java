@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class JVMList implements JVMListMBean {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JVMList.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JVMList.class);
 
     private MBeanServer mBeanServer;
     private ObjectName objectName;
@@ -124,7 +124,6 @@ public class JVMList implements JVMListMBean {
         }
     }
 
-
     @Override
     public List<VMDescriptorDTO> listLocalJVMs() {
         List<VMDescriptorDTO> rc = new ArrayList<>();
@@ -194,22 +193,12 @@ public class JVMList implements JVMListMBean {
     private String allocateFreePort() {
         int port = 8778;
 
-        ServerSocket sock = null;
-
-        try {
-            sock = new ServerSocket(0);
+        try (ServerSocket sock = new ServerSocket(0)) {
             port = sock.getLocalPort();
         } catch (Exception e) {
             // ignore;
-        } finally {
-            if (sock != null) {
-                try {
-                    sock.close();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
         }
+        // ignore
 
         return Integer.toString(port);
     }

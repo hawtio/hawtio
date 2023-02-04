@@ -26,7 +26,7 @@ public class LruList<T> {
     }
 
     public synchronized int size() {
-        int size = 0;
+        int size;
         if (end < start) {
             size = maxElements - start + end;
         } else if (end == start) {

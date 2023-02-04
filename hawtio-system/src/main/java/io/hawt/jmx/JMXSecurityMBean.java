@@ -2,13 +2,13 @@ package io.hawt.jmx;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularType;
-
 
 /**
  * Snagged from Apache Karaf 3.x
@@ -24,13 +24,13 @@ public interface JMXSecurityMBean {
      * {@link #CAN_INVOKE_RESULT_ROW_TYPE} entries.
      * It has a composite key with consists of the "ObjectName" and "Method" columns.
      */
-    static final TabularType CAN_INVOKE_TABULAR_TYPE = SecurityMBeanOpenTypeInitializer.TABULAR_TYPE;
+    TabularType CAN_INVOKE_TABULAR_TYPE = SecurityMBeanOpenTypeInitializer.TABULAR_TYPE;
 
     /**
      * A row as returned by the {@link #CAN_INVOKE_TABULAR_TYPE}. The columns of the row are defined
      * by {@link #CAN_INVOKE_RESULT_COLUMNS}.
      */
-    static final CompositeType CAN_INVOKE_RESULT_ROW_TYPE = SecurityMBeanOpenTypeInitializer.ROW_TYPE;
+    CompositeType CAN_INVOKE_RESULT_ROW_TYPE = SecurityMBeanOpenTypeInitializer.ROW_TYPE;
 
     /**
      * The columns contained in a {@link #CAN_INVOKE_RESULT_ROW_TYPE}. The data types for these columns are
@@ -41,7 +41,7 @@ public interface JMXSecurityMBean {
      * <li>"CanInvoke" : {@link SimpleType#BOOLEAN}</li>
      * </ul>
      */
-    static final String[] CAN_INVOKE_RESULT_COLUMNS = SecurityMBeanOpenTypeInitializer.COLUMNS;
+    String[] CAN_INVOKE_RESULT_COLUMNS = SecurityMBeanOpenTypeInitializer.COLUMNS;
 
     /**
      * Checks whether the current user can invoke any methods on a JMX MBean.
@@ -99,21 +99,21 @@ public interface JMXSecurityMBean {
     TabularData canInvoke(Map<String, List<String>> bulkQuery) throws Exception;
 
     // A member class is used to initialize final fields, as this needs to do some exception handling...
-    static class SecurityMBeanOpenTypeInitializer {
-        private static final String[] COLUMNS = new String[]{"ObjectName", "Method", "CanInvoke"};
+    class SecurityMBeanOpenTypeInitializer {
+        private static final String[] COLUMNS = new String[] { "ObjectName", "Method", "CanInvoke" };
         private static final CompositeType ROW_TYPE;
 
         static {
             try {
                 ROW_TYPE = new CompositeType("CanInvokeRowType",
-                        "The rows of a CanInvokeTabularType table.",
-                        COLUMNS,
-                        new String[]{
-                                "The ObjectName of the MBean checked",
-                                "The Method to checked. This can either be a bare method name which means 'any method with this name' " +
-                                        "or a specific overload such as foo(java.lang.String). If an empty String is returned this means 'any' method.",
-                                "true if the method or mbean can potentially be invoked by the current user."},
-                        new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN}
+                    "The rows of a CanInvokeTabularType table.",
+                    COLUMNS,
+                    new String[] {
+                        "The ObjectName of the MBean checked",
+                        "The Method to checked. This can either be a bare method name which means 'any method with this name' " +
+                            "or a specific overload such as foo(java.lang.String). If an empty String is returned this means 'any' method.",
+                        "true if the method or mbean can potentially be invoked by the current user." },
+                    new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN }
                 );
             } catch (OpenDataException e) {
                 throw new RuntimeException(e);
@@ -125,7 +125,7 @@ public interface JMXSecurityMBean {
         static {
             try {
                 TABULAR_TYPE = new TabularType("CanInvokeTabularType", "Result of canInvoke() bulk operation", ROW_TYPE,
-                        new String[]{"ObjectName", "Method"});
+                    new String[] { "ObjectName", "Method" });
             } catch (OpenDataException e) {
                 throw new RuntimeException(e);
             }

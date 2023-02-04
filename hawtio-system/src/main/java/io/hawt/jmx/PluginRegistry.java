@@ -1,6 +1,7 @@
 package io.hawt.jmx;
 
 import java.util.concurrent.atomic.AtomicLong;
+
 import javax.management.MBeanServerNotification;
 import javax.management.MalformedObjectNameException;
 import javax.management.Notification;
@@ -16,9 +17,9 @@ import org.slf4j.LoggerFactory;
  */
 public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBean {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PluginRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginRegistry.class);
 
-    private AtomicLong updateCounter = new AtomicLong(0);
+    private final AtomicLong updateCounter = new AtomicLong(0);
     private ObjectName comparator = null;
 
     public PluginRegistry() {

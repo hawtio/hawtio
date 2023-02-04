@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
-import io.hawt.system.ConfigManager;
 import io.hawt.web.ServletHelpers;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
@@ -32,13 +31,13 @@ public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 187076436862364207L;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
 
     private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
-    private Converters converters = new Converters();
-    private JsonConvertOptions options = JsonConvertOptions.DEFAULT;
+    private final Converters converters = new Converters();
+    private final JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
     private Redirector redirector = new Redirector();
 

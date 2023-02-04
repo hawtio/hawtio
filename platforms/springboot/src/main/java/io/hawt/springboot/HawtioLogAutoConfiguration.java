@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 /**
- * Auto configuration for Hawtio Log.
+ * Autoconfiguration for Hawtio Log.
  */
 @AutoConfiguration
 @ConditionalOnClass(LogQuerySupport.class)

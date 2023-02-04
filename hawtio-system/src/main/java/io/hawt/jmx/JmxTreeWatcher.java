@@ -3,6 +3,7 @@ package io.hawt.jmx;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerDelegate;
@@ -16,18 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple MBean to watch the JMX tree so it's easy for clients to know when they should refresh
+ * A simple MBean to watch the JMX tree, so it's easy for clients to know when they should refresh
  * their JMX trees (which typically isn't a cheap operation).
  */
 public class JmxTreeWatcher implements JmxTreeWatcherMBean {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmxTreeWatcher.class);
-    private static AtomicBoolean logged = new AtomicBoolean();
+    private static final Logger LOG = LoggerFactory.getLogger(JmxTreeWatcher.class);
+    private static final AtomicBoolean logged = new AtomicBoolean();
 
     private ObjectName objectName;
     private MBeanServer mBeanServer;
-    private AtomicLong counter = new AtomicLong(0);
+    private final AtomicLong counter = new AtomicLong(0);
     private NotificationListener listener;
-    private NotificationFilter filter;
     private String version;
 
     public void init() throws Exception {
@@ -48,12 +48,10 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
                 mBeanServer.registerMBean(this, objectName);
             }
 
-            Object handback = null;
-
             listener = getNotificationListener();
-            filter = getNotificationFilter();
+            NotificationFilter filter = getNotificationFilter();
 
-            mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, filter, handback);
+            mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, filter, null);
         }
         if (logged.compareAndSet(false, true)) {
             LOG.info("Welcome to Hawtio {}", getVersion());

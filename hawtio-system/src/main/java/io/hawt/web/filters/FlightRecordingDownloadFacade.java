@@ -1,6 +1,5 @@
 package io.hawt.web.filters;
 
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,11 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -25,13 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * I emulate a non existing operation  jdk.management.jfr:type=FlightRecorder/downloadRecording(long)
+ * I emulate a non-existing operation  jdk.management.jfr:type=FlightRecorder/downloadRecording(long)
  * executing a sequence of jolokia calls to methods on the FlightRecorder MBean
  * in order to continously write to the clients stream
  * This is important as flight recording files may be huge
@@ -96,7 +95,7 @@ public class FlightRecordingDownloadFacade implements Filter {
         }
 
         try {
-            //STEP 3: Close stream (best effort)
+            // STEP 3: Close stream (best effort)
             chain.doFilter(new StandinRequest(req, replacementPattern, "closeStream(long)/"+stream), new DerivedResponse((HttpServletResponse) response));
 
         }catch (Exception ignore) {

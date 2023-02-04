@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2005-2016 Red Hat, Inc.
  *
  *  Red Hat licenses this file to you under the Apache License, version
@@ -168,8 +168,6 @@ public class RBACRegistry implements RBACRegistryMBean {
 
     /**
      * This method duplicates what Jolokia does in List Handler in order to convert {@link MBeanInfo} to JSON.
-     * @param mBeanInfo
-     * @return
      */
     private Map<String, Object> jsonifyMBeanInfo(MBeanInfo mBeanInfo) {
         Map<String, Object> result = new LinkedHashMap<>();
@@ -249,8 +247,6 @@ public class RBACRegistry implements RBACRegistryMBean {
     /**
      * If the {@link ObjectName} is detected as <em>special</em> (when we may have thousands of such MBeans), we
      * return a key to lookup already processed {@link MBeanInfo}
-     * @param nameObject
-     * @return
      */
     private String isSpecialMBean(ObjectName nameObject) {
         String domain = nameObject.getDomain();
@@ -295,9 +291,6 @@ public class RBACRegistry implements RBACRegistryMBean {
     /**
      * If some combination of {@link ObjectName} and MBean's class name is detected as <em>special</em>, we may
      * cache the JSONified {@link MBeanInfo} as well
-     * @param nameObject
-     * @param mBeanInfo
-     * @return
      */
     private String isSpecialClass(ObjectName nameObject, MBeanInfo mBeanInfo) {
         String domain = nameObject.getDomain();
@@ -324,7 +317,6 @@ public class RBACRegistry implements RBACRegistryMBean {
     /**
      * If we have access to <code>hawtio:type=security,area=jolokia,name=RBACDecorator</code>,
      * we can add RBAC information
-     * @param result
      */
     private void tryAddRBACInfo(Map<String, Object> result) throws MBeanException, InstanceNotFoundException, ReflectionException {
         if (mBeanServer != null && mBeanServer.isRegistered(rbacDecorator)) {

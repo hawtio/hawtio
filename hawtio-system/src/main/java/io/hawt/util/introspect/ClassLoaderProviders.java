@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * Helper class for creating instances of {@link ClassLoaderProvider}
  */
 public class ClassLoaderProviders {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ClassLoaderProviders.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderProviders.class);
 
     public static ClassLoaderProvider createConstantProvider(final ClassLoader classLoader) {
         return new ClassLoaderProvider() {

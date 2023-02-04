@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.Objects;
+
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,17 +23,17 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ContentSecurityPolicyFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContentSecurityPolicyFilter.class);
 
     private static final String POLICY_TEMPLATE =
         "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' %s; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "font-src 'self' data:; " +
-        "img-src 'self' data:; " +
-        "connect-src 'self' %s; " +
-        "frame-src 'self' %s; " +
-        "frame-ancestors %s";
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' %s; " +
+            "style-src 'self' 'unsafe-inline'; " +
+            "font-src 'self' data:; " +
+            "img-src 'self' data:; " +
+            "connect-src 'self' %s; " +
+            "frame-src 'self' %s; " +
+            "frame-ancestors %s";
 
     private String policy = "";
 
@@ -49,7 +51,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         boolean addedKeycloakUrl = false;
         if (keycloakConfigFile != null && !keycloakConfigFile.trim().equals("")) {
             try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)))) {
                 JSONObject json = ServletHelpers.readObject(reader);
                 String url = (String) json.get("url");
                 URI uri = URI.create(url);

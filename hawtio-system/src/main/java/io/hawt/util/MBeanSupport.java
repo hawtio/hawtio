@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * A helpful base class for MBeans
  */
 public abstract class MBeanSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MBeanSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MBeanSupport.class);
 
     private ObjectName objectName;
     private ObjectInstance objectInstance;
@@ -22,7 +22,7 @@ public abstract class MBeanSupport {
     private boolean registered;
 
     public void init() throws Exception {
-        // lets check if we have a config directory if not lets create one...
+        // let's check if we have a config directory if not lets create one...
         // now lets expose the mbean...
         if (objectName == null) {
             objectName = new ObjectName(getDefaultObjectName());
@@ -36,10 +36,10 @@ public abstract class MBeanSupport {
             } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
                 LOG.warn("This mbean is already registered " + objectName + ". There must be multiple deployment units with this mbean inside.");
-/*
+                /*
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
-*/
+                */
             }
             registered = true;
         }

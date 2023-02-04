@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- * Auto configuration for hawtio on Spring Boot.
+ * Autoconfiguration for Hawtio on Spring Boot.
  */
 @Configuration
 @ConditionalOnWebApplication

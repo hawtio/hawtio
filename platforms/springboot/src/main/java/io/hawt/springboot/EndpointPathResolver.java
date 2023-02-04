@@ -54,7 +54,7 @@ public class EndpointPathResolver {
     public String resolveContextPath() {
         final Integer serverPort = serverProperties.getPort();
         final Integer managementServerPort = managementServerProperties.getPort();
-        String contextPath = "";
+        String contextPath;
 
         if (serverPort == null || managementServerPort == null || serverPort.equals(managementServerProperties.getPort())) {
             contextPath = serverProperties.getServlet().getContextPath();

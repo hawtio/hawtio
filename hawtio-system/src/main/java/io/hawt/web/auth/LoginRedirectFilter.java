@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LoginRedirectFilter implements Filter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LoginRedirectFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginRedirectFilter.class);
 
     private int timeout;
     private AuthenticationConfiguration authConfiguration;
@@ -75,18 +75,18 @@ public class LoginRedirectFilter implements Filter {
 
     boolean tryAuthenticateRequest(HttpServletRequest request, HttpSession session) {
         AuthenticateResult result = new Authenticator(request, authConfiguration).authenticate(
-           subject -> {
-               String username = AuthHelpers.getUsername(subject);
-               LOG.info("Logging in user: {}", username);
-               AuthSessionHelpers.setup(session != null ? session :
-                  request.getSession(true), subject, username, timeout);
-           });
+            subject -> {
+                String username = AuthHelpers.getUsername(subject);
+                LOG.info("Logging in user: {}", username);
+                AuthSessionHelpers.setup(session != null ? session :
+                    request.getSession(true), subject, username, timeout);
+            });
 
         return result == AuthenticateResult.AUTHORIZED;
     }
 
     boolean isSecuredPath(String path) {
-        return !Arrays.stream(unsecuredPaths).anyMatch(path::startsWith);
+        return Arrays.stream(unsecuredPaths).noneMatch(path::startsWith);
     }
 
     @Override

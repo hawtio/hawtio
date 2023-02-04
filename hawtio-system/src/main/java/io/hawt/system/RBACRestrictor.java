@@ -16,6 +16,7 @@
 package io.hawt.system;
 
 import java.io.IOException;
+
 import javax.management.ObjectName;
 
 import org.jolokia.config.ConfigKey;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RBACRestrictor implements Restrictor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(RBACRestrictor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RBACRestrictor.class);
 
     protected Restrictor delegate;
     protected RBACMBeanInvoker mBeanInvoker;

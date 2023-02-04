@@ -23,7 +23,7 @@ import static io.hawt.util.Closeables.closeQuietly;
 public class IOHelper {
     public static final int BUFFER_SIZE = 64 * 1024;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(IOHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
 
     public static String readFully(File file) throws IOException {
         return readFully(new BufferedReader(new FileReader(file)));
@@ -90,28 +90,22 @@ public class IOHelper {
     }
 
     /**
-     * Writes the given text to the file; either in append mode or replace mode depending
-     * the append flag
+     * Writes the given text to the file; either in append mode or replace mode depending on
+     * the append flag.
      */
     public static void write(File file, String text, boolean append) throws IOException {
-        FileWriter writer = new FileWriter(file, append);
-        try {
+        try (FileWriter writer = new FileWriter(file, append)) {
             writer.write(text);
-        } finally {
-            writer.close();
         }
     }
 
     /**
-     * Writes the given data to the file; either in append mode or replace mode depending
-     * the append flag
+     * Writes the given data to the file; either in append mode or replace mode depending on
+     * the append flag.
      */
     public static void write(File file, byte[] data, boolean append) throws IOException {
-        FileOutputStream stream = new FileOutputStream(file, append);
-        try {
+        try (FileOutputStream stream = new FileOutputStream(file, append)) {
             stream.write(data);
-        } finally {
-            stream.close();
         }
     }
 

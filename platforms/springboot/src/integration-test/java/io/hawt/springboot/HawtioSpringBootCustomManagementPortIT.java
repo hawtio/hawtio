@@ -16,9 +16,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
         TestProperties properties = TestProperties.builder()
             .managementContextPath("/management-context-path")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -27,9 +26,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
             .managementContextPath("/management-context-path")
             .managementBasePath("/management-base-path")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -39,9 +37,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
             .managementBasePath("/management-base-path")
             .jolokiaPath("jmx/jolokia")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -52,9 +49,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
             .jolokiaPath("jmx/jolokia")
             .hawtioPath("hawtio/console")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -63,9 +59,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
             .managementContextPath("/management-context-path")
             .jolokiaPath("jmx/jolokia")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -74,9 +69,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
             .managementContextPath("/management-context-path")
             .hawtioPath("hawtio/console")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -86,9 +80,8 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
             .jolokiaPath("jmx/jolokia")
             .hawtioPath("hawtio/console")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -96,20 +89,17 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
         TestProperties properties = TestProperties.builder()
             .managementContextPath("")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
-
 
     @Test
     public void testRootManagementContextPath() {
         TestProperties properties = TestProperties.builder()
             .managementContextPath("/")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 
     @Test
@@ -117,8 +107,7 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
         TestProperties properties = TestProperties.builder()
             .managementContextPath("/management/context/path")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
+            assertHawtioEndpointPaths(context, properties));
     }
 }

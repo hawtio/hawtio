@@ -10,7 +10,7 @@ import io.hawt.log.support.ThrowableFormatter;
 
 public class LoggingEventMapper {
 
-    private String hostName;
+    private final String hostName;
 
     public LoggingEventMapper(String hostName) {
         this.hostName = hostName;

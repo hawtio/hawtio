@@ -53,7 +53,7 @@ public class QuartzFacade implements QuartzFacadeMBean {
     public void updateSimpleTrigger(String schedulerObjectName, String triggerName, String groupName, int misfireInstruction,
                                     int repeatCount, long repeatInterval) throws Exception {
         if (schedulerObjectName == null) {
-            throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: " + schedulerObjectName);
+            throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: null");
         }
 
         ObjectName oName = ObjectName.getInstance(schedulerObjectName);
@@ -78,7 +78,7 @@ public class QuartzFacade implements QuartzFacadeMBean {
         Map<String, Object> jobDataMap = new HashMap<>();
         initJobParams(jobParams, jobDataMap, jobName, jobGroupName, jobData);
 
-        // also ensure the job data map is up to date with the simple trigger changes
+        // also ensure the job data map is up-to-date with the simple trigger changes
         Map<String, Object> triggerParams = new HashMap<>();
         jobDataMap.put("CamelQuartzTriggerType", "simple");
         triggerParams.put("repeatCount", repeatCount);
@@ -99,7 +99,7 @@ public class QuartzFacade implements QuartzFacadeMBean {
     public void updateCronTrigger(String schedulerObjectName, String triggerName, String groupName, int misfireInstruction,
                                   String cronExpression, String timeZone) throws Exception {
         if (schedulerObjectName == null) {
-            throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: " + schedulerObjectName);
+            throw new IllegalArgumentException("Cannot find quartz scheduler with ObjectName: null");
         }
 
         ObjectName on = ObjectName.getInstance(schedulerObjectName);
@@ -126,7 +126,7 @@ public class QuartzFacade implements QuartzFacadeMBean {
 
         Map<String, Object> triggerParams = new HashMap<>();
         jobDataMap.put("CamelQuartzTriggerType", "cron");
-        // also ensure the job data map is up to date with the cron trigger changes
+        // also ensure the job data map is up-to-date with the cron trigger changes
         triggerParams.put("cronExpression", cronExpression);
         jobDataMap.put("CamelQuartzTriggerCronExpression", cronExpression);
         if (timeZone != null) {

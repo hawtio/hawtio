@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  */
 public class Packages {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Packages.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Packages.class);
 
     public static Package[] findPackagesForClassLoader(ClassLoader loader) {
         IntrospectClassLoader introspectClassLoader = new IntrospectClassLoader(loader);
@@ -58,12 +58,13 @@ public class Packages {
 */
 
     public static Map<Package, ClassLoader[]> getPackageMap(List<ClassLoader> classLoaders, Set<String> ignorePackages) {
-        Map<Package, ClassLoader[]> answer = new HashMap<Package, ClassLoader[]>();
+        Map<Package, ClassLoader[]> answer = new HashMap<>();
 
         ClassLoader[] globalClassLoaders = {Thread.currentThread().getContextClassLoader(),
                 ClassScanner.class.getClassLoader()};
 
-        Set<Package> packages = new HashSet<Package>();
+        // TODO: fix packages are always empty
+        Set<Package> packages = new HashSet<>();
         add(answer, Package.getPackages(), globalClassLoaders, ignorePackages);
 
         ClassLoader[] classLoaderArray = new ClassLoader[classLoaders.size()];
@@ -73,7 +74,7 @@ public class Packages {
             Package[] loaderPackages = findPackagesForClassLoader(classLoader);
             add(answer, loaderPackages, classLoaderArray, ignorePackages);
         }
-        SortedSet<String> names = new TreeSet<String>();
+        SortedSet<String> names = new TreeSet<>();
         for (Package aPackage : packages) {
             names.add(aPackage.getName());
         }

@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 /**
  * To use Apache Tomcat using its conf/tomcat-users.xml for authentication.
  * <p/>
- * To use this, then the {@link AuthenticationConfiguration#getRealm()} must be empty or "*". Otherwise
+ * To use this, then the {@link AuthenticationConfiguration#getRealm()} must be empty or "*". Otherwise,
  * if an explicit configured realm has been set, then regular JAAS authentication is in use.
  */
 public class TomcatAuthenticationContainerDiscovery implements AuthenticationContainerDiscovery {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(TomcatAuthenticationContainerDiscovery.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TomcatAuthenticationContainerDiscovery.class);
 
-    private static final transient String AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM = "hawtio.authenticationContainerTomcatDigestAlgorithm";
-    private static final transient String AUTHENTICATION_TOMCAT_USER_LOCATION = "hawtio.tomcatUserFileLocation";
+    private static final String AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM = "hawtio.authenticationContainerTomcatDigestAlgorithm";
+    private static final String AUTHENTICATION_TOMCAT_USER_LOCATION = "hawtio.tomcatUserFileLocation";
 
     @Override
     public String getContainerName() {
@@ -41,7 +41,7 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
             if (!isTomcat) {
                 isTomcat = server.isRegistered(new ObjectName("Tomcat:type=Server"));
             }
-            LOG.debug("Checked for {} in JMX for {} -> {}", getContainerName(), isTomcat);
+            LOG.debug("Checked for {} in JMX -> {}", getContainerName(), isTomcat);
 
             if (isTomcat) {
                 configuration.setConfiguration(new TomcatLoginContextConfiguration(System.getProperty(AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM, "NONE").toUpperCase(),
@@ -62,11 +62,7 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
      * Is the realm empty or * to denote any realm.
      */
     private static boolean isEmptyOrAllRealm(String realm) {
-        if (realm == null || realm.trim().isEmpty() || realm.trim().equals("*")) {
-            return true;
-        } else {
-            return false;
-        }
+        return realm == null || realm.trim().isEmpty() || realm.trim().equals("*");
     }
 
 }

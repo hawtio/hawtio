@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Authenticator performs authentication using JAAS with the {@link LoginContext} for the chosen realm.
- *
+ * <p>
  * Authenticator supports the following authentication methods:
  * <ul>
  * <li>a set of user name and password</li>
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Authenticator {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Authenticator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Authenticator.class);
 
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
@@ -120,9 +120,7 @@ public class Authenticator {
         }
 
         if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BEARER)) {
-            String username = "token";
-            String password = authInfo;
-            callback.accept(username, password);
+            callback.accept("token", authInfo);
         }
     }
 
@@ -323,8 +321,7 @@ public class Authenticator {
             if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
                 try {
                     Method groupsMethod = getWebSphereGetGroupsMethod(cred);
-                    @SuppressWarnings("unchecked")
-                    final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
+                    @SuppressWarnings("unchecked") final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
 
                     if (groups != null) {
                         LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
@@ -338,7 +335,7 @@ public class Authenticator {
                                     LOG.debug("Required role {} found in IBM WebSphere specific credentials", r);
                                     return true;
                                 } else {
-                                    LOG.debug("role {} doesn't match {}, continuing", r, group.toString());
+                                    LOG.debug("role {} doesn't match {}, continuing", r, group);
                                 }
                             }
                         }
@@ -346,7 +343,8 @@ public class Authenticator {
                         LOG.debug("The IBM Websphere groups list is null");
                     }
 
-                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                         InvocationTargetException e) {
                     // ignored
                     LOG.debug("Caught exception trying to read groups from WebSphere specific WSCredentials class", e);
                 }
@@ -362,8 +360,7 @@ public class Authenticator {
             if ("org.jboss.security.SimpleGroup".equals(prin.getClass().getName()) && "Roles".equals(prin.getName())) {
                 try {
                     Method groupsMethod = getJbossEAPGetGroupsMethod(prin);
-                    @SuppressWarnings("unchecked")
-                    final Enumeration<Principal> groups = (Enumeration<Principal>) groupsMethod.invoke(prin);
+                    @SuppressWarnings("unchecked") final Enumeration<Principal> groups = (Enumeration<Principal>) groupsMethod.invoke(prin);
 
                     if (groups != null) {
                         while (groups.hasMoreElements()) {
@@ -375,7 +372,7 @@ public class Authenticator {
                                     LOG.debug("Required role {} found in Jboss EAP specific credentials", r);
                                     return true;
                                 } else {
-                                    LOG.debug("role {} doesn't match {}, continuing", r, group.toString());
+                                    LOG.debug("role {} doesn't match {}, continuing", r, group);
                                 }
                             }
                         }
@@ -383,7 +380,8 @@ public class Authenticator {
                         LOG.debug("The Jboss EAP groups list is null");
                     }
 
-                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                         InvocationTargetException e) {
                     // ignored
                     LOG.debug("Caught exception trying to read groups from JBoss EAP specific SimpleGroup class", e);
                 }
@@ -480,6 +478,7 @@ public class Authenticator {
             }
         }
 
+        @SuppressWarnings("deprecation")
         private void setCertificates(Callback callback) {
             try {
                 // Artemis uses java.security.cert.X509Certificate class since the 2.18.0 version.
@@ -492,12 +491,14 @@ public class Authenticator {
                     // Artemis used deprecated javax.security.cert.X509Certificate class up to the 2.17.0 version.
                     Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, javax.security.cert.X509Certificate[].class);
                     method.invoke(callback, new Object[] { toJavax(certificates) });
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | CertificateEncodingException | CertificateException ex) {
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
+                         CertificateEncodingException | CertificateException ex) {
                     LOG.error("Setting certificates to callback failed", ex);
                 }
             }
         }
 
+        @SuppressWarnings("deprecation")
         private static javax.security.cert.X509Certificate[] toJavax(X509Certificate[] certificates)
             throws CertificateEncodingException, CertificateException {
             List<javax.security.cert.X509Certificate> answer = new ArrayList<>();

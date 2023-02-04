@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
+
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
@@ -26,12 +27,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Allowlist manager for hawtio proxy.
- *
+ * <p>
  * TODO: For now this implementation is heavily relying on Fabric v1, and should be rewritten to a more general form.
  */
 public class ProxyAllowlist {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyAllowlist.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyAllowlist.class);
 
     private static final String FABRIC_MBEAN = "io.fabric8:type=Fabric";
 
@@ -119,12 +120,7 @@ public class ProxyAllowlist {
         }
 
         // test against the regex as last resort
-        if (details.isAllowed(regexAllowlist)) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return details.isAllowed(regexAllowlist);
     }
 
     public boolean update() {
