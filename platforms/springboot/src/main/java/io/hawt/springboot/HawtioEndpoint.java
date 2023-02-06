@@ -34,7 +34,7 @@ public class HawtioEndpoint implements WebMvcConfigurer {
      *
      * @return The Spring Web forward directive for the Hawtio index.html resource.
      */
-    @RequestMapping(value = { "", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|\\.).)*$}/**" }, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = { "", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|static|\\.).)*$}/**" }, produces = MediaType.TEXT_HTML_VALUE)
     public String forwardHawtioRequestToIndexHtml() {
         final String path = endpointPath.resolve("hawtio");
         final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(path)
@@ -52,6 +52,12 @@ public class HawtioEndpoint implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         // @formatter:off
+        // Hawtio React static resources
+        registry
+            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/static/**"))
+            .addResourceLocations(
+                "/static/",
+                "classpath:/hawtio-static/static/");
         registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/plugins/**"))
             .addResourceLocations(
@@ -66,6 +72,7 @@ public class HawtioEndpoint implements WebMvcConfigurer {
                 "classpath:/hawtio-static/app/");
         registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/img/**"))
-            .addResourceLocations("classpath:/hawtio-static/img/"); // @formatter:on
+            .addResourceLocations("classpath:/hawtio-static/img/");
+        // @formatter:on
     }
 }
