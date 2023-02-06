@@ -5,7 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.servlet.Filter;
@@ -52,36 +54,46 @@ public class BaseTagHrefFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        LOG.trace("Applying {}", getClass().getSimpleName());
+        LOG.debug("Applying {}", getClass().getSimpleName());
 
         // For Spring Boot we need to append the context path of the hawtio application
         String baseTagHref = basePath + applicationContextPath;
+        LOG.debug("baseTagHref = {}", baseTagHref);
 
         if (baseTagHref.equals(DEFAULT_CONTEXT_PATH)) {
             filterChain.doFilter(request, response);
-        } else {
-            final BaseTagHrefResponseWrapper responseWrapper = new BaseTagHrefResponseWrapper((HttpServletResponse) response);
-            filterChain.doFilter(request, responseWrapper);
-
-            final ServletOutputStream out = response.getOutputStream();
-            final String contentType = response.getContentType();
-            final byte[] data = responseWrapper.getData();
-
-            if (contentType != null && contentType.startsWith("text/html")) {
-                if (!baseTagHref.endsWith("/")) {
-                    baseTagHref += "/";
-                }
-
-                final String characterEncoding = responseWrapper.getCharacterEncoding() != null ? responseWrapper.getCharacterEncoding() : StandardCharsets.UTF_8.name();
-                final String originalContent = new String(data, characterEncoding);
-                final byte[] replacedContent = originalContent.replaceAll("<base href='.*?'>", "<base href='" + baseTagHref + "'>").getBytes(characterEncoding);
-
-                responseWrapper.setContentLength(replacedContent.length);
-                out.write(replacedContent);
-            } else {
-                out.write(data);
-            }
+            return;
         }
+
+        final BaseTagHrefResponseWrapper responseWrapper = new BaseTagHrefResponseWrapper((HttpServletResponse) response);
+        filterChain.doFilter(request, responseWrapper);
+
+        final ServletOutputStream out = response.getOutputStream();
+        final String contentType = response.getContentType();
+        final byte[] content = responseWrapper.getData();
+
+        if (contentType == null || !contentType.startsWith("text/html")) {
+            out.write(content);
+            return;
+        }
+
+        final byte[] replacedContent = replaceHrefs(content, baseTagHref, responseWrapper);
+        responseWrapper.setContentLength(replacedContent.length);
+        out.write(replacedContent);
+    }
+
+    private static byte[] replaceHrefs(byte[] content, String href, ServletResponse response) throws UnsupportedEncodingException {
+        if (!href.endsWith("/")) {
+            href += "/";
+        }
+        String encoding = Optional.ofNullable(response.getCharacterEncoding()).orElse(StandardCharsets.UTF_8.name());
+        String original = new String(content, encoding);
+        String replaced = original.replaceAll(
+            String.format("(src|href)=(['\"])%s/", DEFAULT_CONTEXT_PATH),
+            String.format("$1=$2%s", href));
+        LOG.trace("Original:\n{}", original);
+        LOG.trace("Replaced:\n{}", replaced);
+        return replaced.getBytes(encoding);
     }
 
     @Override
