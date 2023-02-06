@@ -136,18 +136,16 @@
       via JMX / Hawtio.
     -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-management</artifactId>
-      <version>${camel-version}</version>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-management-starter</artifactId>
     </dependency>
 
     <!--
       To enable Camel plugin debugging feature, add this dependency.
     -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-debug</artifactId>
-      <version>${camel-version}</version>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-debug-starter</artifactId>
     </dependency>
 
     <!-- Cucumber for Spring -->
