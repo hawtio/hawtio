@@ -32,7 +32,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <artifactId>camel-spring-boot-bom</artifactId>
         <version>${camel-version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -138,6 +138,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-management</artifactId>
+      <version>${camel-version}</version>
     </dependency>
 
     <!--
@@ -146,6 +147,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-debug</artifactId>
+      <version>${camel-version}</version>
     </dependency>
 
     <!-- Cucumber for Spring -->
