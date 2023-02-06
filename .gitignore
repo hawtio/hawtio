@@ -22,3 +22,4 @@ hawtio-config
 node/
 bower_components/
 .vscode
+/tests/spring-boot/build/

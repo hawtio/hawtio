@@ -82,9 +82,9 @@
     <log4j2-version>2.17.1</log4j2-version>
     <maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
     <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
-    <maven-failsafe-plugin-version>3.0.0-M1</maven-failsafe-plugin-version>
+    <maven-failsafe-plugin-version>3.0.0-M5</maven-failsafe-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-    <maven-surefire-plugin-version>3.0.0-M1</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
     <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
     <mockito-core-version>4.3.1</mockito-core-version>
     <org-json-version>20180130</org-json-version>
@@ -134,6 +134,7 @@
     <module>platforms/wildfly</module>
     <module>tooling/hawtio-junit</module>
     <module>tooling/hawtio-maven-plugin</module>
+    <module>tests</module>
   </modules>
 
   <build>
