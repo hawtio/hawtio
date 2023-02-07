@@ -16,7 +16,7 @@
 
   <modules>
     <module>utils</module>
-    <module>spring-boot</module>
+    <module>springboot</module>
   </modules>
 
   <properties>
@@ -27,8 +27,6 @@
     <http5-version>5.2.1</http5-version>
     <guava-version>31.1-jre</guava-version>
     <slf4j-version>2.0.6</slf4j-version>
-    <java.lang.version.sources>1.8</java.lang.version.sources>
-    <java.lang.version.target>1.8</java.lang.version.target>
   </properties>
 
   <dependencies>
@@ -150,7 +148,7 @@
         </property>
       </activation>
       <modules>
-        <module>spring-boot</module>
+        <module>springboot</module>
       </modules>
     </profile>
     <profile>
@@ -164,18 +162,5 @@
       </properties>
     </profile>
   </profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin-version}</version>
-        <configuration>
-          <rerunFailingTestsCount>2</rerunFailingTestsCount>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

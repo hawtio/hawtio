@@ -15,8 +15,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- Jetty version referred from the spring-boot-dependencies project -->
-    <jetty.version>9.4.11.v20180605</jetty.version>
     <hawtio.url>/actuator/hawtio</hawtio.url>
     <hawtio.managementPort>10001</hawtio.managementPort>
   </properties>
@@ -34,13 +32,6 @@
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-bom</artifactId>
         <version>${camel-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-bom</artifactId>
-        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -95,7 +86,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-jaas</artifactId>
-      <version>${jetty.version}</version>
+      <version>${jetty-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -106,6 +97,7 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!--
@@ -115,6 +107,7 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-log-logback</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- Camel -->
@@ -160,7 +153,8 @@
     <dependency>
       <groupId>io.hawt.tests</groupId>
       <artifactId>hawtio-tests-utils</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -189,16 +183,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-
-      <!-- to run with mvn hawtio:spring-boot -->
-      <plugin>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <mainClass>io.hawt.tests.spring.boot.SpringBootService</mainClass>
         </configuration>
       </plugin>
 
