@@ -16,7 +16,7 @@ const root = ReactDOM.createRoot(
 )
 root.render(
   <React.StrictMode>
-    <Hawtio basepath={process.env.PUBLIC_URL} />
+    <Hawtio />
   </React.StrictMode>
 )
 

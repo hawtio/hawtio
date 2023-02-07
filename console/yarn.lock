@@ -1758,7 +1758,7 @@ __metadata:
   dependencies:
     "@craco/craco": ^7.0.0
     "@hawtio/backend-middleware": ^1.0.3
-    "@hawtio/react": ^0.1.0-4
+    "@hawtio/react": ^0.1.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
@@ -1774,9 +1774,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^0.1.0-4":
-  version: 0.1.0-4
-  resolution: "@hawtio/react@npm:0.1.0-4"
+"@hawtio/react@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@hawtio/react@npm:0.1.0"
   dependencies:
     "@patternfly/react-core": ^4.267.6
     "@patternfly/react-table": ^4.112.6
@@ -1803,7 +1803,7 @@ __metadata:
     "@patternfly/react-table": ^4.112.6
     react: ^16.8 || ^17 || ^18
     react-dom: ^16.8 || ^17 || ^18
-  checksum: a8206adfc02924800f87becc536156a9314fdff6ab5aa9dab981185a484cff13863043682f107816bbf0150d3f4f30379cfdd688056b9365f2bd3909c2ee3717
+  checksum: b742fc59a728324b735efb029cf0540dd0ca68632bb3ea73aaa6483e97f0b3db353194c19c934fc6387dab59a8569e65480b8fe153d32047d394b104449991be
   languageName: node
   linkType: hard
 
@@ -2994,9 +2994,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^18.11.18":
-  version: 18.11.18
-  resolution: "@types/node@npm:18.11.18"
-  checksum: 03f17f9480f8d775c8a72da5ea7e9383db5f6d85aa5fefde90dd953a1449bd5e4ffde376f139da4f3744b4c83942166d2a7603969a6f8ea826edfb16e6e3b49d
+  version: 18.11.19
+  resolution: "@types/node@npm:18.11.19"
+  checksum: d7cd19fcfc59cbdd3f9ba0b4072cb7adc21bd575bd8eb7d7e698975e63564aaa83f03434f32b12331f84f73d0b369d9cbe2371e359d9d7f5c3361f4987f4f7da
   languageName: node
   linkType: hard
 
