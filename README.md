@@ -17,7 +17,6 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 - [Running an executable JAR](#running-an-executable-jar)
 - [Running a Spring Boot app](#running-a-spring-boot-app)
-- [Deploying on Apache Karaf](#deploying-on-apache-karaf)
 - [Deploying on OpenShift](https://github.com/hawtio/hawtio-online)
 
 For more details and other containers, see [Get Started Guide](http://hawt.io/docs/get-started/).
@@ -26,11 +25,11 @@ For more details and other containers, see [Get Started Guide](http://hawt.io/do
 
 You can start up Hawtio on your machine using the hawtio-app executable JAR.
 
-* [hawtio-app-2.17.0.jar](https://repo1.maven.org/maven2/io/hawt/hawtio-app/2.17.0/hawtio-app-2.17.0.jar)
+- [hawtio-app-3.0-M1.jar](https://repo1.maven.org/maven2/io/hawt/hawtio-app/3.0-M1/hawtio-app-3.0-M1.jar)
 
 Once you have downloaded it, just run this from the command line:
 
-    java -jar hawtio-app-2.17.0.jar
+    java -jar hawtio-app-3.0-M1.jar
 
 ### Running a Spring Boot app
 
@@ -38,20 +37,16 @@ Attaching the Hawtio console to your Spring Boot app is simple.
 
 1. Add `io.hawt:hawtio-springboot` to the dependencies in `pom.xml`:
 
-        <dependency>
-          <groupId>io.hawt</groupId>
-          <artifactId>hawtio-springboot</artifactId>
-          <version>2.17.0</version>
-        </dependency>
+       <dependency>
+         <groupId>io.hawt</groupId>
+         <artifactId>hawtio-springboot</artifactId>
+         <version>3.0-M1</version>
+       </dependency>
 
 2. Enable the Hawtio and Jolokia endpoints by adding the following line in `application.properties`:
-   ```
-   management.endpoints.web.exposure.include=hawtio,jolokia
-   spring.jmx.enabled=true 
-   ```
 
-
-
+       management.endpoints.web.exposure.include=hawtio,jolokia
+       spring.jmx.enabled=true
 
 Now you should be able to run Hawtio in your Spring Boot app as follows:
 
@@ -59,27 +54,16 @@ Now you should be able to run Hawtio in your Spring Boot app as follows:
 
 Opening <http://localhost:8080/actuator/hawtio> should show the Hawtio console.
 
-See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-2.17.0/examples/springboot) for a working example app.
-
-### Deploying on Apache Karaf
-
-If you are using [Apache Karaf](https://karaf.apache.org/) 4.x and above:
-
-    feature:repo-add hawtio 2.17.0
-    feature:install hawtio
-
-This will install all the features required for Hawtio. The Hawtio console can then be viewed at <http://localhost:8181/hawtio>.
-
-Karaf versions prior to 4.x are not supported.
+See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-3.0-M1/examples/springboot) for a working example app.
 
 ## Contributing
 
 We love [contributions](http://hawt.io/docs/contributing/)!  Here are the resources on how to get you involved in Hawtio development.
 
-* [FAQ](http://hawt.io/docs/faq/)
-* [Change Log](CHANGES.md)
-* [How to contribute](http://hawt.io/docs/contributing/)
-* [Community](http://hawt.io/community/)
+- [FAQ](http://hawt.io/docs/faq/)
+- [Change Log](CHANGES.md)
+- [How to contribute](http://hawt.io/docs/contributing/)
+- [Community](http://hawt.io/community/)
 
 Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for finding issues to work on.
 
