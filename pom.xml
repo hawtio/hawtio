@@ -132,9 +132,9 @@
     <module>platforms/springboot</module>
     <module>platforms/springboot-keycloak</module>
     <module>platforms/wildfly</module>
+    <module>tests</module>
     <module>tooling/hawtio-junit</module>
     <module>tooling/hawtio-maven-plugin</module>
-    <module>tests</module>
   </modules>
 
   <build>
@@ -328,6 +328,17 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>hawtio-tests</id>
+      <activation>
+        <property>
+          <name>hawtio-e2e-tests</name>
+        </property>
+      </activation>
+      <modules>
+        <module>tests</module>
+      </modules>
     </profile>
   </profiles>
 
