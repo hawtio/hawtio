@@ -31,7 +31,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <artifactId>camel-spring-boot-bom</artifactId>
         <version>${camel-version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -112,8 +112,8 @@
       To enable Camel plugin debugging feature, add this dependency.
     -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-debug</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-debug-starter</artifactId>
     </dependency>
   </dependencies>
 
