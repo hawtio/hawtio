@@ -34,11 +34,13 @@ E2E UI tests
 
 ### Sample Command
 
-The command must be run from `tests` directory.
+The command to run only Hawtio E2E UI tests from the `root` directory
 
 ```
-mvn clean install -Druntime=springboot -Dtest=RunSpringBootAllTest
+mvn clean install -Dhawtio-e2e-tests -Druntime=springboot -Dtest=RunSpringBootAllTest
 ```
+
+Also, the tests are triggered when building the whole Hawtio project.
 
 Test reports can be found under `tests/spring-boot/target/surefire-reports/` directory.
 
