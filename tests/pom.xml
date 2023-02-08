@@ -157,8 +157,8 @@
         <jdk>11</jdk>
       </activation>
       <properties>
-        <java.lang.version.sources>11</java.lang.version.sources>
-        <java.lang.version.target>11</java.lang.version.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
       </properties>
     </profile>
   </profiles>

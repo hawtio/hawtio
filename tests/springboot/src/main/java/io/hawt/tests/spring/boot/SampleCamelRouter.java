@@ -9,9 +9,6 @@ public class SampleCamelRouter extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        // Uncomment to enable the Camel plugin Debug tab
-         getContext().setDebugging(true);
-
         from("quartz:cron?cron={{quartz.cron}}").routeId("cron")
             .setBody().constant("Hello Camel! - cron")
             .to("stream:out")
