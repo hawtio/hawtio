@@ -5,11 +5,15 @@ import './index.css'
 import { hawtio, Hawtio, registerPlugins } from '@hawtio/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { configure } from './config'
 import { reportWebVitals } from './reportWebVitals'
 
 // Bootstrap Hawtio
 registerPlugins()
 hawtio.bootstrap()
+
+// Configure the console
+configure()
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

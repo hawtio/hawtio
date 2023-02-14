@@ -1758,7 +1758,7 @@ __metadata:
   dependencies:
     "@craco/craco": ^7.0.0
     "@hawtio/backend-middleware": ^1.0.3
-    "@hawtio/react": ^0.2.0-dev.1
+    "@hawtio/react": ^0.2.0-dev.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
@@ -1774,9 +1774,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^0.2.0-dev.1":
-  version: 0.2.0-dev.1
-  resolution: "@hawtio/react@npm:0.2.0-dev.1"
+"@hawtio/react@npm:^0.2.0-dev.2":
+  version: 0.2.0-dev.2
+  resolution: "@hawtio/react@npm:0.2.0-dev.2"
   dependencies:
     "@patternfly/react-core": ^4.267.6
     "@patternfly/react-table": ^4.112.6
@@ -1804,7 +1804,7 @@ __metadata:
     "@patternfly/react-table": ^4.112.6
     react: ^16.8 || ^17 || ^18
     react-dom: ^16.8 || ^17 || ^18
-  checksum: b52b4052a0f522d61935c7d89b2cb64cd59959f103afd21f5896f31e37c50b893d1cbd5308249f1fa52433d139804227c1ab74cc1c5ba93ec6bf4ee01893b8b8
+  checksum: 70aa976740c31c9128550b0c66e275e7ce1234fc96aa58919ad6b1ca5a3b976295fff78a81472fc60f7d9035d7146198e9cd4aaab3b652e124f46a30e99d80d7
   languageName: node
   linkType: hard
 
