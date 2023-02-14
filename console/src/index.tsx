@@ -2,14 +2,14 @@ import '@hawtio/react/dist/index.css'
 import '@patternfly/react-core/dist/styles/base.css'
 import './index.css'
 
-import { bootstrap, Hawtio, registerPlugins } from '@hawtio/react'
+import { hawtio, Hawtio, registerPlugins } from '@hawtio/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { reportWebVitals } from './reportWebVitals'
 
 // Bootstrap Hawtio
 registerPlugins()
-bootstrap()
+hawtio.bootstrap()
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
