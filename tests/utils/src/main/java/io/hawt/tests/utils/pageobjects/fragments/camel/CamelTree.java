@@ -1,22 +1,65 @@
 package io.hawt.tests.utils.pageobjects.fragments.camel;
 
-import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
+import static com.codeborne.selenide.CollectionCondition.allMatch;
+import static com.codeborne.selenide.CollectionCondition.empty;
+import static com.codeborne.selenide.CollectionCondition.itemWithText;
+import static com.codeborne.selenide.CollectionCondition.size;
+import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codeborne.selenide.ElementsCollection;
-
-import java.util.List;
-
-import io.hawt.tests.utils.pageobjects.pages.camel.contexts.CamelContextsPage;
 
 /**
  * Represents the Camel tree.
  */
 public class CamelTree {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelTree.class);
+
+    /**
+     * Expand specific Camel Context in a Camel tree.
+     *
+     * @param pageObjectClass
+     * @param context         name of a context containing a node
+     * @return page of a given class
+     */
+    public <P> P expandSpecificContext(Class<P> pageObjectClass, String context) {
+        $(byXpath("//li[contains(@id, 'context-" + context + "')]")).shouldBe(visible).click();
+        return page(pageObjectClass);
+    }
+
+    /**
+     * Expand a folder nested under specified context in Camel tree.
+     *
+     * @param pageObjectClass
+     * @param folder          name of a folder to expand
+     * @return page of a given class
+     */
+    public <P> P expandSpecificFolder(Class<P> pageObjectClass, String folder) {
+        $(byXpath("//li[contains(@class, '" + folder + "-folder')]")).shouldBe(visible).click();
+        return page(pageObjectClass);
+    }
+
+    /**
+     * Select specific node in Camel tree.
+     *
+     * @param pageObjectClass
+     * @param node            name of a node to be selected
+     * @param folder          name of a folder containing a node
+     * @param context         name of a context containing a node
+     * @return the page of a given class
+     */
+    public <P> P selectSpecificNode(Class<P> pageObjectClass, String node, String folder, String context) {
+        $(byXpath("//li[contains(@id, '" + context + "-" + folder + "-" + node + "')]")).shouldBe(visible).click();
+        return page(pageObjectClass);
+    }
+
     /**
      * Click on Expand All button and expand all the nodes in the tree.
      *
@@ -24,6 +67,16 @@ public class CamelTree {
      */
     public CamelTree expandAll() {
         $("i[title='Expand All']").shouldBe(visible).click();
+        return this;
+    }
+
+    /**
+     * Check that all nodes are visible after clicking on expand all button.
+     *
+     * @return camel tree fragment
+     */
+    public CamelTree allNodesAreVisible() {
+        hiddenNodes().shouldBe(empty);
         return this;
     }
 
@@ -38,33 +91,22 @@ public class CamelTree {
     }
 
     /**
-     * Expands context with a given name.
+     * Check that all nodes are hidden after clicking on collapse all button.
      *
-     * @param context name of a context to expand
+     * @return camel tree fragment
      */
-    private void expandContext(String context) {
-        $(byXpath("//li[text() = '" + context + "']")).shouldBe(visible).click();
+    public CamelTree allNodesAreHidden() {
+        hiddenNodes().shouldHave(size(allNodesInTree().size() - 1));
+        return this;
     }
 
     /**
-     * Expands folder with a given name nested under a specified context.
+     * Get all nodes that are hidden (not expanded).
      *
-     * @param context name of a context to expand
-     * @param folder  name of a folder to expand
+     * @return all hidden nodes
      */
-    private void expand(String context, String folder) {
-        $(byXpath("//li[contains(@id, '" + context + "')]")).shouldBe(visible).click();
-        $(byXpath("//li[contains(@id, '" + context + "-" + folder + "')]")).shouldBe(visible).click();
-    }
-
-    /**
-     * Makes Camel Contexts (root of a tree) targeted.
-     *
-     * @return CamelContextsPage class
-     */
-    public CamelContextsPage targetCamelContextsRoot() {
-        $(byXpath("//li[contains(@id, \"camelContexts\")]")).click();
-        return page(CamelContextsPage.class);
+    public ElementsCollection hiddenNodes() {
+        return $(byXpath(".//div[@id='cameltree']")).$$(byXpath(".//li[contains(@class, 'node-hidden')]"));
     }
 
     /**
@@ -72,73 +114,69 @@ public class CamelTree {
      *
      * @return all nodes
      */
-    public ElementsCollection getAllNodesInTree() {
+    public ElementsCollection allNodesInTree() {
         return $$(byXpath("//div[@id='cameltree']/ul/li"));
     }
 
     /**
-     * Return all available routes under specified context.
-     *
-     * @param context name of a context
-     * @return list of a names (string)
-     */
-    public List<String> getRoutes(String context) {
-        expandContext(context);
-        expand(context, "routes");
-        return $$(byXpath("//li[@class=\"list-group-item node-cameltree org-apache-camel-routes can-invoke\"]"))
-            .shouldHave(sizeGreaterThan(0))
-            .texts();
-    }
-
-    /**
-     * Return all available components under specified context.
-     *
-     * @param context name of a context
-     * @return list of names (string)
-     */
-    public List<String> getComponents(String context) {
-        expandContext(context);
-        expand(context, "components");
-        return $$(byXpath("//li[@class=\"list-group-item node-cameltree org-apache-camel-components can-invoke\"]"))
-            .shouldHave(sizeGreaterThan(0))
-            .texts();
-    }
-
-    /**
-     * Return all available endpoints under specified context.
-     *
-     * @param context name of a context
-     * @return list of names (string)
-     */
-    public List<String> getEndpoints(String context) {
-        expandContext(context);
-        expand(context, "endpoints");
-        return $$(byXpath("//li[@class=\"list-group-item node-cameltree org-apache-camel-endpoints can-invoke\"]"))
-            .shouldHave(sizeGreaterThan(0))
-            .texts();
-    }
-
-    /**
-     * Return all available dataformats under specified context.
-     *
-     * @param context name of a context
-     * @return list of names (string)
-     */
-    public List<String> getDataformats(String context) {
-        expandContext(context);
-        expand(context, "dataformats");
-        return $$(byXpath("//li[@class=\"list-group-item node-cameltree org-apache-camel-dataformats can-invoke\"]"))
-            .shouldHave(sizeGreaterThan(0))
-            .texts();
-    }
-
-    /**
-     * Check that the context is situated in the camel tree.
+     * Check that context is situated in the camel tree.
      *
      * @return camel tree fragment
      */
-    public CamelTree isContextInCamelTree(String context) {
+    public CamelTree contextIsInCamelTree(String context) {
         $(byXpath(".//li[contains(@id, '" + context + "')]")).is(visible);
+        return this;
+    }
+
+    /**
+     * Set the value for filtering to the filter input.
+     *
+     * @return camel tree fragment
+     */
+    public CamelTree setFilterValue(String value) {
+        $(byXpath(".//input[@id='input-search']")).shouldBe(enabled).setValue(value);
+        return this;
+    }
+
+    /**
+     * Check that tree was filtered correctly.
+     *
+     * @return camel tree fragment
+     */
+    public CamelTree checkTreeFiltering(String filteredValue) {
+        filteredMarkedNodes().shouldBe(itemWithText(filteredValue));
+        filteredNodesByValue(filteredValue).shouldBe(allMatch("elements contain node-result class", el -> el.getAttribute("class").contains("node-result")));
+        return this;
+    }
+
+    /**
+     * Get all filtered nodes (they are marked with orange color).
+     *
+     * @return filtered nodes
+     */
+    public ElementsCollection filteredMarkedNodes() {
+        return $$(byXpath(".//li[contains(@class, 'node-result')]"));
+    }
+
+    /**
+     * Get all nodes filtered by value.
+     *
+     * @param value which filter nodes
+     * @return nodes filtered by value
+     */
+    public ElementsCollection filteredNodesByValue(String value) {
+        return $$(byXpath(".//li[contains(text(), '" + value + "')]"));
+    }
+
+    /**
+     * Check that count of filter results is the same that actual count of filtered nodes.
+     *
+     * @return camel tree fragment
+     */
+    public CamelTree checkCountOfFilterResult(String value) {
+        final int filterCount = Integer.parseInt($(byXpath(".//span[@class = 'badge ng-binding positive']")).getText());
+        filteredMarkedNodes().shouldHave(size(filterCount));
+        filteredNodesByValue(value).shouldHave(size(filterCount));
         return this;
     }
 }

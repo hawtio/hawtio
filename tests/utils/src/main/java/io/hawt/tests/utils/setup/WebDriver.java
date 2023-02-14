@@ -14,7 +14,6 @@ public class WebDriver {
     }
 
     public static void setup() {
-
         LOG.info("Setting up a web browser options");
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
         Configuration.headless = true;
