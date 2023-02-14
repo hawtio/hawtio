@@ -12,4 +12,9 @@ public class LeftSideMenuStepDefs {
     public void userIsOnHawtioMainPage() {
         hawtioPage = new HawtioPage();
     }
+
+    @Given("^User clicks on Camel tab in the left-side menu$")
+    public void userClicksOnCamelTabInTheLeftSideMenu() {
+        camelPage = hawtioPage.menu().camel();
+    }
 }
