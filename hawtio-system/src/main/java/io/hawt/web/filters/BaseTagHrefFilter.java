@@ -54,7 +54,7 @@ public class BaseTagHrefFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        LOG.debug("Applying {}", getClass().getSimpleName());
+        LOG.trace("Applying {}", getClass().getSimpleName());
 
         // For Spring Boot we need to append the context path of the hawtio application
         String baseTagHref = basePath + applicationContextPath;
