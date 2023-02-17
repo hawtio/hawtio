@@ -1,0 +1,9 @@
+build
+coverage
+dist
+.yarn
+
+# any directories specifically labelled ignore
+**/ignore/**
+
+console/app/**
