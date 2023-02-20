@@ -22,7 +22,7 @@ public class SpringHawtioContextListenerTest {
             configManager, "foobar");
         underTest.contextInitialized(event);
 
-        Mockito.verify(configManager).init(ctx);
+        Mockito.verify(configManager).init();
         Mockito.verify(ctx).setAttribute("ConfigManager", configManager);
         Mockito.verify(ctx).setAttribute("hawtioServletPath", "foobar");
     }

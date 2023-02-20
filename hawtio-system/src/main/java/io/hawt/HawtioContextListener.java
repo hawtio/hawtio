@@ -49,7 +49,7 @@ public class HawtioContextListener implements ServletContextListener {
         LOGGER.info("Initialising hawtio services");
         try {
             about.init();
-            configManager.init(servletContextEvent.getServletContext());
+            configManager.init();
             treeWatcher.init();
             registry.init();
             jmxSecurity.init();

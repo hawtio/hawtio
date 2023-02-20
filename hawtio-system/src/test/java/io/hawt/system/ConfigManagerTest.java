@@ -3,9 +3,7 @@ package io.hawt.system;
 import java.util.Hashtable;
 
 import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
-import javax.servlet.ServletContext;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -19,9 +17,6 @@ public class ConfigManagerTest {
 
     @Mock
     private Context jndiContext;
-
-    @Mock
-    private ServletContext servletContext;
 
     @Before
     public void setUp() {
@@ -48,7 +43,7 @@ public class ConfigManagerTest {
         System.setProperty("hawtio.foo", "bar");
 
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("bar", underTest.get("foo", null));
     }
@@ -56,27 +51,26 @@ public class ConfigManagerTest {
     @Test
     public void testGetWithoutJndiContextWithDefaultValue() {
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("default", underTest.get("foo", "default"));
     }
 
     @Test
-    public void testGetWithCustomProvider() throws Exception {
+    public void testGetWithCustomProvider() {
         final ConfigManager underTest = new ConfigManager(
                 x -> "foo".equals(x) ? "bar" : null);
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("bar", underTest.get("foo", "default"));
     }
 
     @Test
-    public void testGetWithCustomProviderOverriddenBySystemProperty()
-            throws Exception {
+    public void testGetWithCustomProviderOverriddenBySystemProperty() {
         System.setProperty("hawtio.foo", "system");
         final ConfigManager underTest = new ConfigManager(
                 x -> "foo".equals(x) ? "bar" : null);
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("system", underTest.get("foo", "default"));
     }
@@ -89,7 +83,7 @@ public class ConfigManagerTest {
         Mockito.when(jndiContext.lookup("hawtio/foo")).thenReturn("bar");
 
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("bar", underTest.get("foo", null));
     }
@@ -101,7 +95,7 @@ public class ConfigManagerTest {
         Mockito.when(jndiContext.lookup("java:comp/env")).thenReturn(jndiContext);
 
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("foobar", underTest.get("foo", "foobar"));
 
@@ -119,7 +113,7 @@ public class ConfigManagerTest {
         Mockito.when(jndiContext.lookup("hawtio/foo")).thenReturn("jndiBar");
 
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
 
         Assert.assertEquals("systemBar", underTest.get("foo", null));
     }
@@ -127,7 +121,7 @@ public class ConfigManagerTest {
     @Test
     public void testDestroyNoJndiContext() {
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
         underTest.destroy();
 
         Mockito.verifyZeroInteractions(jndiContext);
@@ -140,7 +134,7 @@ public class ConfigManagerTest {
                 TestInitialContextFactory.class.getName());
 
         final ConfigManager underTest = new ConfigManager();
-        underTest.init(servletContext);
+        underTest.init();
         underTest.destroy();
 
         Mockito.verify(jndiContext).close();
@@ -151,17 +145,12 @@ public class ConfigManagerTest {
         private static final ThreadLocal<Context> CTX = new ThreadLocal<>();
 
         @Override
-        public Context getInitialContext(Hashtable<?, ?> environment)
-                throws NamingException {
+        public Context getInitialContext(Hashtable<?, ?> environment) {
             return CTX.get();
         }
 
         public static void setCurrentContext(Context context) {
             CTX.set(context);
-        }
-
-        public static void clearCurrentContext() {
-            CTX.remove();
         }
 
     }

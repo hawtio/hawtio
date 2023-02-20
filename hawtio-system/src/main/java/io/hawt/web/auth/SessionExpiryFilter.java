@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.HawtioProperty;
 import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
@@ -31,20 +30,29 @@ public class SessionExpiryFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SessionExpiryFilter.class);
 
+    /**
+     * Hawtio system property:
+     * The name of the servlet context attribute holding hawtio deployment path
+     * relative to the context root. By default, when hawtio is launched in
+     * stand-alone mode, its path is assumed to be at the root of the servlet. But
+     * in certain scenarios this might not be the case. For example, when running
+     * under Spring Boot, actual hawtio path can potentially consist of servlet
+     * prefix, management context path as well as hawtio endpoint path.
+     */
+    public static final String SERVLET_PATH = "hawtioServletPath";
+
     public static final String ATTRIBUTE_LAST_ACCESS = "LastAccess";
 
     private static final List<String> IGNORED_PATHS = Collections.unmodifiableList(Arrays.asList("jolokia", "proxy"));
 
     private ServletContext context;
-    private AuthenticationConfiguration authConfiguration;
     private int pathIndex;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
-        authConfiguration = AuthenticationConfiguration.getConfiguration(context);
 
-        String servletPath = (String) filterConfig.getServletContext().getAttribute(HawtioProperty.SERVLET_PATH);
+        String servletPath = (String) filterConfig.getServletContext().getAttribute(SERVLET_PATH);
         if (servletPath == null) {
             this.pathIndex = 0; // assume hawtio is served from root
         } else {

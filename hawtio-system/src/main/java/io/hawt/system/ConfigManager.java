@@ -7,7 +7,6 @@ import java.util.function.Function;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,13 @@ import org.slf4j.LoggerFactory;
 public class ConfigManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
+
+    /**
+     * Hawtio system property:
+     * Boolean flag indicating whether JNDI configuration should be skipped in
+     * preference of system properties.
+     */
+    public static final String FORCE_PROPERTIES = "forceProperties";
 
     public static final String CONFIG_MANAGER = "ConfigManager";
 
@@ -36,8 +42,8 @@ public class ConfigManager {
         this.propertyResolver = x -> getProperty(x, ConfigManager::getHawtioSystemProperty, propertyResolver);
     }
 
-    public void init(ServletContext servletContext) {
-        if (Boolean.parseBoolean(getHawtioSystemProperty(HawtioProperty.FORCE_PROPERTIES))) {
+    public void init() {
+        if (Boolean.parseBoolean(getHawtioSystemProperty(FORCE_PROPERTIES))) {
             LOG.info("Forced using system properties");
             return;
         }

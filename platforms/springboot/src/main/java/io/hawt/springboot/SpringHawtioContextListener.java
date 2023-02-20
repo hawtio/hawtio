@@ -6,7 +6,7 @@ import javax.servlet.ServletContextEvent;
 
 import io.hawt.HawtioContextListener;
 import io.hawt.system.ConfigManager;
-import io.hawt.system.HawtioProperty;
+import io.hawt.web.auth.SessionExpiryFilter;
 
 public class SpringHawtioContextListener extends HawtioContextListener {
 
@@ -22,6 +22,6 @@ public class SpringHawtioContextListener extends HawtioContextListener {
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
         super.contextInitialized(servletContextEvent);
         servletContextEvent.getServletContext()
-            .setAttribute(HawtioProperty.SERVLET_PATH, this.servletPath);
+            .setAttribute(SessionExpiryFilter.SERVLET_PATH, this.servletPath);
     }
 }
