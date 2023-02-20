@@ -31,6 +31,7 @@ TBD
 Suppose you have cloned the `hawtio-next` project in the same directory as the `hawtio` project, run `yarn link` from the `console` directory as follows:
 
     yarn link ../../hawtio-next/packages/hawtio
+    yarn link ../../hawtio-next/packages/camel-model
 
 Then you can build the console with the local `hawtio-next` component by running the following command from the project root directory:
 
