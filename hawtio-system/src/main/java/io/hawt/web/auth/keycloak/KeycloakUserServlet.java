@@ -28,7 +28,7 @@ public class KeycloakUserServlet extends UserServlet {
     @Override
     protected String getUsername(HttpServletRequest req, HttpServletResponse resp) {
         if (keycloakEnabled) {
-            return getKeycloakUsername(req, resp);
+            return getKeycloakUsername(req);
         } else {
             return super.getUsername(req, resp);
         }
@@ -37,7 +37,7 @@ public class KeycloakUserServlet extends UserServlet {
     /**
      * With Keycloak integration, the Authorization header is available in the request to the UserServlet.
      */
-    protected String getKeycloakUsername(final HttpServletRequest req, HttpServletResponse resp) {
+    protected String getKeycloakUsername(final HttpServletRequest req) {
         AtomicReference<String> username = new AtomicReference<>();
         new Authenticator(req, authConfiguration).authenticate(
             subject -> {
