@@ -13,12 +13,14 @@ import com.codeborne.selenide.SelenideElement;
 
 import io.hawt.tests.utils.pageobjects.pages.HawtioPage;
 
+/**
+ * Represents Chart Tab page in viewing mode in Camel.
+ */
 public class CamelChart extends HawtioPage {
     /**
      * Click on edit button.
      */
     public void edit() {
-//        Selenide.refresh();
         clickButton("Edit");
     }
 

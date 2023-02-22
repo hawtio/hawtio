@@ -49,6 +49,11 @@ public class CamelCommonStepDefs {
         camelOperations.checkResultOfExecutedOperation(operation, result);
     }
 
+    @Then("^Camel Attribute \"([^\"]*)\" is displayed in Chart of Camel page$")
+    public void camelAttributeIsDisplayedInChartOfCamelPage(String attributeName) {
+        camelChart.checkSpecificAttributeIsDisplayed(attributeName);
+    }
+
     @Then("^Camel Attribute \"([^\"]*)\" and its value \"([^\"]*)\" are displayed in Chart of Camel page$")
     public void camelAttributeAndItsValuesAreDisplayedInChartOfCamelPage(String attributeName, String attributeValue) {
         camelChart.checkSpecificAttributeIsDisplayed(attributeName).checkStringAttributeValue(attributeName, attributeValue);

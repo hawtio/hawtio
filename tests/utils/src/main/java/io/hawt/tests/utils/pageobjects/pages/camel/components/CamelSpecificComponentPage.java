@@ -5,7 +5,7 @@ import io.hawt.tests.utils.pageobjects.fragments.camel.tabs.common.CamelOperatio
 import io.hawt.tests.utils.pageobjects.fragments.camel.tabs.common.CamelProperties;
 
 /**
- * Main page for Camel -> specific Context -> Components -> specific Component.
+ * Main page for Camel -> specific Context -> Components folder -> specific Component.
  */
 public class CamelSpecificComponentPage extends CamelComponentsPage {
     public CamelAttributes attributes() {

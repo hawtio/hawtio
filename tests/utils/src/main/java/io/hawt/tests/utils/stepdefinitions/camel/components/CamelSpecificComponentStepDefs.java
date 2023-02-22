@@ -12,8 +12,8 @@ import io.hawt.tests.utils.pageobjects.pages.camel.components.CamelSpecificCompo
 public class CamelSpecificComponentStepDefs {
     private final CamelPage camelPage = new CamelPage();
     private CamelAttributes camelAttributes;
-    private CamelProperties camelProperties;
     private CamelOperations camelOperations;
+    private CamelProperties camelProperties;
     private CamelSpecificComponentPage camelSpecificComponentPage;
 
     @And("^User is on Camel \"([^\"]*)\" node of Components folder of \"([^\"]*)\" context$")
