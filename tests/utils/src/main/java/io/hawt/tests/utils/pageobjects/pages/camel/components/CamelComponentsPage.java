@@ -4,7 +4,7 @@ import io.hawt.tests.utils.pageobjects.fragments.camel.tabs.common.CamelAttribut
 import io.hawt.tests.utils.pageobjects.pages.camel.CamelPage;
 
 /**
- * Main page for Camel -> given a Context -> Components.
+ * Main page for Camel -> given a Context -> Components folder.
  */
 public class CamelComponentsPage extends CamelPage {
     public CamelAttributes attributes() {

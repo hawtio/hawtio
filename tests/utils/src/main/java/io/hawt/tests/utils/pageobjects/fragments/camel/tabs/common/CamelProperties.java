@@ -13,13 +13,51 @@ import io.hawt.tests.utils.pageobjects.pages.HawtioPage;
  */
 public class CamelProperties extends HawtioPage {
     /**
-     * Check, that table with Defined properties is not empty.
+     * Check that table with Defined properties is not empty.
      *
      * @return CamelProperties
      */
     public CamelProperties checkDefinedPropertyAttributes() {
         getDefinedPropAttributes().shouldHave(sizeGreaterThanOrEqual(1));
         return this;
+    }
+
+    /**
+     * Check that table with Default properties is not empty.
+     *
+     * @return CamelProperties
+     */
+    public CamelProperties checkDefaultPropertyAttributes() {
+        getDefaultPropAttributes().shouldHave(sizeGreaterThanOrEqual(1));
+        return this;
+    }
+
+    /**
+     * Get default property attributes.
+     *
+     * @return elements collection of default property attributes
+     */
+    public ElementsCollection getDefaultPropAttributes() {
+        return getAttributes("Default Properties");
+    }
+
+    /**
+     * Check that table with Undefined properties is not empty.
+     *
+     * @return CamelProperties
+     */
+    public CamelProperties checkUndefinedPropertyAttributes() {
+        getUndefinedPropAttributes().shouldHave(sizeGreaterThanOrEqual(1));
+        return this;
+    }
+
+    /**
+     * Get undefined property attributes.
+     *
+     * @return elements collection of undefined property attributes
+     */
+    public ElementsCollection getUndefinedPropAttributes() {
+        return getAttributes("Undefined Properties");
     }
 
     /**
@@ -39,19 +77,5 @@ public class CamelProperties extends HawtioPage {
      */
     public ElementsCollection getAttributes(String type) {
         return $$(byXpath("//property-list[@title=\"" + type + "\"]//dt"));
-    }
-
-    /**
-     * Check, that table with Undefined properties is not empty.
-     *
-     * @return CamelProperties
-     */
-    public CamelProperties checkUndefinedPropertyAttributes() {
-        getUndefinedPropAttributes().shouldHave(sizeGreaterThanOrEqual(1));
-        return this;
-    }
-
-    public ElementsCollection getUndefinedPropAttributes() {
-        return getAttributes("Undefined Properties");
     }
 }
