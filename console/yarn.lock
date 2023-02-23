@@ -1752,13 +1752,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hawtio/camel-model@npm:^3.20.2-1":
+  version: 3.20.2-1
+  resolution: "@hawtio/camel-model@npm:3.20.2-1"
+  checksum: c7431c604e5d08b204ae9820cd2e62353e6b21fd27de25731f788fd40cb77cac949a504e9adc6e2b3d0e49314a769a69a2d37826e5080a0e0e9bfca8b9138150
+  languageName: node
+  linkType: hard
+
 "@hawtio/console-assembly@workspace:.":
   version: 0.0.0-use.local
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@craco/craco": ^7.0.0
     "@hawtio/backend-middleware": ^1.0.3
-    "@hawtio/react": ^0.2.0-dev.2
+    "@hawtio/react": ^0.2.0-dev.3
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
@@ -1774,19 +1781,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^0.2.0-dev.2":
-  version: 0.2.0-dev.2
-  resolution: "@hawtio/react@npm:0.2.0-dev.2"
+"@hawtio/react@npm:^0.2.0-dev.3":
+  version: 0.2.0-dev.3
+  resolution: "@hawtio/react@npm:0.2.0-dev.3"
   dependencies:
+    "@hawtio/camel-model": ^3.20.2-1
     "@patternfly/react-core": ^4.267.6
     "@patternfly/react-table": ^4.112.6
     "@testing-library/jest-dom": ^5.16.5
-    "@testing-library/react": ^13.4.0
+    "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.4.3
     "@types/jest": ^29.4.0
-    "@types/node": ^18.13.0
+    "@types/node": ^18.14.0
     "@types/react": ^18.0.28
-    "@types/react-dom": ^18.0.10
+    "@types/react-dom": ^18.0.11
     "@types/react-router-dom": ^5.3.3
     eventemitter3: ^5.0.0
     jolokia.js: 1.7.2
@@ -1804,7 +1812,7 @@ __metadata:
     "@patternfly/react-table": ^4.112.6
     react: ^16.8 || ^17 || ^18
     react-dom: ^16.8 || ^17 || ^18
-  checksum: 70aa976740c31c9128550b0c66e275e7ce1234fc96aa58919ad6b1ca5a3b976295fff78a81472fc60f7d9035d7146198e9cd4aaab3b652e124f46a30e99d80d7
+  checksum: 6fda1150a126a42d3de7488c5e13a7a0824114e60df5cf7493ffe5cfd7e0d5ec41bb3d145c8c2c377d41b7c5330b0101be464546eee51d2679bdfd956b5823a4
   languageName: node
   linkType: hard
 
@@ -2615,22 +2623,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.5.0":
-  version: 8.20.0
-  resolution: "@testing-library/dom@npm:8.20.0"
-  dependencies:
-    "@babel/code-frame": ^7.10.4
-    "@babel/runtime": ^7.12.5
-    "@types/aria-query": ^5.0.1
-    aria-query: ^5.0.0
-    chalk: ^4.1.0
-    dom-accessibility-api: ^0.5.9
-    lz-string: ^1.4.4
-    pretty-format: ^27.0.2
-  checksum: 1e599129a2fe91959ce80900a0a4897232b89e2a8e22c1f5950c36d39c97629ea86b4986b60b173b5525a05de33fde1e35836ea597b03de78cc51b122835c6f0
-  languageName: node
-  linkType: hard
-
 "@testing-library/dom@npm:^9.0.0":
   version: 9.0.0
   resolution: "@testing-library/dom@npm:9.0.0"
@@ -2661,20 +2653,6 @@ __metadata:
     lodash: ^4.17.15
     redent: ^3.0.0
   checksum: 94911f901a8031f3e489d04ac057cb5373621230f5d92bed80e514e24b069fb58a3166d1dd86963e55f078a1bd999da595e2ab96ed95f452d477e272937d792a
-  languageName: node
-  linkType: hard
-
-"@testing-library/react@npm:^13.4.0":
-  version: 13.4.0
-  resolution: "@testing-library/react@npm:13.4.0"
-  dependencies:
-    "@babel/runtime": ^7.12.5
-    "@testing-library/dom": ^8.5.0
-    "@types/react-dom": ^18.0.0
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 51ec548c1fdb1271089a5c63e0908f0166f2c7fcd9cacd3108ebbe0ce64cb4351812d885892020dc37608418cfb15698514856502b3cab0e5cc58d6cc1bd4a3e
   languageName: node
   linkType: hard
 
@@ -3038,7 +3016,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.13.0, @types/node@npm:^18.14.0":
+"@types/node@npm:^18.14.0":
   version: 18.14.0
   resolution: "@types/node@npm:18.14.0"
   checksum: d83fcf5e4ed544755dd9028f5cbb6b9d46235043159111bb2ad62223729aee581c0144a9f6df8ba73d74011db9ed4ebd7af2fd5e0996714e3beb508a5da8ac5c
@@ -3093,6 +3071,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: ff8282d5005a0b1cd95fb65bf79d3d8485e4cfe2aaf052129033a178684b940014a3f4536bc20d573f8a01cf4c6f4770c74988cef7c2b5cac3041d9f172647e3
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^18.0.11":
+  version: 18.0.11
+  resolution: "@types/react-dom@npm:18.0.11"
+  dependencies:
+    "@types/react": "*"
+  checksum: 579691e4d5ec09688087568037c35edf8cfb1ab3e07f6c60029280733ee7b5c06d66df6fcc90786702c93ac8cb13bc7ff16c79ddfc75d082938fbaa36e1cdbf4
   languageName: node
   linkType: hard
 

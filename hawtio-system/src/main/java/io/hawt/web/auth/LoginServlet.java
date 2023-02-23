@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +32,8 @@ public class LoginServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
 
+    private static final String LOGIN_PAGE_PATH = "/login";
+
     private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
@@ -49,14 +50,14 @@ public class LoginServlet extends HttpServlet {
     }
 
     /**
-     * GET simply returns login.html
+     * GET simply redirects to login page.
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (authConfiguration.isKeycloakEnabled()) {
             redirector.doRedirect(request, response, "/");
         } else {
-            redirector.doForward(request, response, "/login.html");
+            redirector.doRedirect(request, response, LOGIN_PAGE_PATH);
         }
     }
 
