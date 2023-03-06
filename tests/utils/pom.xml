@@ -12,7 +12,12 @@
   <artifactId>hawtio-tests-utils</artifactId>
   <name>${project.artifactId}</name>
 
-  <properties>
-  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit-version}</version>
+    </dependency>
+  </dependencies>
 
 </project>
