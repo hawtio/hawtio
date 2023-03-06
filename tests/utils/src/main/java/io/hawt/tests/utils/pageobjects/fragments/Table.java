@@ -60,4 +60,30 @@ public class Table {
     public SelenideElement getRowInAttributesTable(String attribute) {
         return $(byXpath("//*[@title='" + attribute + "']//ancestor::tr")).shouldBe(visible);
     }
+
+    /**
+     * Check whether filtered correctly.
+     *
+     * @param filterValue      value which filters.
+     * @param elementsToFilter to be checked
+     * @return table
+     */
+    public Table checkFiltered(String filterValue, ElementsCollection elementsToFilter) {
+        for (int i = 0; i < elementsToFilter.size(); i++) {
+            if (elementsToFilter.get(i).text().toLowerCase().contains(filterValue.toLowerCase())) {
+                elementsToFilter.get(i).shouldBe(visible);
+            } else {
+                elementsToFilter.get(i).shouldNotBe(visible);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Clear all filters.
+     */
+    public void clearAllFilters() {
+        $(byXpath("//a[contains(text(),'Clear All Filters')]")).shouldBe(visible).click();
+        $(byXpath("//p[contains(text(),'Active Filters:')]")).shouldNotBe(visible);
+    }
 }
