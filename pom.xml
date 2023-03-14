@@ -95,10 +95,6 @@
     <slf4j-version>1.7.26</slf4j-version>
     <wildfly-version>11.0.0.Final</wildfly-version>
     <wildfly-maven-plugin-version>1.2.1.Final</wildfly-maven-plugin-version>
-    <jaxb-version>2.3.2</jaxb-version>
-    <activation-version>1.2.0</activation-version>
-    <spring-hateoas-version>0.25.0.RELEASE</spring-hateoas-version>
-    <spring-plugin-core-version>1.2.0.RELEASE</spring-plugin-core-version>
   </properties>
 
   <modules>
