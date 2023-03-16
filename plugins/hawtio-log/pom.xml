@@ -11,7 +11,6 @@
   <artifactId>hawtio-log</artifactId>
   <name>${project.artifactId}</name>
   <description>Hawtio :: hawtio-log</description>
-  <packaging>bundle</packaging>
 
   <dependencies>
 
@@ -46,27 +45,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-Name>${project.description}</Bundle-Name>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Import-Package>
-              com.fasterxml.jackson.annotation;version="${jackson-version-range}",
-              com.fasterxml.jackson.databind;version="${jackson-version-range}",
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

@@ -48,8 +48,8 @@
     <failIfNoTests>false</failIfNoTests>
     <jettyPort>8282</jettyPort>
     <context>/hawtio</context>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
 
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
@@ -81,11 +81,9 @@
     <log4j-version>1.2.17</log4j-version>
     <log4j2-version>2.17.1</log4j2-version>
     <maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
-    <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
     <maven-failsafe-plugin-version>3.0.0-M1</maven-failsafe-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>3.0.0-M1</maven-surefire-plugin-version>
-    <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
     <mockito-core-version>4.3.1</mockito-core-version>
     <org-json-version>20180130</org-json-version>
     <osgi-version>5.0.0</osgi-version>
