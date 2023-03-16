@@ -9,7 +9,7 @@
     "test": "craco test"
   },
   "dependencies": {
-    "@hawtio/react": "^0.2.0-dev.3",
+    "@hawtio/react": "^0.2.0-dev.4",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.0"
   },
