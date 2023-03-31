@@ -53,6 +53,12 @@ module.exports = {
         moduleScopePlugin.allowedPaths.push(path.resolve(__dirname, 'node_modules/react'))
       }
 
+      // MiniCssExtractPlugin - Ignore order as otherwise conflicting order warning is raised
+      const miniCssExtractPlugin = webpackConfig.plugins.find(p => p.constructor.name === 'MiniCssExtractPlugin')
+      if (miniCssExtractPlugin) {
+        miniCssExtractPlugin.options.ignoreOrder = true
+      }
+
       // ***** Debugging *****
       const fs = require('fs')
       const util = require('node:util')

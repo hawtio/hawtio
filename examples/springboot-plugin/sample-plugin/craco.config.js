@@ -34,20 +34,25 @@ module.exports = {
         }),
       ],
     },
-    configure: {
-      output: {
-        publicPath: 'auto',
-      },
-      module: {
-        rules: [
-          {
-            test: /\.md/,
-            type: 'asset/source',
-          },
-        ],
-      },
+    configure: webpackConfig => {
+      // Required for Module Federation
+      webpackConfig.output.publicPath = 'auto'
+
+      webpackConfig.module.rules.push({
+        test: /\.md/,
+        type: 'asset/source',
+      })
+
       // For suppressing sourcemap warnings from dependencies
-      ignoreWarnings: [/Failed to parse source map/],
+      webpackConfig.ignoreWarnings = [/Failed to parse source map/]
+
+      // MiniCssExtractPlugin - Ignore order as otherwise conflicting order warning is raised
+      const miniCssExtractPlugin = webpackConfig.plugins.find(p => p.constructor.name === 'MiniCssExtractPlugin')
+      if (miniCssExtractPlugin) {
+        miniCssExtractPlugin.options.ignoreOrder = true
+      }
+
+      return webpackConfig
     },
   },
 }
