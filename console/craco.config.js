@@ -1,5 +1,4 @@
 const path = require('path')
-const webpack = require('webpack')
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const { dependencies } = require('./package.json')
@@ -39,11 +38,6 @@ module.exports = {
           languages: ['xml'],
           globalAPI: true,
         }),
-        // Chunking breaks css loading when Module Federation is enabled.
-        // Suppress chunking by limiting max chunks to 1.
-        new webpack.optimize.LimitChunkCountPlugin({
-          maxChunks: 1,
-        }),
       ],
     },
     configure: webpackConfig => {
@@ -81,7 +75,16 @@ module.exports = {
       const username = 'developer'
       const login = true
       const proxyEnabled = true
-      const plugin = []
+      const plugin = [
+        // Uncomment to test remote plugins loading
+        /*
+        {
+          url: 'http://localhost:3001',
+          scope: 'samplePlugin',
+          module: './plugin',
+        },
+        */
+      ]
 
       // Hawtio backend API mock
       devServer.app.get('/hawtio/user', (req, res) => res.send(`"${username}"`))
