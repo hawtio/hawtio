@@ -2,11 +2,17 @@ package io.hawt.web;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.jolokia.converter.Converters;
+import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -26,6 +32,28 @@ public class ServletHelpersTest {
         assertThat(json.get("string"), equalTo("text"));
         assertThat(json.get("number"), equalTo(2));
         assertThat(json.get("boolean"), equalTo(true));
+    }
+
+    @Test
+    public void writeEmpty() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ServletHelpers.writeEmpty(new PrintWriter(out));
+        assertThat(out.toString(), equalTo("{}"));
+    }
+
+    @Test
+    public void writeObject() {
+        Converters converters = new Converters();
+        JsonConvertOptions options = JsonConvertOptions.DEFAULT;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        ServletHelpers.writeObject(converters, options, new PrintWriter(out), Collections.emptyList());
+        assertThat(out.toString(), equalTo("[]"));
+
+        out.reset();
+        Object obj = Map.of("string", "text", "number", 2, "boolean", true);
+        ServletHelpers.writeObject(converters, options, new PrintWriter(out), obj);
+        assertThat(out.toString(), equalTo("{\"number\":2,\"boolean\":true,\"string\":\"text\"}"));
     }
 
     @Test

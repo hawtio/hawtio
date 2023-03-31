@@ -27,20 +27,22 @@ public class SampleAuthenticationSpringBootService {
      */
     @Bean
     public HawtioPlugin samplePlugin() {
-        return new HawtioPlugin("sample-plugin",
-            "plugins",
-            "",
-            new String[] { "sample-plugin/sample-plugin.js" });
+        // Need to point to the same port as Hawtio management context, as otherwise
+        // it would violate Content Security Policy HTTP header policy and thus not
+        // load the script.
+        return new HawtioPlugin(
+            "http://localhost:10001",
+            "samplePlugin",
+            "./plugin");
     }
 
     /**
      * Configure facade to use authentication.
      *
      * @return config
-     * @throws Exception if an error occurs
      */
     @Bean(initMethod = "init")
-    public ConfigFacade configFacade() throws Exception {
+    public ConfigFacade configFacade() {
 
         final URL loginResource = this.getClass().getClassLoader().getResource("login.conf");
         if (loginResource != null) {

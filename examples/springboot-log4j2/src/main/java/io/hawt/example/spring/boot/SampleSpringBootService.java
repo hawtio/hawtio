@@ -20,10 +20,13 @@ public class SampleSpringBootService {
      */
     @Bean
     public HawtioPlugin samplePlugin() {
-        return new HawtioPlugin("sample-plugin",
-            "plugins",
-            "",
-            new String[] { "sample-plugin/sample-plugin.js" });
+        // Need to point to the same port as Hawtio management context, as otherwise
+        // it would violate Content Security Policy HTTP header policy and thus not
+        // load the script.
+        return new HawtioPlugin(
+            "http://localhost:10001",
+            "samplePlugin",
+            "./plugin");
     }
 
     /**

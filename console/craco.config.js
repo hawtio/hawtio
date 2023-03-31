@@ -1,4 +1,8 @@
 const path = require('path')
+const webpack = require('webpack')
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+const { dependencies } = require('./package.json')
 const { hawtioBackend } = require('@hawtio/backend-middleware')
 
 module.exports = {
@@ -7,24 +11,64 @@ module.exports = {
       // Required when doing `yarn link`
       react: path.resolve(__dirname, 'node_modules/react'),
     },
+    plugins: {
+      add: [
+        new ModuleFederationPlugin({
+          name: 'hawtio',
+          shared: {
+            ...dependencies,
+            react: {
+              singleton: true,
+              requiredVersion: dependencies['react'],
+            },
+            'react-dom': {
+              singleton: true,
+              requiredVersion: dependencies['react-dom'],
+            },
+            'react-router-dom': {
+              singleton: true,
+              requiredVersion: dependencies['react-router-dom'],
+            },
+            '@hawtio/react': {
+              singleton: true,
+              requiredVersion: dependencies['@hawtio/react'],
+            },
+          },
+        }),
+        new MonacoWebpackPlugin({
+          languages: ['xml'],
+          globalAPI: true,
+        }),
+        // Chunking breaks css loading when Module Federation is enabled.
+        // Suppress chunking by limiting max chunks to 1.
+        new webpack.optimize.LimitChunkCountPlugin({
+          maxChunks: 1,
+        }),
+      ],
+    },
     configure: webpackConfig => {
-      webpackConfig.ignoreWarnings = [
-        // For suppressing sourcemap warnings coming from superstruct
-        function ignoreSourcemapsloaderWarnings(warning) {
-          return (
-            warning.module &&
-            warning.module.resource.includes('node_modules') &&
-            warning.details &&
-            warning.details.includes('source-map-loader')
-          )
-        },
-      ]
+      // Required for Module Federation
+      webpackConfig.output.publicPath = 'auto'
+
+      // For suppressing sourcemap warnings coming from some dependencies
+      webpackConfig.ignoreWarnings = [/Failed to parse source map/]
 
       // Tweak ModuleScopePlugin for allowing aliases outside of src
       const moduleScopePlugin = webpackConfig.resolve.plugins.find(p => p.constructor.name === 'ModuleScopePlugin')
       if (moduleScopePlugin) {
         moduleScopePlugin.allowedPaths.push(path.resolve(__dirname, 'node_modules/react'))
       }
+
+      // ***** Debugging *****
+      const fs = require('fs')
+      const util = require('node:util')
+      const out = `output = ${util.inspect(webpackConfig.output)}\n\nplugins = ${util.inspect(webpackConfig.plugins)}`
+      fs.mkdir(
+        'target',
+        { recursive: true },
+        err => !err && fs.writeFile('target/__webpackConfig__.txt', out, err => err && console.error(err)),
+      )
+      // ***** Debugging *****
 
       return webpackConfig
     },

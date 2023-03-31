@@ -19,6 +19,6 @@ package io.hawt.web.plugin;
 /**
  * Hawtio plugin MBean
  */
-public interface HawtioPluginMBean extends Plugin {
+public interface HawtioPluginMBean extends HawtioRemote {
 }
 

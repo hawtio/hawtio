@@ -5,19 +5,31 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class HawtioPluginTest {
 
     @Test
-    public void setScripts() {
-        HawtioPlugin plugin = new HawtioPlugin();
+    public void build() {
+        HawtioPlugin plugin = new HawtioPlugin()
+            .url("http://localhost:3000")
+            .scope("test")
+            .module("./plugin");
 
-        plugin.setScripts("");
-        assertThat(plugin.getScripts().length, is(1));
-        assertThat(plugin.getScripts(), arrayContaining(""));
+        assertThat(plugin.getUrl(), is("http://localhost:3000"));
+        assertThat(plugin.getScope(), is("test"));
+        assertThat(plugin.getModule(), is("./plugin"));
+        assertThat(plugin.getRemoteEntryFileName(), nullValue());
+        assertThat(plugin.isBustRemoteEntryCache(), nullValue());
+        assertThat(plugin.getPluginEntry(), nullValue());
 
-        plugin.setScripts("a,b,c");
-        assertThat(plugin.getScripts().length, is(3));
-        assertThat(plugin.getScripts(), arrayContaining("a", "b", "c"));
+        plugin
+            .remoteEntryFileName("remoteEntry.js")
+            .bustRemoteEntryCache(true)
+            .pluginEntry("registerPlugin");
+
+        assertThat(plugin.getRemoteEntryFileName(), is("remoteEntry.js"));
+        assertThat(plugin.isBustRemoteEntryCache(), is(true));
+        assertThat(plugin.getPluginEntry(), is("registerPlugin"));
     }
 }
