@@ -41,4 +41,9 @@ public class TableStepDefs {
     public void tableIsSortedByText(String ascendant, String columnName) {
         sortedTable.checkSortedByText(sortedTable.getColumn(columnName), Boolean.parseBoolean(ascendant));
     }
+
+    @Then("^Table is sorted ascendant \"([^\"]*)\" by \"([^\"]*)\" column by integer")
+    public void tableIsSortedByInteger(String ascendant, String columnName) {
+        sortedTable.checkSortedByInteger(sortedTable.getColumn(columnName), Boolean.parseBoolean(ascendant));
+    }
 }

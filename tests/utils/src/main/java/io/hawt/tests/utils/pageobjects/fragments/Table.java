@@ -51,6 +51,16 @@ public class Table {
     }
 
     /**
+     * Get row position in a table.
+     *
+     * @param rowPosition variable is used to find desired row position
+     * @return desired row
+     */
+    public SelenideElement getRowByPosition(int rowPosition) {
+        return $(byXpath(".//tbody/tr[" + rowPosition + "]"));
+    }
+
+    /**
      * Get row of Attributes table.
      * The method works with Attributes table.
      *
@@ -85,5 +95,18 @@ public class Table {
     public void clearAllFilters() {
         $(byXpath("//a[contains(text(),'Clear All Filters')]")).shouldBe(visible).click();
         $(byXpath("//p[contains(text(),'Active Filters:')]")).shouldNotBe(visible);
+    }
+
+    /**
+     * Get cell in a given row.
+     *
+     * @param headerName  header name of the given column
+     * @param rowPosition row position of the given row
+     * @return selenide element of the cell
+     */
+    public SelenideElement getCellInRow(String headerName, int rowPosition) {
+        final SelenideElement row = getRowByPosition(rowPosition);
+        final int position = getColumnsPosition(headerName);
+        return row.$(byXpath(".//td[" + position + "]"));
     }
 }
