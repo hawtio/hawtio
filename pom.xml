@@ -112,6 +112,7 @@
     <module>examples/springboot-authentication-jar</module>
     <module>examples/springboot-keycloak</module>
     <module>examples/springboot-log4j2</module>
+    <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>
     <module>hawtio-app</module>
     <module>hawtio-plugin-mbean</module>

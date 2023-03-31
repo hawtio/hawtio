@@ -73,7 +73,7 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
-    <!-- hawtio -->
+    <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
@@ -171,37 +171,7 @@
           </artifactItems>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>java11-plus</id>
-      <activation>
-        <jdk>[11,)</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>jakarta.xml.bind</groupId>
-          <artifactId>jakarta.xml.bind-api</artifactId>
-          <version>${jaxb-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.activation</groupId>
-          <artifactId>javax.activation</artifactId>
-          <version>${activation-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.springframework.hateoas</groupId>
-          <artifactId>spring-hateoas</artifactId>
-          <version>${spring-hateoas-version}</version>
-        </dependency>
-        <dependency>
-          <groupId>org.springframework.plugin</groupId>
-          <artifactId>spring-plugin-core</artifactId>
-          <version>${spring-plugin-core-version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
+
 </project>
