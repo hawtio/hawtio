@@ -9,12 +9,12 @@
     "test": "craco test"
   },
   "dependencies": {
-    "@hawtio/react": "^0.2.0-dev.4",
+    "@hawtio/react": "^0.2.0-dev.5",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.0"
   },
   "devDependencies": {
-    "@craco/craco": "^7.0.0",
+    "@craco/craco": "^7.1.0",
     "@hawtio/backend-middleware": "^1.0.3"
   },
   "eslintConfig": {
