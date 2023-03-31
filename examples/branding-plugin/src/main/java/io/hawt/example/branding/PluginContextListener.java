@@ -16,22 +16,20 @@ public class PluginContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-
         ServletContext context = servletContextEvent.getServletContext();
 
-        plugin = new HawtioPlugin();
-        plugin.setContext((String) context.getInitParameter("plugin-context"));
-        plugin.setName(context.getInitParameter("plugin-name"));
-        plugin.setScripts(context.getInitParameter("plugin-scripts"));
-        plugin.setDomain(context.getInitParameter("plugin-domain"));
+        plugin = new HawtioPlugin()
+            .url(context.getInitParameter("plugin-url"))
+            .scope(context.getInitParameter("plugin-name"))
+            .module(context.getInitParameter("plugin-module"));
         plugin.init();
 
-        LOG.info("Initialized {} plugin", plugin.getName());
+        LOG.info("Initialized {} plugin", plugin.getScope());
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         plugin.destroy();
-        LOG.info("Destroyed {} plugin", plugin.getName());
+        LOG.info("Destroyed {} plugin", plugin.getScope());
     }
 }

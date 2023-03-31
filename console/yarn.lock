@@ -1790,6 +1790,9 @@ __metadata:
     "@craco/craco": ^7.1.0
     "@hawtio/backend-middleware": ^1.0.3
     "@hawtio/react": ^0.2.0-dev.5
+    monaco-editor-webpack-plugin: ^7.0.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-scripts: ^5.0.1
     web-vitals: ^2.1.0
   languageName: unknown
@@ -8975,7 +8978,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.4":
+"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.2, loader-utils@npm:^2.0.4":
   version: 2.0.4
   resolution: "loader-utils@npm:2.0.4"
   dependencies:
@@ -9713,6 +9716,18 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: 0c91b721bb12c3f9af4b77ebf73604baf350e64d80df91754dc509491ae93bf238581e59c7188360cec7cb62fc4100959245a42cfe01834efedc5e9d068376c2
+  languageName: node
+  linkType: hard
+
+"monaco-editor-webpack-plugin@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "monaco-editor-webpack-plugin@npm:7.0.1"
+  dependencies:
+    loader-utils: ^2.0.2
+  peerDependencies:
+    monaco-editor: ">= 0.31.0"
+    webpack: ^4.5.0 || 5.x
+  checksum: 436814c724d5033254519ef8203f0df600d15c6bf0a3bf48a42ea678086becb56ed5685df2bca4cd4107855ecf8cea73722e52b63573edba5c020ff51b4f2d31
   languageName: node
   linkType: hard
 

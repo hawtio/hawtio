@@ -1,10 +1,7 @@
-import { configManager, hawtio, jolokiaService } from '@hawtio/react'
+import { configManager, jolokiaService } from '@hawtio/react'
 
 export const configure = async () => {
   // Apply console version
   const hawtioVersion = await jolokiaService.readAttribute('hawtio:type=About', 'HawtioVersion')
   configManager.addProductInfo('Hawtio', hawtioVersion as string)
-
-  // Set up plugin location
-  hawtio.addUrl('plugin')
 }

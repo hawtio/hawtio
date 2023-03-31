@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +12,7 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>branding-plugin</artifactId>
+  <artifactId>hawtio-example-branding-plugin</artifactId>
   <name>${project.artifactId}</name>
   <description>Hawtio :: Branding plugin example</description>
 
@@ -20,17 +22,18 @@
   <properties>
     <!-- filtered plugin properties, we don't define plugin-scripts here
       as we build that dynamically using maven-antrun-plugin below. -->
+
     <!-- plugin-context is what context this plugin will handle requests on
       in the application server -->
-    <plugin-context>/branding-plugin</plugin-context>
+    <plugin-url>http://localhost:10001</plugin-url>
 
     <!-- plugin-name is the name of our plugin, affects the name used for
-      the plugin's mbean -->
-    <plugin-name>${project.artifactId}</plugin-name>
+        the plugin's mbean -->
+    <plugin-name>samplePlugin</plugin-name>
 
     <!-- plugin-domain is currently unused, we just define it to an empty
-      string -->
-    <plugin-domain />
+        string -->
+    <plugin-module>./plugin</plugin-module>
   </properties>
 
   <dependencies>
@@ -112,7 +115,8 @@
                 <!-- we need to strip out the top level path which is
                    our source directory and be sure to change the directory
                    separators to forward slashes -->
-                <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
+                <pathconvert pathsep="," dirsep="/" property="plugin-scripts"
+                  refid="javascript-files">
                   <map from="${basedir}/src/main/webapp/" to="" />
                 </pathconvert>
                 <echo>Files: ${plugin-scripts}</echo>

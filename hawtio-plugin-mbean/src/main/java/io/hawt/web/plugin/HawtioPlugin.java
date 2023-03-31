@@ -17,7 +17,6 @@
 package io.hawt.web.plugin;
 
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -33,10 +32,12 @@ public class HawtioPlugin implements HawtioPluginMBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioPlugin.class);
 
-    private String name;
-    private String context;
-    private String domain;
-    private String[] scripts;
+    private String url;
+    private String scope;
+    private String module;
+    private String remoteEntryFileName;
+    private Boolean bustRemoteEntryCache;
+    private String pluginEntry;
 
     private ObjectName objectName = null;
     private MBeanServer mBeanServer = null;
@@ -56,69 +57,90 @@ public class HawtioPlugin implements HawtioPluginMBean {
 
             if (mBeanServer.isRegistered(objectName)) {
                 // Update of existing plugin
-                LOG.info("Unregistering existing plugin {}", objectName);
+                LOG.info("Unregistering existing plugin: {}", objectName);
                 mBeanServer.unregisterMBean(objectName);
             }
 
-            LOG.debug("Registering plugin {}", objectName);
+            LOG.debug("Registering plugin: {}", objectName);
             mBeanServer.registerMBean(this, objectName);
 
         } catch (Throwable t) {
-            LOG.error("Failed to register plugin: ", t);
+            LOG.error("Failed to register plugin:", t);
         }
     }
 
     public void destroy() {
         try {
             if (mBeanServer != null) {
-                LOG.debug("Unregistering plugin {}", objectName);
+                LOG.debug("Unregistering plugin: {}", objectName);
                 mBeanServer.unregisterMBean(objectName);
             }
         } catch (Throwable t) {
-            LOG.error("Failed to register plugin: ", t);
+            LOG.error("Failed to register plugin:", t);
         }
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public HawtioPlugin url(String url) {
+        this.url = url;
+        return this;
     }
 
-    public String getName() {
-        return this.name;
+    public HawtioPlugin scope(String scope) {
+        this.scope = scope;
+        return this;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public HawtioPlugin module(String module) {
+        this.module = module;
+        return this;
     }
 
-    public String getContext() {
-        return this.context;
+    public HawtioPlugin remoteEntryFileName(String remoteEntryFileName) {
+        this.remoteEntryFileName = remoteEntryFileName;
+        return this;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public HawtioPlugin bustRemoteEntryCache(Boolean bustRemoteEntryCache) {
+        this.bustRemoteEntryCache = bustRemoteEntryCache;
+        return this;
     }
 
-    public String getDomain() {
-        return this.domain;
+    public HawtioPlugin pluginEntry(String pluginEntry) {
+        this.pluginEntry = pluginEntry;
+        return this;
     }
 
-    public void setScripts(String[] scripts) {
-        this.scripts = scripts;
+    @Override
+    public String getUrl() {
+        return this.url;
     }
 
-    public void setScripts(String scripts) {
-        this.scripts = Arrays.stream(scripts.split(","))
-            .map(String::trim)
-            .toArray(String[]::new);
+    @Override
+    public String getScope() {
+        return this.scope;
     }
 
-    public String[] getScripts() {
-        return this.scripts;
+    @Override
+    public String getModule() {
+        return this.module;
+    }
+
+    @Override
+    public String getRemoteEntryFileName() {
+        return this.remoteEntryFileName;
+    }
+
+    @Override
+    public Boolean isBustRemoteEntryCache() {
+        return this.bustRemoteEntryCache;
+    }
+
+    @Override
+    public String getPluginEntry() {
+        return this.pluginEntry;
     }
 
     protected ObjectName getObjectName() throws MalformedObjectNameException {
-        return new ObjectName("hawtio:type=plugin,name=" + getName());
+        return new ObjectName("hawtio:type=plugin,name=" + getScope());
     }
-
 }

@@ -8,16 +8,19 @@ import ReactDOM from 'react-dom/client'
 import { configure } from './config'
 import { reportWebVitals } from './reportWebVitals'
 
-// Bootstrap Hawtio
+// Register builtin plugins
 registerPlugins()
-hawtio.bootstrap()
+
+hawtio
+  // Set up plugin location
+  .addUrl('plugin')
+  // Bootstrap Hawtio
+  .bootstrap()
 
 // Configure the console
 configure()
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-)
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <Hawtio />
