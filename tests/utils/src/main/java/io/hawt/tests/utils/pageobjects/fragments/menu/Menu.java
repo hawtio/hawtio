@@ -8,6 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 import io.hawt.tests.utils.pageobjects.pages.camel.CamelPage;
 import io.hawt.tests.utils.pageobjects.pages.quartz.QuartzPage;
+import io.hawt.tests.utils.pageobjects.pages.runtime.RuntimePage;
 
 /**
  * Represents the left-side menu.
@@ -33,6 +34,17 @@ public class Menu {
         toggleMenuIfCollapsed();
         $(byLinkText("Quartz")).shouldBe(visible).click();
         return page(QuartzPage.class);
+    }
+
+    /**
+     * Click on Runtime option in the left-side menu.
+     *
+     * @return Runtime page
+     */
+    public RuntimePage runtime() {
+        toggleMenuIfCollapsed();
+        $(byLinkText("Runtime")).shouldBe(visible).click();
+        return page(RuntimePage.class);
     }
 
     /**
