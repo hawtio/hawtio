@@ -20,7 +20,7 @@ public class HawtioPluginTest {
         assertThat(plugin.getScope(), is("test"));
         assertThat(plugin.getModule(), is("./plugin"));
         assertThat(plugin.getRemoteEntryFileName(), nullValue());
-        assertThat(plugin.isBustRemoteEntryCache(), nullValue());
+        assertThat(plugin.getBustRemoteEntryCache(), nullValue());
         assertThat(plugin.getPluginEntry(), nullValue());
 
         plugin
@@ -29,7 +29,7 @@ public class HawtioPluginTest {
             .pluginEntry("registerPlugin");
 
         assertThat(plugin.getRemoteEntryFileName(), is("remoteEntry.js"));
-        assertThat(plugin.isBustRemoteEntryCache(), is(true));
+        assertThat(plugin.getBustRemoteEntryCache(), is(true));
         assertThat(plugin.getPluginEntry(), is("registerPlugin"));
     }
 }

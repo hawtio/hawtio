@@ -1,8 +1,10 @@
 package io.hawt.web.plugin;
 
+import java.beans.Introspector;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,6 +46,11 @@ public class PluginServlet extends HttpServlet {
         "BustRemoteEntryCache",
         "PluginEntry"
     };
+    private static final String[] MANDATORY_PLUGIN_ATTRIBUTES = {
+        "Url",
+        "Scope",
+        "Module"
+    };
 
     private MBeanServer mBeanServer;
     private ObjectName pluginQuery;
@@ -81,15 +88,27 @@ public class PluginServlet extends HttpServlet {
                     LOG.warn("Security issue accessing mbean: " + plugin.getObjectName(), e);
                 }
 
-                if (attributeList == null || PLUGIN_ATTRIBUTES.length != attributeList.size()) {
+                if (attributeList == null || !isPluginMBean(attributeList)) {
                     return null;
                 }
                 return attributeList.asList().stream()
-                    .collect(Collectors.toMap(Attribute::getName, Attribute::getValue));
+                    .filter(a -> Objects.nonNull(a.getValue()))
+                    .collect(Collectors.toMap(
+                        a -> Introspector.decapitalize(a.getName()),
+                        Attribute::getValue));
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
         ServletHelpers.writeObject(converters, options, out, answer);
     }
 
+    private boolean isPluginMBean(AttributeList attributeList) {
+        if (attributeList.size() < MANDATORY_PLUGIN_ATTRIBUTES.length) {
+            return false;
+        }
+
+        return attributeList.asList().stream()
+            .map(Attribute::getName).collect(Collectors.toSet())
+            .containsAll(Arrays.asList(MANDATORY_PLUGIN_ATTRIBUTES));
+    }
 }

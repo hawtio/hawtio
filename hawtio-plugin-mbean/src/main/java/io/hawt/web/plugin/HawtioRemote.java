@@ -18,9 +18,9 @@ package io.hawt.web.plugin;
 
 /**
  * Hawtio v3 remote plugin interface.
- *
+ * <p>
  * Hawtio v3 plugin system is based on <a href="https://module-federation.github.io/">Webpack Module Federation</a>.
- *
+ * <p>
  * This interface is the Java representation of
  * <a href="https://github.com/hawtio/hawtio-next/blob/v0.2.0-dev.5/packages/hawtio/src/core/core.ts#L37-L39">HawtioRemote</a>
  * interface in hawtio-next project, which is compatible with
@@ -37,7 +37,7 @@ public interface HawtioRemote {
 
     String getRemoteEntryFileName();
 
-    Boolean isBustRemoteEntryCache();
+    Boolean getBustRemoteEntryCache();
 
     String getPluginEntry();
 }

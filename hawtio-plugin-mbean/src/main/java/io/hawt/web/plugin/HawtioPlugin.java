@@ -131,7 +131,7 @@ public class HawtioPlugin implements HawtioPluginMBean {
     }
 
     @Override
-    public Boolean isBustRemoteEntryCache() {
+    public Boolean getBustRemoteEntryCache() {
         return this.bustRemoteEntryCache;
     }
 
