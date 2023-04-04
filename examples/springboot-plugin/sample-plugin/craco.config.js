@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 const { dependencies } = require('./package.json')
 
