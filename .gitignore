@@ -23,3 +23,16 @@ node/
 bower_components/
 .vscode
 .attach_pid*
+
+# dependencies
+node_modules
+.pnp
+
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
