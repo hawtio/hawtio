@@ -16,7 +16,7 @@
   <description>Hawtio :: Sample Spring Boot application with custom Hawtio plugin</description>
 
   <properties>
-    <plugin.path>sample-plugin</plugin.path>
+    <plugin.path>../sample-plugin</plugin.path>
   </properties>
 
   <dependencyManagement>
