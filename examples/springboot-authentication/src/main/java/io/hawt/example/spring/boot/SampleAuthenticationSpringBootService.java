@@ -3,7 +3,6 @@ package io.hawt.example.spring.boot;
 import java.net.URL;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.HawtioPlugin;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,27 +22,12 @@ public class SampleAuthenticationSpringBootService {
     }
 
     /**
-     * Loading an example plugin.
-     */
-    @Bean
-    public HawtioPlugin samplePlugin() {
-        // Need to point to the same port as Hawtio management context, as otherwise
-        // it would violate Content Security Policy HTTP header policy and thus not
-        // load the script.
-        return new HawtioPlugin(
-            "http://localhost:10001",
-            "samplePlugin",
-            "./plugin");
-    }
-
-    /**
      * Configure facade to use authentication.
      *
      * @return config
-     * @throws Exception if an error occurs
      */
     @Bean(initMethod = "init")
-    public ConfigFacade configFacade() throws Exception {
+    public ConfigFacade configFacade() {
 
         final URL loginResource = this.getClass().getClassLoader().getResource("login.conf");
         if (loginResource != null) {

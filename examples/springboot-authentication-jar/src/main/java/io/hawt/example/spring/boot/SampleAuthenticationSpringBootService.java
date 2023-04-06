@@ -3,7 +3,6 @@ package io.hawt.example.spring.boot;
 import java.net.URL;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.HawtioPlugin;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,20 +19,6 @@ public class SampleAuthenticationSpringBootService {
     public static void main(String[] args) {
         System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleAuthenticationSpringBootService.class, args);
-    }
-
-    /**
-     * Loading an example plugin.
-     */
-    @Bean
-    public HawtioPlugin samplePlugin() {
-        // Need to point to the same port as Hawtio management context, as otherwise
-        // it would violate Content Security Policy HTTP header policy and thus not
-        // load the script.
-        return new HawtioPlugin(
-            "http://localhost:10001",
-            "samplePlugin",
-            "./plugin");
     }
 
     /**
