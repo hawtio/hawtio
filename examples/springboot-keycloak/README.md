@@ -9,7 +9,7 @@ Run with:
     mvn spring-boot:run
 
 Hawtio is exposed at the [Actuator](https://docs.spring.io/spring-boot/docs/latest/reference/html/production-ready-endpoints.html) management port configured using
-`management.server.port` in `appplication.properties`. Browse Hawtio via the following URL: http://localhost:10001/actuator/hawtio/index.html
+`management.server.port` in `application.properties`. Browse Hawtio via the following URL: http://localhost:10001/actuator/hawtio/index.html
 
 The actual application is running on port 10000 (`server.port` in `application.properties`).
 
