@@ -2,7 +2,8 @@ package io.hawt.tests.utils.pageobjects.pages;
 
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
-import static com.codeborne.selenide.Condition.not;
+import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
@@ -82,17 +83,19 @@ public class HawtioPage {
 
     public <C> C openTab(String tab, Class<C> c) {
         final SelenideElement tabElement = $(byXpath("//a[text()='" + tab + "']"));
+        final SelenideElement moreDropDownMenuElement = $(byXpath("//a[@id='moreDropdown' and normalize-space(text())='More']"));
 
         // if the tab is active, return the page
         if (tabElement.$(byXpath("parent::li")).has(cssClass("active"))) {
             return page(c);
         }
 
-        // if tabs are hidden, expand More dropdown menu
-        if (tabElement.is(not(visible))) {
-            $(byXpath("//a[@id='moreDropdown']")).shouldBe(visible).click();
+        // if More tab is displayed, expand it
+        if (moreDropDownMenuElement.isDisplayed()) {
+            moreDropDownMenuElement.click();
         }
-        tabElement.shouldBe(visible).click();
+
+        tabElement.should(exist).shouldNotBe(hidden).click();
         return page(c);
     }
 }

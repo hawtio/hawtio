@@ -1,9 +1,17 @@
 package io.hawt.tests.utils.pageobjects.pages.quartz;
 
-import io.hawt.tests.utils.pageobjects.fragments.quartz.QuartzTree;
-import io.hawt.tests.utils.pageobjects.pages.HawtioPage;
+import static com.codeborne.selenide.Condition.cssClass;
+import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.hidden;
+import static com.codeborne.selenide.Selectors.byXpath;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.page;
 
-public class QuartzPage extends HawtioPage {
+import com.codeborne.selenide.SelenideElement;
+
+import io.hawt.tests.utils.pageobjects.fragments.quartz.QuartzTree;
+
+public class QuartzPage {
     private final QuartzTree quartzTree;
 
     public QuartzPage() {
@@ -12,5 +20,17 @@ public class QuartzPage extends HawtioPage {
 
     public QuartzTree quartzTree() {
         return quartzTree;
+    }
+
+    public <C> C openTab(String tab, Class<C> c) {
+        final SelenideElement tabElement = $(byXpath("//a[text()='" + tab + "']"));
+
+        // if the tab is active, return the page
+        if (tabElement.$(byXpath("parent::li")).has(cssClass("active"))) {
+            return page(c);
+        }
+
+        tabElement.should(exist).shouldNotBe(hidden).click();
+        return page(c);
     }
 }
