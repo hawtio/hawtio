@@ -95,6 +95,11 @@ public class HawtioPage {
             moreDropDownMenuElement.click();
         }
 
+        // if the tabs are not displayed, refresh the page
+        if (!tabElement.isDisplayed()) {
+            Selenide.refresh();
+        }
+
         tabElement.should(exist).shouldNotBe(hidden).click();
         return page(c);
     }

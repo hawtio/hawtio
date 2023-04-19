@@ -30,3 +30,8 @@ jobs:
       - name: Build & E2E test
         run: |
           mvn --batch-mode install -Druntime=springboot -Dtest=RunSpringBootAllTest
+      - name: Archive failed test reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          path: tests/springboot/build/reports/tests/*.png
