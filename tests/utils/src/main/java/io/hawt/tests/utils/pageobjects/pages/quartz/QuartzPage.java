@@ -1,12 +1,14 @@
 package io.hawt.tests.utils.pageobjects.pages.quartz;
 
 import static com.codeborne.selenide.Condition.cssClass;
+import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
 import io.hawt.tests.utils.pageobjects.fragments.quartz.QuartzTree;
@@ -30,7 +32,12 @@ public class QuartzPage {
             return page(c);
         }
 
-        tabElement.should(exist).shouldNotBe(hidden).click();
+        // if the tabs are not displayed, refresh the page
+        if (!tabElement.isDisplayed()) {
+            Selenide.refresh();
+        }
+
+        tabElement.should(exist).shouldBe(enabled).click();
         return page(c);
     }
 }
