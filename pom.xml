@@ -248,6 +248,14 @@
 
   <profiles>
     <profile>
+      <id>fastinstall</id>
+      <properties>
+        <skipTests>true</skipTests>
+        <skip.yarn>true</skip.yarn>
+      </properties>
+    </profile>
+
+    <profile>
       <id>release</id>
       <properties>
       </properties>
