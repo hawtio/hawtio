@@ -1,0 +1,7 @@
+/* You can customise the styles of your application here. */
+
+/* Change the background image for Login page and About modal */
+.pf-c-login, .pf-c-about-modal-box__hero {
+  background-image: url("/img/background.svg") !important;
+  background-size: cover;
+}

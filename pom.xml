@@ -75,6 +75,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jolokia-version>1.7.2</jolokia-version>
     <junit-version>4.13.2</junit-version>
+    <junit5-version>5.9.3</junit5-version>
     <karaf-version>4.3.3</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
     <keycloak-version>11.0.2</keycloak-version>
@@ -123,6 +124,7 @@
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
     <module>plugins/hawtio-log</module>
+    <module>tests</module>
   </modules>
 
   <build>
@@ -324,6 +326,17 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>hawtio-tests</id>
+      <activation>
+        <property>
+          <name>hawtio-e2e-tests</name>
+        </property>
+      </activation>
+      <modules>
+        <module>tests</module>
+      </modules>
     </profile>
   </profiles>
 
