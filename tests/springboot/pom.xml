@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>hawtio-tests</artifactId>
+    <groupId>io.hawt.tests</groupId>
+    <version>3.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>hawtio-tests-springboot</artifactId>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Spring Boot 2.x E2E tests</description>
+  <packaging>jar</packaging>
+
+  <properties>
+    <hawtio.url>/actuator/hawtio</hawtio.url>
+    <hawtio.managementPort>10001</hawtio.managementPort>
+    <plugin.path>../sample-plugin</plugin.path>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-bom</artifactId>
+        <version>${camel-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Spring Boot -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-undertow</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>io.undertow</groupId>
+          <artifactId>undertow-websockets-jsr</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin.external.google</groupId>
+          <artifactId>android-json</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-engine</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- jetty -->
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-jaas</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-http</artifactId>
+    </dependency>
+
+    <!-- hawtio -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!--
+      Include hawtio-log-logback if you want to use Logs plugin with Spring Boot.
+      Currently only Logback is supported.
+    -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-log-logback</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Camel -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-stream-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-quartz-starter</artifactId>
+    </dependency>
+
+    <!--
+      This dependency is mandatory for enabling Camel management
+      via JMX / Hawtio.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-management-starter</artifactId>
+    </dependency>
+
+    <!--
+      To enable Camel plugin debugging feature, add this dependency.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-debug-starter</artifactId>
+    </dependency>
+
+    <!-- Hawtio Test Utils -->
+    <dependency>
+      <groupId>io.hawt.tests</groupId>
+      <artifactId>hawtio-tests-utils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- Add the plugin build to Spring Boot's static resources -->
+      <resource>
+        <directory>${plugin.path}/build</directory>
+        <targetPath>static</targetPath>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot-version}</version>
+        <configuration>
+          <mainClass>io.hawt.tests.spring.boot.SpringBootService</mainClass>
+          <jvmArguments>
+            -javaagent:./target/dependency/jmx_prometheus_javaagent.jar=10002:./jmx-exporter.yml
+          </jvmArguments>
+        </configuration>
+        <!--
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+        -->
+      </plugin>
+
+      <!-- Build the plugin TypeScript subproject from Maven -->
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin-version}</version>
+        <configuration>
+          <workingDirectory>${plugin.path}</workingDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>install node and yarn</id>
+            <goals>
+              <goal>install-node-and-yarn</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>v16.15.0</nodeVersion>
+              <yarnVersion>v1.22.19</yarnVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn install</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn build</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <arguments>build</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Clean up the plugin's 'build/' and 'node_modules/' directories as well -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/${plugin.path}/build</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/${plugin.path}/node_modules</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+      <!-- downloads the Prometheus JMX exporter java agent -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>io.prometheus.jmx</groupId>
+              <artifactId>jmx_prometheus_javaagent</artifactId>
+              <version>0.3.1</version>
+              <type>jar</type>
+              <destFileName>jmx_prometheus_javaagent.jar</destFileName>
+            </artifactItem>
+          </artifactItems>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin-version}</version>
+        <configuration>
+          <useSystemClassLoader>true</useSystemClassLoader>
+          <useManifestOnlyJar>true</useManifestOnlyJar>
+          <failIfNoTests>false</failIfNoTests>
+          <systemPropertyVariables>
+            <hawtio.url>${hawtio.url}</hawtio.url>
+            <hawtio.managementPort>${hawtio.managementPort}</hawtio.managementPort>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
