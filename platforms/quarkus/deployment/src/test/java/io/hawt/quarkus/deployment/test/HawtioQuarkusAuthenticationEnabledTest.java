@@ -1,15 +1,14 @@
 package io.hawt.quarkus.deployment.test;
 
-import io.quarkus.bootstrap.model.AppArtifact;
-import io.quarkus.test.QuarkusUnitTest;
-import io.restassured.RestAssured;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
+import io.quarkus.bootstrap.model.AppArtifact;
+import io.quarkus.test.QuarkusUnitTest;
+import io.restassured.RestAssured;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -17,26 +16,27 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+
 import static org.hamcrest.Matchers.containsString;
 
 public class HawtioQuarkusAuthenticationEnabledTest {
 
     @RegisterExtension
     static final QuarkusUnitTest CONFIG = new QuarkusUnitTest()
-        .setForcedDependencies(Arrays.asList(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "2.11-SNAPSHOT")))
+        .setForcedDependencies(List.of(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "3.0-SNAPSHOT")))
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(applicationProperties(), "application.properties"));
 
     @Test
-    public void testHawtioAccessDenied() throws Exception {
+    public void testHawtioAccessDenied() {
         RestAssured.get("/hawtio")
             .then()
             .body(containsString("<hawtio-login></hawtio-login>"));
     }
 
     @Test
-    public void testHawtioLogin() throws Exception {
+    public void testHawtioLogin() {
         RestAssured.given()
             .body("{\"username\": \"hawtio\", \"password\": \"s3cr3t\"}")
             .post("/hawtio/auth/login")
@@ -46,7 +46,7 @@ public class HawtioQuarkusAuthenticationEnabledTest {
     }
 
     @Test
-    public void testHawtioLoginInvalidCredentials() throws Exception {
+    public void testHawtioLoginInvalidCredentials() {
         RestAssured.given()
             .body("{\"username\": \"foo\", \"password\": \"bar\"}")
             .post("/hawtio/auth/login")
@@ -55,7 +55,7 @@ public class HawtioQuarkusAuthenticationEnabledTest {
     }
 
     @Test
-    public void testHawtioLoginInvalidRole() throws Exception {
+    public void testHawtioLoginInvalidRole() {
         RestAssured.given()
             .body("{\"username\": \"other\", \"password\": \"t0s3cr3t\"}")
             .post("/hawtio/auth/login")
@@ -63,7 +63,7 @@ public class HawtioQuarkusAuthenticationEnabledTest {
             .statusCode(403);
     }
 
-    public static final Asset applicationProperties() {
+    public static Asset applicationProperties() {
         Writer writer = new StringWriter();
 
         Properties props = new Properties();

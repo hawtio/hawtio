@@ -12,7 +12,7 @@
   <artifactId>hawtio-quarkus-parent</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Quarkus Extension Parent</description>
+  <description>Hawtio :: Quarkus Extension Parent</description>
 
   <modules>
     <module>deployment</module>

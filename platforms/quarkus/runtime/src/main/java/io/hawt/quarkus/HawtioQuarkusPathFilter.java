@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Forwards all Angular route URLs to index.html.
- *
+ * <p>
  * Ignores jolokia paths and other Hawtio resources.
  */
 public class HawtioQuarkusPathFilter implements Filter  {
@@ -20,7 +20,7 @@ public class HawtioQuarkusPathFilter implements Filter  {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getRequestURI().substring(HawtioConfig.DEFAULT_CONTEXT_PATH.length());
-        if (path.matches("^/(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|\\.).)*")) {
+        if (path.matches("^/(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|static|\\.).)*")) {
             chain.doFilter(request, response);
             httpRequest.getRequestDispatcher(HawtioConfig.DEFAULT_CONTEXT_PATH + "/index.html").forward(request, response);
         } else {

@@ -57,6 +57,16 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
+        <artifactId>hawtio-quarkus</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-quarkus-deployment</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
         <artifactId>hawtio-springboot</artifactId>
         <version>${project.version}</version>
       </dependency>
