@@ -1,10 +1,17 @@
 package io.hawt.quarkus.deployment;
 
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import io.hawt.quarkus.HawtioConfig;
+import io.hawt.quarkus.HawtioProducers;
 import io.hawt.quarkus.HawtioQuakusLoginServlet;
 import io.hawt.quarkus.HawtioQuakusLogoutServlet;
 import io.hawt.quarkus.HawtioQuarkusLoginRedirectFilter;
-import io.hawt.quarkus.HawtioProducers;
 import io.hawt.quarkus.HawtioQuarkusPathFilter;
 import io.hawt.quarkus.HawtioRecorder;
 import io.hawt.web.auth.LoginRedirectFilter;
@@ -26,16 +33,6 @@ import io.quarkus.undertow.deployment.ListenerBuildItem;
 import io.quarkus.undertow.deployment.MPConfigPropertyResolver;
 import io.quarkus.undertow.deployment.ServletBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
-
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
 import org.jboss.metadata.parser.servlet.WebMetaDataParser;
 import org.jboss.metadata.parser.util.MetaDataElementParser;
 import org.jboss.metadata.property.PropertyReplacers;
@@ -46,24 +43,25 @@ import org.jboss.metadata.web.spec.ListenerMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+
 import static io.hawt.quarkus.HawtioConfig.DEFAULT_CONTEXT_PATH;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 
 public class HawtioProcessor {
 
-    private static final List<String> DISALLOWED_LISTENERS = Arrays.asList(
+    private static final List<String> DISALLOWED_LISTENERS = List.of(
         "io.hawt.blueprint.HawtioBlueprintContextListener"
     );
 
-    private static final List<String> DISALLOWED_SERVLETS = Arrays.asList(
+    private static final List<String> DISALLOWED_SERVLETS = List.of(
         "io.hawt.web.plugin.PluginServlet"
     );
 
-    private static final Map<String, String> WEB_XML_OVERRIDES = new HashMap<String, String>() {{
-        put(LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName());
-        put(LogoutServlet.class.getName(), HawtioQuakusLogoutServlet.class.getName());
-        put(LoginRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName());
-    }};
+    private static final Map<String, String> WEB_XML_OVERRIDES = Map.of(
+        LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName(),
+        LogoutServlet.class.getName(), HawtioQuakusLogoutServlet.class.getName(),
+        LoginRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName()
+    );
 
     private static final String FEATURE = "hawtio";
 
@@ -84,7 +82,7 @@ public class HawtioProcessor {
         MetaDataElementParser.DTDInfo dtdInfo = new MetaDataElementParser.DTDInfo();
         inputFactory.setXMLResolver(dtdInfo);
 
-        // Parse and process the Hawtio web.xml to avoid having to manually register all of the servlets, filters & mappings
+        // Parse and process the Hawtio web.xml to avoid having to manually register all the servlets, filters & mappings
         try (InputStream in = HawtioProcessor.class.getResourceAsStream("/META-INF/web.xml")) {
             final XMLStreamReader xmlReader = inputFactory.createXMLStreamReader(in);
             WebMetaData result = WebMetaDataParser.parse(xmlReader, dtdInfo, PropertyReplacers.resolvingReplacer(new MPConfigPropertyResolver()));
@@ -201,7 +199,10 @@ public class HawtioProcessor {
             if (!capabilities.isPresent(Capability.JACKSON)) {
                 throw new RuntimeException("Hawtio plugin support requires jackson. Please add a dependency for quarkus-jackson to your application");
             }
-            return new RouteBuildItem(HawtioConfig.DEFAULT_PLUGIN_CONTEXT_PATH, recorder.pluginHandler(config.pluginConfigs));
+            return RouteBuildItem.builder()
+                .route(HawtioConfig.DEFAULT_PLUGIN_CONTEXT_PATH)
+                .handler(recorder.pluginHandler(config.pluginConfigs))
+                .build();
         }
         return null;
     }

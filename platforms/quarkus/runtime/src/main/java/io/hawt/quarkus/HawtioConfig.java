@@ -22,13 +22,13 @@ public class HawtioConfig {
     public Boolean authenticationEnabled;
 
     /**
-     * The user role required to login to the console
+     * The user role required to log in to the console
      */
     @ConfigItem
     public Optional<String> role;
 
     /**
-     * Comma separated list of user roles required to login to the console
+     * Comma separated list of user roles required to log in to the console
      */
     @ConfigItem
     public Optional<List<String>> roles;
@@ -41,7 +41,7 @@ public class HawtioConfig {
 
     /**
      * Comma separated list for target hosts that the hawtio-jmx Connect plugin can connect to via ProxyServlet.
-     *
+     * <p>
      * All hosts that are not listed in this allowlist are denied to connect for security reasons. This option can be set to * to restore the old behavior and
      * allow all hosts. Prefixing an element of the list with "r:" allows you to define a regexp (example: localhost,r:myservers[0-9]+.mydomain.com)
      */
