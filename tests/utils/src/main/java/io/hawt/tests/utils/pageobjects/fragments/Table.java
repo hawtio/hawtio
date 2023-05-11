@@ -60,7 +60,7 @@ public class Table {
      * @param value to be checked
      */
     public void checkKeyAndValuePairs(String key, String value) {
-        $$("table tbody tr").should(containExactTextsCaseSensitive(key + " " + value));
+        $$("table tbody tr td").should(containExactTextsCaseSensitive(key, value));
     }
 
     /**

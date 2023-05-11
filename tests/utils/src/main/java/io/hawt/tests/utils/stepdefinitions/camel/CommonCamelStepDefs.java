@@ -2,7 +2,6 @@ package io.hawt.tests.utils.stepdefinitions.camel;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.hawt.tests.utils.pageobjects.fragments.Table;
 import io.hawt.tests.utils.pageobjects.fragments.camel.dialog.CamelAttributeDetailDialog;
 import io.hawt.tests.utils.pageobjects.fragments.camel.tabs.common.CamelAttributes;
 import io.hawt.tests.utils.pageobjects.fragments.camel.tabs.common.CamelOperations;
@@ -13,21 +12,10 @@ public class CommonCamelStepDefs {
     private final CamelAttributes camelAttributes = new CamelAttributes();
     private final CamelAttributeDetailDialog camelAttributeDetailDialog = new CamelAttributeDetailDialog();
     private final CamelOperations camelOperations = new CamelOperations();
-    private final Table table = new Table();
 
     @When("^User clicks on Camel \"([^\"]*)\" tab$")
     public void userClicksOnCamelTab(String tab) {
         camelPage.openTab(tab);
-    }
-
-    @Then("^Camel table \"([^\"]*)\" column is not empty$")
-    public void camelTableColumnIsPresented(String column) {
-        table.checkColumnIsNotEmpty(column);
-    }
-
-    @Then("^Camel table has \"([^\"]*)\" key and \"([^\"]*)\" value$")
-    public void camelTableHasKeyAndValue(String key, String value) {
-        table.checkKeyAndValuePairs(key, value);
     }
 
     @When("^User opens Attribute detail dialog with the name \"([^\"]*)\"$")
