@@ -7,11 +7,11 @@ import io.hawt.tests.utils.pageobjects.pages.HawtioPage;
 
 public class PanelMenuStepDefs {
     private final static HawtioPage hawtioPage = new HawtioPage();
-    private AboutModalWindow aboutModalWindow;
+    private final AboutModalWindow aboutModalWindow = new AboutModalWindow();
 
-    @When("^User clicks on About option in Question mark drop-down menu$")
-    public void userClicksOnAboutOptionInQuestionMarkDropDownMeu() {
-        aboutModalWindow = hawtioPage.panel().about();
+    @When("^User clicks on \"([^\"]*)\" option in Question mark drop-down menu$")
+    public void userClicksOnAboutOptionInQuestionMarkDropDownMeu(String option) {
+        hawtioPage.panel().openMenuItemUnderQuestionMarkDropDownMenu(option);
     }
 
     @Then("^About modal window is closed$")
