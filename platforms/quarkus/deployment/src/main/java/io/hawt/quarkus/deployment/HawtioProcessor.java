@@ -1,8 +1,10 @@
 package io.hawt.quarkus.deployment;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -49,11 +51,12 @@ import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PA
 
 public class HawtioProcessor {
 
-    private static final List<String> DISALLOWED_LISTENERS = List.of(
-        "io.hawt.blueprint.HawtioBlueprintContextListener"
-    );
+    /**
+     * For now, there are no explicitly disallowed listeners.
+     */
+    private static final Set<String> DISALLOWED_LISTENERS = Collections.emptySet();
 
-    private static final List<String> DISALLOWED_SERVLETS = List.of(
+    private static final Set<String> DISALLOWED_SERVLETS = Set.of(
         "io.hawt.web.plugin.PluginServlet"
     );
 
@@ -86,76 +89,87 @@ public class HawtioProcessor {
         try (InputStream in = HawtioProcessor.class.getResourceAsStream("/META-INF/web.xml")) {
             final XMLStreamReader xmlReader = inputFactory.createXMLStreamReader(in);
             WebMetaData result = WebMetaDataParser.parse(xmlReader, dtdInfo, PropertyReplacers.resolvingReplacer(new MPConfigPropertyResolver()));
+            registerServlets(result, servlet);
+            registerFilters(result, filter);
+            registerListeners(result, listener);
+        }
+    }
 
-            // Hawtio servlets
-            if (result.getServlets() != null) {
-                for (ServletMetaData servletMetaData : result.getServlets()) {
-                    if (DISALLOWED_SERVLETS.contains(servletMetaData.getServletClass())) {
-                        continue;
-                    }
+    private void registerServlets(WebMetaData webMetaData, BuildProducer<ServletBuildItem> servlet) {
+        if (webMetaData.getServlets() == null) {
+            return;
+        }
 
-                    ServletBuildItem.Builder builder = ServletBuildItem.builder(servletMetaData.getServletName(), getClassName(servletMetaData.getServletClass()));
-                    builder.setLoadOnStartup(servletMetaData.getLoadOnStartupDefault());
-
-                    // Servlet mappings
-                    ServletMappingMetaData servletMappings = getServletMappings(result, servletMetaData.getName());
-                    if (servletMappings != null) {
-                        servletMappings.getUrlPatterns()
-                            .stream()
-                            .map(s -> DEFAULT_CONTEXT_PATH + s)
-                            .forEach(builder::addMapping);
-                    }
-
-                    // Servlet init-params
-                    if (servletMetaData.getInitParam() != null) {
-                        servletMetaData.getInitParam()
-                            .forEach(param -> builder.addInitParam(param.getParamName(), param.getParamValue()));
-                    }
-
-                    servlet.produce(builder.build());
-                }
+        for (ServletMetaData servletMetaData : webMetaData.getServlets()) {
+            if (DISALLOWED_SERVLETS.contains(servletMetaData.getServletClass())) {
+                continue;
             }
 
-            // Quarkus path filter
-            FilterBuildItem pathHandler = FilterBuildItem.builder("PathFilter", HawtioQuarkusPathFilter.class.getName())
-                .addFilterUrlMapping(DEFAULT_CONTEXT_PATH + "/*", javax.servlet.DispatcherType.REQUEST)
-                .build();
-            filter.produce(pathHandler);
+            ServletBuildItem.Builder builder = ServletBuildItem.builder(servletMetaData.getServletName(), getClassName(servletMetaData.getServletClass()))
+                .setLoadOnStartup(servletMetaData.getLoadOnStartupDefault());
 
-            // Hawtio filters
-            if (result.getFilters() != null) {
-                for (FilterMetaData filterMetaData : result.getFilters()) {
-                    FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterMetaData.getFilterClass()));
-                    if (filterMetaData.getFilterClass().equals(BaseTagHrefFilter.class.getName())) {
-                        builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
-                    }
+            // Servlet mappings
+            getServletMappings(webMetaData, servletMetaData.getName()).ifPresent(servletMappings ->
+                servletMappings.getUrlPatterns()
+                    .stream()
+                    .map(s -> DEFAULT_CONTEXT_PATH + s)
+                    .forEach(builder::addMapping));
 
-                    // Filter mappings
-                    FilterMappingMetaData filterMappings = getFilterMappings(result, filterMetaData.getName());
-                    if (filterMappings != null) {
-                        for (String urlPattern : filterMappings.getUrlPatterns()) {
-                            if (filterMappings.getDispatchers() != null) {
-                                for (DispatcherType dispatcher : filterMappings.getDispatchers()) {
-                                    builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.valueOf(dispatcher.name()));
-                                }
-                            } else {
-                                builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.REQUEST);
-                            }
+            // Servlet init-params
+            if (servletMetaData.getInitParam() != null) {
+                servletMetaData.getInitParam()
+                    .forEach(param -> builder.addInitParam(param.getParamName(), param.getParamValue()));
+            }
+
+            servlet.produce(builder.build());
+        }
+    }
+
+    private void registerFilters(WebMetaData webMetaData, BuildProducer<FilterBuildItem> filter) {
+        // Quarkus path filter
+        FilterBuildItem pathHandler = FilterBuildItem.builder("PathFilter", HawtioQuarkusPathFilter.class.getName())
+            .addFilterUrlMapping(DEFAULT_CONTEXT_PATH + "/*", javax.servlet.DispatcherType.REQUEST)
+            .build();
+        filter.produce(pathHandler);
+
+        // Hawtio filters
+        if (webMetaData.getFilters() == null) {
+            return;
+        }
+
+        for (FilterMetaData filterMetaData : webMetaData.getFilters()) {
+            FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterMetaData.getFilterClass()));
+            if (filterMetaData.getFilterClass().equals(BaseTagHrefFilter.class.getName())) {
+                builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
+            }
+
+            // Filter mappings
+            getFilterMappings(webMetaData, filterMetaData.getName()).ifPresent(filterMappings -> {
+                for (String urlPattern : filterMappings.getUrlPatterns()) {
+                    if (filterMappings.getDispatchers() != null) {
+                        for (DispatcherType dispatcher : filterMappings.getDispatchers()) {
+                            builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.valueOf(dispatcher.name()));
                         }
-                    }
-
-                    filter.produce(builder.build());
-                }
-            }
-
-            // Configure Hawtio listeners
-            if (result.getListeners() != null) {
-                for (ListenerMetaData listenerMetaData : result.getListeners()) {
-                    if (!DISALLOWED_LISTENERS.contains(listenerMetaData.getListenerClass())) {
-                        listener.produce(new ListenerBuildItem(listenerMetaData.getListenerClass()));
+                    } else {
+                        builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.REQUEST);
                     }
                 }
+            });
+
+            filter.produce(builder.build());
+        }
+    }
+
+    private void registerListeners(WebMetaData webMetaData, BuildProducer<ListenerBuildItem> listener) {
+        if (webMetaData.getListeners() == null) {
+            return;
+        }
+
+        for (ListenerMetaData listenerMetaData : webMetaData.getListeners()) {
+            if (DISALLOWED_LISTENERS.contains(listenerMetaData.getListenerClass())) {
+                continue;
             }
+            listener.produce(new ListenerBuildItem(listenerMetaData.getListenerClass()));
         }
     }
 
@@ -219,19 +233,17 @@ public class HawtioProcessor {
         return className;
     }
 
-    private ServletMappingMetaData getServletMappings(WebMetaData metaData, String servletName) {
+    private Optional<ServletMappingMetaData> getServletMappings(WebMetaData metaData, String servletName) {
         return metaData.getServletMappings()
             .stream()
             .filter(servletMappingMetaData -> servletMappingMetaData.getServletName().equals(servletName))
-            .findFirst()
-            .orElse(null);
+            .findFirst();
     }
 
-    private FilterMappingMetaData getFilterMappings(WebMetaData metaData, String filterName) {
+    private Optional<FilterMappingMetaData> getFilterMappings(WebMetaData metaData, String filterName) {
         return metaData.getFilterMappings()
             .stream()
             .filter(filterMappingMetaData -> filterMappingMetaData.getFilterName().equals(filterName))
-            .findFirst()
-            .orElse(null);
+            .findFirst();
     }
 }
