@@ -126,38 +126,38 @@ public class HawtioProcessor {
     }
 
     private void registerFilters(WebMetaData webMetaData, BuildProducer<FilterBuildItem> filter) {
+        // Hawtio filters
+        if (webMetaData.getFilters() != null) {
+            for (FilterMetaData filterMetaData : webMetaData.getFilters()) {
+                FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterMetaData.getFilterClass()));
+                if (filterMetaData.getFilterClass().equals(BaseTagHrefFilter.class.getName())) {
+                    builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
+                }
+
+                // Filter mappings
+                getFilterMappings(webMetaData, filterMetaData.getName()).ifPresent(filterMappings -> {
+                    for (String urlPattern : filterMappings.getUrlPatterns()) {
+                        if (filterMappings.getDispatchers() != null) {
+                            for (DispatcherType dispatcher : filterMappings.getDispatchers()) {
+                                builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.valueOf(dispatcher.name()));
+                            }
+                        } else {
+                            builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.REQUEST);
+                        }
+                    }
+                });
+
+                filter.produce(builder.build());
+            }
+        }
+
         // Quarkus path filter
+        // This filter must be placed at the end of filter chain
         FilterBuildItem pathHandler = FilterBuildItem.builder("PathFilter", HawtioQuarkusPathFilter.class.getName())
             .addFilterUrlMapping(DEFAULT_CONTEXT_PATH + "/*", javax.servlet.DispatcherType.REQUEST)
             .build();
         filter.produce(pathHandler);
 
-        // Hawtio filters
-        if (webMetaData.getFilters() == null) {
-            return;
-        }
-
-        for (FilterMetaData filterMetaData : webMetaData.getFilters()) {
-            FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterMetaData.getFilterClass()));
-            if (filterMetaData.getFilterClass().equals(BaseTagHrefFilter.class.getName())) {
-                builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
-            }
-
-            // Filter mappings
-            getFilterMappings(webMetaData, filterMetaData.getName()).ifPresent(filterMappings -> {
-                for (String urlPattern : filterMappings.getUrlPatterns()) {
-                    if (filterMappings.getDispatchers() != null) {
-                        for (DispatcherType dispatcher : filterMappings.getDispatchers()) {
-                            builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.valueOf(dispatcher.name()));
-                        }
-                    } else {
-                        builder.addFilterUrlMapping(DEFAULT_CONTEXT_PATH + urlPattern, javax.servlet.DispatcherType.REQUEST);
-                    }
-                }
-            });
-
-            filter.produce(builder.build());
-        }
     }
 
     private void registerListeners(WebMetaData webMetaData, BuildProducer<ListenerBuildItem> listener) {
