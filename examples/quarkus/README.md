@@ -13,7 +13,7 @@ mvn compile quarkus:dev
 Or build the project and execute the runnable JAR:
 
 ```console
-mvn package && java -jar target/hawtio-example-quarkus-3.0-SNAPSHOT-runner.jar
+mvn package && java -jar target/quarkus-app/quarkus-run.jar
 ```
 
 Hawtio is available at <http://localhost:8080/hawtio>.
