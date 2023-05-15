@@ -9,7 +9,7 @@ import java.util.Map;
 @Recorder
 public class HawtioRecorder {
 
-    public Handler<RoutingContext> pluginHandler(Map<String, HawtioConfig.HawtioPluginConfig> pluginConfigs) {
+    public Handler<RoutingContext> pluginHandler(Map<String, HawtioConfig.PluginConfig> pluginConfigs) {
         return new HawtioPluginHandler(pluginConfigs);
     }
 }

@@ -47,18 +47,29 @@ import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 
 import static io.hawt.quarkus.HawtioConfig.DEFAULT_CONTEXT_PATH;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLE;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
+import static io.hawt.web.proxy.ProxyServlet.HAWTIO_DISABLE_PROXY;
+import static io.hawt.web.proxy.ProxyServlet.HAWTIO_LOCAL_ADDRESS_PROBING;
+import static io.hawt.web.proxy.ProxyServlet.HAWTIO_PROXY_ALLOWLIST;
 
 public class HawtioProcessor {
+
+    private static final Set<String> DISALLOWED_SERVLETS = Set.of(
+        "io.hawt.web.plugin.PluginServlet"
+    );
+
+    /**
+     * For now, there are no explicitly disallowed filters.
+     */
+    private static final Set<String> DISALLOWED_FILTERS = Collections.emptySet();
 
     /**
      * For now, there are no explicitly disallowed listeners.
      */
     private static final Set<String> DISALLOWED_LISTENERS = Collections.emptySet();
-
-    private static final Set<String> DISALLOWED_SERVLETS = Set.of(
-        "io.hawt.web.plugin.PluginServlet"
-    );
 
     private static final Map<String, String> WEB_XML_OVERRIDES = Map.of(
         LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName(),
@@ -130,6 +141,10 @@ public class HawtioProcessor {
         // Hawtio filters
         if (webMetaData.getFilters() != null) {
             for (FilterMetaData filterMetaData : webMetaData.getFilters()) {
+                if (DISALLOWED_FILTERS.contains(filterMetaData.getFilterClass())) {
+                    continue;
+                }
+
                 FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterMetaData.getFilterClass()));
                 if (filterMetaData.getFilterClass().equals(BaseTagHrefFilter.class.getName())) {
                     builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
@@ -186,40 +201,42 @@ public class HawtioProcessor {
                 + "You must configure one or disable authentication");
         }
 
-        systemProperties.produce(new SystemPropertyBuildItem("hawtio.authenticationEnabled", config.authenticationEnabled.toString()));
-        systemProperties.produce(new SystemPropertyBuildItem("hawtio.disableProxy", config.disableProxy.toString()));
-        systemProperties.produce(new SystemPropertyBuildItem("hawtio.localAddressProbing", config.localAddressProbing.toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_ENABLED, config.authenticationEnabled.toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy.toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing.toString()));
 
-        config.proxyAllowList.ifPresent(allowList -> systemProperties.produce(
-            new SystemPropertyBuildItem("hawtio.proxyAllowList", String.join(",", allowList)))
-        );
+        config.proxyAllowlist
+            .map(allowlist -> new SystemPropertyBuildItem(HAWTIO_PROXY_ALLOWLIST, String.join(",", allowlist)))
+            .ifPresent(systemProperties::produce);
 
-        config.role.ifPresent(role -> systemProperties.produce(
-            new SystemPropertyBuildItem("hawtio.role", role))
-        );
+        config.role
+            .map(role -> new SystemPropertyBuildItem(HAWTIO_ROLE, role))
+            .ifPresent(systemProperties::produce);
 
-        config.roles.ifPresent(roles -> systemProperties.produce(
-            new SystemPropertyBuildItem("hawtio.roles", String.join(",", roles)))
-        );
+        config.roles
+            .map(roles -> new SystemPropertyBuildItem(HAWTIO_ROLES, String.join(",", roles)))
+            .ifPresent(systemProperties::produce);
 
-        config.sessionTimeout.ifPresent(sessionTimeout -> systemProperties.produce(
-            new SystemPropertyBuildItem("hawtio.sessionTimeout", sessionTimeout.toString()))
-        );
+        config.sessionTimeout
+            .map(sessionTimeout -> new SystemPropertyBuildItem("hawtio.sessionTimeout", sessionTimeout.toString()))
+            .ifPresent(systemProperties::produce);
     }
 
     @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
     RouteBuildItem hawtioPluginHandler(HawtioConfig config, HawtioRecorder recorder, Capabilities capabilities) {
-        if (config.pluginConfigs != null && !config.pluginConfigs.isEmpty()) {
-            if (!capabilities.isPresent(Capability.JACKSON)) {
-                throw new RuntimeException("Hawtio plugin support requires jackson. Please add a dependency for quarkus-jackson to your application");
-            }
-            return RouteBuildItem.builder()
-                .route(HawtioConfig.DEFAULT_PLUGIN_CONTEXT_PATH)
-                .handler(recorder.pluginHandler(config.pluginConfigs))
-                .build();
+        if (config.pluginConfigs == null || config.pluginConfigs.isEmpty()) {
+            return null;
         }
-        return null;
+
+        if (capabilities.isMissing(Capability.JACKSON)) {
+            throw new RuntimeException("Hawtio plugin support requires jackson. Please add a dependency for quarkus-jackson to your application");
+        }
+
+        return RouteBuildItem.builder()
+            .route(HawtioConfig.DEFAULT_PLUGIN_PATH)
+            .handler(recorder.pluginHandler(config.pluginConfigs))
+            .build();
     }
 
     @BuildStep(onlyIf = NativeBuild.class)

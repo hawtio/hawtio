@@ -7,35 +7,44 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Vert.x handler to output JSON content for custom Hawtio plugins
  */
 public class HawtioPluginHandler implements Handler<RoutingContext> {
 
-    private final Map<String, HawtioConfig.HawtioPluginConfig> pluginConfigs;
+    private final Map<String, HawtioConfig.PluginConfig> pluginConfigs;
+    private final String jsonContent;
 
-    public HawtioPluginHandler(Map<String, HawtioConfig.HawtioPluginConfig> pluginConfigs) {
+    public HawtioPluginHandler(Map<String, HawtioConfig.PluginConfig> pluginConfigs) {
+        Objects.requireNonNull(pluginConfigs, "pluginConfigs must not be null");
         this.pluginConfigs = pluginConfigs;
+        this.jsonContent = initContent();
+    }
+
+    private String initContent() {
+        JsonArray plugins = new JsonArray();
+        pluginConfigs.forEach((name, config) -> {
+            JsonObject object = new JsonObject();
+            // mandatory parameters
+            object.put("url", config.url);
+            object.put("scope", config.scope);
+            object.put("module", config.module);
+            // optional parameters
+            config.remoteEntryFileName.ifPresent(value -> object.put("remoteEntryFileName", value));
+            config.bustRemoteEntryCache.ifPresent(value -> object.put("bustRemoteEntryCache", value));
+            config.pluginEntry.ifPresent(value -> object.put("pluginEntry", value));
+            plugins.add(object);
+        });
+        return Json.encode(plugins);
     }
 
     @Override
     public void handle(RoutingContext routingContext) {
-        JsonArray plugins = new JsonArray();
-
-        pluginConfigs.forEach((name, config) -> {
-            if (config.scriptPaths.isPresent()) {
-                JsonObject object = new JsonObject();
-                object.put("Name", name);
-                object.put("Context", "");
-                object.put("Domain", "");
-                object.put("Scripts", config.scriptPaths.get());
-                plugins.add(object);
-            }
-        });
 
         routingContext.response()
             .putHeader("content-type", "application/json; charset=utf-8")
-            .end(Json.encode(plugins));
+            .end(jsonContent);
     }
 }
