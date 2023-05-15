@@ -29,10 +29,17 @@ public class HawtioQuarkusAuthenticationEnabledTest {
             .addAsResource(applicationProperties(), "application.properties"));
 
     @Test
-    public void testHawtioAccessDenied() {
+    public void testHawtioIndexPage() {
         RestAssured.get("/hawtio")
             .then()
-            .body(containsString("<hawtio-login></hawtio-login>"));
+            .body(containsString("<title>Hawtio</title>"));
+    }
+
+    @Test
+    public void testHawtioUserForbidden() {
+        RestAssured.get("/hawtio/user")
+            .then()
+            .statusCode(403);
     }
 
     @Test
