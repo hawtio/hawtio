@@ -11,11 +11,11 @@ import javax.xml.stream.XMLStreamReader;
 
 import io.hawt.quarkus.HawtioConfig;
 import io.hawt.quarkus.HawtioProducers;
-import io.hawt.quarkus.HawtioQuakusLoginServlet;
-import io.hawt.quarkus.HawtioQuakusLogoutServlet;
-import io.hawt.quarkus.HawtioQuarkusLoginRedirectFilter;
-import io.hawt.quarkus.HawtioQuarkusPathFilter;
 import io.hawt.quarkus.HawtioRecorder;
+import io.hawt.quarkus.filters.HawtioQuarkusLoginRedirectFilter;
+import io.hawt.quarkus.filters.HawtioQuarkusPathFilter;
+import io.hawt.quarkus.servlets.HawtioQuakusLoginServlet;
+import io.hawt.quarkus.servlets.HawtioQuakusLogoutServlet;
 import io.hawt.web.auth.LoginRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
@@ -88,6 +88,7 @@ public class HawtioProcessor {
         // Parse and process the Hawtio web.xml to avoid having to manually register all the servlets, filters & mappings
         try (InputStream in = HawtioProcessor.class.getResourceAsStream("/META-INF/web.xml")) {
             final XMLStreamReader xmlReader = inputFactory.createXMLStreamReader(in);
+            @SuppressWarnings("deprecation")
             WebMetaData result = WebMetaDataParser.parse(xmlReader, dtdInfo, PropertyReplacers.resolvingReplacer(new MPConfigPropertyResolver()));
             registerServlets(result, servlet);
             registerFilters(result, filter);

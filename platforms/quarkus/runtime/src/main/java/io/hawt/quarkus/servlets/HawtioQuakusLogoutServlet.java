@@ -1,4 +1,4 @@
-package io.hawt.quarkus;
+package io.hawt.quarkus.servlets;
 
 import io.hawt.web.auth.AuthSessionHelpers;
 import io.hawt.web.auth.AuthenticationConfiguration;
