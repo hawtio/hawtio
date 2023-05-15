@@ -30,9 +30,17 @@ public class HawtioQuarkusPluginConfigurationTest {
 
     @Test
     public void testHawtioPluginEndpoint() {
+        String expected = "[{"
+            + "\"url\":\"http://test.io:12345\","
+            + "\"scope\":\"test-scope\","
+            + "\"module\":\"./test-module\","
+            + "\"remoteEntryFileName\":\"testEntry.js\","
+            + "\"bustRemoteEntryCache\":true,"
+            + "\"pluginEntry\":\"testPluginEntry\""
+            + "}]";
         RestAssured.get("/hawtio/plugin")
             .then()
-            .body(is("[{\"Name\":\"sample-plugin-config\",\"Context\":\"\",\"Domain\":\"\",\"Scripts\":[\"sample-plugin/sample-plugin.js\"]}]"));
+            .body(is(expected));
     }
 
     public static Asset applicationProperties() {
@@ -40,7 +48,12 @@ public class HawtioQuarkusPluginConfigurationTest {
 
         Properties props = new Properties();
         props.setProperty("quarkus.hawtio.authenticationEnabled", "false");
-        props.setProperty("quarkus.hawtio.sample-plugin-config.script-paths", "sample-plugin/sample-plugin.js");
+        props.setProperty("quarkus.hawtio.plugin.test.url", "http://test.io:12345");
+        props.setProperty("quarkus.hawtio.plugin.test.scope", "test-scope");
+        props.setProperty("quarkus.hawtio.plugin.test.module", "./test-module");
+        props.setProperty("quarkus.hawtio.plugin.test.remoteEntryFileName", "testEntry.js");
+        props.setProperty("quarkus.hawtio.plugin.test.bustRemoteEntryCache", "true");
+        props.setProperty("quarkus.hawtio.plugin.test.pluginEntry", "testPluginEntry");
 
         try {
             props.store(writer, null);

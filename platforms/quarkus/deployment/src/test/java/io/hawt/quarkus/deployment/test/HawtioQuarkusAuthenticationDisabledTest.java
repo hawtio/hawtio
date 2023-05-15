@@ -29,10 +29,18 @@ public class HawtioQuarkusAuthenticationDisabledTest {
             .addAsResource(applicationProperties(), "application.properties"));
 
     @Test
-    public void testHawtioAccessible() {
+    public void testHawtioIndexPage() {
         RestAssured.get("/hawtio")
             .then()
             .body(containsString("<title>Hawtio</title>"));
+    }
+
+    @Test
+    public void testHawtioUserPublic() {
+        RestAssured.get("/hawtio/user")
+            .then()
+            .statusCode(200)
+            .body(containsString("\"public\""));
     }
 
     public static Asset applicationProperties() {
