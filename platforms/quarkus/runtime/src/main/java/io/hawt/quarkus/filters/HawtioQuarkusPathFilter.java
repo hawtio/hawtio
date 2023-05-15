@@ -1,4 +1,4 @@
-package io.hawt.quarkus;
+package io.hawt.quarkus.filters;
 
 import java.io.IOException;
 
@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import io.hawt.quarkus.HawtioConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
