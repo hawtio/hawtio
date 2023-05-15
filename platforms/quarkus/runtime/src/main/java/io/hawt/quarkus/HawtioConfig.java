@@ -13,12 +13,12 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 public class HawtioConfig {
 
     public static final String DEFAULT_CONTEXT_PATH = "/hawtio";
-    public static final String DEFAULT_PLUGIN_CONTEXT_PATH = DEFAULT_CONTEXT_PATH + "/plugin";
+    public static final String DEFAULT_PLUGIN_PATH = DEFAULT_CONTEXT_PATH + "/plugin";
 
     /**
      * Enables or disables Hawtio authentication
      */
-    @ConfigItem(name="authenticationEnabled", defaultValue = "true")
+    @ConfigItem(name = "authenticationEnabled", defaultValue = "true")
     public Boolean authenticationEnabled;
 
     /**
@@ -45,8 +45,8 @@ public class HawtioConfig {
      * All hosts that are not listed in this allowlist are denied to connect for security reasons. This option can be set to * to restore the old behavior and
      * allow all hosts. Prefixing an element of the list with "r:" allows you to define a regexp (example: localhost,r:myservers[0-9]+.mydomain.com)
      */
-    @ConfigItem(name = "proxyAllowList", defaultValue = "localhost, 127.0.0.1")
-    public Optional<List<String>> proxyAllowList;
+    @ConfigItem(name = "proxyAllowlist", defaultValue = "localhost, 127.0.0.1")
+    public Optional<List<String>> proxyAllowlist;
 
     /**
      * Whether local address probing for proxy allowlist is enabled or not upon startup. Set this property to false to disable it
@@ -63,15 +63,43 @@ public class HawtioConfig {
     /**
      * Map of custom Hawtio plugin configurations
      */
-    @ConfigItem(name = ConfigItem.PARENT)
-    public Map<String, HawtioPluginConfig> pluginConfigs;
+    @ConfigItem(name = "plugin")
+    public Map<String, PluginConfig> pluginConfigs;
 
     @ConfigGroup
-    public static class HawtioPluginConfig {
+    public static class PluginConfig {
         /**
-         * Comma separated list of scripts that comprise any custom Hawtio plugins included within the application
+         * URL of the remote plugin.
          */
         @ConfigItem
-        public Optional<List<String>> scriptPaths;
+        public String url;
+        /**
+         * Scope of the remote plugin.
+         */
+        @ConfigItem
+        public String scope;
+        /**
+         * Module path of the remote plugin.
+         */
+        @ConfigItem
+        public String module;
+        /**
+         * (Optional) Custom remote entry file name of the remote plugin.
+         * Defaults to <code>remoteEntry.js</code>.
+         */
+        @ConfigItem(name = "remoteEntryFileName")
+        public Optional<String> remoteEntryFileName;
+        /**
+         * (Optional) Whether to bust remote entry cache of the remote plugin.
+         * Defaults to <code>false</code>.
+         */
+        @ConfigItem(name = "bustRemoteEntryCache")
+        public Optional<Boolean> bustRemoteEntryCache;
+        /**
+         * (Optional) Hawtio plugin entry name of the remote plugin.
+         * Defaults to <code>plugin</code>.
+         */
+        @ConfigItem(name = "pluginEntry")
+        public Optional<String> pluginEntry;
     }
 }
