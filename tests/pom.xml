@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>project</artifactId>
     <groupId>io.hawt</groupId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0-M6</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +11,7 @@
   <groupId>io.hawt.tests</groupId>
   <name>${project.artifactId}</name>
   <description>hawtio :: Hawtio E2E Tests</description>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0-M6</version>
   <packaging>pom</packaging>
 
   <properties>
