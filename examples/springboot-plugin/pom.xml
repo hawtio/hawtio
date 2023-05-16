@@ -149,14 +149,14 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>${basedir}/${plugin.path}/build</directory>
+              <directory>${plugin.path}/build</directory>
               <includes>
                 <include>**/*</include>
               </includes>
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${basedir}/${plugin.path}/node_modules</directory>
+              <directory>${plugin.path}/node_modules</directory>
               <includes>
                 <include>**/*</include>
               </includes>
