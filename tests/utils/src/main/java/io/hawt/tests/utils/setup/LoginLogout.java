@@ -2,6 +2,7 @@ package io.hawt.tests.utils.setup;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 
 import org.slf4j.Logger;
@@ -53,5 +54,6 @@ public class LoginLogout {
     public static void hawtioIsLoaded() {
         $("img.pf-c-brand").should(exist).shouldBe(interactable);
         $("#vertical-nav-toggle").should(exist).shouldBe(interactable);
+        $(byXpath("//h1[contains(text(),'Connect')]")).should(exist).shouldBe(interactable);
     }
 }
