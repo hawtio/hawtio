@@ -32,7 +32,7 @@ jobs:
           cache: 'maven'
       - name: Build & E2E test
         run: |
-          mvn --batch-mode install -Druntime=springboot -Dtest=RunSpringBootAllTest
+          mvn --batch-mode --no-transfer-progress install -Dhawtio-e2e-tests -Druntime=springboot -Dtest=SpringBootAllTest
       - name: Archive failed test reports
         uses: actions/upload-artifact@v3
         if: always()

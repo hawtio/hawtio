@@ -3,7 +3,6 @@ package io.hawt.tests.utils.pageobjects.fragments;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.not;
-import static com.codeborne.selenide.Selectors.byId;
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
@@ -30,7 +29,7 @@ public class Panel {
     public LoginPage logout() {
         // Check if already logged out
         if (!$(byXpath("//a[contains(text(),'my_htpasswd_provider')]")).is(interactable)) {
-            this.openDropDownMenu("hawtio-header-user-dropdown-toggle");
+            this.openDropDownMenu("#hawtio-header-user-dropdown-toggle");
             // Workaround for Windows machines - sometimes, the Logout button is not loaded properly
             if ($(byXpath("//a[contains(text(), 'Logout')]")).is(not(interactable))) {
                 LOG.info("Logout by the direct logout URL");
@@ -47,14 +46,14 @@ public class Panel {
      * Open desired menu item from the drop-down menu under the question mark.
      */
     public void openMenuItemUnderQuestionMarkDropDownMenu(String option) {
-        this.openDropDownMenu("pf-dropdown-toggle-id-1");
+        this.openDropDownMenu("#hawtio-header-toolbar [id^=pf-dropdown-toggle-id-]");
         $(byLinkText(option)).shouldBe(interactable).click();
     }
 
     /**
-     * Open a drop-down menu by id value.
+     * Open a drop-down menu by css selector value.
      */
-    private void openDropDownMenu(String id) {
-        $(byId(id)).shouldBe(enabled).click();
+    private void openDropDownMenu(String selector) {
+        $(selector).shouldBe(enabled).click();
     }
 }
