@@ -25,6 +25,7 @@
   </properties>
 
   <modules>
+    <module>quarkus</module>
     <module>springboot</module>
     <module>utils</module>
   </modules>
@@ -184,6 +185,27 @@
       </build>
       <modules>
         <module>springboot</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>e2e-quarkus</id>
+      <properties>
+        <test>QuarkusAllTest</test>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven-surefire-plugin-version}</version>
+            <configuration>
+              <skipTests>false</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <modules>
+        <module>quarkus</module>
       </modules>
     </profile>
   </profiles>

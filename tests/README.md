@@ -13,7 +13,7 @@ E2E UI tests
 ### Runtime Support
 
 - Spring Boot 2.x
-- Quarkus (in future)
+- Quarkus 2.x
 
 ### Test scenarios cover the following areas
 
@@ -32,41 +32,47 @@ E2E UI tests
 
 ## Test Execution
 
-### Sample Command
+All commands to be run from the root directory of the Hawtio project.
 
-The command to run only Hawtio E2E UI tests from the `root` directory
+First of all, it's needed to build the project.
 
 ```
-mvn clean install -Dhawtio-e2e-tests -Druntime=springboot -Dtest=SpringBootAllTest
+mvn install -DskipTests
 ```
 
-Also, the tests are triggered when building the whole Hawtio project.
+### Spring Boot 2.x E2E tests
 
-Test reports can be found under `tests/spring-boot/target/surefire-reports/` directory.
+```
+mvn install -Pe2e-springboot -pl tests/springboot
+```
 
-### Command Options
+### Quarkus 2.x E2E tests
+```
+mvn install -Pe2e-springboot -pl tests/springboot
+```
 
-- `-Druntime=` - defines a runtime in which tests are run.
-  - `springboot`
-  - `quarkus` - (not implemented yet)
+### Additional Command Options
 
 - `-Dtest=` - defines the type of test set to be run.
-  - `SpringBootAllTest`
-  - `SpringBootSmokeTest`
-  - more options can be found under `io/hawt/tests/spring/boot/suites/`
+  - Spring Boot 2.x
+    - `SpringBootAllTest`
+    - `SpringBootSmokeTest`
+  - Quarkus 2.x
+    - `QuarkusAllTest`
+    - `QuarkusSmokeTest`
 
-#### Optional Selenide Options
+### Optional Selenide Options
 
 - `-Dselenide.browser=` - defines a web browser to be used during test execution.
   - `chrome`
   - `firefox`
-  - By default, Selenide picks up a web driver based on system default web browser.
+  - By default, Selenide picks up a web driver based on a system default web browser.
 
 - `-Dselenide.timeout=` - defines a timeout for loading a web page (in milliseconds).
   - `10000`
   - `20000`
   - etc
-- `-Dselenide.headless=` - enables the ability to run the browser in headless mode.
+- `-Dselenide.headless=` - enables the ability to run the browser in headless mode (`true` by default).
   - `true`
   - `false`
 
