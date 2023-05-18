@@ -16,17 +16,29 @@
   <packaging>war</packaging>
 
   <dependencies>
-
-    <!-- we only need to embed this dependency in the war, this contains
+    <!--
+      We only need to embed this dependency in the war. This contains
       a nice helper class that our plugin can use to export its plugin
-      mbean -->
+      mbean.
+    -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-plugin-mbean</artifactId>
       <version>${project.version}</version>
     </dependency>
 
-    <!-- servlet API is provided by the container -->
+    <!--
+      Hawtio example plugin project
+      Since static resources are packaged under META-INF/resources in the JAR,
+      it's enough to add this dependency to the project to load the plugin resources.
+    -->
+    <dependency>
+      <groupId>io.hawt.examples</groupId>
+      <artifactId>hawtio-example-sample-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Servlet API is provided by the container -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -34,119 +46,69 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- logging -->
+    <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
     </dependency>
-
   </dependencies>
 
   <build>
-
     <finalName>${project.artifactId}</finalName>
 
-    <!-- we want to ensure src/main/resources/WEB-INF/web.xml is being filtered
-      so that it picks up all of our javascript files -->
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-    </resources>
-
     <plugins>
-
-      <!-- We use maven-antrun-plugin to build up a list of
-           javascript files for our plugin mbean, this means
-           it needs to run before the maven-resources-plugin
-           copies and filters the web.xml, since for this
-           example we use contextParam settings to configure
-           our plugin mbean -->
-
+      <!--
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>${maven-antrun-plugin-version}</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-
           <execution>
-            <!-- we run this early in the build process before
-              maven-resources-plugin is run.  We're exporting the
-              plugin-scripts property from here, so we need to
-              use maven-antrun-plugin 1.6 or up -->
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
+            <id>copy</id>
+            <phase>test-compile</phase>
             <goals>
-              <goal>run</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
-              <target>
-                <echo>Building plugin javascript file list</echo>
-                <!-- javascript-files will contain all of the javascript in
-                  our project -->
-                <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
-                  <include name="**/*.js"/>
-                </fileset>
-                <!-- we need to strip out the top level path which is
-                   our source directory and be sure to change the directory
-                   separators to forward slashes -->
-                <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
-                  <map from="${basedir}/src/main/webapp/" to=""/>
-                </pathconvert>
-                <echo>Files: ${plugin-scripts}</echo>
-
-                <echo>Copying log4j.properties</echo>
-                <copy file="src/main/resources/log4j.properties" todir="target/classes"/>
-
-              </target>
-              <!-- this exports plugin-scripts to the maven build, without
-                this line ${plugin-scripts} in the web.xml file won't be
-                replaced -->
-              <exportAntProperties>true</exportAntProperties>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.hawt</groupId>
+                  <artifactId>hawtio-war</artifactId>
+                  <version>${project.version}</version>
+                  <type>war</type>
+                  <outputDirectory>${project.build.directory}/deploy</outputDirectory>
+                  <destFileName>hawtio.war</destFileName>
+                </artifactItem>
+              </artifactItems>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin-version}</version>
-        <executions>
-          <execution>
-            <!-- defining this maven plugin in the same phase as the
-              maven-antrun-plugin but *after* we've configured the
-              maven-antrun-plugin ensures we filter resources *after*
-              we've discovered the plugin .js files. -->
-            <id>copy-resources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-version}</version>
         <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-          <webResources>
-            <resource>
-              <filtering>true</filtering>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>**/*.*</include>
-              </includes>
-            </resource>
-          </webResources>
+          <deployMode>EMBED</deployMode>
+          <scan>10</scan>
+          <webApp>
+            <contextPath>/</contextPath>
+          </webApp>
+          <contextHandlers>
+            <contextHandler implementation="org.eclipse.jetty.maven.plugin.MavenWebAppContext">
+              <war>${project.build.directory}/deploy/hawtio.war</war>
+              <contextPath>/hawtio</contextPath>
+            </contextHandler>
+          </contextHandlers>
+          <modules>
+            <module>jmx</module>
+          </modules>
+          <systemProperties>
+            <hawtio.authenticationEnabled>false</hawtio.authenticationEnabled>
+          </systemProperties>
         </configuration>
       </plugin>
-
+      -->
     </plugins>
   </build>
 </project>
