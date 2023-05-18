@@ -33,9 +33,12 @@ jobs:
       - name: Build
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests
-      - name: E2E test
+      - name: Spring Boot E2E test
         run: |
           mvn --batch-mode --no-transfer-progress install -Pe2e-springboot -pl tests/springboot
+      - name: Quarkus E2E test
+        run: |
+          mvn --batch-mode --no-transfer-progress install -Pe2e-quarkus -pl tests/quarkus
       - name: Archive failed test reports
         uses: actions/upload-artifact@v3
         if: always()
