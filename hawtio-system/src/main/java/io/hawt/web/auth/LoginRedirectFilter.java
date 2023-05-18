@@ -31,7 +31,7 @@ public class LoginRedirectFilter implements Filter {
 
     private String[] unsecuredPaths;
 
-    private Redirector redirector;
+    private Redirector redirector = new Redirector();
 
     public LoginRedirectFilter() {
         this(AuthenticationConfiguration.UNSECURED_PATHS);

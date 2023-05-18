@@ -19,9 +19,9 @@ public class PluginContextListener implements ServletContextListener {
         ServletContext context = servletContextEvent.getServletContext();
 
         plugin = new HawtioPlugin()
-            .url(context.getInitParameter("plugin-url"))
-            .scope(context.getInitParameter("plugin-name"))
-            .module(context.getInitParameter("plugin-module"));
+            .url("http://localhost:8080/hawtio-example-war-plugin")
+            .scope("samplePlugin")
+            .module("./plugin");
         plugin.init();
 
         LOG.info("Initialized {} plugin", plugin.getScope());
