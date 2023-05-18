@@ -10,29 +10,10 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>hawtio-example-simple-plugin</artifactId>
+  <artifactId>hawtio-example-war-plugin</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Simple plugin example</description>
-
-  <!-- hawtio plugins are almost always war files -->
+  <description>Hawtio :: Simple WAR plugin example</description>
   <packaging>war</packaging>
-
-  <properties>
-    <!-- filtered plugin properties, we don't define plugin-scripts here
-      as we build that dynamically using maven-antrun-plugin below. -->
-
-    <!-- plugin-context is what context this plugin will handle requests on
-      in the application server -->
-    <plugin-url>http://localhost:10001</plugin-url>
-
-    <!-- plugin-name is the name of our plugin, affects the name used for
-      the plugin's mbean -->
-    <plugin-name>samplePlugin</plugin-name>
-
-    <!-- plugin-domain is currently unused, we just define it to an empty
-      string -->
-    <plugin-module>./plugin</plugin-module>
-  </properties>
 
   <dependencies>
 
@@ -108,18 +89,18 @@
                 <!-- javascript-files will contain all of the javascript in
                   our project -->
                 <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
-                  <include name="**/*.js" />
+                  <include name="**/*.js"/>
                 </fileset>
                 <!-- we need to strip out the top level path which is
                    our source directory and be sure to change the directory
                    separators to forward slashes -->
                 <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
-                  <map from="${basedir}/src/main/webapp/" to="" />
+                  <map from="${basedir}/src/main/webapp/" to=""/>
                 </pathconvert>
                 <echo>Files: ${plugin-scripts}</echo>
 
                 <echo>Copying log4j.properties</echo>
-                <copy file="src/main/resources/log4j.properties" todir="target/classes" />
+                <copy file="src/main/resources/log4j.properties" todir="target/classes"/>
 
               </target>
               <!-- this exports plugin-scripts to the maven build, without

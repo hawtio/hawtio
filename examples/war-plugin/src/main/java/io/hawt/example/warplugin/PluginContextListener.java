@@ -1,4 +1,4 @@
-package io.hawt.example.simpleplugin;
+package io.hawt.example.warplugin;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

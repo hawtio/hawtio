@@ -15,10 +15,6 @@
   <name>${project.artifactId}</name>
   <description>Hawtio :: Sample Spring Boot application with custom Hawtio plugin</description>
 
-  <properties>
-    <plugin.path>../sample-plugin</plugin.path>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -70,20 +66,20 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
     </dependency>
+
+    <!--
+      Hawtio example plugin project
+      Since static resources are packaged under META-INF/resources in the JAR,
+      it's enough to add this dependency to the project to load the plugin resources.
+    -->
+    <dependency>
+      <groupId>io.hawt.examples</groupId>
+      <artifactId>hawtio-example-sample-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <!-- Add the plugin build to Spring Boot's static resources -->
-      <resource>
-        <directory>${plugin.path}/build</directory>
-        <targetPath>static</targetPath>
-      </resource>
-    </resources>
-
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -92,7 +88,6 @@
         <configuration>
           <mainClass>io.hawt.example.spring.boot.SampleSpringBootService</mainClass>
         </configuration>
-        <!--
         <executions>
           <execution>
             <goals>
@@ -100,70 +95,6 @@
             </goals>
           </execution>
         </executions>
-        -->
-      </plugin>
-
-      <!-- Build the plugin TypeScript subproject from Maven -->
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>${frontend-maven-plugin-version}</version>
-        <configuration>
-          <workingDirectory>${plugin.path}</workingDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>install node and yarn</id>
-            <goals>
-              <goal>install-node-and-yarn</goal>
-            </goals>
-            <configuration>
-              <nodeVersion>v16.15.0</nodeVersion>
-              <yarnVersion>v1.22.19</yarnVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>yarn install</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>yarn build</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>build</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Clean up the plugin's 'build/' and 'node_modules/' directories as well -->
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${plugin.path}/build</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${plugin.path}/node_modules</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
       </plugin>
     </plugins>
   </build>

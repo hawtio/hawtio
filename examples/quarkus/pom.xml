@@ -16,9 +16,7 @@
   <description>Hawtio :: Sample Quarkus 2.x application</description>
 
   <properties>
-    <compiler-plugin.version>3.10.1</compiler-plugin.version>
     <skipITs>true</skipITs>
-    <plugin.path>../sample-plugin</plugin.path>
   </properties>
 
   <dependencyManagement>
@@ -110,6 +108,17 @@
       <artifactId>hawtio-quarkus</artifactId>
     </dependency>
 
+    <!--
+      Hawtio example plugin project
+      Since static resources are packaged under META-INF/resources in the JAR,
+      it's enough to add this dependency to the project to load the plugin resources.
+    -->
+    <dependency>
+      <groupId>io.hawt.examples</groupId>
+      <artifactId>hawtio-example-sample-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- Testing -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -134,17 +143,6 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <!-- Add the plugin build to Quarkus' static resources -->
-      <resource>
-        <directory>${plugin.path}/build</directory>
-        <targetPath>META-INF/resources</targetPath>
-      </resource>
-    </resources>
-
     <plugins>
       <plugin>
         <groupId>io.quarkus.platform</groupId>
@@ -163,7 +161,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>${compiler-plugin.version}</version>
         <configuration>
           <compilerArgs>
             <arg>-parameters</arg>
@@ -196,69 +193,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!-- Build the plugin TypeScript subproject from Maven -->
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>${frontend-maven-plugin-version}</version>
-        <configuration>
-          <workingDirectory>${plugin.path}</workingDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>install node and yarn</id>
-            <goals>
-              <goal>install-node-and-yarn</goal>
-            </goals>
-            <configuration>
-              <nodeVersion>v16.15.0</nodeVersion>
-              <yarnVersion>v1.22.19</yarnVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>yarn install</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>yarn build</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>build</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Clean up the plugin's 'build/' and 'node_modules/' directories as well -->
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${plugin.path}/build</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${plugin.path}/node_modules</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -285,8 +219,8 @@
                 </goals>
                 <configuration>
                   <target>
-                    <echo message="!!! WARNING !!!" />
-                    <echo message="Hawtio does not support Quarkus native mode!" />
+                    <echo message="!!! WARNING !!!"/>
+                    <echo message="Hawtio does not support Quarkus native mode!"/>
                   </target>
                 </configuration>
               </execution>
