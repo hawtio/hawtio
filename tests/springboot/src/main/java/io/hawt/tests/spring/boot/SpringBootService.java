@@ -1,16 +1,21 @@
 package io.hawt.tests.spring.boot;
 
+import java.util.Optional;
+
+import javax.annotation.PostConstruct;
+
+import io.hawt.springboot.HawtioPlugin;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.net.URL;
-
-import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.HawtioPlugin;
-import io.hawt.web.auth.AuthenticationConfiguration;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_REALM;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLE_PRINCIPAL_CLASSES;
 
 @SpringBootApplication()
 public class SpringBootService {
@@ -51,33 +56,23 @@ public class SpringBootService {
     }
 
     /**
-     * Configure facade to use authentication.
-     *
-     * @return config
+     * Configure authentication.
      */
-    @Bean(initMethod = "init")
-    public ConfigFacade configFacade() {
+    @PostConstruct
+    public void init() {
+        Optional.ofNullable(this.getClass().getClassLoader().getResource("login.conf"))
+            .ifPresent(loginResource -> setSystemPropertyIfNotSet(JAVA_SECURITY_AUTH_LOGIN_CONFIG, loginResource.toExternalForm()));
+        LOG.info("Using loginResource {} : {}", JAVA_SECURITY_AUTH_LOGIN_CONFIG, System.getProperty(JAVA_SECURITY_AUTH_LOGIN_CONFIG));
 
-        final URL loginResource = this.getClass().getClassLoader().getResource("login.conf");
-        if (loginResource != null) {
-            setSystemPropertyIfNotSet(JAVA_SECURITY_AUTH_LOGIN_CONFIG, loginResource.toExternalForm());
-        }
-        LOG.info("Using loginResource " + JAVA_SECURITY_AUTH_LOGIN_CONFIG + " : " + System
-            .getProperty(JAVA_SECURITY_AUTH_LOGIN_CONFIG));
+        Optional.ofNullable(this.getClass().getClassLoader().getResource("realm.properties"))
+            .ifPresent(loginFile -> setSystemPropertyIfNotSet("login.file", loginFile.toExternalForm()));
+        LOG.info("Using login.file : {}", System.getProperty("login.file"));
 
-        final URL loginFile = this.getClass().getClassLoader().getResource("realm.properties");
-        if (loginFile != null) {
-            setSystemPropertyIfNotSet("login.file", loginFile.toExternalForm());
-        }
-        LOG.info("Using login.file : " + System.getProperty("login.file"));
+        setSystemPropertyIfNotSet(HAWTIO_ROLES, "admin");
+        setSystemPropertyIfNotSet(HAWTIO_REALM, "hawtio");
+        setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
 
-        setSystemPropertyIfNotSet(AuthenticationConfiguration.HAWTIO_ROLES, "admin");
-        setSystemPropertyIfNotSet(AuthenticationConfiguration.HAWTIO_REALM, "hawtio");
-        setSystemPropertyIfNotSet(AuthenticationConfiguration.HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
-        if (!Boolean.getBoolean("debugMode")) {
-            System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "true");
-        }
-        return new ConfigFacade();
+        System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, Boolean.getBoolean("debugMode") ? "false" : "true");
     }
 
     private void setSystemPropertyIfNotSet(final String key, final String value) {
