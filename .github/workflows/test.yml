@@ -32,4 +32,4 @@ jobs:
           cache: 'maven'
       - name: Build & test
         run: |
-          mvn --batch-mode install
+          mvn --batch-mode --no-transfer-progress install
