@@ -30,9 +30,12 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: Build & E2E test
+      - name: Build
         run: |
-          mvn --batch-mode --no-transfer-progress install -Dhawtio-e2e-tests -Druntime=springboot -Dtest=SpringBootAllTest
+          mvn --batch-mode --no-transfer-progress install -DskipTests
+      - name: E2E test
+        run: |
+          mvn --batch-mode --no-transfer-progress install -Pe2e-springboot -pl tests/springboot
       - name: Archive failed test reports
         uses: actions/upload-artifact@v3
         if: always()

@@ -15,7 +15,6 @@
   <properties>
     <hawtio.url>/actuator/hawtio</hawtio.url>
     <hawtio.managementPort>10001</hawtio.managementPort>
-    <plugin.path>../sample-plugin</plugin.path>
   </properties>
 
   <dependencyManagement>
@@ -141,6 +140,17 @@
       <artifactId>camel-debug-starter</artifactId>
     </dependency>
 
+    <!--
+      Hawtio example plugin project
+      Since static resources are packaged under META-INF/resources in the JAR,
+      it's enough to add this dependency to the project to load the plugin resources.
+    -->
+    <dependency>
+      <groupId>io.hawt.examples</groupId>
+      <artifactId>hawtio-example-sample-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- Hawtio Test Utils -->
     <dependency>
       <groupId>io.hawt.tests</groupId>
@@ -151,17 +161,6 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <!-- Add the plugin build to Spring Boot's static resources -->
-      <resource>
-        <directory>${plugin.path}/build</directory>
-        <targetPath>static</targetPath>
-      </resource>
-    </resources>
-
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -173,7 +172,6 @@
             -javaagent:./target/dependency/jmx_prometheus_javaagent.jar=10002:./jmx-exporter.yml
           </jvmArguments>
         </configuration>
-        <!--
         <executions>
           <execution>
             <goals>
@@ -181,84 +179,12 @@
             </goals>
           </execution>
         </executions>
-        -->
       </plugin>
 
-      <!-- Build the plugin TypeScript subproject from Maven -->
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>${frontend-maven-plugin-version}</version>
-        <configuration>
-          <workingDirectory>${plugin.path}</workingDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>install node and yarn</id>
-            <goals>
-              <goal>install-node-and-yarn</goal>
-            </goals>
-            <configuration>
-              <nodeVersion>v16.15.0</nodeVersion>
-              <yarnVersion>v1.22.19</yarnVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>yarn install</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>yarn build</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>build</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Clean up the plugin's 'build/' and 'node_modules/' directories as well -->
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/${plugin.path}/build</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${basedir}/${plugin.path}/node_modules</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-
-      <!-- downloads the Prometheus JMX exporter java agent -->
+      <!-- Downloads the Prometheus JMX exporter Java agent -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.1</version>
         <executions>
           <execution>
             <id>copy</id>
@@ -280,14 +206,7 @@
           </artifactItems>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
-        </configuration>
-      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

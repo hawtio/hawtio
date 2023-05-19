@@ -87,6 +87,7 @@
     <maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
     <maven-clean-plugin-version>3.0.0</maven-clean-plugin-version>
     <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
+    <maven-dependency-plugin-version>3.1.1</maven-dependency-plugin-version>
     <maven-failsafe-plugin-version>3.1.0</maven-failsafe-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>3.1.0</maven-surefire-plugin-version>
@@ -243,6 +244,10 @@
           <version>${maven-compiler-plugin-version}</version>
         </plugin>
         <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin-version}</version>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin-version}</version>
@@ -272,8 +277,6 @@
 
     <profile>
       <id>release</id>
-      <properties>
-      </properties>
       <!--
       TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
 
@@ -339,17 +342,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>hawtio-tests</id>
-      <activation>
-        <property>
-          <name>hawtio-e2e-tests</name>
-        </property>
-      </activation>
-      <modules>
-        <module>tests</module>
-      </modules>
     </profile>
   </profiles>
 
