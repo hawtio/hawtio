@@ -104,6 +104,12 @@
       <artifactId>quarkus-jackson</artifactId>
     </dependency>
 
+    <!-- Quarkus Camel Timer (for testing purpose)-->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-timer</artifactId>
+    </dependency>
+
     <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>

@@ -19,7 +19,7 @@ public class CamelOperations extends CamelPage {
      * @param method method name
      */
     public void executeMethod(String method) {
-        final SelenideElement operation = $(byXpath(".//li[contains(@aria-labelledby, '" + method + "')]"));
+        final SelenideElement operation = $(byXpath(".//li[@aria-labelledby='operation " + method + "']"));
 
         // Expand the operation section
         operation.$(byXpath(".//button[@aria-label='Details']")).shouldBe(enabled).click();
@@ -35,7 +35,7 @@ public class CamelOperations extends CamelPage {
      * @param result expected result of an operation
      */
     public void checkResultOfExecutedOperation(String method, String result) {
-        final SelenideElement operation = $(byXpath(".//li[contains(@aria-labelledby, '" + method + "')]"));
+        final SelenideElement operation = $(byXpath(".//li[@aria-labelledby='operation " + method + "']"));
         operation.$(byXpath(".//pre")).shouldHave(exactText(result));
     }
 }
