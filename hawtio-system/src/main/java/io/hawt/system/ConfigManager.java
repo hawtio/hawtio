@@ -2,6 +2,7 @@ package io.hawt.system;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.naming.Context;
@@ -68,7 +69,7 @@ public class ConfigManager {
         }
     }
 
-    public String get(String name, String defaultValue) {
+    public Optional<String> get(String name) {
         String answer = null;
         if (envContext != null) {
             try {
@@ -82,16 +83,12 @@ public class ConfigManager {
             answer = this.propertyResolver.apply(name);
         }
 
-        if (answer == null) {
-            answer = defaultValue;
-        }
-
         LOG.debug("Property {} is set to value {}", name, answer);
-        return answer;
+        return Optional.ofNullable(answer);
     }
 
     public boolean getBoolean(String name, boolean defaultValue) {
-        return Boolean.parseBoolean(get(name, Boolean.toString(defaultValue)));
+        return Boolean.parseBoolean(get(name).orElse(Boolean.toString(defaultValue)));
     }
 
     private static String getHawtioSystemProperty(String name) {

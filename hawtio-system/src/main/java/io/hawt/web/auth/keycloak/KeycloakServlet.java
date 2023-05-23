@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
  * Servlet, which aims to return:
  * - whether keycloak is enabled (true/false) if path '/enabled' is used
  * - keycloak.json to be used by keycloak JS adapter on frontend if path '/client-config' is used
- * - validate if current JAAS logged subject is same like SSO user logged through keycloak if path '/validate-subject-matches' is used
+ * - validate if current JAAS logged subject is same like SSO user logged through keycloak
+ * if path '/validate-subject-matches' is used
  */
 public class KeycloakServlet extends HttpServlet {
 
@@ -34,21 +35,20 @@ public class KeycloakServlet extends HttpServlet {
     public static final String HAWTIO_KEYCLOAK_CLIENT_CONFIG = "hawtio." + KEYCLOAK_CLIENT_CONFIG;
 
     private String keycloakConfig = null;
-    private AuthenticationConfiguration authConfiguration;
     private boolean keycloakEnabled;
 
     @Override
     public void init() {
         ConfigManager config = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
 
-        authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
-        keycloakEnabled = authConfiguration.isKeycloakEnabled();
+        AuthenticationConfiguration authConfig = AuthenticationConfiguration.getConfiguration(getServletContext());
+        keycloakEnabled = authConfig.isKeycloakEnabled();
         LOG.info("Keycloak integration is {}", this.keycloakEnabled ? "enabled" : "disabled");
         if (!keycloakEnabled) {
             return;
         }
 
-        String keycloakConfigFile = config.get(KEYCLOAK_CLIENT_CONFIG, null);
+        String keycloakConfigFile = config.get(KEYCLOAK_CLIENT_CONFIG).orElse(null);
 
         // JVM system properties can override always
         if (System.getProperty(HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
@@ -80,7 +80,8 @@ public class KeycloakServlet extends HttpServlet {
     }
 
     /**
-     * Will try to guess the config location based on the server where hawtio is running. Used just if keycloakClientConfig is not provided
+     * Will try to guess the config location based on the server where hawtio is running.
+     * Used just if keycloakClientConfig is not provided
      *
      * @return config to be used by default
      */

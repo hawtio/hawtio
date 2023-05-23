@@ -128,7 +128,7 @@ public class ProxyServlet extends HttpServlet {
             return;
         }
 
-        String allowlistStr = config.get(PROXY_ALLOWLIST, servletConfig.getInitParameter(PROXY_ALLOWLIST));
+        String allowlistStr = config.get(PROXY_ALLOWLIST).orElse(servletConfig.getInitParameter(PROXY_ALLOWLIST));
         boolean probeLocal = config.getBoolean(LOCAL_ADDRESS_PROBING, true);
         allowlist = new ProxyAllowlist(allowlistStr, probeLocal);
 
@@ -371,9 +371,9 @@ public class ProxyServlet extends HttpServlet {
 
     static {
         hopByHopHeaders = new HeaderGroup();
-        String[] headers = new String[] {
+        String[] headers = new String[]{
             "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-            "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie" };
+            "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie"};
         for (String header : headers) {
             hopByHopHeaders.addHeader(new BasicHeader(header, null));
         }

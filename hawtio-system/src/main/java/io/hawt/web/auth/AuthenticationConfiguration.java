@@ -74,23 +74,23 @@ public class AuthenticationConfiguration {
         String authDiscoveryClasses = TOMCAT_AUTH_CONTAINER_DISCOVERY;
 
         if (config != null) {
-            this.realm = config.get(REALM, DEFAULT_REALM);
+            this.realm = config.get(REALM).orElse(DEFAULT_REALM);
             // we have either role or roles
-            String roles = config.get(ROLE, null);
+            String roles = config.get(ROLE).orElse(null);
             if (roles == null) {
-                roles = config.get(ROLES, null);
+                roles = config.get(ROLES).orElse(null);
             }
             if (roles == null) {
                 // use default roles (karaf roles)
                 roles = DEFAULT_KARAF_ROLES;
             }
             this.role = roles;
-            this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES, defaultRolePrincipalClasses);
+            this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES).orElse(defaultRolePrincipalClasses);
             this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
             this.noCredentials401 = config.getBoolean(NO_CREDENTIALS_401, false);
             this.keycloakEnabled = this.enabled && config.getBoolean(KEYCLOAK_ENABLED, false);
 
-            authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES, authDiscoveryClasses);
+            authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES).orElse(authDiscoveryClasses);
         }
 
         // JVM system properties can override always

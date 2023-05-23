@@ -1,6 +1,7 @@
 package io.hawt.web.filters;
 
 import java.io.IOException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -50,7 +51,7 @@ public abstract class HttpHeaderFilter implements Filter {
         throws IOException, ServletException;
 
     protected String getConfigParameter(String key) {
-        return configManager.get(key, null);
+        return configManager.get(key).orElse(null);
     }
 
     protected boolean isXFrameSameOriginAllowed() {

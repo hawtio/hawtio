@@ -1,6 +1,7 @@
 package io.hawt.web.filters;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -60,7 +61,7 @@ public class ContentSecurityPolicyFilterTest {
     @Test
     public void shouldSetHeaderWithKeycloakServerWhenConfigParameterIsSet() throws Exception {
         // given
-        when(configManager.get(KeycloakServlet.KEYCLOAK_CLIENT_CONFIG, null)).thenReturn(keycloakConfigFile);
+        when(configManager.get(KeycloakServlet.KEYCLOAK_CLIENT_CONFIG)).thenReturn(Optional.ofNullable(keycloakConfigFile));
         contentSecurityPolicyFilter.init(filterConfig);
         // when
         contentSecurityPolicyFilter.addHeaders(request, response);
@@ -102,7 +103,7 @@ public class ContentSecurityPolicyFilterTest {
     @Test
     public void shouldSetHeaderWithFrameAncestorsSelfWhenConfigParameterIsSet() throws Exception {
         // given
-        when(configManager.get(HttpHeaderFilter.ALLOW_X_FRAME_SAME_ORIGIN, null)).thenReturn("true");
+        when(configManager.get(HttpHeaderFilter.ALLOW_X_FRAME_SAME_ORIGIN)).thenReturn(Optional.of("true"));
         contentSecurityPolicyFilter.init(filterConfig);
         // when
         contentSecurityPolicyFilter.addHeaders(request, response);

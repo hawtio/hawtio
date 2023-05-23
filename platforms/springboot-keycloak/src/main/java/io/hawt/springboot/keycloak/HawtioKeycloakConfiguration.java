@@ -38,7 +38,7 @@ public class HawtioKeycloakConfiguration extends KeycloakWebSecurityConfigurerAd
     }
 
     /**
-     * Defiines Spring Security session listener.
+     * Defines Spring Security session listener.
      */
     @Bean
     public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {

@@ -32,10 +32,7 @@ public final class AuthSessionHelpers {
         if (configManager == null) {
             return timeout;
         }
-        String timeoutStr = configManager.get("sessionTimeout", Integer.toString(DEFAULT_SESSION_TIMEOUT));
-        if (timeoutStr == null) {
-            return timeout;
-        }
+        String timeoutStr = configManager.get("sessionTimeout").orElse(Integer.toString(DEFAULT_SESSION_TIMEOUT));
         try {
             timeout = Integer.parseInt(timeoutStr);
             // timeout of 0 means default timeout

@@ -1,17 +1,19 @@
 package io.hawt.system;
 
 import java.util.Hashtable;
+import java.util.Optional;
 
 import javax.naming.Context;
 import javax.naming.spi.InitialContextFactory;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static org.junit.Assert.assertEquals;
 
 public class ConfigManagerTest {
 
@@ -45,7 +47,7 @@ public class ConfigManagerTest {
         final ConfigManager underTest = new ConfigManager();
         underTest.init();
 
-        Assert.assertEquals("bar", underTest.get("foo", null));
+        assertEquals(Optional.of("bar"), underTest.get("foo"));
     }
 
     @Test
@@ -53,51 +55,51 @@ public class ConfigManagerTest {
         final ConfigManager underTest = new ConfigManager();
         underTest.init();
 
-        Assert.assertEquals("default", underTest.get("foo", "default"));
+        assertEquals(Optional.empty(), underTest.get("foo"));
     }
 
     @Test
     public void testGetWithCustomProvider() {
         final ConfigManager underTest = new ConfigManager(
-                x -> "foo".equals(x) ? "bar" : null);
+            x -> "foo".equals(x) ? "bar" : null);
         underTest.init();
 
-        Assert.assertEquals("bar", underTest.get("foo", "default"));
+        assertEquals(Optional.of("bar"), underTest.get("foo"));
     }
 
     @Test
     public void testGetWithCustomProviderOverriddenBySystemProperty() {
         System.setProperty("hawtio.foo", "system");
         final ConfigManager underTest = new ConfigManager(
-                x -> "foo".equals(x) ? "bar" : null);
+            x -> "foo".equals(x) ? "bar" : null);
         underTest.init();
 
-        Assert.assertEquals("system", underTest.get("foo", "default"));
+        assertEquals(Optional.of("system"), underTest.get("foo"));
     }
 
     @Test
     public void testGetWithJndiContext() throws Exception {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                TestInitialContextFactory.class.getName());
+            TestInitialContextFactory.class.getName());
         Mockito.when(jndiContext.lookup("java:comp/env")).thenReturn(jndiContext);
         Mockito.when(jndiContext.lookup("hawtio/foo")).thenReturn("bar");
 
         final ConfigManager underTest = new ConfigManager();
         underTest.init();
 
-        Assert.assertEquals("bar", underTest.get("foo", null));
+        assertEquals(Optional.of("bar"), underTest.get("foo"));
     }
 
     @Test
     public void testGetWithJndiContextDefaultValue() throws Exception {
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                TestInitialContextFactory.class.getName());
+            TestInitialContextFactory.class.getName());
         Mockito.when(jndiContext.lookup("java:comp/env")).thenReturn(jndiContext);
 
         final ConfigManager underTest = new ConfigManager();
         underTest.init();
 
-        Assert.assertEquals("foobar", underTest.get("foo", "foobar"));
+        assertEquals(Optional.empty(), underTest.get("foo"));
 
         Mockito.verify(jndiContext).lookup("hawtio/foo");
     }
@@ -107,7 +109,7 @@ public class ConfigManagerTest {
         System.setProperty("hawtio.foo", "systemBar");
         System.setProperty("hawtio.forceProperties", "true");
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                TestInitialContextFactory.class.getName());
+            TestInitialContextFactory.class.getName());
 
         Mockito.when(jndiContext.lookup("java:comp/env")).thenReturn(jndiContext);
         Mockito.when(jndiContext.lookup("hawtio/foo")).thenReturn("jndiBar");
@@ -115,7 +117,7 @@ public class ConfigManagerTest {
         final ConfigManager underTest = new ConfigManager();
         underTest.init();
 
-        Assert.assertEquals("systemBar", underTest.get("foo", null));
+        assertEquals(Optional.of("systemBar"), underTest.get("foo"));
     }
 
     @Test
@@ -131,7 +133,7 @@ public class ConfigManagerTest {
     public void testDestroyWithJndiContext() throws Exception {
         Mockito.when(jndiContext.lookup("java:comp/env")).thenReturn(jndiContext);
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                TestInitialContextFactory.class.getName());
+            TestInitialContextFactory.class.getName());
 
         final ConfigManager underTest = new ConfigManager();
         underTest.init();
