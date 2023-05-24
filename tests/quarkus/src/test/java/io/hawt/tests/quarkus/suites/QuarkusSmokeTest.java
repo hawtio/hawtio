@@ -8,7 +8,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = {"io.hawt.tests.quarkus", "io.hawt.tests.utils.stepdefinitions"},
-    tags = "@quarkusAllTest",
+    tags = "@quarkusSmokeTest",
     plugin = {"json"})
 public class QuarkusSmokeTest extends CucumberQuarkusTest {
 }

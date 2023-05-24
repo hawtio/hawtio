@@ -1,6 +1,6 @@
 Feature: Checking the functionality of Camel Routes page.
 
-  @springBootAllTest
+  @springBootSmokeTest @springBootAllTest
   Scenario Outline: Check that Routes table on Camel Routes page is not empty
     Given User is on "Camel" page
     When User is on Camel "routes" folder of "SampleCamel" context
