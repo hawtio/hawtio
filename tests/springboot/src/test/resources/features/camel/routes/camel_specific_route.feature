@@ -1,6 +1,6 @@
 Feature: Checking the functionality of Camel Specific Route page.
 
-  @springBootAllTest
+  @springBootSmokeTest @springBootAllTest
   Scenario Outline: Check that Camel Route diagram is presented
     Given User is on "Camel" page
     And User is on Camel "simple" item of "routes" folder of "SampleCamel" context

@@ -1,6 +1,6 @@
 Feature: Checking the functionality of Plugin page.
 
-  @springBootAllTest
+  @springBootSmokeTest @springBootAllTest
   Scenario: Check that Sample Plugin got installed and accessible
     Given User is on "Sample Plugin" page
     Then Content section has h1 title "Sample Plugin"

@@ -48,7 +48,7 @@ mvn install -Pe2e-springboot -pl tests/springboot
 
 ### Quarkus 2.x E2E tests
 ```
-mvn install -Pe2e-springboot -pl tests/springboot
+mvn install -Pe2e-quarkus -pl tests/quarkus
 ```
 
 ### Additional Command Options

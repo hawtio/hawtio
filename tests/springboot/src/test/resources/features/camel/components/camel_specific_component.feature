@@ -1,6 +1,6 @@
 Feature: Checking the functionality of a Camel Specific Component page.
 
-  @springBootAllTest
+  @springBootSmokeTest @springBootAllTest
   Scenario Outline: Check that the Attributes table under Attribute tab on Camel Specific Component page is not empty
     Given User is on "Camel" page
     And User is on Camel "mock" item of "components" folder of "SampleCamel" context

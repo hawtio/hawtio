@@ -1,6 +1,6 @@
 Feature: Checking the functionality of a specific camel context page.
 
-  @springBootAllTest
+  @springBootSmokeTest @springBootAllTest
   Scenario Outline: Check that table of Attribute tab in Camel Specific Context page is not empty
     Given User is on "Camel" page
     And User is on Camel "SampleCamel" context

@@ -1,6 +1,6 @@
 Feature: Checking the functionality of a Camel Specific Endpoint page.
 
-  @quarkusAllTest
+  @quarkusSmokeTest @quarkusAllTest
   Scenario Outline: Check that the Attributes table under Attribute tab on Camel Specific Endpoint page is not empty
     Given User is on "Camel" page
     And User is on Camel "mock://result" item of "endpoints" folder of "SampleCamelQuarkus" context
