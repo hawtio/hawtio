@@ -9,7 +9,7 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features")
+@SelectClasspathResource("io/hawt/tests/features/")
 @ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "@springBootAllTest")
 public class SpringBootAllTest {
 

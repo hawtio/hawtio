@@ -29,6 +29,8 @@ E2E UI tests
 - Runtime
 - Spring Boot page
 
+All test scenarios can be found under `tests/features/src/main/resources/io/hawt/tests/features`
+
 
 ## Test Execution
 
@@ -43,12 +45,12 @@ mvn install -DskipTests
 ### Spring Boot 2.x E2E tests
 
 ```
-mvn install -Pe2e-springboot -pl tests/springboot
+mvn install -Pe2e-springboot -am -pl tests/springboot
 ```
 
 ### Quarkus 2.x E2E tests
 ```
-mvn install -Pe2e-quarkus -pl tests/quarkus
+mvn install -Pe2e-quarkus -am -pl tests/quarkus
 ```
 
 ### Additional Command Options
