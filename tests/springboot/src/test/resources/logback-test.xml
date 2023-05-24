@@ -1,0 +1,19 @@
+<configuration>
+
+  <appender name="CUCUMBER-LOG" class="ch.qos.logback.core.FileAppender">
+    <file>target/cucumber.log</file>
+    <encoder>
+      <pattern>[%level] %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%level] %logger{35} %msg%n</pattern>
+    </encoder>
+    <immediateFlush>true</immediateFlush>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="CUCUMBER-LOG"/>
+  </root>
+</configuration>

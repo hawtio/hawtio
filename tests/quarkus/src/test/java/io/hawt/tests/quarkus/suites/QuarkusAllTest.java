@@ -6,9 +6,9 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @CucumberOptions(
-    features = "src/test/resources/features",
-    glue = {"io.hawt.tests.quarkus", "io.hawt.tests.utils.stepdefinitions"},
+    features = "classpath:io/hawt/tests/features",
+    glue = {"io.hawt.tests.quarkus", "io.hawt.tests.features"},
     tags = "@quarkusAllTest",
-    plugin = {"json"})
+    plugin = {"pretty"})
 public class QuarkusAllTest extends CucumberQuarkusTest {
 }

@@ -27,7 +27,7 @@
   <modules>
     <module>quarkus</module>
     <module>springboot</module>
-    <module>utils</module>
+    <module>features</module>
   </modules>
 
   <dependencyManagement>
@@ -160,6 +160,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skipTests>true</skipTests>
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
+          <forkedProcessTimeoutInSeconds>0</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
     </plugins>

@@ -149,10 +149,10 @@
       </exclusions>
     </dependency>
 
-    <!-- Hawtio Test Utils -->
+    <!-- Hawtio Test Features -->
     <dependency>
       <groupId>io.hawt.tests</groupId>
-      <artifactId>hawtio-tests-utils</artifactId>
+      <artifactId>hawtio-tests-features</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

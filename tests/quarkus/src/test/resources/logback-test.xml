@@ -1,0 +1,28 @@
+<configuration additivity="false">
+  <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
+  <import class="ch.qos.logback.core.FileAppender"/>
+  <import class="ch.qos.logback.core.ConsoleAppender"/>
+
+  <appender name="CUCUMBER-LOG" class="FileAppender">
+    <file>target/cucumber.log</file>
+    <encoder class="PatternLayoutEncoder">
+      <pattern>[%level] %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="STDOUT" class="ConsoleAppender">
+    <encoder class="PatternLayoutEncoder">
+      <pattern>[%level] %logger{35} %msg%n</pattern>
+    </encoder>
+<!--    <immediateFlush>true</immediateFlush>-->
+  </appender>
+
+  <logger name="CUCUMBER" additivity="false">
+    <appwnder-ref ref="CUCUMBER-LOG"/>
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+<!--    <appender-ref ref="CUCUMBER-LOG"/>-->
+  </root>
+</configuration>
