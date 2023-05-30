@@ -20,7 +20,7 @@
   </modules>
 
   <properties>
-    <camel-version>3.20.4</camel-version>
+    <camel-version>3.20.5</camel-version>
     <selenium-version>4.8.3</selenium-version>
     <selenide-version>6.12.4</selenide-version>
     <cucumber-version>7.11.2</cucumber-version>
