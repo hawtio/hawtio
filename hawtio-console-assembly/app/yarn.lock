@@ -33,10 +33,10 @@
     typescript "^3.0.3"
     urijs "^1.19.9"
 
-"@hawtio/integration@^5.3.2":
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-5.3.2.tgz#06df1c4bbbd761c3c863e3e283c4ed11f69ce41e"
-  integrity sha512-1QEbqv9xC4OJaXNEzhuc+Bl6KA+RdiqYAXC/sSmGJwSazt0SaLqVkSIkkOLnpLMy/bBeviGEwj70x1WJW8kHdQ==
+"@hawtio/integration@^5.3.3":
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-5.3.3.tgz#6378601272295a985265c563900fd2ce2ba61fa4"
+  integrity sha512-CXqPCqJ62dISrmwIPyee9zkb5hnk8Frj4QT/Yob71Kky/YrHoF3NaDWB3vSVjgdYgFYN4j4pH1hXRQc89Oh01g==
   dependencies:
     "@hawtio/core" "^4.16.5"
     "@types/angular-cookies" "^1.4.5"
