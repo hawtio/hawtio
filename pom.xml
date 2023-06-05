@@ -57,9 +57,11 @@
     <blueprint-web-version>1.1.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
 
-    <spring-version>5.3.24</spring-version>
-    <spring-boot-version>2.7.6</spring-boot-version>
+    <!-- Spring versions -->
+    <spring-version>5.3.27</spring-version>
+    <spring-boot-version>2.7.12</spring-boot-version>
 
+    <!-- Quarkus version -->
     <quarkus-version>2.16.6.Final</quarkus-version>
 
     <assertj-core-version>3.22.0</assertj-core-version>
@@ -81,7 +83,7 @@
     <junit5-version>5.9.3</junit5-version>
     <karaf-version>4.3.3</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
-    <keycloak-version>11.0.2</keycloak-version>
+    <keycloak-version>21.1.1</keycloak-version>
     <log4j-version>1.2.17</log4j-version>
     <log4j2-version>2.17.1</log4j2-version>
     <maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
