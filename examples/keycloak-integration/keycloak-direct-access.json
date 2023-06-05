@@ -2,7 +2,7 @@
   "realm": "hawtio-demo",
   "resource": "ssh-jmx-admin-client",
   "ssl-required": "external",
-  "auth-server-url": "http://localhost:18080/auth",
+  "auth-server-url": "http://localhost:18080/",
   "credentials": {
     "secret": "password"
   }

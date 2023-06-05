@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.util.IOHelper;
+import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class KeycloakServlet extends HttpServlet {
             keycloakConfigFile = System.getProperty(HAWTIO_KEYCLOAK_CLIENT_CONFIG);
         }
 
-        if (keycloakConfigFile == null || keycloakConfigFile.length() == 0) {
+        if (Strings.isBlank(keycloakConfigFile)) {
             keycloakConfigFile = defaultKeycloakConfigLocation();
         }
 
@@ -126,7 +127,7 @@ public class KeycloakServlet extends HttpServlet {
                 break;
             case "/validate-subject-matches":
                 String keycloakUser = request.getParameter("keycloakUser");
-                if (keycloakUser == null || keycloakUser.length() == 0) {
+                if (Strings.isBlank(keycloakUser)) {
                     LOG.warn("Parameter 'keycloakUser' not found");
                 }
                 boolean valid = validateKeycloakUser(request, keycloakUser);
