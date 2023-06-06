@@ -15,13 +15,13 @@
   <packaging>pom</packaging>
 
   <properties>
-    <camel-version>3.20.3</camel-version>
+    <camel-version>3.20.5</camel-version>
     <http5-version>5.2.1</http5-version>
-    <guava-version>31.1-jre</guava-version>
+    <guava-version>32.0.0-jre</guava-version>
     <slf4j-version>2.0.7</slf4j-version>
-    <selenium-version>4.9.0</selenium-version>
-    <selenide-version>6.13.1</selenide-version>
-    <cucumber-version>7.12.0</cucumber-version>
+    <selenium-version>4.9.1</selenium-version>
+    <selenide-version>6.15.0</selenide-version>
+    <cucumber-version>7.12.1</cucumber-version>
   </properties>
 
   <modules>

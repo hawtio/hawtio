@@ -31,12 +31,12 @@ public class Panel {
         if (!$(byXpath("//a[contains(text(),'my_htpasswd_provider')]")).is(interactable)) {
             this.openDropDownMenu("#hawtio-header-user-dropdown-toggle");
             // Workaround for Windows machines - sometimes, the Logout button is not loaded properly
-            if ($(byXpath("//a[contains(text(), 'Logout')]")).is(not(interactable))) {
+            if ($(byXpath("//a[contains(text(), 'Log out')]")).is(not(interactable))) {
                 LOG.info("Logout by the direct logout URL");
                 open(getUrlFromParameters() + "/auth/logout");
             } else {
                 LOG.info("Logout from the drop-down menu list");
-                $(byXpath("//a[contains(text(), 'Logout')]")).shouldBe(interactable).click();
+                $(byXpath("//a[contains(text(), 'Log out')]")).shouldBe(interactable).click();
             }
         }
         return page(LoginPage.class);

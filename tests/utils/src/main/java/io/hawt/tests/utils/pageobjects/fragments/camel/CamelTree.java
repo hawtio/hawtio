@@ -18,7 +18,7 @@ public class CamelTree {
      * @return the given page object class
      */
     public <P> P expandSpecificFolder(Class<P> pageObjectClass, String folderPartialId) {
-        $("[id$='" + folderPartialId + "']").$("[class$='node-toggle']").shouldBe(interactable).click();
+        $("[id*='" + folderPartialId + "']").$("[class$='node-toggle']").shouldBe(interactable).click();
         return page(pageObjectClass);
     }
 
@@ -28,7 +28,7 @@ public class CamelTree {
      * @param itemPartialId of the item to be selected
      */
     public void selectSpecificItem(String itemPartialId) {
-        $("[id$='" + itemPartialId + "']").$("[class$='node-text']").shouldBe(interactable).click();
+        $("[id*='" + itemPartialId + "']").$("[class$='node-text']").shouldBe(interactable).click();
     }
 
     /**

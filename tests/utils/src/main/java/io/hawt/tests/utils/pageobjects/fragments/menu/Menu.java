@@ -4,9 +4,11 @@ import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.focused;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.not;
+import static com.codeborne.selenide.Selectors.byClassName;
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.$;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
 /**
@@ -21,10 +23,17 @@ public class Menu {
      */
     public void navigateTo(String navItem) {
         final SelenideElement item = $(byLinkText(navItem));
+        final SelenideElement emptyStateContent = $(byClassName("pf-c-empty-state__content"));
 
         toggleLeftSideBarIfCollapsed();
 
-        item.shouldBe(interactable).click();
+        item.click();
+
+        // Sometimes Selenide is faster than Hawtio and content is loaded properly
+        if (emptyStateContent.exists()) {
+            Selenide.refresh();
+            item.click();
+        }
 
         toggleLeftSideBarIfOverlaysCamelTree();
     }
