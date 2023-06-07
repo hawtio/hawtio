@@ -34,9 +34,11 @@ jobs:
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests
       - name: Spring Boot E2E test
+        id: spring-boot-e2e-test
         run: |
           mvn --batch-mode --no-transfer-progress install -Pe2e-springboot -pl tests/springboot
       - name: Quarkus E2E test
+        if: success() || (failure() && steps.spring-boot-e2e-test.conclusion == 'failure')
         run: |
           mvn --batch-mode --no-transfer-progress install -Pe2e-quarkus -pl tests/quarkus
       - name: Archive failed test reports
