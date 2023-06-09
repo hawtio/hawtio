@@ -1,0 +1,9 @@
+{
+  "catalogs": {},
+  "aliases": {
+    "hawtio": {
+      "script-ref": "hawtio-jbang/dist/HawtioJBang.java",
+      "description": "Run Hawtio easily"
+    }
+  }
+}
