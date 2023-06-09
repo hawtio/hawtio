@@ -22,6 +22,11 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
+        <artifactId>hawtio-jbang</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
         <artifactId>hawtio-base</artifactId>
         <version>${project.version}</version>
       </dependency>
