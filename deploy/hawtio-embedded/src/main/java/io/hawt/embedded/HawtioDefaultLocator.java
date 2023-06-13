@@ -1,52 +1,24 @@
-/*
- * Copyright (C) 2013 the original author or authors.
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package io.hawt.app;
+package io.hawt.embedded;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.hawt.embedded.Main;
+public class HawtioDefaultLocator {
 
-public class App {
-    private static final String WAR_FILENAME = "hawtio.war";
+    private static final String WAR_FILENAME = "hawtio-default-3.0-SNAPSHOT.war";
     private static final int KB = 1024;
 
-    public static void main(String[] args) {
-
-        Object val = System.getProperty("hawtio.authenticationEnabled");
-        if (val == null) {
-            System.setProperty("hawtio.authenticationEnabled", "false");
-        }
-
-        Main main = new Main();
-
+    public static void setWar(Main main) {
         try {
             String virtualMachineClass = "com.sun.tools.attach.VirtualMachine";
             try {
-                loadClass(virtualMachineClass, App.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
+                loadClass(virtualMachineClass, HawtioDefaultLocator.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
             } catch (Exception e) {
                 // let's try to find the tools.jar instead
                 Set<String> paths = new HashSet<>();
@@ -90,37 +62,6 @@ public class App {
         } catch (Exception e) {
             System.err.println("Failed to create hawtio: " + e.getMessage());
             e.printStackTrace();
-            return;
-        }
-
-        if (!main.parseArguments(args) || main.isHelp()) {
-            main.showOptions();
-        } else {
-            try {
-                main.run();
-
-                // should we open the url
-                int port = main.getPort();
-                String url = "http://localhost:" + port + main.getContextPath();
-                // set what is the url
-                System.setProperty("hawtio.url", url);
-
-                String open = main.isOpenUrl() ? "true" : "false";
-                // JVM system override the main option
-                boolean openUrl = "true".equals(System.getProperty("hawtio.openUrl", open));
-                if (openUrl && Desktop.isDesktopSupported()) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(url));
-                    } catch (Exception e) {
-                        System.err.printf(
-                            "Failed to open browser session, to access hawtio visit \"%s\"%n",
-                            url);
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("Failed running hawtio: " + e.getMessage());
-                e.printStackTrace();
-            }
         }
     }
 
@@ -154,5 +95,4 @@ public class App {
             count = input.read(buffer);
         }
     }
-
 }

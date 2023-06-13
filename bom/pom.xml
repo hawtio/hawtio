@@ -17,11 +17,6 @@
     <dependencies>
       <dependency>
         <groupId>io.hawt</groupId>
-        <artifactId>hawtio-app</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
         <artifactId>hawtio-jbang</artifactId>
         <version>${project.version}</version>
       </dependency>

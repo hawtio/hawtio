@@ -23,13 +23,12 @@ For more details and other containers, see [Get Started Guide](http://hawt.io/do
 
 ### Running an executable JAR
 
-You can start up Hawtio on your machine using the hawtio-app executable JAR.
+You can start up Hawtio on your machine using the following jbang command.
 
-- [hawtio-app-3.0-M1.jar](https://repo1.maven.org/maven2/io/hawt/hawtio-app/3.0-M1/hawtio-app-3.0-M1.jar)
-
-Once you have downloaded it, just run this from the command line:
-
-    java -jar hawtio-app-3.0-M1.jar
+```
+jbang app install hawtio@hawtio/hawtio
+hawtio --help
+```
 
 ### Running a Spring Boot app
 

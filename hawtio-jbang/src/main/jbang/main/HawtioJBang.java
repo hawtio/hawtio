@@ -20,11 +20,12 @@
 
 //JAVA 11+
 //REPOS mavencentral
-//DEPS io.hawt:hawtio-app:${hawtio.jbang.version:3.0-M6}
+//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:3.0-SNAPSHOT}
+//DEPS io.hawt:hawtio-default:${hawtio.jbang.version:3.0-SNAPSHOT}@war
 
 package main;
 
-import io.hawt.app.App;
+import io.hawt.embedded.Main;
 
 /**
  * Main to run HawtioJBang
@@ -32,7 +33,7 @@ import io.hawt.app.App;
 public class HawtioJBang {
 
     public static void main(String... args) {
-        App.main(args);
+        Main.run(args);
     }
 
 }
