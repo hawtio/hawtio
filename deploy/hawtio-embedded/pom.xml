@@ -12,6 +12,10 @@
   <name>${project.artifactId}</name>
   <description>Hawtio :: hawtio-embedded</description>
 
+  <properties>
+    <picocli-version>4.7.3</picocli-version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -22,6 +26,12 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>${jetty-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>${picocli-version}</version>
     </dependency>
 
     <!-- logging -->

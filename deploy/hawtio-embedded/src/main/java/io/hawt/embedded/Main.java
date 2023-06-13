@@ -17,10 +17,13 @@
  */
 package io.hawt.embedded;
 
+import java.awt.*;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -33,36 +36,87 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
+import picocli.CommandLine;
 
 /**
  * A simple way to run hawtio embedded inside a JVM by booting up a Jetty server
  */
-public class Main {
-    private final Options options;
+@CommandLine.Command(mixinStandardHelpOptions = true, name = "hawtio", description = "Run Hawtio")
+public class Main implements Callable<Integer>  {
+    private static CommandLine commandLine;
+
+    @CommandLine.Option(names = {"--war-location", "--l"},
+        description = "Directory to search for .war files.")
+    String warLocation;
+    @CommandLine.Option(names = {"--war", "--w"},
+        description = "War file or directory of the hawtio web application.")
+    String war;
+    @CommandLine.Option(names = {"--context-path", "--c"},
+        description = "Context path.",
+        defaultValue = "/hawtio")
+    String contextPath = "/hawtio";
+    @CommandLine.Option(names = {"--plugins-dir", "--pd"},
+        description = "Directory to search for .war files to install as 3rd party plugins.",
+        defaultValue = "plugins")
+    String plugins = "plugins";
+    @CommandLine.Option(names = {"--host", "--hst"},
+        description = "Hostname to listen to.",
+        defaultValue = "0.0.0.0")
+    String host = "0.0.0.0";
+    @CommandLine.Option(names = {"--port", "--p"},
+        description = "Port number.",
+        defaultValue = "8080")
+    Integer port = 8080;
+    @CommandLine.Option(names = {"--extra-class-path", "--ecp"},
+        description = "Extra class path.")
+    String extraClassPath;
+    @CommandLine.Option(names = {"--join", "--j"},
+        description = "Join server thread.",
+        defaultValue = "true")
+    boolean jointServerThread;
+    @CommandLine.Option(names = {"--open-url", "--ou"},
+        description = "Open the web console automatic in the web browser.",
+        defaultValue = "true")
+    boolean openUrl;
+    @CommandLine.Option(names = {"--key-store", "--ks"},
+        description = "JKS keyStore with the keys for https.")
+    String keyStore;
+    @CommandLine.Option(names = {"--key-store-pass", "--kp"},
+        description = "Password for the JKS keyStore with the keys for https.")
+    String keyStorePass;
     private boolean welcome = true;
 
     public Main() {
-        options = new Options();
-        options.init();
+    }
+
+    public static void run(String... args) {
+        Main main = new Main();
+        commandLine = new CommandLine(main);
+
+        int exitCode = commandLine.execute(args);
+        System.exit(exitCode);
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        Object val = System.getProperty("hawtio.authenticationEnabled");
+        if (val == null) {
+            System.setProperty("hawtio.authenticationEnabled", "false");
+        }
+
+        if (war == null && warLocation == null) {
+            HawtioDefaultLocator.setWar(this);
+        }
+
+        this.run();
+
+        return 0;
     }
 
     public static void main(String[] args) {
         Main main = new Main();
 
-        if (!main.parseArguments(args) || main.isHelp()) {
-            main.showOptions();
-            return;
-        }
-
         doRun(main);
-    }
-
-    public boolean parseArguments(String[] args) {
-        return options.parseArguments(args);
-    }
-
-    public void showOptions() {
-        options.showOptions();
     }
 
     public static void doRun(Main main) {
@@ -74,16 +128,16 @@ public class Main {
         }
     }
 
-    public void run() throws Exception {
-        run(options.isJointServerThread());
+    public String run() throws Exception {
+        return run(jointServerThread);
     }
 
-    public void run(boolean join) throws Exception {
+    public String run(boolean join) throws Exception {
         System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
         Slf4jLog log = new Slf4jLog("jetty");
         Log.setLog(log);
 
-        Server server = new Server(new InetSocketAddress(InetAddress.getByName(options.getHost()), options.getPort()));
+        Server server = new Server(new InetSocketAddress(InetAddress.getByName(host), port));
 
         HandlerCollection handlers = new HandlerCollection();
         handlers.setServer(server);
@@ -109,19 +163,29 @@ public class Main {
         // create server and add the handlers
         if (welcome) {
             System.out.println("Embedded Hawtio: You can use --help to show usage");
-            System.out.println(options.usedOptionsSummary());
         }
 
         System.out.println("About to start Hawtio " + webapp.getWar());
         server.start();
 
+        String url = String.format("%s://%s:%s%s", scheme, host, port, contextPath);
         if (welcome) {
             System.out.println();
             System.out.println("Welcome to Hawtio");
             System.out.println("=====================================================");
             System.out.println();
-            System.out.println(scheme + "://localhost:" + options.getPort() + options.getContextPath());
+            System.out.println(url);
             System.out.println();
+        }
+
+        if (openUrl && Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (Exception e) {
+                System.err.printf(
+                    "Failed to open browser session, to access hawtio visit \"%s\"%n",
+                    url);
+            }
         }
 
         if (join) {
@@ -130,42 +194,44 @@ public class Main {
             }
             server.join();
         }
+
+        return url;
     }
 
     private WebAppContext createHawtioWebapp(Server server, String scheme) {
         WebAppContext webapp = new WebAppContext();
         webapp.setServer(server);
-        webapp.setContextPath(options.getContextPath());
-        String war = findWar(options.getWarLocation());
-        if (war == null) {
-            war = options.getWar();
+        webapp.setContextPath(contextPath);
+        String foundWar = findWar(warLocation);
+        if (foundWar == null) {
+            foundWar = war;
         }
-        if (war == null) {
+        if (foundWar == null) {
             throw new IllegalArgumentException("No war or warLocation options set!");
         }
-        webapp.setWar(war);
+        webapp.setWar(foundWar);
         webapp.setParentLoaderPriority(true);
         webapp.setLogUrlOnStart(true);
         webapp.setInitParameter("scheme", scheme);
-        webapp.setExtraClasspath(options.getExtraClassPath());
+        webapp.setExtraClasspath(extraClassPath);
         return webapp;
     }
 
     private String resolveScheme(Server server) {
         String scheme = "http";
-        if (null != options.getKeyStore()) {
+        if (null != keyStore) {
             System.out.println("Configuring SSL");
             SslContextFactory sslcontf = new SslContextFactory();
             HttpConfiguration httpconf = new HttpConfiguration();
-            sslcontf.setKeyStorePath(options.getKeyStore());
-            if (null != options.getKeyStorePass()) {
-                sslcontf.setKeyStorePassword(options.getKeyStorePass());
+            sslcontf.setKeyStorePath(keyStore);
+            if (null != keyStorePass) {
+                sslcontf.setKeyStorePassword(keyStorePass);
             } else {
                 System.out.println("Attempting to open keystore with no password...");
             }
             try (ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf))) {
-                sslconn.setPort(options.getPort());
-                server.setConnectors(new Connector[] { sslconn });
+                sslconn.setPort(port);
+                server.setConnectors(new Connector[]{sslconn});
 
             }
             scheme = "https";
@@ -182,7 +248,7 @@ public class Main {
     }
 
     protected void findThirdPartyPlugins(Slf4jLog log, HandlerCollection handlers, File tempDir) {
-        File dir = new File(options.getPlugins());
+        File dir = new File(plugins);
         if (!dir.exists() || !dir.isDirectory()) {
             return;
         }
@@ -226,7 +292,7 @@ public class Main {
             contextPath = contextPath.substring(0, contextPath.length() - 4);
         }
         // custom plugins must not use same context-path as Hawtio
-        if (contextPath.equals(options.getContextPath())) {
+        if (contextPath.equals(this.contextPath)) {
             throw new IllegalArgumentException("3rd party plugin " + war.getName() + " cannot have same name as Hawtio context path. Rename the plugin file to avoid the clash.");
         }
         return contextPath;
@@ -266,67 +332,51 @@ public class Main {
         return name.toLowerCase().endsWith(".war");
     }
 
-    public String getWarLocation() {
-        return options.getWarLocation();
+    public void showWelcome(boolean welcome) {
+        this.welcome = welcome;
     }
 
     public void setWarLocation(String warLocation) {
-        options.setWarLocation(warLocation);
-    }
-
-    public String getWar() {
-        return options.getWar();
+        this.warLocation = warLocation;
     }
 
     public void setWar(String war) {
-        options.setWar(war);
-    }
-
-    public String getContextPath() {
-        return options.getContextPath();
+        this.war = war;
     }
 
     public void setContextPath(String contextPath) {
-        options.setContextPath(contextPath);
+        this.contextPath = contextPath;
     }
 
-    public Integer getPort() {
-        return options.getPort();
+    public void setPlugins(String plugins) {
+        this.plugins = plugins;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public void setPort(Integer port) {
-        options.setPort(port);
-    }
-
-    public String getExtraClassPath() {
-        return options.getExtraClassPath();
+        this.port = port;
     }
 
     public void setExtraClassPath(String extraClassPath) {
-        options.setExtraClassPath(extraClassPath);
+        this.extraClassPath = extraClassPath;
     }
 
-    public boolean isJoinServerThread() {
-        return options.isJointServerThread();
-    }
-
-    public void setJoinServerThread(boolean joinServerThread) {
-        options.setJointServerThread(joinServerThread);
-    }
-
-    public boolean isOpenUrl() {
-        return options.isOpenUrl();
+    public void setJointServerThread(boolean jointServerThread) {
+        this.jointServerThread = jointServerThread;
     }
 
     public void setOpenUrl(boolean openUrl) {
-        options.setOpenUrl(openUrl);
+        this.openUrl = openUrl;
     }
 
-    public boolean isHelp() {
-        return options.isHelp();
+    public void setKeyStore(String keyStore) {
+        this.keyStore = keyStore;
     }
 
-    public void showWelcome(boolean welcome) {
-        this.welcome = welcome;
+    public void setKeyStorePass(String keyStorePass) {
+        this.keyStorePass = keyStorePass;
     }
 }

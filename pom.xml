@@ -125,7 +125,6 @@
     <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>
     <module>examples/war-plugin</module>
-    <module>hawtio-app</module>
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>
