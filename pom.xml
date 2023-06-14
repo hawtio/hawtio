@@ -297,6 +297,26 @@
       -->
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>update-jbang-version</id>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <tasks>
+                    <replaceregexp match="hawtio.jbang.version:(.*)}"
+                                   replace="hawtio.jbang.version:${releaseVersion}}">
+                      <fileset dir="../hawtio-jbang" includes="**/HawtioJBang.java"/>
+                    </replaceregexp>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
