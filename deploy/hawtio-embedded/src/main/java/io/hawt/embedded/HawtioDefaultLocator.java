@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class HawtioDefaultLocator {
 
-    private static final String WAR_FILENAME = "hawtio-default-3.0-SNAPSHOT.war";
+    private static final String WAR_FILENAME = "hawtio.war";
     private static final int KB = 1024;
 
     public static void setWar(Main main) {
