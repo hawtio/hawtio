@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+  <id>hawtio-embedded</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>embedded.properties</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory></outputDirectory>
+      <outputFileNameMapping>hawtio.war</outputFileNameMapping>
+      <includes>
+        <include>io.hawt:hawtio-default</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory></outputDirectory>
+      <unpack>true</unpack>
+      <outputFileNameMapping></outputFileNameMapping>
+      <includes>
+        <include>io.hawt:hawtio-embedded</include>
+        <include>org.eclipse.jetty:*</include>
+        <include>org.slf4j:*</include>
+        <include>javax.servlet:javax.servlet-api</include>
+        <!-- for Keycloak -->
+        <!--
+          Inclusion of bouncycastle causes a lot of time for assembly,
+          so Keycloak integration is disabled for now.
+          See: https://github.com/hawtio/hawtio/issues/2516
+
+          <include>org.keycloak:*</include>
+          <include>org.jboss.logging:jboss-logging</include>
+          <include>com.fasterxml.jackson.core:*</include>
+          <include>org.apache.httpcomponents:*</include>
+          <include>commons-logging:commons-logging</include>
+          <include>commons-codec:commons-codec</include>
+          <include>org.bouncycastle:*</include>
+        -->
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
