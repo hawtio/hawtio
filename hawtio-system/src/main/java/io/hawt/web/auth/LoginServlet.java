@@ -34,8 +34,8 @@ public class LoginServlet extends HttpServlet {
 
     private static final String LOGIN_PAGE_PATH = "/login";
 
-    private int timeout;
-    private AuthenticationConfiguration authConfiguration;
+    protected int timeout;
+    protected AuthenticationConfiguration authConfiguration;
 
     private final Converters converters = new Converters();
     private final JsonConvertOptions options = JsonConvertOptions.DEFAULT;

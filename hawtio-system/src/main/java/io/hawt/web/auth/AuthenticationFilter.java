@@ -23,13 +23,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Filter for authentication. If the filter is enabled, then the login screen is shown.
+ * <p>
+ * This filter is used to provide authentication for direct access to Jolokia endpoint.
  */
 public class AuthenticationFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-    private int timeout;
-    private AuthenticationConfiguration authConfiguration;
+    protected int timeout;
+    protected AuthenticationConfiguration authConfiguration;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -44,10 +46,10 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
 
-        LOG.debug("Handling request for path {}", path);
+        LOG.debug("Handling request for path: {}", path);
 
         if (authConfiguration.getRealm() == null || authConfiguration.getRealm().equals("") || !authConfiguration.isEnabled()) {
-            LOG.debug("No authentication needed for path {}", path);
+            LOG.debug("No authentication needed for path: {}", path);
             chain.doFilter(request, response);
             return;
         }
@@ -74,7 +76,7 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
-        LOG.debug("Doing authentication and authorization for path {}", path);
+        LOG.debug("Doing authentication and authorization for path: {}", path);
 
         AuthenticateResult result = new Authenticator(httpRequest, authConfiguration).authenticate(
             subject -> executeAs(request, response, chain, subject));

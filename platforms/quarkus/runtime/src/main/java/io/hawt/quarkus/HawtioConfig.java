@@ -22,18 +22,6 @@ public class HawtioConfig {
     public Boolean authenticationEnabled;
 
     /**
-     * Enables or disables Hawtio keycloak support
-     */
-    @ConfigItem(name = "keycloakEnabled", defaultValue = "false")
-    public Boolean keycloakEnabled;
-
-    /**
-     * The location of client-side configuration file for Hawtio Keycloak support
-     */
-    @ConfigItem(name = "keycloakClientConfig")
-    public Optional<String> keycloakClientConfig;
-
-    /**
      * The user role required to log in to the console
      */
     @ConfigItem
@@ -44,6 +32,18 @@ public class HawtioConfig {
      */
     @ConfigItem
     public Optional<List<String>> roles;
+
+    /**
+     * Enables or disables Hawtio keycloak support
+     */
+    @ConfigItem(name = "keycloakEnabled", defaultValue = "false")
+    public Boolean keycloakEnabled;
+
+    /**
+     * The location of client-side configuration file for Hawtio Keycloak support
+     */
+    @ConfigItem(name = "keycloakClientConfig")
+    public Optional<String> keycloakClientConfig;
 
     /**
      * The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses

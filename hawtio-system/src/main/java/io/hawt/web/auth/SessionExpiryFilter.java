@@ -2,8 +2,6 @@ package io.hawt.web.auth;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -43,7 +41,7 @@ public class SessionExpiryFilter implements Filter {
 
     public static final String ATTRIBUTE_LAST_ACCESS = "LastAccess";
 
-    private static final List<String> IGNORED_PATHS = Collections.unmodifiableList(Arrays.asList("jolokia", "proxy"));
+    private static final List<String> IGNORED_PATHS = List.of("jolokia", "proxy");
 
     private ServletContext context;
     private int pathIndex;
