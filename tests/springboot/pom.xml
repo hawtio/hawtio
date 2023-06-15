@@ -10,7 +10,7 @@
   <artifactId>hawtio-tests-springboot</artifactId>
   <name>${project.artifactId}</name>
   <description>Hawtio :: Spring Boot 2.x E2E tests</description>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <properties>
     <hawtio.url>/actuator/hawtio</hawtio.url>

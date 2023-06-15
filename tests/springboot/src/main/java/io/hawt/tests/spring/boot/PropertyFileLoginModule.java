@@ -1,5 +1,15 @@
 package io.hawt.tests.spring.boot;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+
 import org.eclipse.jetty.jaas.spi.AbstractLoginModule;
 import org.eclipse.jetty.jaas.spi.UserInfo;
 import org.eclipse.jetty.security.PropertyUserStore;
@@ -7,17 +17,6 @@ import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.util.security.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginException;
-
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PropertyFileLoginModule extends AbstractLoginModule {
     public static final String DEFAULT_FILENAME = "realm.properties";
@@ -31,10 +30,6 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
     /**
      * Read contents of the configured property file.
      *
-     * @param subject
-     * @param callbackHandler
-     * @param sharedState
-     * @param options
      * @see javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)
      */
     @Override
@@ -99,7 +94,7 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
     }
 
     @Override
-    public boolean logout() throws LoginException {
+    public boolean logout() {
         return true;
     }
 }
