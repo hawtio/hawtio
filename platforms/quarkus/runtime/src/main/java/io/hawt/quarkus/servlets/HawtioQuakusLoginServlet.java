@@ -1,29 +1,31 @@
 package io.hawt.quarkus.servlets;
 
-import io.hawt.web.ServletHelpers;
-import io.hawt.web.auth.AuthSessionHelpers;
-import io.hawt.web.auth.AuthenticationConfiguration;
-import io.hawt.web.auth.LoginServlet;
-import io.hawt.web.auth.Redirector;
-import io.quarkus.arc.Arc;
-import io.quarkus.security.AuthenticationFailedException;
-import io.quarkus.security.credential.PasswordCredential;
-import io.quarkus.security.identity.IdentityProviderManager;
-import io.quarkus.security.identity.SecurityIdentity;
-import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
-
 import java.io.IOException;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
+import io.hawt.system.AuthenticateResult;
+import io.hawt.web.ServletHelpers;
+import io.hawt.web.auth.AuthSessionHelpers;
+import io.hawt.web.auth.LoginServlet;
+import io.hawt.web.auth.Redirector;
+import io.quarkus.arc.Arc;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HawtioQuakusLoginServlet extends LoginServlet {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HawtioQuakusLoginServlet.class);
+
+    private HawtioQuarkusAuthenticator authenticator;
+
     @Override
     public void init() {
+        authenticator = Arc.container().instance(HawtioQuarkusAuthenticator.class).get();
         Redirector redirector = Arc.container().instance(Redirector.class).get();
         setRedirector(redirector);
         super.init();
@@ -31,36 +33,22 @@ public class HawtioQuakusLoginServlet extends LoginServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        AuthSessionHelpers.clear(request, authConfiguration, false);
+
         JSONObject json = ServletHelpers.readObject(request.getReader());
         String username = (String) json.get("username");
         String password = (String) json.get("password");
 
-        PasswordCredential credential = new PasswordCredential(password.toCharArray());
-        UsernamePasswordAuthenticationRequest authenticationRequest = new UsernamePasswordAuthenticationRequest(username, credential);
-        IdentityProviderManager identityProviderManager = Arc.container().instance(IdentityProviderManager.class).get();
-
-        try {
-            SecurityIdentity identity = identityProviderManager.authenticateBlocking(authenticationRequest);
-            AuthenticationConfiguration authConfig = AuthenticationConfiguration.getConfiguration(getServletContext());
-            String roleConfig = authConfig.getRole();
-            if (roleConfig != null) {
-                // Verify the allowed roles matches with those specified in Quarkus security config
-                if (!roleConfig.isEmpty() && !roleConfig.equals("*")) {
-                    String[] roles = roleConfig.split(",");
-                    for (String role : roles) {
-                        if (identity.getRoles().contains(role)) {
-                            AuthSessionHelpers.setup(request.getSession(true), new Subject(), username, AuthSessionHelpers.getSessionTimeout(getServletContext()));
-                            return;
-                        }
-                    }
-                    ServletHelpers.doForbidden(response);
-                } else {
-                    // All roles permitted
-                    AuthSessionHelpers.setup(request.getSession(true), new Subject(), username, AuthSessionHelpers.getSessionTimeout(getServletContext()));
-                }
-            }
-        } catch (AuthenticationFailedException e) {
+        AuthenticateResult result = authenticator.authenticate(request, authConfiguration, username, password);
+        switch (result) {
+        case AUTHORIZED:
+            LOG.info("Logging in user: {}", username);
+            AuthSessionHelpers.setup(request.getSession(true), new Subject(), username, timeout);
+            break;
+        case NOT_AUTHORIZED:
+        case NO_CREDENTIALS:
             ServletHelpers.doForbidden(response);
+            break;
         }
     }
 }

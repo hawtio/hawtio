@@ -19,9 +19,9 @@ public class LogoutServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogoutServlet.class);
 
-    private AuthenticationConfiguration authConfiguration;
+    protected AuthenticationConfiguration authConfiguration;
 
-    private Redirector redirector = new Redirector();
+    protected Redirector redirector = new Redirector();
 
     @Override
     public void init() {

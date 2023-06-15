@@ -45,7 +45,7 @@ public class AuthenticationConfiguration {
     // ServletContext attributes
     public static final String AUTHENTICATION_CONFIGURATION = "authenticationConfig";
 
-    public static final String DEFAULT_REALM = "karaf";
+    public static final String DEFAULT_REALM = "hawtio";
     private static final String DEFAULT_KARAF_ROLES = "admin,manager,viewer";
     public static final String DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES =
         "org.apache.karaf.jaas.boot.principal.RolePrincipal,"

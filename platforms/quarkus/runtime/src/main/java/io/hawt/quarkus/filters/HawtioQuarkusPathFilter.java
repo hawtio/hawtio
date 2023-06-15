@@ -22,7 +22,7 @@ public class HawtioQuarkusPathFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusPathFilter.class);
 
-    private final String FILTERED_PATH_PATTERN = "^/(?:(?!\\bjolokia\\b|auth|proxy|keycloak|css|fonts|img|js|user|oauth|plugins|static|\\.).)*";
+    private final String FILTERED_PATH_PATTERN = "^/(?:(?!\\bjolokia\\b|auth|proxy|keycloak|css|fonts|img|js|user|oauth|static|\\.).)*";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

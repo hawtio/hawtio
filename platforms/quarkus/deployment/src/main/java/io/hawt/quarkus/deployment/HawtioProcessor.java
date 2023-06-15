@@ -12,14 +12,16 @@ import javax.xml.stream.XMLStreamReader;
 import io.hawt.quarkus.HawtioConfig;
 import io.hawt.quarkus.HawtioProducers;
 import io.hawt.quarkus.HawtioRecorder;
+import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
+import io.hawt.quarkus.filters.HawtioQuarkusAuthenticationFilter;
 import io.hawt.quarkus.filters.HawtioQuarkusLoginRedirectFilter;
 import io.hawt.quarkus.filters.HawtioQuarkusPathFilter;
 import io.hawt.quarkus.servlets.HawtioQuakusLoginServlet;
 import io.hawt.quarkus.servlets.HawtioQuakusLogoutServlet;
+import io.hawt.web.auth.AuthenticationFilter;
 import io.hawt.web.auth.LoginRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
-import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.filters.BaseTagHrefFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.Capabilities;
@@ -77,7 +79,8 @@ public class HawtioProcessor {
     private static final Map<String, String> WEB_XML_OVERRIDES = Map.of(
         LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName(),
         LogoutServlet.class.getName(), HawtioQuakusLogoutServlet.class.getName(),
-        LoginRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName()
+        LoginRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName(),
+        AuthenticationFilter.class.getName(), HawtioQuarkusAuthenticationFilter.class.getName()
     );
 
     private static final String FEATURE = "hawtio";
@@ -195,6 +198,7 @@ public class HawtioProcessor {
     @BuildStep
     void unremoveableBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(HawtioProducers.class));
+        additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(HawtioQuarkusAuthenticator.class));
     }
 
     @BuildStep
@@ -209,10 +213,6 @@ public class HawtioProcessor {
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing.toString()));
 
-        config.proxyAllowlist
-            .map(allowlist -> new SystemPropertyBuildItem(HAWTIO_PROXY_ALLOWLIST, String.join(",", allowlist)))
-            .ifPresent(systemProperties::produce);
-
         config.role
             .map(role -> new SystemPropertyBuildItem(HAWTIO_ROLE, role))
             .ifPresent(systemProperties::produce);
@@ -221,12 +221,16 @@ public class HawtioProcessor {
             .map(roles -> new SystemPropertyBuildItem(HAWTIO_ROLES, String.join(",", roles)))
             .ifPresent(systemProperties::produce);
 
-        config.sessionTimeout
-            .map(sessionTimeout -> new SystemPropertyBuildItem("hawtio.sessionTimeout", sessionTimeout.toString()))
-            .ifPresent(systemProperties::produce);
-
         config.keycloakClientConfig
             .map(keycloakClientConfig -> new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_CLIENT_CONFIG, keycloakClientConfig))
+            .ifPresent(systemProperties::produce);
+
+        config.proxyAllowlist
+            .map(allowlist -> new SystemPropertyBuildItem(HAWTIO_PROXY_ALLOWLIST, String.join(",", allowlist)))
+            .ifPresent(systemProperties::produce);
+
+        config.sessionTimeout
+            .map(sessionTimeout -> new SystemPropertyBuildItem("hawtio.sessionTimeout", sessionTimeout.toString()))
             .ifPresent(systemProperties::produce);
     }
 

@@ -62,8 +62,6 @@ public final class AuthSessionHelpers {
     public static void setup(HttpSession session, Subject subject, String username, int timeout) {
         session.setAttribute("subject", subject);
         session.setAttribute("user", username);
-        session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
-        session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);
         session.setAttribute("loginTime", GregorianCalendar.getInstance().getTimeInMillis());
         session.setMaxInactiveInterval(timeout);
         LOG.debug("Http session timeout for user {} is {} sec.", username, session.getMaxInactiveInterval());
@@ -75,11 +73,7 @@ public final class AuthSessionHelpers {
         }
         String sessionUser = (String) session.getAttribute("user");
         AtomicReference<String> username = new AtomicReference<>();
-        AtomicReference<String> password = new AtomicReference<>();
-        Authenticator.extractAuthHeader(request, (u, p) -> {
-            username.set(u);
-            password.set(p);
-        });
+        Authenticator.extractAuthHeader(request, (u, p) -> username.set(u));
         if (username.get() == null || username.get().equals(sessionUser)) {
             LOG.debug("Session subject - {}", subject);
             return true;
@@ -97,8 +91,10 @@ public final class AuthSessionHelpers {
     public static boolean isSpringSecurityEnabled() {
         try {
             Class.forName("org.springframework.security.core.SpringSecurityCoreVersion");
+            LOG.debug("Spring Security enabled");
             return true;
         } catch (ClassNotFoundException e) {
+            LOG.debug("Spring Security not found");
             return false;
         }
     }
