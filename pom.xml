@@ -116,6 +116,7 @@
     <module>deploy/hawtio-embedded</module>
     <module>examples/branding-plugin</module>
     <module>examples/quarkus</module>
+    <module>examples/quarkus-keycloak</module>
     <module>examples/sample-plugin</module>
     <module>examples/springboot</module>
     <module>examples/springboot-authentication</module>

@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
 import org.json.JSONObject;
@@ -49,7 +50,8 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         String frameAncestors = isXFrameSameOriginAllowed() ? "'self'" : "'none'";
 
         boolean addedKeycloakUrl = false;
-        if (keycloakConfigFile != null && !keycloakConfigFile.trim().equals("")) {
+        if (Strings.isNotBlank(keycloakConfigFile)) {
+            LOG.debug("Reading Keycloak config file from {}", keycloakConfigFile);
             try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
                  BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)))) {
                 JSONObject json = ServletHelpers.readObject(reader);
@@ -62,7 +64,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
                 }
                 policy = String.format(POLICY_TEMPLATE, cspSrc, cspSrc, cspSrc, frameAncestors);
                 addedKeycloakUrl = true;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.error("Can't read keycloak configuration file", e);
             }
         }

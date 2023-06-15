@@ -18,7 +18,7 @@ public class HawtioQuarkusLoginRedirectFilter extends LoginRedirectFilter {
         Redirector redirector = Arc.container().instance(Redirector.class).get();
         setRedirector(redirector);
 
-        filterConfig.getServletContext().setAttribute("unsecuredPaths", prependContextPath());
+        filterConfig.getServletContext().setAttribute(ATTRIBUTE_UNSECURED_PATHS, prependContextPath());
 
         super.init(filterConfig);
     }
