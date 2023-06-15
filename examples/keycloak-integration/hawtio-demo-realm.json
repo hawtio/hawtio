@@ -22,6 +22,8 @@
       ],
       "webOrigins": ["+"],
       "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
       "publicClient": true,
       "attributes": {
         "pkce.code.challenge.method": ""

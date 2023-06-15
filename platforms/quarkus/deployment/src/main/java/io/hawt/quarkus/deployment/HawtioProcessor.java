@@ -19,6 +19,7 @@ import io.hawt.quarkus.servlets.HawtioQuakusLogoutServlet;
 import io.hawt.web.auth.LoginRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
+import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.filters.BaseTagHrefFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.Capabilities;
@@ -48,8 +49,10 @@ import org.jboss.metadata.web.spec.WebMetaData;
 
 import static io.hawt.quarkus.HawtioConfig.DEFAULT_CONTEXT_PATH;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_KEYCLOAK_ENABLED;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLE;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
+import static io.hawt.web.auth.keycloak.KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 import static io.hawt.web.proxy.ProxyServlet.HAWTIO_DISABLE_PROXY;
 import static io.hawt.web.proxy.ProxyServlet.HAWTIO_LOCAL_ADDRESS_PROBING;
@@ -202,6 +205,7 @@ public class HawtioProcessor {
         }
 
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_ENABLED, config.authenticationEnabled.toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_ENABLED, config.keycloakEnabled.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing.toString()));
 
@@ -219,6 +223,10 @@ public class HawtioProcessor {
 
         config.sessionTimeout
             .map(sessionTimeout -> new SystemPropertyBuildItem("hawtio.sessionTimeout", sessionTimeout.toString()))
+            .ifPresent(systemProperties::produce);
+
+        config.keycloakClientConfig
+            .map(keycloakClientConfig -> new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_CLIENT_CONFIG, keycloakClientConfig))
             .ifPresent(systemProperties::produce);
     }
 

@@ -99,7 +99,13 @@ public class ServletHelpers {
     public static InputStream loadFile(String path) {
         if (path.startsWith("classpath:")) {
             String classPathLocation = path.substring(10);
-            return ServletHelpers.class.getClassLoader().getResourceAsStream(classPathLocation);
+            InputStream is = ServletHelpers.class.getClassLoader().getResourceAsStream(classPathLocation);
+            if (is != null) {
+                return is;
+            }
+            // Quarkus dev mode requires thread context classloader
+            // https://github.com/quarkusio/quarkus/issues/2531
+            return Thread.currentThread().getContextClassLoader().getResourceAsStream(classPathLocation);
         }
         try {
             if (!path.contains(":")) {
@@ -108,8 +114,8 @@ public class ServletHelpers {
             }
             return new URL(path).openStream();
         } catch (Exception e) {
-            LOG.warn("Couldn't find keycloak config file on location: {}", path);
-            LOG.debug("Couldn't find keycloak config file", e);
+            LOG.warn("Couldn't find file on location: {}", path);
+            LOG.debug("Couldn't find file", e);
             return null;
         }
     }

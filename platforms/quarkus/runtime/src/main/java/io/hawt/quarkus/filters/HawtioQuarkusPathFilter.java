@@ -22,15 +22,18 @@ public class HawtioQuarkusPathFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusPathFilter.class);
 
+    private final String FILTERED_PATH_PATTERN = "^/(?:(?!\\bjolokia\\b|auth|proxy|keycloak|css|fonts|img|js|user|oauth|plugins|static|\\.).)*";
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         LOG.trace("Applying {}", getClass().getSimpleName());
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getRequestURI().substring(HawtioConfig.DEFAULT_CONTEXT_PATH.length());
-        LOG.debug("path = {}", path);
-        if (path.matches("^/(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|static|\\.).)*")) {
+        if (path.matches(FILTERED_PATH_PATTERN)) {
+            LOG.debug("path = {} -- matched", path);
             httpRequest.getRequestDispatcher(HawtioConfig.DEFAULT_CONTEXT_PATH + "/index.html").forward(request, response);
         } else {
+            LOG.debug("path = {} -- not matched", path);
             chain.doFilter(request, response);
         }
     }
