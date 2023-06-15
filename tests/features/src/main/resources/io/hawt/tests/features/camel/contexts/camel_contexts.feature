@@ -9,6 +9,6 @@ Feature: Checking the changes of states after performing some operation on Camel
     Then Camel "SampleCamel" item has "<desired state>" state in Camel table
 
     Examples: Context actions and states
-    | action  | initial state | desired state |
-    | Suspend | Started       | Suspended     |
-    | Start   | Suspended     | Started       |
+      | action  | initial state | desired state |
+      | Suspend | Started       | Suspended     |
+      | Start   | Suspended     | Started       |

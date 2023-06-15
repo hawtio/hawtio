@@ -25,9 +25,9 @@
   </properties>
 
   <modules>
+    <module>features</module>
     <module>quarkus</module>
     <module>springboot</module>
-    <module>features</module>
   </modules>
 
   <dependencyManagement>
