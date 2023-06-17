@@ -10,13 +10,12 @@ Feature: Checking the functionality of Camel Endpoints page.
     Examples: Columns
       | column | uri           | state   |
       | URI    | mock://result | Started |
-      | State  | stream://out	 | Started |
+      | State  | stream://out  | Started |
 
   @springBootAllTest @quarkusAllTest
   Scenario: Check to add an Endpoint from URI
     Given User is on "Camel" page
     And User is on Camel "endpoints" folder of "SampleCamel" context
-    When User clicks on Camel "Endpoints" tab
     When User adds Endpoint "timer://foo?period=1000" from URI
     And Successful alert message is appeared and closed
     Then Camel table has "timer://foo?period=1000" key and "Started" value
@@ -25,7 +24,6 @@ Feature: Checking the functionality of Camel Endpoints page.
   Scenario: Check to add an Endpoint from Data
     Given User is on "Camel" page
     And User is on Camel "endpoints" folder of "SampleCamel" context
-    When User clicks on Camel "Endpoints" tab
-    And User adds Endpoint "bar" name and "mock" component from Data
+    When User adds Endpoint "bar" name and "mock" component from Data
     And Successful alert message is appeared and closed
     Then Camel table has "mock://bar" key and "Started" value

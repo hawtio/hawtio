@@ -27,7 +27,7 @@ Feature: Checking the functionality of a specific camel context page.
     And User is on Camel "SampleCamel" context
     When User clicks on Camel "Operations" tab
     And User executes operation with name "suspend()"
-    Then Result of "suspend()" operation is "Operation Succeeded!"
+    Then Result of "suspend()" operation is "Operation successful"
     And User clicks on Camel "Attributes" tab
     And Camel table has "State" key and "Suspended" value
 
@@ -37,7 +37,7 @@ Feature: Checking the functionality of a specific camel context page.
     And User is on Camel "SampleCamel" context
     When User clicks on Camel "Operations" tab
     And User executes operation with name "start()"
-    Then Result of "start()" operation is "Operation Succeeded!"
+    Then Result of "start()" operation is "Operation successful"
     And User clicks on Camel "Attributes" tab
     And Camel table has "State" key and "Started" value
 
