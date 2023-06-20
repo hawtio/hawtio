@@ -59,4 +59,33 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>update-jbang-version</id>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <tasks>
+                    <replaceregexp match="hawtio.jbang.version:(.*)}" replace="hawtio.jbang.version:${releaseVersion}}">
+                      <fileset dir="${basedir}" includes="**/HawtioJBang.java" />
+                    </replaceregexp>
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
