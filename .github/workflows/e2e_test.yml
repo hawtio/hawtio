@@ -16,7 +16,69 @@ on:
     paths-ignore:
       - "**.md"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  test:
+    runs-on: ubuntu-20.04
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix: 
+        java: ['11', '17']
+        runtime: ['quarkus', 'springboot']
+        browser: ['firefox', 'chrome']
+    env:
+      REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}} 
+    steps:
+      - name: Docker Setup QEMU
+        uses: docker/setup-qemu-action@v2.2.0
+      - name: Download images
+        uses: actions/cache/restore@v3
+        with:
+          path: /tmp/images
+          key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Load images
+        run: |
+          for i in /tmp/images/*.tar; do
+            docker load --input $i
+          done
+      - name: ${{ matrix.runtime }} E2E test (Java ${{ matrix.java }})
+        id: test
+        run: |
+          docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
+          -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
+          --shm-size="2g" \
+          hawtio-test-suite:${{ matrix.java }} -Pe2e-${{ matrix.runtime }} -Dselenide.browser=${{ matrix.browser }} \
+          -Dio.hawt.test.docker.image=hawtio-${{ matrix.runtime }}-app:${{ matrix.java }}
+      - name: Prepare report artifacts
+        if: always()
+        run: |
+          mkdir -p results/$REPORT_DIR/
+          cp $REPORT_DIR/cucumber-reports/* results/$REPORT_DIR/ 
+          ls $REPORT_DIR/cucumber-reports/
+      - name: Archive test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: 'test-results-${{ matrix.runtime }}-java-${{ matrix.java }}-${{ matrix.browser }}'
+          path: |
+            ${{ env.REPORT_DIR }}/build/reports/tests/*.png
+            ${{ env.REPORT_DIR }}/cucumber.log
+            ${{ env.REPORT_DIR }}/hawtio-app.log
+            ${{ env.REPORT_DIR }}/cucumber-reports/*
+
+      - name: Archive failed test reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: 'test-results'
+          path: |
+            results/**/*
   build:
     runs-on: ubuntu-20.04
     strategy:
@@ -32,19 +94,54 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+      - name: Docker Setup QEMU
+        uses: docker/setup-qemu-action@v2.2.0
       - name: Build
         run: |
-          mvn --batch-mode --no-transfer-progress install -DskipTests
-      - name: Spring Boot E2E test
-        id: spring-boot-e2e-test
+          mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -Ddocker.buildArg.JAVA_VERSION=${{ matrix.java }} -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
+      - name: Export docker images
         run: |
-          mvn --batch-mode --no-transfer-progress install -Pe2e-springboot -pl tests/springboot
-      - name: Quarkus E2E test
-        if: success() || (failure() && steps.spring-boot-e2e-test.conclusion == 'failure')
-        run: |
-          mvn --batch-mode --no-transfer-progress install -Pe2e-quarkus -pl tests/quarkus
-      - name: Archive failed test reports
-        uses: actions/upload-artifact@v3
+          mkdir -p /tmp/images/
+          docker save hawtio-test-suite:${{ matrix.java }} > /tmp/images/hawtio-test-suite-${{ matrix.java }}.tar
+          docker save hawtio-quarkus-app:${{ matrix.java }} > /tmp/images/hawtio-quarkus-app-${{ matrix.java }}.tar
+          docker save hawtio-springboot-app:${{ matrix.java }} > /tmp/images/hawtio-springboot-app-${{ matrix.java }}.tar
+      - name: Cache images
+        uses: actions/cache/save@v3
+        with:
+          path: /tmp/images
+          key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+  publish-results:
+    permissions:
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-20.04
+    needs: test
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Download Test Results
+        uses: actions/download-artifact@v3
+        with: 
+          name: 'test-results'
+          path: 'test-results'
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          path: tests/springboot/build/reports/tests/*.png
+          files: |
+            **/Cucumber.xml
+          json_file: results.json
+      - name: Install xmllint
+        run: sudo apt-get install -y xmlstarlet jq
+      - name: Generate summary
+        run: |
+          export CHECK_URL=$(jq -r .check_url results.json)
+          bash tests/hawtio-test-suite/process_test_results.sh test-results > summary.md
+      - name: Comment PR with summary
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: summary.md
+          create_if_not_exists: true
+          comment_tag: execution

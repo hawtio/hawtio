@@ -41,7 +41,7 @@ public class SpringBootService {
          * - module: The path exposed from Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
          */
         HawtioPlugin plugin = new HawtioPlugin(
-            "http://localhost:10001",
+            "",
             "samplePlugin",
             "./plugin");
 
