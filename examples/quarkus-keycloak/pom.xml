@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0-M7</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -225,8 +225,8 @@
                 </goals>
                 <configuration>
                   <target>
-                    <echo message="!!! WARNING !!!"/>
-                    <echo message="Hawtio does not support Quarkus native mode!"/>
+                    <echo message="!!! WARNING !!!" />
+                    <echo message="Hawtio does not support Quarkus native mode!" />
                   </target>
                 </configuration>
               </execution>
