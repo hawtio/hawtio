@@ -73,7 +73,7 @@
                 <phase>prepare-package</phase>
                 <configuration>
                   <tasks>
-                    <replaceregexp match="hawtio.jbang.version:(.*)}" replace="hawtio.jbang.version:${releaseVersion}}">
+                    <replaceregexp match="hawtio.jbang.version:(.*)}" replace="hawtio.jbang.version:${project.version}}">
                       <fileset dir="${basedir}" includes="**/HawtioJBang.java" />
                     </replaceregexp>
                   </tasks>
