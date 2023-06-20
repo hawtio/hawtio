@@ -106,6 +106,7 @@
     <activation-version>1.2.0</activation-version>
     <spring-hateoas-version>0.25.0.RELEASE</spring-hateoas-version>
     <spring-plugin-core-version>1.2.0.RELEASE</spring-plugin-core-version>
+    <docker-plugin-version>0.43.0</docker-plugin-version>
   </properties>
 
   <modules>
@@ -136,7 +137,6 @@
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
     <module>plugins/hawtio-log</module>
-    <module>tests</module>
   </modules>
 
   <build>
@@ -265,6 +265,11 @@
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>${build-helper-maven-plugin-version}</version>
         </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>${docker-plugin-version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -276,6 +281,13 @@
         <skipTests>true</skipTests>
         <skip.yarn>true</skip.yarn>
       </properties>
+    </profile>
+
+    <profile>
+      <id>e2e</id>
+      <modules>
+        <module>tests</module>
+      </modules>
     </profile>
 
     <profile>

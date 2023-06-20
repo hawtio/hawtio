@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>hawtio-tests</artifactId>
     <groupId>io.hawt.tests</groupId>
@@ -10,11 +11,12 @@
   <artifactId>hawtio-tests-springboot</artifactId>
   <name>${project.artifactId}</name>
   <description>Hawtio :: Spring Boot 2.x E2E tests</description>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <hawtio.url>/actuator/hawtio</hawtio.url>
     <hawtio.managementPort>10001</hawtio.managementPort>
+    <image.name>hawtio-springboot-app</image.name>
   </properties>
 
   <dependencyManagement>
@@ -150,14 +152,6 @@
       <artifactId>hawtio-example-sample-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <!-- Hawtio Test Features -->
-    <dependency>
-      <groupId>io.hawt.tests</groupId>
-      <artifactId>hawtio-tests-features</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -220,6 +214,11 @@
             <hawtio.managementPort>${hawtio.managementPort}</hawtio.managementPort>
           </systemPropertyVariables>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
