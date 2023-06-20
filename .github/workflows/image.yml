@@ -1,0 +1,36 @@
+name: Build Images
+
+on:
+  push:
+    branches:
+      - 3.x
+    paths-ignore:
+      - "**.md"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 11
+          cache: "maven"
+      - name: Install
+        run: |
+          mvn --batch-mode --no-transfer-progress install
+      - name: Build example image
+        run: |
+          cd examples/quarkus
+          podman build -f src/main/docker/Dockerfile.jvm -t quay.io/hawtio/hawtio-example-quarkus:latest .
+      - name: Push image to Quay.io
+        env:
+          USERNAME: ${{ secrets.QUAY_USERNAME }}
+          PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+        run: |
+          podman login -u $USERNAME -p $PASSWORD quay.io
+          podman push quay.io/hawtio/hawtio-example-quarkus:latest
