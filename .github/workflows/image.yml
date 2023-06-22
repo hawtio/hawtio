@@ -31,7 +31,6 @@ jobs:
           mvn ${MVN_ARGS} install -Dquarkus.container-image.build=true -pl examples/quarkus
       - name: Display images
         run: |
-          podman images
           docker images
       - name: Get project version
         run: |
@@ -42,5 +41,5 @@ jobs:
           USERNAME: ${{ secrets.QUAY_USERNAME }}
           PASSWORD: ${{ secrets.QUAY_PASSWORD }}
         run: |
-          podman login -u $USERNAME -p $PASSWORD quay.io
-          podman push quay.io/hawtio/hawtio-example-quarkus:${{ env.project_version }}
+          docker login -u $USERNAME -p $PASSWORD quay.io
+          docker push quay.io/hawtio/hawtio-example-quarkus:${{ env.project_version }}
