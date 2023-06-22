@@ -8,6 +8,9 @@ on:
       - "**.md"
   workflow_dispatch:
 
+env:
+  MAVEN_OPTS: --batch-mode --no-transfer-progress
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -22,15 +25,18 @@ jobs:
           cache: "maven"
       - name: Install
         run: |
-          mvn --batch-mode --no-transfer-progress install
+          mvn install
       - name: Build example image
         run: |
-          cd examples/quarkus
-          podman build -f src/main/docker/Dockerfile.jvm -t quay.io/hawtio/hawtio-example-quarkus:latest .
+          mvn install -Dquarkus.container-image.build=true -pl examples/quarkus
+      - name: Get project version
+        run: |
+          project_version=$(mvn help:evaluate -Dexpression=project.version | grep -v "^\[")
+          echo "project_version=${project_version}" >> "$GITHUB_ENV"
       - name: Push image to Quay.io
         env:
           USERNAME: ${{ secrets.QUAY_USERNAME }}
           PASSWORD: ${{ secrets.QUAY_PASSWORD }}
         run: |
           podman login -u $USERNAME -p $PASSWORD quay.io
-          podman push quay.io/hawtio/hawtio-example-quarkus:latest
+          podman push quay.io/hawtio/hawtio-example-quarkus:${{ env.project_version }}
