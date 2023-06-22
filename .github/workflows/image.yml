@@ -31,7 +31,7 @@ jobs:
           mvn ${MVN_ARGS} install -Dquarkus.container-image.build=true -pl examples/quarkus
       - name: Get project version
         run: |
-          project_version=$(mvn help:evaluate -Dexpression=project.version | grep -v "^\[")
+          project_version=$(mvn ${MVN_ARGS} help:evaluate -Dexpression=project.version | grep -v "^\[")
           echo "project_version=${project_version}" >> "$GITHUB_ENV"
       - name: Push image to Quay.io
         env:
