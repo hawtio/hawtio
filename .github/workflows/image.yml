@@ -29,6 +29,9 @@ jobs:
       - name: Build example image
         run: |
           mvn ${MVN_ARGS} install -Dquarkus.container-image.build=true -pl examples/quarkus
+      - name: Display images
+        run: |
+          podman images
       - name: Get project version
         run: |
           project_version=$(mvn ${MVN_ARGS} help:evaluate -Dexpression=project.version | grep -v "^\[")
