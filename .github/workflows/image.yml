@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  MAVEN_OPTS: --batch-mode --no-transfer-progress
+  MVN_ARGS: --batch-mode --no-transfer-progress
 
 jobs:
   build:
@@ -25,10 +25,10 @@ jobs:
           cache: "maven"
       - name: Install
         run: |
-          mvn install
+          mvn ${MVN_ARGS} install
       - name: Build example image
         run: |
-          mvn install -Dquarkus.container-image.build=true -pl examples/quarkus
+          mvn ${MVN_ARGS} install -Dquarkus.container-image.build=true -pl examples/quarkus
       - name: Get project version
         run: |
           project_version=$(mvn help:evaluate -Dexpression=project.version | grep -v "^\[")
