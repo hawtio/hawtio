@@ -32,6 +32,7 @@ jobs:
       - name: Display images
         run: |
           podman images
+          docker images
       - name: Get project version
         run: |
           project_version=$(mvn ${MVN_ARGS} help:evaluate -Dexpression=project.version | grep -v "^\[")
