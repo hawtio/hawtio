@@ -18,7 +18,7 @@
 
   <properties>
     <!-- Jetty version referred from the spring-boot-dependencies project -->
-    <jetty.version>9.4.11.v20180605</jetty.version>
+    <jetty.version>10.0.15</jetty.version>
   </properties>
 
   <dependencyManagement>
@@ -58,6 +58,11 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-jaas</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-security</artifactId>
       <version>${jetty.version}</version>
     </dependency>
     <dependency>
