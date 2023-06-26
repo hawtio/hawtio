@@ -19,6 +19,7 @@ package io.hawt.embedded;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -33,9 +34,10 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 /**
@@ -43,6 +45,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(mixinStandardHelpOptions = true, name = "hawtio", description = "Run Hawtio")
 public class Main implements Callable<Integer>  {
+    private static Logger log = LoggerFactory.getLogger(Main.class);
     private static CommandLine commandLine;
 
     @CommandLine.Option(names = {"--war-location", "--l"},
@@ -133,10 +136,6 @@ public class Main implements Callable<Integer>  {
     }
 
     public String run(boolean join) throws Exception {
-        System.setProperty("org.eclipse.jetty.util.log.class", Slf4jLog.class.getName());
-        Slf4jLog log = new Slf4jLog("jetty");
-        Log.setLog(log);
-
         Server server = new Server(new InetSocketAddress(InetAddress.getByName(host), port));
 
         HandlerCollection handlers = new HandlerCollection();
@@ -198,7 +197,7 @@ public class Main implements Callable<Integer>  {
         return url;
     }
 
-    private WebAppContext createHawtioWebapp(Server server, String scheme) {
+    private WebAppContext createHawtioWebapp(Server server, String scheme) throws IOException {
         WebAppContext webapp = new WebAppContext();
         webapp.setServer(server);
         webapp.setContextPath(contextPath);
@@ -221,7 +220,7 @@ public class Main implements Callable<Integer>  {
         String scheme = "http";
         if (null != keyStore) {
             System.out.println("Configuring SSL");
-            SslContextFactory sslcontf = new SslContextFactory();
+            SslContextFactory.Server sslcontf = new SslContextFactory.Server();
             HttpConfiguration httpconf = new HttpConfiguration();
             sslcontf.setKeyStorePath(keyStore);
             if (null != keyStorePass) {
@@ -247,7 +246,7 @@ public class Main implements Callable<Integer>  {
         return scheme;
     }
 
-    protected void findThirdPartyPlugins(Slf4jLog log, HandlerCollection handlers, File tempDir) {
+    protected void findThirdPartyPlugins(Logger log, HandlerCollection handlers, File tempDir) {
         File dir = new File(plugins);
         if (!dir.exists() || !dir.isDirectory()) {
             return;
@@ -264,7 +263,7 @@ public class Main implements Callable<Integer>  {
             war -> deployPlugin(war, log, handlers, tempDir));
     }
 
-    private void deployPlugin(File war, Slf4jLog log, HandlerCollection handlers, File tempDir) {
+    private void deployPlugin(File war, Logger log, HandlerCollection handlers, File tempDir) {
         String contextPath = resolveContextPath(war);
 
         WebAppContext plugin = new WebAppContext();
