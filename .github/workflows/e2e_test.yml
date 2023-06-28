@@ -5,12 +5,14 @@ on:
     branches:
       - main
       - 3.x
+      - 4.x
     paths-ignore:
       - "**.md"
   push:
     branches:
       - main
       - 3.x
+      - 4.x
     paths-ignore:
       - "**.md"
 
