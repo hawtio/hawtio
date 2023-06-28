@@ -1,23 +1,21 @@
 package io.hawt.example.spring.boot;
 
-import org.eclipse.jetty.jaas.spi.AbstractLoginModule;
-import org.eclipse.jetty.jaas.spi.UserInfo;
-import org.eclipse.jetty.security.PropertyUserStore;
-import org.eclipse.jetty.server.UserIdentity;
-import org.eclipse.jetty.util.security.Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginException;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import org.eclipse.jetty.jaas.spi.AbstractLoginModule;
+import org.eclipse.jetty.security.PropertyUserStore;
+import org.eclipse.jetty.security.RolePrincipal;
+import org.eclipse.jetty.security.UserPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.security.auth.login.LoginException;
 
 /**
  * Sample PropertyFileLoginModule.
@@ -78,27 +76,38 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
     }
 
     @Override
-    public UserInfo getUserInfo(final String userName) {
+    public JAASUser getUser(String userName) throws Exception {
         final PropertyUserStore propertyUserStore = PROPERTY_USERSTORES.get(filename);
         if (propertyUserStore == null) {
             throw new IllegalStateException("PropertyUserStore should never be null here!");
         }
 
         LOG.trace("Checking PropertyUserStore " + filename + " for " + userName);
-        final UserIdentity userIdentity = propertyUserStore.getUserIdentity(userName);
-        if (userIdentity == null) {
+        final UserPrincipal userPrincipal = propertyUserStore.getUserPrincipal(userName);
+        final List<RolePrincipal> rolePrincipals = propertyUserStore.getRolePrincipals(userName);
+
+        if (userPrincipal == null || rolePrincipals == null) {
             return null;
         }
 
-        final Set<Principal> principals = userIdentity.getSubject().getPrincipals();
-        final List<String> roles = new ArrayList<>();
-        for (final Principal principal : principals) {
-            roles.add(principal.getName());
+        final List<String> roles = rolePrincipals.stream().map(RolePrincipal::getName).collect(Collectors.toList());
+
+        LOG.trace("Found: " + userName + " in PropertyUserStore " + filename);
+       return new HawtioJAASUser(userPrincipal, roles);
+    }
+
+    class HawtioJAASUser extends JAASUser {
+        List<String> roles;
+
+        public HawtioJAASUser(UserPrincipal userPrincipal, List<String> roles) {
+            super(userPrincipal);
+            this.roles = roles;
         }
 
-        final Credential credential = (Credential) userIdentity.getSubject().getPrivateCredentials().iterator().next();
-        LOG.trace("Found: " + userName + " in PropertyUserStore " + filename);
-        return new UserInfo(userName, credential, roles);
+        @Override
+        public List<String> doFetchRoles() throws Exception {
+            return roles;
+        }
     }
 
     @Override
