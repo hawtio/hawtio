@@ -6,9 +6,7 @@ const { dependencies } = require('./package.json')
 const { hawtioBackend } = require('@hawtio/backend-middleware')
 
 module.exports = {
-  plugins: [
-    {plugin: CracoEsbuildPlugin}
-  ],
+  plugins: [{ plugin: CracoEsbuildPlugin }],
   webpack: {
     alias: {
       // Required when doing `yarn link`
@@ -51,11 +49,11 @@ module.exports = {
       // For suppressing sourcemap warnings coming from some dependencies
       webpackConfig.ignoreWarnings = [/Failed to parse source map/]
 
-      webpackConfig['resolve'] = {
-        ...webpackConfig['resolve'],
+      webpackConfig.resolve = {
+        ...webpackConfig.resolve,
         fallback: {
-          path: require.resolve("path-browserify"),
-          os: require.resolve("os-browserify")
+          path: require.resolve('path-browserify'),
+          os: require.resolve('os-browserify'),
         },
       }
 

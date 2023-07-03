@@ -1,5 +1,5 @@
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
-const CracoEsbuildPlugin = require('craco-esbuild');
+const CracoEsbuildPlugin = require('craco-esbuild')
 const { dependencies } = require('./package.json')
 
 module.exports = {
@@ -44,11 +44,11 @@ module.exports = {
         type: 'asset/source',
       })
 
-      webpackConfig['resolve'] = {
-        ...webpackConfig['resolve'],
+      webpackConfig.resolve = {
+        ...webpackConfig.resolve,
         fallback: {
-          path: require.resolve("path-browserify"),
-          os: require.resolve("os-browserify")
+          path: require.resolve('path-browserify'),
+          os: require.resolve('os-browserify'),
         },
       }
 
