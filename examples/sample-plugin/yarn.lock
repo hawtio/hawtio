@@ -2186,9 +2186,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^0.3.0-dev.7":
-  version: 0.3.0-dev.7
-  resolution: "@hawtio/react@npm:0.3.0-dev.7"
+"@hawtio/react@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@hawtio/react@npm:0.3.0"
   dependencies:
     "@hawtio/camel-model": ^3.20.6
     "@module-federation/utilities": ^1.6.0
@@ -2202,7 +2202,7 @@ __metadata:
     "@types/dagre": ^0.7.48
     "@types/dagre-layout": ^0.8.2
     "@types/jest": ^29.5.2
-    "@types/node": ^18.16.18
+    "@types/node": ^18.16.19
     "@types/react": ^18.2.14
     "@types/react-dom": ^18.2.6
     "@types/react-router-dom": ^5.3.3
@@ -2217,7 +2217,7 @@ __metadata:
     react-dom: ^18.2.0
     react-markdown: ^8.0.7
     react-monaco-editor: ^0.53.0
-    react-router-dom: ^6.14.0
+    react-router-dom: ^6.14.1
     react-split: ^2.0.14
     reactflow: ^11.7.4
     superstruct: ^1.0.3
@@ -2231,7 +2231,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 858e07b254b7d6acf16bfc5e5bb5a7e8de1dc7dbea87ca5697bb0436e0aa7710b7d43d48147a809cd475af7b19d599573b22d89dbd54d6d717233785f9e8ea44
+  checksum: 0522c0a9495f0dca54942612938b6fa2f0ecf68e209bf8ac280f7f98213c8a10c3c11a180cc0850bc7f6e5e5662ece9a2de58f426820ac0af8f4949b433bcf86
   languageName: node
   linkType: hard
 
@@ -3029,10 +3029,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.7.0":
-  version: 1.7.0
-  resolution: "@remix-run/router@npm:1.7.0"
-  checksum: 80cab2fda9e4b9047c991e9b05b8bda8afa2adf7b85c785d7e6f593a399eb264d6a74302438babc81833b5d304eae0b22832f27552b1601e2ca9001d94b8e174
+"@remix-run/router@npm:1.7.1":
+  version: 1.7.1
+  resolution: "@remix-run/router@npm:1.7.1"
+  checksum: d13ad7e0b3b35379f8fdec1eec4f515325b618e431915e12fb9f1cd812ee959add0e7045edcb229ba17888ecfc787869b64e6cb4153ae3be148887e234b6ffac
   languageName: node
   linkType: hard
 
@@ -3992,10 +3992,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.16.18":
-  version: 18.16.18
-  resolution: "@types/node@npm:18.16.18"
-  checksum: d32d8a0a04cd3f5ecb361bcb42f3a07623881ac90d680e06bf626defb3c663a94860d11690babe607cfe67265eceeb8a59ba5fe40c0e49f5a1b01e0088640469
+"@types/node@npm:^18.16.19":
+  version: 18.16.19
+  resolution: "@types/node@npm:18.16.19"
+  checksum: 63c31f09616508aa7135380a4c79470a897b75f9ff3a70eb069e534dfabdec3f32fb0f9df5939127f1086614d980ddea0fa5e8cc29a49103c4f74cd687618aaf
   languageName: node
   linkType: hard
 
@@ -8829,7 +8829,7 @@ __metadata:
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
     "@craco/craco": ^7.1.0
-    "@hawtio/react": ^0.3.0-dev.7
+    "@hawtio/react": ^0.3.0
     craco-esbuild: ^0.5.2
     os-browserify: ^0.3.0
     path-browserify: ^1.0.1
@@ -13646,27 +13646,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.14.0":
-  version: 6.14.0
-  resolution: "react-router-dom@npm:6.14.0"
+"react-router-dom@npm:^6.14.1":
+  version: 6.14.1
+  resolution: "react-router-dom@npm:6.14.1"
   dependencies:
-    "@remix-run/router": 1.7.0
-    react-router: 6.14.0
+    "@remix-run/router": 1.7.1
+    react-router: 6.14.1
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 66800b8779f5ae9f8b8e1f41e25599519a40c532e020a8c1450e1645d2c8cc8351e51ed0f2516584681e9a509c6c40f629f2d80663123e132c68022c0edced03
+  checksum: 6ddda481edb2c614671bcaf24b0ca07ca00215f1d0350ede43a03ba24c3401a537dfe4a9f5e108a512c2703e4a8ce99a3301c15caf16012b67b248b1a055d69a
   languageName: node
   linkType: hard
 
-"react-router@npm:6.14.0":
-  version: 6.14.0
-  resolution: "react-router@npm:6.14.0"
+"react-router@npm:6.14.1":
+  version: 6.14.1
+  resolution: "react-router@npm:6.14.1"
   dependencies:
-    "@remix-run/router": 1.7.0
+    "@remix-run/router": 1.7.1
   peerDependencies:
     react: ">=16.8"
-  checksum: 50a941746d12e81cea5495505c1afbcd099cc7d497624b013454cfd5a360d9403578f8fb3df17973bf775fbff91cb76477448023d537215e6aa71a8b85ae95bd
+  checksum: 16f3d108e0f833bfee447192e3f40bd6731b8b11d42ca6925443ec8aeb157a889fe8ece67baf690f75f0d146d0a212656f9216fcc2df6fd3a2bd263108ed0abb
   languageName: node
   linkType: hard
 
