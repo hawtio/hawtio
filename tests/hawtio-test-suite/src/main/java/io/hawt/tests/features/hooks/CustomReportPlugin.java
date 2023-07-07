@@ -26,7 +26,7 @@ public class CustomReportPlugin implements ConcurrentEventListener {
     public void setEventPublisher(EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
 
-        eventPublisher.registerHandlerFor(TestStepFinished.class, this::screenshotHook);
+        eventPublisher.registerHandlerFor(TestStepFinished.class, this::driverLogPrint);
     }
 
     @BeforeStep
@@ -34,7 +34,7 @@ public class CustomReportPlugin implements ConcurrentEventListener {
         currentScenario = scenario;
     }
 
-    private void screenshotHook(TestStepFinished event) {
+    private void driverLogPrint(TestStepFinished event) {
         if (!event.getResult().getStatus().isOk()) {
             String[] logTypes = new String[] {LogType.BROWSER, LogType.CLIENT, LogType.DRIVER};
             for (String logType : logTypes) {

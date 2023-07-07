@@ -1,7 +1,7 @@
 name: E2E Test
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
       - 3.x
@@ -88,6 +88,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+      - name: Checkout code
+        uses: actions/checkout@v3
+        if: github.event_name == 'push'
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -112,9 +118,6 @@ jobs:
           key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
 
   publish-results:
-    permissions:
-      checks: write
-      pull-requests: write
     runs-on: ubuntu-20.04
     needs: test
     if: always()
@@ -139,9 +142,19 @@ jobs:
         run: |
           export CHECK_URL=$(jq -r .check_url results.json)
           bash tests/hawtio-test-suite/process_test_results.sh test-results > summary.md
+      - name: Update summary
+        run: |
+          cat summary.md >> $GITHUB_STEP_SUMMARY
+      - uses: tibdex/github-app-token@v1
+        if: github.event_name == 'pull_request'
+        id: generate-token
+        with:
+          app_id: ${{ secrets.HAWTIO_CI_APP_ID }}
+          private_key: ${{ secrets.HAWTIO_CI_PRIVATE_KEY }}
       - name: Comment PR with summary
+        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           filePath: summary.md
-          create_if_not_exists: true
           comment_tag: execution
