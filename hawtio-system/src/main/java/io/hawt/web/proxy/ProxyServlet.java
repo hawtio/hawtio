@@ -14,12 +14,12 @@ import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.system.ProxyAllowlist;
@@ -280,8 +280,7 @@ public class ProxyServlet extends HttpServlet {
             // Pass the response code. This method with the "reason phrase" is deprecated, but it's the only way to pass the
             //  reason along too.
             //noinspection deprecation
-            servletResponse.setStatus(statusCode, proxyResponse.getStatusLine().getReasonPhrase());
-
+            servletResponse.setStatus(statusCode);
             copyResponseHeaders(proxyResponse, servletResponse);
 
             // Send the content to the client
