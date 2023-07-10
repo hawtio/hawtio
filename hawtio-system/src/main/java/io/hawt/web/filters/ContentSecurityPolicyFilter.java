@@ -7,10 +7,10 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Objects;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;

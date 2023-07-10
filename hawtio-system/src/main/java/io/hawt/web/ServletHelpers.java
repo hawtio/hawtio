@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 
 import javax.management.AttributeNotFoundException;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
 import io.hawt.util.IOHelper;

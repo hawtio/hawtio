@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.login.Configuration;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;

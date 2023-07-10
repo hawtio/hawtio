@@ -4,9 +4,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import org.jolokia.config.ConfigKey;
 import org.jolokia.http.AgentServlet;
@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JolokiaConfiguredAgentServlet extends AgentServlet {
     private static final Logger LOG = LoggerFactory.getLogger(JolokiaConfiguredAgentServlet.class);
+
+
 
     @Override
     public void init(ServletConfig pServletConfig) throws ServletException {

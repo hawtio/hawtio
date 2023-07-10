@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;

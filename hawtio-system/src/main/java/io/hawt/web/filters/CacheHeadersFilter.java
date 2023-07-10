@@ -2,17 +2,17 @@ package io.hawt.web.filters;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class CacheHeadersFilter extends HttpHeaderFilter {
 
-    static String INCLUDE_REQUEST_URI = "javax.servlet.include.request_uri";
-    static String INCLUDE_SERVLET_PATH = "javax.servlet.include.servlet_path";
-    static String INCLUDE_PATH_INFO = "javax.servlet.include.path_info";
+    static String INCLUDE_REQUEST_URI = "jakarta.servlet.include.request_uri";
+    static String INCLUDE_SERVLET_PATH = "jakarta.servlet.include.servlet_path";
+    static String INCLUDE_PATH_INFO = "jakarta.servlet.include.path_info";
 
     private ServletContext servletContext;
 

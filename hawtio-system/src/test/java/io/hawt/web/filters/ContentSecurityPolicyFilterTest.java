@@ -3,10 +3,10 @@ package io.hawt.web.filters;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
