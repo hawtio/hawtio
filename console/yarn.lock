@@ -2202,7 +2202,7 @@ __metadata:
   dependencies:
     "@craco/craco": ^7.1.0
     "@hawtio/backend-middleware": ^1.0.3
-    "@hawtio/react": ^0.3.0
+    "@hawtio/react": ^0.4.0-dev.1
     craco-esbuild: ^0.5.2
     monaco-editor-webpack-plugin: ^7.0.1
     os-browserify: ^0.3.0
@@ -2214,12 +2214,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@hawtio/react@npm:0.3.0"
+"@hawtio/react@npm:^0.4.0-dev.1":
+  version: 0.4.0-dev.1
+  resolution: "@hawtio/react@npm:0.4.0-dev.1"
   dependencies:
     "@hawtio/camel-model": ^3.20.6
-    "@module-federation/utilities": ^1.6.0
+    "@module-federation/utilities": ^2.0.0
     "@patternfly/react-charts": ^6.94.19
     "@patternfly/react-code-editor": ^4.82.113
     "@patternfly/react-core": ^4.276.8
@@ -2229,18 +2229,18 @@ __metadata:
     "@testing-library/user-event": ^14.4.3
     "@types/dagre": ^0.7.48
     "@types/dagre-layout": ^0.8.2
-    "@types/jest": ^29.5.2
+    "@types/jest": ^29.5.3
     "@types/node": ^18.16.19
     "@types/react": ^18.2.14
     "@types/react-dom": ^18.2.6
     "@types/react-router-dom": ^5.3.3
     dagre: ^0.8.5
     eventemitter3: ^5.0.1
-    jolokia.js: 1.7.3-1
+    jolokia.js: ^1.7.3-2
     jquery: ^3.7.0
     js-logger: ^1.6.1
     keycloak-js: ^21.1.2
-    monaco-editor: ^0.39.0
+    monaco-editor: ^0.40.0
     react: ^18.2.0
     react-dom: ^18.2.0
     react-markdown: ^8.0.7
@@ -2259,7 +2259,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 0522c0a9495f0dca54942612938b6fa2f0ecf68e209bf8ac280f7f98213c8a10c3c11a180cc0850bc7f6e5e5662ece9a2de58f426820ac0af8f4949b433bcf86
+  checksum: 9315f37f29c0ff1cfb409a2522abcfb25a36cd23c75f3ce933ef2cb21fcc9320563ef7a92d3d7944289871aa1307d7cadf6a5453f61ee1e435b9a1e013017746
   languageName: node
   linkType: hard
 
@@ -2705,9 +2705,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "@module-federation/utilities@npm:1.6.0"
+"@module-federation/utilities@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@module-federation/utilities@npm:2.0.0"
+  dependencies:
+    webpack-sources: 3.2.3
   peerDependencies:
     next: ^12 || ^13
     react: ^16 || ^17 || ^18
@@ -2720,7 +2722,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 7da6d3f3c7640870b1f3264d1a83593c894e54ec1b5a5ac2058fe28c4206a27b47efb6e55869d693ab0417a3661e06011b05953f655acec7e61171d2b1e9e694
+  checksum: 8050ff6f130d3ee45d9ca4484658b5817f3b392d93325cf289da76a79565b6a5e00f18c06e454aee97a6ae82b897bac28c37aad6677764853a8dd99db5135346
   languageName: node
   linkType: hard
 
@@ -3957,13 +3959,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.2":
-  version: 29.5.2
-  resolution: "@types/jest@npm:29.5.2"
+"@types/jest@npm:^29.5.3":
+  version: 29.5.3
+  resolution: "@types/jest@npm:29.5.3"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 7d205599ea3cccc262bad5cc173d3242d6bf8138c99458509230e4ecef07a52d6ddcde5a1dbd49ace655c0af51d2dbadef3748697292ea4d86da19d9e03e19c0
+  checksum: e36bb92e0b9e5ea7d6f8832baa42f087fc1697f6cd30ec309a07ea4c268e06ec460f1f0cfd2581daf5eff5763475190ec1ad8ac6520c49ccfe4f5c0a48bfa676
   languageName: node
   linkType: hard
 
@@ -10549,12 +10551,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:1.7.3-1":
-  version: 1.7.3-1
-  resolution: "jolokia.js@npm:1.7.3-1"
+"jolokia.js@npm:^1.7.3-2":
+  version: 1.7.3-2
+  resolution: "jolokia.js@npm:1.7.3-2"
   dependencies:
     "@types/jquery": ^3.5.14
-  checksum: 9bc6f6a5d42f8e3105c33fa00da09fbea3252251dec31d263d41876dbdd101da9581508b9c5517b934749958470eb6822fe75ab3a36474d452438417453b513c
+  checksum: e5f69db02ede1ef1e775f6b22a0bf071bd98f9f0485cf2c1d81e5bd15f68cbf915db71c44493219440f62f65aae941a11235af106a02a7c678b129fa6bdaf255
   languageName: node
   linkType: hard
 
@@ -11700,10 +11702,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.39.0":
-  version: 0.39.0
-  resolution: "monaco-editor@npm:0.39.0"
-  checksum: 6d906c5f07fc6761b93bebee70bc1c461d6bbea493252751f4e2e60f26678faced9261ed9cca21613511695e6d7b75c2f2214b6d53aaa479a7e0b6f2d912f90b
+"monaco-editor@npm:^0.40.0":
+  version: 0.40.0
+  resolution: "monaco-editor@npm:0.40.0"
+  checksum: 9f879c254bfb9907cc0b23d26bd4bcaaabf9a2cfbd9926574e06ea94f4b9e5807299db9cae1f35820da6242d5d13d9382cb9db48b1340c54ba06620c242c25c7
   languageName: node
   linkType: hard
 
@@ -16612,6 +16614,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webpack-sources@npm:3.2.3, webpack-sources@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "webpack-sources@npm:3.2.3"
+  checksum: 989e401b9fe3536529e2a99dac8c1bdc50e3a0a2c8669cbafad31271eadd994bc9405f88a3039cd2e29db5e6d9d0926ceb7a1a4e7409ece021fe79c37d9c4607
+  languageName: node
+  linkType: hard
+
 "webpack-sources@npm:^1.4.3":
   version: 1.4.3
   resolution: "webpack-sources@npm:1.4.3"
@@ -16629,13 +16638,6 @@ __metadata:
     source-list-map: ^2.0.1
     source-map: ^0.6.1
   checksum: 6fd67f2274a84c5f51ad89767112ec8b47727134bf0f2ba0cff458c970f18966939a24128bdbddba621cd66eeb2bef0552642a9333cd8e54514f7b2a71776346
-  languageName: node
-  linkType: hard
-
-"webpack-sources@npm:^3.2.3":
-  version: 3.2.3
-  resolution: "webpack-sources@npm:3.2.3"
-  checksum: 989e401b9fe3536529e2a99dac8c1bdc50e3a0a2c8669cbafad31271eadd994bc9405f88a3039cd2e29db5e6d9d0926ceb7a1a4e7409ece021fe79c37d9c4607
   languageName: node
   linkType: hard
 
