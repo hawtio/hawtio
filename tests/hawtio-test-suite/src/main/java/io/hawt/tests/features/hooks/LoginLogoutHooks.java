@@ -26,6 +26,7 @@ public class LoginLogoutHooks {
 
     @Before
     public static void before() {
+        LOG.info("Logging in.");
         if (!init) {
             WebDriver.setup();
             LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
