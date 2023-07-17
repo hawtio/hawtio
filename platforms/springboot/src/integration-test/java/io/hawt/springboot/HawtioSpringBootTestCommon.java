@@ -14,7 +14,7 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
             .build();
 
         getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
-            getTestClient(context).get().uri(properties.getHawtioPath()).exchange().expectStatus().isNotFound());
+            getTestClient(context).get().uri(properties.getHawtioPath(false)).exchange().expectStatus().isNotFound());
     }
 
     @Test
@@ -27,7 +27,7 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
             assertThat(context.containsBean("hawtioEndpoint")).isFalse();
             assertThat(context.containsBean("hawtioManagementConfiguration")).isFalse();
 
-            getTestClient(context).get().uri(properties.getHawtioPath()).exchange()
+            getTestClient(context).get().uri(properties.getHawtioPath(false)).exchange()
                 .expectStatus().isNotFound();
         });
     }
@@ -41,42 +41,17 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
         getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
             WebTestClient client = getTestClient(context);
 
-            client.get().uri(properties.getJolokiaPath()).exchange()
+            client.get().uri(properties.getJolokiaPath(false)).exchange()
                 .expectStatus().isNotFound();
 
-            client.get().uri(properties.getJolokiaPath() + "/foo/bar?a=b").exchange()
+            client.get().uri(properties.getJolokiaPath(false) + "/foo/bar?a=b").exchange()
                 .expectStatus().isNotFound();
 
-            client.get().uri(properties.getHawtioJolokiaPath()).exchange()
+            client.get().uri(properties.getHawtioJolokiaPath(false)).exchange()
                 .expectStatus().isNotFound();
 
-            client.get().uri(properties.getHawtioJolokiaPath() + "/foo/bar?a=b").exchange()
+            client.get().uri(properties.getHawtioJolokiaPath(false) + "/foo/bar?a=b").exchange()
                 .expectStatus().isNotFound();
         });
-    }
-
-    @Test
-    public void testConfigurationDefaults() {
-        TestProperties properties = TestProperties.builder().build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
-            assertHawtioEndpointPaths(context, properties));
-    }
-
-    @Test
-    public void testCustomManagementBasePath() {
-        TestProperties properties = TestProperties.builder()
-            .managementBasePath("/management-base-path")
-            .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
-            assertHawtioEndpointPaths(context, properties));
-    }
-
-    @Test
-    public void testRootManagementBasePath() {
-        TestProperties properties = TestProperties.builder()
-            .managementBasePath("/")
-            .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) ->
-            assertHawtioEndpointPaths(context, properties));
     }
 }
