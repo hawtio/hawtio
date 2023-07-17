@@ -7,7 +7,8 @@ echo "| NAME | TESTS | PASSED ✅ | SKIPPED 💤 | FAILED ❌ | ERRORS 🚫 | TI
 echo "| --- | --- | --- | --- | --- | --- | --- |"
 for i in $1/*; do 
     if [ -f "$i/Cucumber.xml" ]; then
-        echo -n "| $i | "
+        name=$(basename $i)
+        echo -n "| $name | "
         xmlstarlet tr $SCRIPT_DIR/pr_results_template.xsl $i/Cucumber.xml | xargs
     fi
 done

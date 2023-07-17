@@ -38,13 +38,17 @@ public class CustomReportPlugin implements ConcurrentEventListener {
         if (!event.getResult().getStatus().isOk()) {
             String[] logTypes = new String[] {LogType.BROWSER, LogType.CLIENT, LogType.DRIVER};
             for (String logType : logTypes) {
-                List<String> logs = Selenide.getWebDriverLogs(logType);
-                LOG.info(StringUtils.repeat("=", 20));
-                LOG.info("browser {} logs", logType);
-                LOG.info("{}", logs);
-                LOG.info(StringUtils.repeat("=", 20));
-                if (currentScenario != null) {
-                    currentScenario.attach(String.valueOf(logs), "text/plain", "Browser " + logType + " logs");
+                try {
+                    List<String> logs = Selenide.getWebDriverLogs(logType);
+                    LOG.info(StringUtils.repeat("=", 20));
+                    LOG.info("browser {} logs", logType);
+                    LOG.info("{}", logs);
+                    LOG.info(StringUtils.repeat("=", 20));
+                    if (currentScenario != null) {
+                        currentScenario.attach(String.valueOf(logs), "text/plain", "Browser " + logType + " logs");
+                    }
+                } catch (Exception e) {
+                    LOG.error("Failed to obtain logs from webdriver", e);
                 }
             }
         }

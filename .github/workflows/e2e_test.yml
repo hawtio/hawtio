@@ -1,4 +1,4 @@
-name: E2E Test
+name: mmuzikar-test E2E Test
 
 on:
   pull_request_target:
@@ -6,6 +6,7 @@ on:
       - main
       - 3.x
       - 4.x
+      - mmuzikar-ci-test-branch
     paths-ignore:
       - "**.md"
   push:
@@ -88,7 +89,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"
       - name: Checkout code
@@ -121,6 +122,10 @@ jobs:
     runs-on: ubuntu-20.04
     needs: test
     if: always()
+    permissions:
+      checks: write
+      actions: read
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -146,13 +151,13 @@ jobs:
         run: |
           cat summary.md >> $GITHUB_STEP_SUMMARY
       - uses: tibdex/github-app-token@v1
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         id: generate-token
         with:
           app_id: ${{ secrets.HAWTIO_CI_APP_ID }}
           private_key: ${{ secrets.HAWTIO_CI_PRIVATE_KEY }}
       - name: Comment PR with summary
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         uses: thollander/actions-comment-pull-request@v2
         with:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}

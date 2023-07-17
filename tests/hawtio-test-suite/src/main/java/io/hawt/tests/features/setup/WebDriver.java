@@ -1,7 +1,9 @@
 package io.hawt.tests.features.setup;
 
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +25,9 @@ public class WebDriver {
     public static void setup() {
         LOG.info("Setting up a web browser options");
         if (TestConfiguration.isRunningInContainer()) {
-            if ("chrome".equals(Configuration.browser)) {
-                LOG.info("Disabling SHM usage for chrome to improve stability");
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("--disable-dev-shm-usage");
-
-                DesiredCapabilities caps = new DesiredCapabilities();
-                caps.setCapability(ChromeOptions.CAPABILITY, options);
-                Configuration.browserCapabilities = caps;
-            }
             setupDriverPaths();
+            System.setProperty(GeckoDriverService.GECKO_DRIVER_LOG_PROPERTY, "target/driver.log");
+            System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "target/driver.log");
         }
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
         Configuration.headless = TestConfiguration.browserHeadless();
