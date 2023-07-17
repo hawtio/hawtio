@@ -224,7 +224,7 @@ public class HawtioSpringBootTestSupport {
     protected static class TestPropertiesBuilder {
         private String contextPath;
         private String servletPath;
-        private String managementBasePath;
+        private String managementContextPath;
         private String managementWebBasePath;
         private String jolokiaPath;
         private String hawtioPath;
@@ -244,8 +244,8 @@ public class HawtioSpringBootTestSupport {
             return this;
         }
 
-        public TestPropertiesBuilder managementBasePath(String managementBasePath) {
-            this.managementBasePath = managementBasePath;
+        public TestPropertiesBuilder managemenBasePath(String managementContextPath) {
+            this.managementContextPath = managementContextPath;
             return this;
         }
 
@@ -290,7 +290,7 @@ public class HawtioSpringBootTestSupport {
         }
 
         public TestProperties build() {
-            return new TestProperties(contextPath, servletPath, managementBasePath,
+            return new TestProperties(contextPath, servletPath, managementContextPath,
                 managementWebBasePath, jolokiaPath, hawtioPath, hawtioExposed,
                 jolokiaExposed, hawtioEnabled, jolokiaEnabled, authenticationEnabled);
         }
