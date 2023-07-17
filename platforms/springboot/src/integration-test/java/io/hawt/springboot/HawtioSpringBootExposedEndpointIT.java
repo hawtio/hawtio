@@ -4,11 +4,13 @@ import org.junit.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the {@link ConditionalOnExposedEndpoint} annotation
  */
+
 public class HawtioSpringBootExposedEndpointIT {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withUserConfiguration(TestConfiguration.class);
@@ -25,7 +27,7 @@ public class HawtioSpringBootExposedEndpointIT {
     @Test
     public void testStringArrayProperty() {
         contextRunner.withPropertyValues("management.endpoints.web.exposure.include[0]=hawtio",
-            "management.endpoints.web.exposure.include[1]=jolokia", "management.endpoints.web.exposure.include[2]=foo")
+                "management.endpoints.web.exposure.include[1]=jolokia", "management.endpoints.web.exposure.include[2]=foo")
             .run((context) -> assertThat(context).hasBean("foo"));
 
         contextRunner.withPropertyValues("management.endpoints.web.exposure.include[0]=*")
