@@ -1,4 +1,4 @@
-@springBootSmokeTest @springBootAllTest
+@springBootSmokeTest @springBootAllTest @notHawtioNext
 # @quarkusSmokeTest @quarkusAllTest - disabled due to https://github.com/hawtio/hawtio-next/issues/348
 Feature: Checking the functionality of Plugin page.
 
