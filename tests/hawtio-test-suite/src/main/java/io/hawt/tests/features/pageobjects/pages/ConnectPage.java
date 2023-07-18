@@ -2,6 +2,7 @@ package io.hawt.tests.features.pageobjects.pages;
 
 import static com.codeborne.selenide.Selenide.$;
 
+import org.awaitility.Awaitility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -10,8 +11,10 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 
 import java.net.URL;
+import java.time.Duration;
 
 import io.hawt.tests.features.config.TestConfiguration;
+import io.hawt.tests.features.setup.LoginLogout;
 
 public class ConnectPage extends HawtioPage {
 
@@ -58,7 +61,11 @@ public class ConnectPage extends HawtioPage {
         }
 
         Selenide.open(url, LoginPage.class).login(username, password);
-        Selenide.open(prevUrl);
+        Awaitility.waitAtMost(Duration.ofSeconds(5)).pollInSameThread()
+            .untilAsserted(() -> {
+                Selenide.open(prevUrl);
+                LoginLogout.hawtioIsLoaded();
+            });
 
         $(CONNECTION_LIST).$(connectionSelector).click();
         Selenide.Wait().until(ExpectedConditions.numberOfWindowsToBe(2));
