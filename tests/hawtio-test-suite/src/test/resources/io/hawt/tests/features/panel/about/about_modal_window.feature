@@ -1,3 +1,4 @@
+@notHawtioNext
 Feature: Check whether all data is presented and displayed correctly in About modal window.
 
   @springBootSmokeTest @springBootAllTest
