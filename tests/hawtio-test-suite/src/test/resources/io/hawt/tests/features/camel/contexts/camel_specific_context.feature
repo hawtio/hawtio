@@ -14,12 +14,40 @@ Feature: Checking the functionality of a specific camel context page.
       | Value     | State     | Started     |
 
   @springBootAllTest @quarkusAllTest
-  Scenario: Check to execute operation of Specific Context
+  Scenario: Check to execute operation of Specific Context and returned result of String type
     Given User is on "Camel" page
     And User is on Camel "SampleCamel" context
     When User clicks on Camel "Operations" tab
     When User executes operation with name "getCamelId()"
     Then Result of "getCamelId()" operation is "SampleCamel"
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check to execute operation of Specific Context and returned result of boolean type
+    Given User is on "Camel" page
+    And User is on Camel "SampleCamel" context
+    When User clicks on Camel "Operations" tab
+    When User executes operation with name "isLogMask()"
+    Then Result of "isLogMask()" operation is "false"
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check to execute operation of Specific Context and returned result of Integer type
+    Given User is on "Camel" page
+    And User is on Camel "SampleCamel" context
+    When User clicks on Camel "Operations" tab
+    When User executes operation with name "getTotalRoutes()"
+    Then Result of "getTotalRoutes()" operation is "2"
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check to view and edit chart of Specific Context
+    Given User is on "Camel" page
+    And User is on Camel "SampleCamel" context
+    When User clicks on Camel "Chart" tab
+    And User switches to Edit watches mode of Camel Chart
+    And User unwatch all attributes
+    And User watches "TotalRoutes" attribute
+    And User closes Edit watches mode of Camel Chart
+    Then Camel Attribute "SampleCamel TotalRoutes" and its value "2" are displayed in Camel Chart
+    And Camel Attribute "ExchangesFailed" is not displayed in Camel Chart
 
   @springBootAllTest @quarkusAllTest
   Scenario: Check the suspend action with Camel Specific Context.
