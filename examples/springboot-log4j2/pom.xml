@@ -16,7 +16,7 @@
   <description>Hawtio :: Sample Spring Boot 2.x process with Log4J2</description>
 
   <properties>
-    <camel-version>3.20.3</camel-version>
+    <camel-version>3.21.0</camel-version>
   </properties>
 
   <dependencyManagement>
@@ -30,7 +30,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <artifactId>camel-spring-boot-bom</artifactId>
         <version>${camel-version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -104,15 +104,22 @@
       via JMX / Hawtio.
     -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-management</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-management-starter</artifactId>
+    </dependency>
+    <!--
+      This dependency is required for viewing Camel routes source XML.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-spring-boot-xml</artifactId>
     </dependency>
     <!--
       To enable Camel plugin debugging feature, add this dependency.
     -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-debug</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-debug-starter</artifactId>
     </dependency>
   </dependencies>
 
