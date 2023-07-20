@@ -6,7 +6,6 @@ on:
       - main
       - 3.x
       - 4.x
-      - mmuzikar-ci-test-branch
     paths-ignore:
       - "**.md"
   push:
@@ -14,7 +13,6 @@ on:
       - main
       - 3.x
       - 4.x
-      - mmuzikar-ci-test-branch
     paths-ignore:
       - "**.md"
 
