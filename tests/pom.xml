@@ -16,7 +16,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <camel-version>3.20.5</camel-version>
+    <camel-version>3.21.0</camel-version>
     <http5-version>5.2.1</http5-version>
     <guava-version>32.0.0-jre</guava-version>
     <slf4j-version>2.0.7</slf4j-version>
