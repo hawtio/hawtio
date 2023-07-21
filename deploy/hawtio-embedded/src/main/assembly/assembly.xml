@@ -29,7 +29,6 @@
       <includes>
         <include>io.hawt:hawtio-embedded</include>
         <include>org.eclipse.jetty:*</include>
-        <include>org.slf4j:*</include>
         <include>javax.servlet:javax.servlet-api</include>
         <!-- for Keycloak -->
         <!--
