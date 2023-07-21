@@ -83,6 +83,9 @@ public class Main implements Callable<Integer> {
     String keyStorePass;
     private boolean welcome = true;
 
+    @CommandLine.Option(names = "--version", description = "Print the hawtio version")
+    private boolean version;
+
     public Main() {
     }
 
@@ -96,16 +99,20 @@ public class Main implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        Object val = System.getProperty("hawtio.authenticationEnabled");
-        if (val == null) {
-            System.setProperty("hawtio.authenticationEnabled", "false");
-        }
+        if (this.version) {
+            System.out.printf("Hawtio %s", Main.class.getPackage().getImplementationVersion());
+        } else {
+            Object val = System.getProperty("hawtio.authenticationEnabled");
+            if (val == null) {
+                System.setProperty("hawtio.authenticationEnabled", "false");
+            }
 
-        if (war == null && warLocation == null) {
-            HawtioDefaultLocator.setWar(this);
-        }
+            if (war == null && warLocation == null) {
+                HawtioDefaultLocator.setWar(this);
+            }
 
-        this.run();
+            this.run();
+        }
 
         return 0;
     }
