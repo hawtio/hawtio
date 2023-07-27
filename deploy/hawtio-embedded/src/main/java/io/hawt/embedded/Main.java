@@ -17,6 +17,14 @@
  */
 package io.hawt.embedded;
 
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
+import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -25,20 +33,6 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
-
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
 
 /**
  * A simple way to run hawtio embedded inside a JVM by booting up a Jetty server
@@ -138,7 +132,7 @@ public class Main implements Callable<Integer>  {
     public String run(boolean join) throws Exception {
         Server server = new Server(new InetSocketAddress(InetAddress.getByName(host), port));
 
-        HandlerCollection handlers = new HandlerCollection();
+        ContextHandlerCollection handlers = new ContextHandlerCollection();
         handlers.setServer(server);
         server.setHandler(handlers);
 
@@ -212,7 +206,9 @@ public class Main implements Callable<Integer>  {
         webapp.setParentLoaderPriority(true);
         webapp.setLogUrlOnStart(true);
         webapp.setInitParameter("scheme", scheme);
-        webapp.setExtraClasspath(extraClassPath);
+        if (extraClassPath!= null) {
+            webapp.setExtraClasspath(extraClassPath);
+        }
         return webapp;
     }
 
@@ -246,7 +242,7 @@ public class Main implements Callable<Integer>  {
         return scheme;
     }
 
-    protected void findThirdPartyPlugins(Logger log, HandlerCollection handlers, File tempDir) {
+    protected void findThirdPartyPlugins(Logger log, ContextHandlerCollection handlers, File tempDir) {
         File dir = new File(plugins);
         if (!dir.exists() || !dir.isDirectory()) {
             return;
@@ -263,7 +259,7 @@ public class Main implements Callable<Integer>  {
             war -> deployPlugin(war, log, handlers, tempDir));
     }
 
-    private void deployPlugin(File war, Logger log, HandlerCollection handlers, File tempDir) {
+    private void deployPlugin(File war, Logger log, ContextHandlerCollection handlers, File tempDir) {
         String contextPath = resolveContextPath(war);
 
         WebAppContext plugin = new WebAppContext();
