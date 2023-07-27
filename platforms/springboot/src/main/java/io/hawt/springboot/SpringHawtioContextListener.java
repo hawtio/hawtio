@@ -2,7 +2,7 @@ package io.hawt.springboot;
 
 import java.util.Objects;
 
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextEvent;
 
 import io.hawt.HawtioContextListener;
 import io.hawt.system.ConfigManager;

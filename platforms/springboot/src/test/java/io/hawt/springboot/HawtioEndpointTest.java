@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,7 +33,8 @@ public class HawtioEndpointTest {
     public void testRedirectHawtioInvalidRequest() {
         Mockito.when(resolver.resolve("hawtio")).thenReturn("/actuator/hawtio");
         Mockito.when(httpServletRequest.getRequestURI()).thenReturn("/actuator/hawtio");
+
         String result = hawtioEndpoint.forwardHawtioRequestToIndexHtml(httpServletRequest);
-        assertEquals("redirect:/actuator/hawtio/", result);
+        assertEquals("redirect:/actuator/hawtio/index.html", result);
     }
 }

@@ -17,14 +17,6 @@
  */
 package io.hawt.embedded;
 
-import org.eclipse.jetty.ee10.webapp.WebAppContext;
-import org.eclipse.jetty.server.*;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +26,19 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
+import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
+
 /**
  * A simple way to run hawtio embedded inside a JVM by booting up a Jetty server
  */
 @CommandLine.Command(mixinStandardHelpOptions = true, name = "hawtio", description = "Run Hawtio")
-public class Main implements Callable<Integer>  {
+public class Main implements Callable<Integer> {
     private static Logger log = LoggerFactory.getLogger(Main.class);
     private static CommandLine commandLine;
 
@@ -206,7 +206,7 @@ public class Main implements Callable<Integer>  {
         webapp.setParentLoaderPriority(true);
         webapp.setLogUrlOnStart(true);
         webapp.setInitParameter("scheme", scheme);
-        if (extraClassPath!= null) {
+        if (extraClassPath != null) {
             webapp.setExtraClasspath(extraClassPath);
         }
         return webapp;

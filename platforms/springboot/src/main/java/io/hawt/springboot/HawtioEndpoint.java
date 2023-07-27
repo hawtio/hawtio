@@ -1,17 +1,17 @@
 package io.hawt.springboot;
 
 import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Spring Boot endpoint to expose Hawtio.
@@ -43,7 +43,7 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         final String path = endpointPath.resolve("hawtio");
 
         if (request.getRequestURI().equals(path)) {
-            return "redirect:" + path + "/";
+            return "redirect:" + path + "/index.html";
         }
 
         final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(path)
@@ -84,4 +84,10 @@ public class HawtioEndpoint implements WebMvcConfigurer {
             .addResourceLocations("classpath:/hawtio-static/img/");
         // @formatter:on
     }
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setUseTrailingSlashMatch(true);
+    }
 }
+
