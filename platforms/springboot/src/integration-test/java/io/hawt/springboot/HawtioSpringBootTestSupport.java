@@ -10,7 +10,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.jolokia.JolokiaEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.web.servlet.ServletManagementContextAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -21,13 +20,14 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.assertj.AssertableWebApplicationContext;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
+import org.springframework.test.util.TestSocketUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.SocketUtils;
+
 
 public class HawtioSpringBootTestSupport {
 
-    public static final int SERVER_PORT = SocketUtils.findAvailableTcpPort();
-    public static final int MANAGEMENT_PORT = SocketUtils.findAvailableTcpPort(SERVER_PORT + 1);
+    public static final int SERVER_PORT =  TestSocketUtils.findAvailableTcpPort();
+    public static final int MANAGEMENT_PORT = TestSocketUtils.findAvailableTcpPort();
 
     protected WebApplicationContextRunner contextRunner;
     protected boolean isCustomManagementPortConfigured = false;
@@ -224,7 +224,7 @@ public class HawtioSpringBootTestSupport {
     protected static class TestPropertiesBuilder {
         private String contextPath;
         private String servletPath;
-        private String managementContextPath;
+        private String managementBasePath;
         private String managementWebBasePath;
         private String jolokiaPath;
         private String hawtioPath;
@@ -244,8 +244,8 @@ public class HawtioSpringBootTestSupport {
             return this;
         }
 
-        public TestPropertiesBuilder managemenBasePath(String managementContextPath) {
-            this.managementContextPath = managementContextPath;
+        public TestPropertiesBuilder managementBasePath(String managementBasePath) {
+            this.managementBasePath = managementBasePath;
             return this;
         }
 
@@ -290,7 +290,7 @@ public class HawtioSpringBootTestSupport {
         }
 
         public TestProperties build() {
-            return new TestProperties(contextPath, servletPath, managementContextPath,
+            return new TestProperties(contextPath, servletPath, managementBasePath,
                 managementWebBasePath, jolokiaPath, hawtioPath, hawtioExposed,
                 jolokiaExposed, hawtioEnabled, jolokiaEnabled, authenticationEnabled);
         }

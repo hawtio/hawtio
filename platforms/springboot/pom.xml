@@ -11,7 +11,7 @@
 
   <artifactId>hawtio-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Spring Boot 2.x starter</description>
+  <description>Hawtio :: Spring Boot 3.x starter</description>
 
   <dependencyManagement>
     <dependencies>
@@ -77,12 +77,6 @@
     </dependency>
 
     <!-- testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
