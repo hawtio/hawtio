@@ -1,5 +1,5 @@
 const path = require('path')
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+const { ModuleFederationPlugin } = require('webpack').container
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const CracoEsbuildPlugin = require('craco-esbuild')
 const { dependencies } = require('./package.json')
