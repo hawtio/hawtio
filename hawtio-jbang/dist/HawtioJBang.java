@@ -20,7 +20,7 @@
 
 //JAVA 11+
 //REPOS mavencentral
-//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:3.0-M8}
+//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:3.0-beta-1}
 
 package main;
 
