@@ -1,6 +1,6 @@
 {
   "name": "hawtio-sample-plugin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "craco start",
@@ -8,7 +8,7 @@
     "test": "craco test"
   },
   "dependencies": {
-    "@hawtio/react": "^0.4.0-dev.2",
+    "@hawtio/react": "^0.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1"
