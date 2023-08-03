@@ -115,7 +115,6 @@
     <module>deploy/hawtio-base</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
-    <module>examples/branding-plugin</module>
     <module>examples/quarkus</module>
     <module>examples/quarkus-keycloak</module>
     <module>examples/sample-plugin</module>
