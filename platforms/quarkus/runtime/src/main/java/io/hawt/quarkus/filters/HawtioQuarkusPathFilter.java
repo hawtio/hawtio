@@ -57,6 +57,7 @@ public class HawtioQuarkusPathFilter implements Filter {
         chain.doFilter(request, response);
     }
 
+    // TODO: We might not need to load hawtconfig.json from hawtio-static. For Quarkus, static resources can be loaded from META-INF/resources.
     private static String loadFromHawtioStatic(String path) {
         String hawtioStaticPath = String.format("classpath:/hawtio-static%s", path);
         try (InputStream is = ServletHelpers.loadFile(hawtioStaticPath);
