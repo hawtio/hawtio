@@ -37,7 +37,8 @@ import picocli.CommandLine;
 /**
  * A simple way to run hawtio embedded inside a JVM by booting up a Jetty server
  */
-@CommandLine.Command(mixinStandardHelpOptions = true, name = "hawtio", description = "Run Hawtio")
+@CommandLine.Command(versionProvider = Main.ManifestVersionProvider.class,
+    name = "hawtio", description = "Run Hawtio")
 public class Main implements Callable<Integer> {
     private static Logger log = LoggerFactory.getLogger(Main.class);
     private static CommandLine commandLine;
@@ -81,10 +82,12 @@ public class Main implements Callable<Integer> {
     @CommandLine.Option(names = {"--key-store-pass", "--kp"},
         description = "Password for the JKS keyStore with the keys for https.")
     String keyStorePass;
+    @CommandLine.Option(names = {"-V", "--version"}, versionHelp = true, description = "Print Hawtio version")
+    boolean versionRequested;
+    @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true,
+        description = "Print usage help and exit.")
+    boolean usageHelpRequested;
     private boolean welcome = true;
-
-    @CommandLine.Option(names = "--version", description = "Print the hawtio version")
-    private boolean version;
 
     public Main() {
     }
@@ -99,20 +102,16 @@ public class Main implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        if (this.version) {
-            System.out.printf("Hawtio %s", Main.class.getPackage().getImplementationVersion());
-        } else {
-            Object val = System.getProperty("hawtio.authenticationEnabled");
-            if (val == null) {
-                System.setProperty("hawtio.authenticationEnabled", "false");
-            }
-
-            if (war == null && warLocation == null) {
-                HawtioDefaultLocator.setWar(this);
-            }
-
-            this.run();
+        Object val = System.getProperty("hawtio.authenticationEnabled");
+        if (val == null) {
+            System.setProperty("hawtio.authenticationEnabled", "false");
         }
+
+        if (war == null && warLocation == null) {
+            HawtioDefaultLocator.setWar(this);
+        }
+
+        this.run();
 
         return 0;
     }
@@ -196,6 +195,16 @@ public class Main implements Callable<Integer> {
         }
 
         return url;
+    }
+
+    static class ManifestVersionProvider implements CommandLine.IVersionProvider {
+
+        @Override
+        public String[] getVersion() throws Exception {
+            String[] result = new String[1];
+            result[0] = Main.class.getPackage().getImplementationVersion();
+            return result;
+        }
     }
 
     private WebAppContext createHawtioWebapp(Server server, String scheme) throws IOException {
