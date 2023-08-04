@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        java: ['11', '17']
+        java: ['17']
         runtime: ['quarkus', 'springboot']
         browser: ['firefox', 'chrome']
     env:
