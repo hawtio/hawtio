@@ -8,10 +8,11 @@ import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 
-import org.eclipse.jetty.jaas.spi.AbstractLoginModule;
+import org.eclipse.jetty.security.jaas.spi.AbstractLoginModule;
 import org.eclipse.jetty.security.PropertyUserStore;
 import org.eclipse.jetty.security.RolePrincipal;
 import org.eclipse.jetty.security.UserPrincipal;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyFileLoginModule.class);
     private static final ConcurrentHashMap<String, PropertyUserStore> PROPERTY_USERSTORES = new ConcurrentHashMap<>();
-
+    private final ResourceFactory.Closeable resourceFactory = ResourceFactory.closeable();
     private boolean hotReload = false;
     private String filename = null;
 
@@ -44,7 +45,7 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
 
         if (PROPERTY_USERSTORES.get(filename) == null) {
             final PropertyUserStore propertyUserStore = new PropertyUserStore();
-            propertyUserStore.setConfig(filename);
+            propertyUserStore.setConfig(resourceFactory.newResource(filename));
             propertyUserStore.setHotReload(hotReload);
 
             final PropertyUserStore prev = PROPERTY_USERSTORES.putIfAbsent(filename, propertyUserStore);
@@ -87,7 +88,7 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
         final List<String> roles = rolePrincipals.stream().map(RolePrincipal::getName).collect(Collectors.toList());
 
         LOG.trace("Found: " + userName + " in PropertyUserStore " + filename);
-       return new HawtioJAASUser(userPrincipal, roles);
+        return new HawtioJAASUser(userPrincipal, roles);
     }
 
     class HawtioJAASUser extends JAASUser {
