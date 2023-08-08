@@ -1,9 +1,11 @@
 package io.hawt.system;
 
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
-import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -20,13 +22,11 @@ import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.security.cert.CertificateException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.karaf.jaas.boot.principal.ClientPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +172,7 @@ public class Authenticator {
             LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
                 realm, role, rolePrincipalClasses, configuration, username, "******");
 
-            Subject subject = initSubject();
+            Subject subject = new Subject();
             login(subject, realm, configuration);
             if (checkRoles(subject, role, rolePrincipalClasses)) {
                 return subject;
@@ -186,17 +186,6 @@ public class Authenticator {
         }
 
         return null;
-    }
-
-    protected Subject initSubject() {
-        Subject subject = new Subject();
-        try {
-            String addr = request.getRemoteHost() + ":" + request.getRemotePort();
-            subject.getPrincipals().add(new ClientPrincipal("hawtio", addr));
-        } catch (Throwable t) {
-            // ignore
-        }
-        return subject;
     }
 
     protected void login(Subject subject, String realm, Configuration configuration) throws LoginException {
@@ -469,11 +458,11 @@ public class Authenticator {
                 }
                 // currently supports only Apache ActiveMQ Artemis
                 switch (callback.getClass().getName()) {
-                case ARTEMIS_CALLBACK:
-                    setCertificates(callback);
-                    break;
-                default:
-                    LOG.warn("Callback class not supported: {}", callback.getClass().getName());
+                    case ARTEMIS_CALLBACK:
+                        setCertificates(callback);
+                        break;
+                    default:
+                        LOG.warn("Callback class not supported: {}", callback.getClass().getName());
                 }
             }
         }
@@ -483,29 +472,32 @@ public class Authenticator {
             try {
                 // Artemis uses java.security.cert.X509Certificate class since the 2.18.0 version.
                 Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, java.security.cert.X509Certificate[].class);
-                method.invoke(callback, new Object[] { certificates });
+                method.invoke(callback, new Object[]{certificates});
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 LOG.warn("Setting certificates to new callback failed", e);
 
                 try {
                     // Artemis used deprecated javax.security.cert.X509Certificate class up to the 2.17.0 version.
-                    Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, javax.security.cert.X509Certificate[].class);
-                    method.invoke(callback, new Object[] { toJavax(certificates) });
+                    Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, java.security.cert.X509Certificate[].class);
+                    method.invoke(callback, new Object[]{toJavax(certificates)});
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                         CertificateEncodingException | CertificateException ex) {
+                         CertificateException ex) {
                     LOG.error("Setting certificates to callback failed", ex);
                 }
             }
         }
 
         @SuppressWarnings("deprecation")
-        private static javax.security.cert.X509Certificate[] toJavax(X509Certificate[] certificates)
-            throws CertificateEncodingException, CertificateException {
-            List<javax.security.cert.X509Certificate> answer = new ArrayList<>();
+        private static java.security.cert.X509Certificate[] toJavax(X509Certificate[] certificates)
+            throws CertificateException {
+            List<java.security.cert.X509Certificate> answer = new ArrayList<>();
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             for (X509Certificate cert : certificates) {
-                answer.add(javax.security.cert.X509Certificate.getInstance(cert.getEncoded()));
+                java.security.cert.X509Certificate x509Cert =
+                    (java.security.cert.X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(cert.getEncoded()));
+                answer.add(x509Cert);
             }
-            return answer.toArray(new javax.security.cert.X509Certificate[certificates.length]);
+            return answer.toArray(new java.security.cert.X509Certificate[certificates.length]);
         }
     }
 
