@@ -1,6 +1,6 @@
 # Hawtio Spring Boot 2 Authentication Example
 
-Sample application for Hawtio + Spring Boot 2 with authentication enabled.
+Sample application for Hawtio + Spring Boot 3 with authentication enabled.
 
 ## How to run
 
