@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: build
     strategy:
       fail-fast: false
@@ -33,8 +33,6 @@ jobs:
     env:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}} 
     steps:
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v2.2.0
       - name: Download images
         uses: actions/cache/restore@v3
         with:
@@ -48,6 +46,7 @@ jobs:
       - name: ${{ matrix.runtime }} E2E test (Java ${{ matrix.java }})
         id: test
         run: |
+          docker version
           docker run --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
@@ -79,7 +78,7 @@ jobs:
           path: |
             results/**/*
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -99,8 +98,6 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v2.2.0
       - name: Build
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -Ddocker.buildArg.JAVA_VERSION=${{ matrix.java }} -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
@@ -115,9 +112,13 @@ jobs:
         with:
           path: /tmp/images
           key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
-
+      - name: Archive test artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'images-${{matrix.java}}'
+          path: '/tmp/images/*.tar'
   publish-results:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: test
     if: always()
     permissions:
