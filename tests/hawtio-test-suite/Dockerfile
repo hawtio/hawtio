@@ -1,11 +1,12 @@
 ARG JAVA_VERSION=11
+ARG SELENIUM_VERSION=4.10
 
-FROM selenium/standalone-firefox:latest as firefoxImage
+FROM selenium/standalone-firefox:${SELENIUM_VERSION} as firefoxImage
 USER root
 RUN mkdir hawtio-test-suite
 WORKDIR hawtio-test-suite
 RUN export > env_init.sh
-FROM selenium/standalone-chrome:latest as chromeImage
+FROM selenium/standalone-chrome:${SELENIUM_VERSION} as chromeImage
 
 FROM maven:3-eclipse-temurin-${JAVA_VERSION}
 COPY --from=firefoxImage / /

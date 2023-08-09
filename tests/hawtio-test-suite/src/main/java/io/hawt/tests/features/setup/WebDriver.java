@@ -1,10 +1,7 @@
 package io.hawt.tests.features.setup;
 
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.GeckoDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +24,9 @@ public class WebDriver {
         if (TestConfiguration.isRunningInContainer()) {
             setupDriverPaths();
             System.setProperty(GeckoDriverService.GECKO_DRIVER_LOG_PROPERTY, "target/driver.log");
+            System.setProperty(GeckoDriverService.GECKO_DRIVER_LOG_LEVEL_PROPERTY, "INFO");
             System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "target/driver.log");
+            System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_LEVEL_PROPERTY, "WARNING");
         }
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
         Configuration.headless = TestConfiguration.browserHeadless();
@@ -44,9 +43,9 @@ public class WebDriver {
             System.setProperty("webdriver.firefox.driver", optFolder.resolve(path).toAbsolutePath().toString());
         });
         Path seleniumFolder = optFolder.resolve("selenium");
-        Arrays.stream(seleniumFolder.toFile().list()).filter(f -> f.startsWith("chromedriver")).findFirst()
-            .ifPresent(path -> {
-                System.setProperty("webdriver.chrome.driver", seleniumFolder.resolve(path).toAbsolutePath().toString());
+        Arrays.stream(seleniumFolder.toFile().listFiles((f, name) -> name.startsWith("chromedriver"))).filter(f -> f.isFile() && f.canExecute()).findFirst()
+            .ifPresent(file -> {
+                System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
             });
     }
 

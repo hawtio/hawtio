@@ -3,6 +3,7 @@ package io.hawt.tests.features.hooks;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.logging.LogType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +32,14 @@ public class LoginLogoutHooks {
             LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
             init = true;
         } else {
-            if (Selenide.webdriver().driver().getWebDriver().getCurrentUrl().contains("login")) {
+            try {
+                if (Selenide.webdriver().driver().getWebDriver().getCurrentUrl().contains("login")) {
+                    LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
+                } else {
+                    Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/jmx");
+                }
+            } catch (NoSuchSessionException e) {
                 LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
-            } else {
-                Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/jmx");
             }
         }
         LoginLogout.hawtioIsLoaded();

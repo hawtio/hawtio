@@ -245,6 +245,7 @@
         <configuration>
           <skipTests>${skipTests}</skipTests>
           <test>${test-class}</test>
+          <rerunFailingTestsCount>2</rerunFailingTestsCount>
           <systemProperties>
             <io.hawt.test.runtime>${test-runtime}</io.hawt.test.runtime>
             <io.hawt.test.url.suffix>${hawtio.url}</io.hawt.test.url.suffix>

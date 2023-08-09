@@ -46,7 +46,6 @@ jobs:
       - name: ${{ matrix.runtime }} E2E test (Java ${{ matrix.java }})
         id: test
         run: |
-          docker version
           docker run --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
@@ -112,11 +111,6 @@ jobs:
         with:
           path: /tmp/images
           key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Archive test artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: 'images-${{matrix.java}}'
-          path: '/tmp/images/*.tar'
   publish-results:
     runs-on: ubuntu-22.04
     needs: test

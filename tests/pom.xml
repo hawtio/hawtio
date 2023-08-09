@@ -89,6 +89,9 @@
                     <name>${image.name}:${java.vm.specification.version}</name>
                     <build>
                       <dockerFile>${basedir}/Dockerfile</dockerFile>
+                      <args>
+                        <SELENIUM_VERSION>${selenium-version}</SELENIUM_VERSION>
+                      </args>
                     </build>
                   </image>
                 </images>
