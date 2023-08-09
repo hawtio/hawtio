@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -13,10 +14,10 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot-log4j2</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Spring Boot 2.x process with Log4J2</description>
+  <description>Hawtio :: Sample Spring Boot 3.x process with Log4J2</description>
 
   <properties>
-    <camel-version>3.21.0</camel-version>
+    <camel-version>4.0.0-M2</camel-version>
   </properties>
 
   <dependencyManagement>
@@ -112,7 +113,7 @@
     -->
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
-      <artifactId>camel-spring-boot-xml</artifactId>
+      <artifactId>camel-spring-boot-xml-starter</artifactId>
     </dependency>
     <!--
       To enable Camel plugin debugging feature, add this dependency.
