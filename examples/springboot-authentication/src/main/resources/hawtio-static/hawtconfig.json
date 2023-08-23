@@ -1,6 +1,6 @@
 {
   "branding": {
-    "appName": "Hawtio Spring Boot 2 Authentication Example",
+    "appName": "Hawtio Spring Boot 3 Authentication Example",
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg",
     "css": "css/app.css",
@@ -24,10 +24,10 @@
     ]
   },
   "about": {
-    "title": "Hawtio Spring Boot 2 Authentication Example",
+    "title": "Hawtio Spring Boot 3 Authentication Example",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "(c) 2019 Hawtio team",
+    "copyright": "(c) 2023 Hawtio team",
     "imgSrc": "img/hawtio-logo.svg"
   },
   "disabledRoutes": []
