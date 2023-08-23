@@ -14,7 +14,7 @@
   <artifactId>hawtio-example-springboot-authentication</artifactId>
   <name>${project.artifactId}</name>
   <description>Hawtio :: Sample Spring Boot 2.x process with authentication</description>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <!-- Jetty version referred from the spring-boot-dependencies project -->

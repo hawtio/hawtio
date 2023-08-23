@@ -1,7 +1,6 @@
 package io.hawt.example.spring.boot;
 
 import java.util.Optional;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
