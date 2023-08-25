@@ -33,6 +33,12 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
