@@ -1,5 +1,5 @@
 @springBootSmokeTest @springBootAllTest @notHawtioNext
-# @quarkusSmokeTest @quarkusAllTest - disabled due to https://github.com/hawtio/hawtio-next/issues/348
+ @quarkusSmokeTest @quarkusAllTest
 Feature: Checking the functionality of Plugin page.
 
   Scenario: Check that Sample Plugin got installed and accessible

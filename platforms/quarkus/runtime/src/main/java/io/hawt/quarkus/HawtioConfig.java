@@ -85,7 +85,7 @@ public class HawtioConfig {
          * URL of the remote plugin.
          */
         @ConfigItem
-        public String url;
+        public Optional<String> url;
         /**
          * Scope of the remote plugin.
          */
