@@ -26,10 +26,30 @@ public class HawtioPlugin {
     private Boolean bustRemoteEntryCache;
     private String pluginEntry;
 
-    public HawtioPlugin(String url, String scope, String module) {
-        this.url = url;
+    /**
+     * Use a plugin from remote repository.
+     * These are the parameters required to load a remote Hawtio plugin (a.k.a. Module Federation remote module):
+     *
+     * @param url The URL of the remote entry for the plugin. This must be the same location as the Hawtio console.
+     * @param scope The name of the container defined at Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
+     * @param module The path exposed from Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
+     */
+    public HawtioPlugin(String scope, String module, String url) {
         this.scope = scope;
         this.module = module;
+        this.url = url;
+    }
+
+    /**
+     * Use a plugin that's located in the application itself.
+     * This constructor automatically uses address of the application.
+     * These are the parameters required to load a remote Hawtio plugin (a.k.a. Module Federation remote module):
+     *
+     * @param scope The name of the container defined at Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
+     * @param module The path exposed from Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
+     */
+    public HawtioPlugin(String scope, String module) {
+        this(scope, module, "");
     }
 
     @JsonProperty("url")
