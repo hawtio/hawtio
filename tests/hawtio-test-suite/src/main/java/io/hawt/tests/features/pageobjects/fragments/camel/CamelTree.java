@@ -1,5 +1,6 @@
 package io.hawt.tests.features.pageobjects.fragments.camel;
 
+import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Selectors.byId;
 import static com.codeborne.selenide.Selenide.$;
@@ -18,7 +19,9 @@ public class CamelTree {
      * @return the given page object class
      */
     public <P> P expandSpecificFolder(Class<P> pageObjectClass, String folderPartialId) {
-        $("[id*='" + folderPartialId + "']").$("[class$='node-toggle']").shouldBe(interactable).click();
+        if (!$("[id*='" + folderPartialId + "']").has(cssClass("pf-m-expanded"))) {
+            $("[id*='" + folderPartialId + "']").$("[class$='node-toggle']").shouldBe(interactable).click();
+        }
         return page(pageObjectClass);
     }
 

@@ -28,3 +28,36 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     And User clicks on Camel "Operations" tab
     When User executes operation with name "getCamelId()"
     Then Result of "getCamelId()" operation is "SampleCamel"
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check sending a message
+    Given User is on "Camel" page
+    And User is on Camel "mock://bar" item of "endpoints" folder of "SampleCamel" context
+    And User clicks on Camel "Send" tab
+    When User sets "CamelFileName" header with value of "Test Name"
+    And User adds "Hello Test" message body
+    And User sets "plaintext" message type
+    And User sends the message
+    And Successful alert message is appeared and closed
+    Then User clicks on Camel "Browse" tab
+    And User can browse the message with "Hello Test" body
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check forwarding the message
+    Given User is on "Camel" page
+    And User is on Camel "mock://bar" item of "endpoints" folder of "SampleCamel" context
+    And User clicks on Camel "Browse" tab
+    When User selects the message with "Hello Test" body
+    And User forwards the message to "mock://result" URI
+    Then User is on Camel "mock://result" item of "endpoints" folder of "SampleCamel" context
+    And User clicks on Camel "Browse" tab
+    And User can browse the message with "Hello Test" body
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check details of the message
+    Given User is on "Camel" page
+    And User is on Camel "endpoints" folder of "SampleCamel" context
+    And User is on Camel "mock://result" item of "endpoints" folder of "SampleCamel" context
+    And User clicks on Camel "Browse" tab
+    When User clicks on the message with "Hello Test" body
+    Then Details of the message with "Hello Test" body are displayed
