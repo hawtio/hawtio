@@ -120,7 +120,7 @@
     <module>examples/springboot</module>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot-authentication-jar</module>
-    <module>examples/springboot-keycloak</module>
+<!--    <module>examples/springboot-keycloak</module>-->
     <module>examples/springboot-log4j2</module>
     <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>
@@ -131,7 +131,7 @@
     <module>hawtio-war</module>
     <module>platforms/quarkus</module>
     <module>platforms/springboot</module>
-    <module>platforms/springboot-keycloak</module>
+<!--    <module>platforms/springboot-keycloak</module>-->
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
     <module>plugins/hawtio-log</module>
