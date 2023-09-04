@@ -2,8 +2,8 @@ package io.hawt.quarkus.filters;
 
 import java.util.Arrays;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
 
 import io.hawt.quarkus.HawtioConfig;
 import io.hawt.web.auth.AuthenticationConfiguration;
