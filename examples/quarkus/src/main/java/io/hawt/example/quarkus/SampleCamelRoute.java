@@ -1,6 +1,6 @@
 package io.hawt.example.quarkus;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 

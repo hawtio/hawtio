@@ -3,8 +3,8 @@ package io.hawt.quarkus.servlets;
 import java.io.IOException;
 
 import javax.security.auth.Subject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
 import io.hawt.system.AuthenticateResult;

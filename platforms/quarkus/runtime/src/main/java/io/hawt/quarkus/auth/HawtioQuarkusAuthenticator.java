@@ -1,15 +1,12 @@
 package io.hawt.quarkus.auth;
 
 import java.util.Arrays;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.security.auth.Subject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.system.AuthenticateResult;
 import io.hawt.util.Strings;
-import io.hawt.web.auth.AuthSessionHelpers;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.quarkus.security.AuthenticationFailedException;
 import io.quarkus.security.credential.PasswordCredential;
