@@ -16,7 +16,7 @@
   <description>Hawtio :: Sample Spring Boot 3.x process</description>
 
   <properties>
-    <camel-version>4.0.0-M2</camel-version>
+    <camel-version>4.0.0</camel-version>
   </properties>
 
   <dependencyManagement>
