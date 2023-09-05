@@ -38,4 +38,15 @@ public class CamelOperations extends CamelPage {
         final SelenideElement operation = $(byXpath(".//li[@aria-labelledby='operation " + method + "']"));
         operation.$(byXpath(".//pre")).shouldHave(exactText(result));
     }
+
+    /**
+     * Get result of the executed operation as String.
+     *
+     * @param method name of the operation
+     * @return result of the operation as String
+     */
+    public String getResultOfExecutedOperation(String method) {
+        final SelenideElement operation = $(byXpath(".//li[@aria-labelledby='operation " + method + "']"));
+        return operation.$(byXpath(".//pre")).getText();
+    }
 }

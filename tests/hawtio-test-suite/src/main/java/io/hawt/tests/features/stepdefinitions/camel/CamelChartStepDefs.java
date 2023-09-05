@@ -22,9 +22,9 @@ public class CamelChartStepDefs {
         camelChart.edit();
     }
 
-    @When("^User unwatch all attributes$")
-    public void userUnwatchAllAttributes() {
-        camelChart.unwatchAll();
+    @When("^User unwatch all \"([^\"]*)\" attributes$")
+    public void userUnwatchAllAttributes(String parentAttribute) {
+        camelChart.unwatchAll(parentAttribute);
     }
 
     @When("^User watches \"([^\"]*)\" attribute$")
