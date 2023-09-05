@@ -30,6 +30,57 @@ Feature: Checking the functionality of Camel Specific Route page.
     Then Result of "getRouteId()" operation is "simple"
 
   @springBootAllTest @quarkusAllTest
+  Scenario: Check to view and edit chart of Specific Context
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Operations" tab
+    And User executes operation with name "getMaxProcessingTime()"
+    And The result of the "getMaxProcessingTime()" operation is stored
+    And User clicks on Camel "Chart" tab
+    And User switches to Edit watches mode of Camel Chart
+    And User unwatch all "simple" attributes
+    And User watches "MaxProcessingTime" attribute
+    And User closes Edit watches mode of Camel Chart
+    Then Camel Attribute "simple MaxProcessingTime" has the same value as stored one
+    And Camel Attribute "simple UptimeMillis" is not displayed in Camel Chart
+
+  @quarkusAllTest
+  Scenario: Check to start the debugging
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
+    And User clicks on Camel "Debug" tab
+    And Start debugging option is presented
+    When User starts debugging
+    Then Debugging is started
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check to add a breakpoint while debugging
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
+    And User clicks on Camel "Debug" tab
+    And Debugging is started
+    When User adds breakpoint on "To stream" node
+    Then Breakpoint sign on "To stream" node is set: "true"
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check to remove a breakpoint while debugging
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
+    And User clicks on Camel "Debug" tab
+    And Debugging is started
+    When User removes breakpoint on "To stream" node
+    Then Breakpoint sign on "To stream" node is set: "false"
+
+  @springBootAllTest @quarkusAllTest
+  Scenario: Check to stop the debugging
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
+    And User clicks on Camel "Debug" tab
+    And Debugging is started
+    When User stops debugging
+    Then Start debugging option is presented
+
+  @springBootAllTest @quarkusAllTest
   Scenario: Check that Camel Route diagram is presented
     Given User is on "Camel" page
     And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
