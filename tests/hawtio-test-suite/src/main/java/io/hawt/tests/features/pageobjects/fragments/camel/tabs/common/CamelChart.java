@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
+import static com.codeborne.selenide.Selectors.withTagAndText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -42,10 +43,12 @@ public class CamelChart extends CamelPage {
     }
 
     /**
-     * Unwatch all Camel Attributes.
+     * Unwatch all Camel Attributes under specific parent attribute.
+     *
+     * @param parentAttribute of all chart attributes
      */
-    public void unwatchAll() {
-        $(byXpath("//div[contains(@class, 'pf-m-available')]//span[text()='SampleCamel']/preceding-sibling::span/input")).shouldBe(enabled).click();
+    public void unwatchAll(String parentAttribute) {
+        $(byXpath("//div[contains(@class, 'pf-m-available')]//span[text()='" + parentAttribute + "']/preceding-sibling::span/input")).shouldBe(enabled).click();
         $(byXpath("//button[@aria-label='Add selected']")).shouldBe(enabled).click();
     }
 
@@ -83,11 +86,11 @@ public class CamelChart extends CamelPage {
     /**
      * Assert that the values of tested attribute and from the chart are the same.
      *
-     * @param attribute name of tested attribute
-     * @param value     string value of tested attribute
+     * @param attribute     name of tested attribute
+     * @param expectedValue string value of tested attribute
      */
-    public void checkStringAttributeValue(String attribute, String value) {
-        Assertions.assertEquals(getValue(attribute), value);
+    public void checkStringAttributeValue(String attribute, String expectedValue) {
+        Assertions.assertEquals(expectedValue, getValue(attribute));
     }
 
     /**
@@ -112,7 +115,7 @@ public class CamelChart extends CamelPage {
         chart.should(exist).hover();
 
         if (chartBarValue.is(not(visible))) {
-            $(byXpath("//div[contains(text(),'SampleCamel TotalRoutes')]")).hover();
+            $(withTagAndText("div", attribute)).hover();
             chart.should(exist).hover();
         }
 
