@@ -1,13 +1,13 @@
 {
   "branding": {
-    "appName": "Hawtio Spring Boot 2 Sample app for E2E testing purposes",
+    "appName": "Hawtio Sample Quarkus 2.x Application",
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg",
     "css": "css/app.css",
     "favicon": "img/favicon.ico"
   },
   "login": {
-    "description": "This is placeholder text only. Use this area to place any information or introductory message about your application that may be relevant to users.",
+    "description": "This sample application shows how to run Hawtio with Quarkus.",
     "links": [
       {
         "url": "#terms",
@@ -27,7 +27,7 @@
     "title": "Hello World!",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "(c) 2019 Hawtio team",
+    "copyright": "(c) 2023 Hawtio team",
     "imgSrc": "img/hawtio-logo.svg"
   },
   "disabledRoutes": []
