@@ -9,26 +9,20 @@
   "login": {
     "description": "This is placeholder text only. Use this area to place any information or introductory message about your application that may be relevant to users.",
     "links": [
-      {
-        "url": "#terms",
-        "text": "Terms of use"
-      },
-      {
-        "url": "#help",
-        "text": "Help"
-      },
-      {
-        "url": "#privacy",
-        "text": "Privacy policy"
-      }
+      { "url": "#terms", "text": "Terms of use" },
+      { "url": "#help", "text": "Help" },
+      { "url": "#privacy", "text": "Privacy policy" }
     ]
   },
   "about": {
-    "title": "Hello World!",
-    "productInfo": [],
-    "additionalInfo": "",
-    "copyright": "(c) 2019 Hawtio team",
-    "imgSrc": "img/hawtio-logo.svg"
+    "title": "Hawtio Management Console",
+    "description": "A Hawtio reimplementation based on TypeScript + React.",
+    "imgSrc": "img/hawtio-logo.svg",
+    "productInfo": [
+      { "name": "ABC", "value": "1.2.3" },
+      { "name": "XYZ", "value": "7.8.9" }
+    ],
+    "copyright": "© Hawtio project"
   },
-  "disabledRoutes": []
+  "disabledRoutes": ["disabled"]
 }
