@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
@@ -19,14 +18,13 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.web.ServletHelpers;
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +52,6 @@ public class PluginServlet extends HttpServlet {
 
     private MBeanServer mBeanServer;
     private ObjectName pluginQuery;
-    private final Converters converters = new Converters();
-    private final JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
     @Override
     public void init() throws ServletException {
@@ -99,7 +95,7 @@ public class PluginServlet extends HttpServlet {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        ServletHelpers.writeObject(converters, options, out, answer);
+        ServletHelpers.writeObjectAsJson(out, answer);
     }
 
     private boolean isPluginMBean(AttributeList attributeList) {

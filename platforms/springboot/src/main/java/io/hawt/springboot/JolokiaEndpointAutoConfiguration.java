@@ -1,8 +1,6 @@
 package io.hawt.springboot;
 
-import io.hawt.springboot.JolokiaEndpoint;
-import io.hawt.springboot.JolokiaProperties;
-import org.jolokia.http.AgentServlet;
+import org.jolokia.server.core.http.AgentServlet;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

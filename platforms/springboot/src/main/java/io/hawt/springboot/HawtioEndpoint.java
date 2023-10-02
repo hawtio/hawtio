@@ -1,13 +1,13 @@
 package io.hawt.springboot;
 
 import java.util.List;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -68,26 +68,14 @@ public class HawtioEndpoint implements WebMvcConfigurer {
                 "/static/",
                 "classpath:/hawtio-static/static/");
         registry
-            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/plugins/**"))
-            .addResourceLocations(
-                "/app/",
-                "classpath:/hawtio-static/app/");
-        registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/**"))
             .addResourceLocations(
                 "/",
-                "/app/",
-                "classpath:/hawtio-static/",
-                "classpath:/hawtio-static/app/");
+                "classpath:/hawtio-static/");
         registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/img/**"))
             .addResourceLocations("classpath:/hawtio-static/img/");
         // @formatter:on
-    }
-
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setUseTrailingSlashMatch(true);
     }
 }
 

@@ -8,8 +8,8 @@ import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 
-import org.jolokia.config.ConfigKey;
-import org.jolokia.http.AgentServlet;
+import org.jolokia.server.core.config.ConfigKey;
+import org.jolokia.server.core.http.AgentServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
