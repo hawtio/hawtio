@@ -42,9 +42,8 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
+        <groupId>org.eclipse.jetty.ee10</groupId>
+        <artifactId>jetty-ee10-maven-plugin</artifactId>
         <configuration>
           <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
           <scanIntervalSeconds>1</scanIntervalSeconds>

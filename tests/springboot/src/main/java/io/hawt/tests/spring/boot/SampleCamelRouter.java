@@ -1,7 +1,6 @@
 package io.hawt.tests.spring.boot;
 
 import org.apache.camel.builder.RouteBuilder;
-
 import org.springframework.stereotype.Component;
 
 @Component

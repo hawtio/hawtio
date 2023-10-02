@@ -1,8 +1,8 @@
 package io.hawt.tests.quarkus;
 
-import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import jakarta.enterprise.context.ApplicationScoped;
 
-import javax.enterprise.context.ApplicationScoped;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 
 @ApplicationScoped
 public class SampleCamelRoute extends EndpointRouteBuilder {
