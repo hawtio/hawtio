@@ -23,8 +23,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-jvm</artifactId>
+      <!-- <groupId>org.jolokia</groupId> -->
+      <groupId>com.github.jolokia.jolokia</groupId>
+      <artifactId>jolokia-agent-jvm</artifactId>
       <version>${jolokia-version}</version>
       <exclusions>
         <exclusion>
@@ -71,23 +72,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-        <id>pre-java9</id>
-        <dependencies>
-            <dependency>
-                <groupId>com.sun</groupId>
-                <artifactId>tools</artifactId>
-                <version>1.6.0</version>
-                <scope>system</scope>
-                <systemPath>${java.home}/../lib/tools.jar</systemPath>
-            </dependency>
-        </dependencies>
-        <activation>
-            <file>
-                <exists>${java.home}/../lib/tools.jar</exists>
-            </file>
-        </activation>
-     </profile>
   </profiles>
 
 </project>

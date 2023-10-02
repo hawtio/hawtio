@@ -16,18 +16,17 @@
 package io.hawt.system;
 
 import java.io.IOException;
-
 import javax.management.ObjectName;
 
-import org.jolokia.config.ConfigKey;
-import org.jolokia.config.Configuration;
-import org.jolokia.restrictor.AllowAllRestrictor;
-import org.jolokia.restrictor.DenyAllRestrictor;
-import org.jolokia.restrictor.Restrictor;
-import org.jolokia.restrictor.RestrictorFactory;
-import org.jolokia.util.HttpMethod;
-import org.jolokia.util.NetworkUtil;
-import org.jolokia.util.RequestType;
+import org.jolokia.server.core.config.ConfigKey;
+import org.jolokia.server.core.config.Configuration;
+import org.jolokia.server.core.restrictor.AllowAllRestrictor;
+import org.jolokia.server.core.restrictor.DenyAllRestrictor;
+import org.jolokia.server.core.restrictor.RestrictorFactory;
+import org.jolokia.server.core.service.api.Restrictor;
+import org.jolokia.server.core.util.HttpMethod;
+import org.jolokia.server.core.util.NetworkUtil;
+import org.jolokia.server.core.util.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ public class RBACRestrictor implements Restrictor {
     }
 
     protected void initDelegate(Configuration config) {
-        String location = NetworkUtil.replaceExpression(config.get(ConfigKey.POLICY_LOCATION));
+        String location = NetworkUtil.replaceExpression(config.getConfig(ConfigKey.POLICY_LOCATION));
         try {
             this.delegate = RestrictorFactory.lookupPolicyRestrictor(location);
             if (this.delegate != null) {

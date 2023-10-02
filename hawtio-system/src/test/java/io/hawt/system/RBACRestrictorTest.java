@@ -16,12 +16,11 @@
 package io.hawt.system;
 
 import java.util.Arrays;
-
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
 import io.hawt.jmx.JMXSecurity;
-import org.jolokia.config.Configuration;
+import org.jolokia.server.core.config.StaticConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class RBACRestrictorTest {
     public void noJMXSecurityMBean() throws Exception {
         // make sure no JMXSecurity MBean is registered
         this.mockJMXSecurity.destroy();
-        RBACRestrictor restrictor = new RBACRestrictor(new Configuration());
+        RBACRestrictor restrictor = new RBACRestrictor(new StaticConfiguration());
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "anyMethod(java.lang.String)"), is(true));
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Runtime"), "VmName"), is(true));
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Runtime"), "VmName"), is(true));
@@ -61,7 +60,7 @@ public class RBACRestrictorTest {
 
     @Test
     public void isOperationAllowed() throws Exception {
-        RBACRestrictor restrictor = new RBACRestrictor(new Configuration());
+        RBACRestrictor restrictor = new RBACRestrictor(new StaticConfiguration());
 
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "allowed()"), is(true));
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "notAllowed()"), is(false));
@@ -74,7 +73,7 @@ public class RBACRestrictorTest {
 
     @Test
     public void isAttributeReadAllowed() throws Exception {
-        RBACRestrictor restrictor = new RBACRestrictor(new Configuration());
+        RBACRestrictor restrictor = new RBACRestrictor(new StaticConfiguration());
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Runtime"), "VmName"), is(true));
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Memory"), "Verbose"), is(true));
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Runtime"), "VmVersion"), is(false));
@@ -84,7 +83,7 @@ public class RBACRestrictorTest {
 
     @Test
     public void isAttributeWriteAllowed() throws Exception {
-        RBACRestrictor restrictor = new RBACRestrictor(new Configuration());
+        RBACRestrictor restrictor = new RBACRestrictor(new StaticConfiguration());
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Memory"), "Verbose"), is(true));
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Runtime"), "VmVersion"), is(false));
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Runtime"), "xxx"), is(false));

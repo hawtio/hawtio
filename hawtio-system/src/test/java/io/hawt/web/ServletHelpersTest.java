@@ -11,8 +11,6 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -42,17 +40,15 @@ public class ServletHelpersTest {
     }
 
     @Test
-    public void writeObject() {
-        Converters converters = new Converters();
-        JsonConvertOptions options = JsonConvertOptions.DEFAULT;
+    public void writeObjectAsJson() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        ServletHelpers.writeObject(converters, options, new PrintWriter(out), Collections.emptyList());
+        ServletHelpers.writeObjectAsJson(new PrintWriter(out), Collections.emptyList());
         assertThat(out.toString(), equalTo("[]"));
 
         out.reset();
         Object obj = Map.of("string", "text", "number", 2, "boolean", true);
-        ServletHelpers.writeObject(converters, options, new PrintWriter(out), obj);
+        ServletHelpers.writeObjectAsJson(new PrintWriter(out), obj);
         assertThat(out.toString(), equalTo("{\"number\":2,\"boolean\":true,\"string\":\"text\"}"));
     }
 

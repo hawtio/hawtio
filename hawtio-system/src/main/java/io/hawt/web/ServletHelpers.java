@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
-
 import javax.management.AttributeNotFoundException;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
 import io.hawt.util.IOHelper;
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
+import org.jolokia.server.core.service.serializer.SerializeOptions;
+import org.jolokia.service.serializer.JolokiaSerializer;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,8 @@ public class ServletHelpers {
     private static final Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
 
     private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
+
+    private static final JolokiaSerializer SERIALIZER = new JolokiaSerializer();
 
     public static void doForbidden(HttpServletResponse response) {
         doForbidden(response, ForbiddenReason.NONE);
@@ -78,11 +80,11 @@ public class ServletHelpers {
         out.close();
     }
 
-    public static void writeObject(Converters converters, JsonConvertOptions options, PrintWriter out, Object data) {
+    public static void writeObjectAsJson(PrintWriter out, Object data) {
         Object result = null;
 
         try {
-            result = converters.getToJsonConverter().convertToJson(data, null, options);
+            result = SERIALIZER.serialize(data, null, SerializeOptions.DEFAULT);
         } catch (AttributeNotFoundException e) {
             LOG.warn("Failed to convert object to json", e);
         }

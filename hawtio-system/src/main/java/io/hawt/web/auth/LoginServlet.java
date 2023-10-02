@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.security.auth.Subject;
+
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,8 +17,6 @@ import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
 import io.hawt.web.ServletHelpers;
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +34,6 @@ public class LoginServlet extends HttpServlet {
 
     protected int timeout;
     protected AuthenticationConfiguration authConfiguration;
-
-    private final Converters converters = new Converters();
-    private final JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
     private Redirector redirector = new Redirector();
 
@@ -115,7 +110,7 @@ public class LoginServlet extends HttpServlet {
             answer.put("principals", principals);
             answer.put("credentials", credentials);
 
-            ServletHelpers.writeObject(converters, options, out, answer);
+            ServletHelpers.writeObjectAsJson(out, answer);
         } catch (IOException e) {
             LOG.error("Failed to send response", e);
         }
