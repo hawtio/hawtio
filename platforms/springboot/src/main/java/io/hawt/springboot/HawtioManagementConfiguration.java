@@ -6,11 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.annotation.Nonnull;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.AuthenticationConfiguration;
@@ -108,6 +107,19 @@ public class HawtioManagementConfiguration {
     // -------------------------------------------------------------------------
     // Filters
     // -------------------------------------------------------------------------
+
+    /**
+     * Since Spring Boot 3.0, paths with trailing slash are not automatically processed
+     * and need to be explicitly configured for handling them. This Spring Boot
+     * specific filter redirects requests for hawtio/ to hawtio/index.html.
+     */
+    @Bean
+    public FilterRegistrationBean<TrailingSlashFilter> trailingSlashFilter(final Redirector redirector) {
+        final FilterRegistrationBean<TrailingSlashFilter> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new TrailingSlashFilter(redirector));
+        filter.addUrlPatterns(hawtioPath + "/");
+        return filter;
+    }
 
     @Bean
     public FilterRegistrationBean<SessionExpiryFilter> sessionExpiryFilter() {
