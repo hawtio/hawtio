@@ -63,15 +63,15 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         // @formatter:off
         // Hawtio React static resources
         registry
-            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/static/**"))
-            .addResourceLocations(
-                "/static/",
-                "classpath:/hawtio-static/static/");
-        registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/**"))
             .addResourceLocations(
                 "/",
                 "classpath:/hawtio-static/");
+        registry
+            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/static/**"))
+            .addResourceLocations(
+                "/static/",
+                "classpath:/hawtio-static/static/");
         registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/img/**"))
             .addResourceLocations("classpath:/hawtio-static/img/");
