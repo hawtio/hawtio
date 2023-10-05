@@ -4,23 +4,23 @@ import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import io.hawt.tests.features.pageobjects.fragments.Table;
-import io.hawt.tests.features.pageobjects.fragments.camel.CamelTree;
+import io.hawt.tests.features.pageobjects.fragments.Tree;
 import io.hawt.tests.features.pageobjects.pages.HawtioPage;
 
 /**
  * Represents Camel page.
  */
 public class CamelPage extends HawtioPage {
-    private final CamelTree camelTree;
+    private final Tree tree;
     private final Table table;
 
     public CamelPage() {
-        camelTree = new CamelTree();
+        tree = new Tree();
         table = new Table();
     }
 
-    public CamelTree camelTree() {
-        return camelTree;
+    public Tree tree() {
+        return tree;
     }
 
     /**

@@ -1,5 +1,6 @@
 package io.hawt.springboot.keycloak;
 
+import io.hawt.springboot.EndpointPathResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,13 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @EnableWebSecurity
 @PropertySource("classpath:/io/hawt/springboot/keycloak/application.properties")
 public class HawtioKeycloakConfiguration extends KeycloakWebSecurityConfigurerAdapter {
+
+
+    private final EndpointPathResolver endpointPath;
+
+    public HawtioKeycloakConfiguration(EndpointPathResolver endpointPath) {
+        this.endpointPath = endpointPath;
+    }
 
     /**
      * Registers the KeycloakAuthenticationProvider with the authentication manager.
@@ -54,7 +62,13 @@ public class HawtioKeycloakConfiguration extends KeycloakWebSecurityConfigurerAd
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.authorizeRequests().anyRequest().authenticated()
+
+        String hawtioPath = endpointPath.resolve("hawtio");
+        http.authorizeRequests()
+            .antMatchers(hawtioPath + "/css/**").permitAll()
+            .antMatchers(hawtioPath + "/fonts/**").permitAll()
+            .antMatchers(hawtioPath + "/img/**").permitAll()
+            .anyRequest().authenticated()
             .and()
             .formLogin()
             .and()

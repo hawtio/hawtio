@@ -28,7 +28,7 @@ public class HawtioPluginHandler implements Handler<RoutingContext> {
         pluginConfigs.forEach((name, config) -> {
             JsonObject object = new JsonObject();
             // mandatory parameters
-            object.put("url", config.url);
+            object.put("url", config.url.orElse("") );
             object.put("scope", config.scope);
             object.put("module", config.module);
             // optional parameters

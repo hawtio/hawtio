@@ -20,12 +20,11 @@ public class SampleSpringBootService {
         /*
          * These are the parameters required to load a remote Hawtio plugin (a.k.a. Module Federation remote module):
          *
-         * - url: The URL of the remote entry for the plugin. This must be the same location as the Hawtio console.
          * - scope: The name of the container defined at Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
          * - module: The path exposed from Webpack ModuleFederationPlugin. See also: sample-plugin/craco.config.js
+         * - url: The URL of the remote entry for the plugin, e.g. "http://localhost:8081". (optional)
          */
         HawtioPlugin plugin = new HawtioPlugin(
-            "http://localhost:10001",
             "samplePlugin",
             "./plugin");
 

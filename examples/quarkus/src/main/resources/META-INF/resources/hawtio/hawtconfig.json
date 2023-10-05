@@ -1,0 +1,34 @@
+{
+  "branding": {
+    "appName": "Hawtio Sample Quarkus 2.x Application",
+    "appLogoUrl": "img/hawtio-logo.svg",
+    "companyLogoUrl": "img/hawtio-logo.svg",
+    "css": "css/app.css",
+    "favicon": "img/favicon.ico"
+  },
+  "login": {
+    "description": "This sample application shows how to run Hawtio with Quarkus.",
+    "links": [
+      {
+        "url": "#terms",
+        "text": "Terms of use"
+      },
+      {
+        "url": "#help",
+        "text": "Help"
+      },
+      {
+        "url": "#privacy",
+        "text": "Privacy policy"
+      }
+    ]
+  },
+  "about": {
+    "title": "Hawtio Sample Quarkus 2.x Application",
+    "productInfo": [],
+    "additionalInfo": "",
+    "copyright": "(c) 2023 Hawtio team",
+    "imgSrc": "img/hawtio-logo.svg"
+  },
+  "disabledRoutes": []
+}

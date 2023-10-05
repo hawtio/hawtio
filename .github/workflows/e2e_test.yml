@@ -29,7 +29,8 @@ jobs:
       matrix: 
         java: ['17']
         runtime: ['quarkus', 'springboot']
-        browser: ['firefox', 'chrome']
+#        browser: ['firefox', 'chrome']
+        browser: ['firefox'] # chrome disabled because of https://github.com/hawtio/hawtio-next/issues/478
     env:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}} 
     steps:

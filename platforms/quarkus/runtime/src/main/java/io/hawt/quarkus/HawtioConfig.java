@@ -67,9 +67,10 @@ public class HawtioConfig {
     public Boolean localAddressProbing;
 
     /**
-     * Enable or disable the Hawtio proxy servlet
+     * Enable or disable the Hawtio proxy servlet.
+     * By default, it's disabled to hide Connect plugin when embedded in Quarkus.
      */
-    @ConfigItem(name = "disableProxy", defaultValue = "false")
+    @ConfigItem(name = "disableProxy", defaultValue = "true")
     public Boolean disableProxy;
 
     /**
@@ -84,7 +85,7 @@ public class HawtioConfig {
          * URL of the remote plugin.
          */
         @ConfigItem
-        public String url;
+        public Optional<String> url;
         /**
          * Scope of the remote plugin.
          */

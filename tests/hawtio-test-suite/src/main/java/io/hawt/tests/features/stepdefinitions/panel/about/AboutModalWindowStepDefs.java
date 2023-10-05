@@ -10,7 +10,7 @@ import io.cucumber.java.en.Then;
 public class AboutModalWindowStepDefs {
     @Then("^The \"([^\"]*)\" header is presented in About modal window$")
     public void aboutModalWindowHeaderIsPresented(String header) {
-        $("#pf-about-modal-title-0").shouldHave(exactText(header));
+        $("[id*='pf-about-modal-title']").shouldHave(exactText(header));
     }
 
     @And("^The \"([^\"]*)\" is presented in About modal window$")

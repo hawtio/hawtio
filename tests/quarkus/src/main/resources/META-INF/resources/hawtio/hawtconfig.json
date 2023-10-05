@@ -1,0 +1,28 @@
+{
+  "branding": {
+    "appName": "Hawtio Sample Quarkus 2.x Application",
+    "appLogoUrl": "img/hawtio-logo.svg",
+    "companyLogoUrl": "img/hawtio-logo.svg",
+    "css": "css/app.css",
+    "favicon": "img/favicon.ico"
+  },
+  "login": {
+    "description": "This sample application shows how to run Hawtio with Quarkus.",
+    "links": [
+      { "url": "#terms", "text": "Terms of use" },
+      { "url": "#help", "text": "Help" },
+      { "url": "#privacy", "text": "Privacy policy" }
+    ]
+  },
+  "about": {
+    "title": "Hawtio Management Console",
+    "description": "A Hawtio reimplementation based on TypeScript + React.",
+    "imgSrc": "hawtio-logo.svg",
+    "productInfo": [
+      { "name": "ABC", "value": "1.2.3" },
+      { "name": "XYZ", "value": "7.8.9" }
+    ],
+    "copyright": "© Hawtio project"
+  },
+  "disabledRoutes": []
+}

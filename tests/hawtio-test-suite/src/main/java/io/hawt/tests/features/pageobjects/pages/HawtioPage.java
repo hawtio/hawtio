@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
+import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 
@@ -57,7 +58,7 @@ public class HawtioPage {
     }
 
     /**
-     * Check an alert message of a unsuccessful action.
+     * Check an alert message of an unsuccessful action.
      *
      * @return this
      */
@@ -81,13 +82,17 @@ public class HawtioPage {
     public void openTab(String tab) {
         final SelenideElement tabElement = $(byXpath("//a[text()='" + tab + "']"));
         final SelenideElement scrollRightButton = $(byAttribute("aria-label", "Scroll right"));
+        final String currentCamelTreeNode = $(byXpath("//h1[contains(@class, 'title')]")).shouldBe(visible).getText();
 
         // if the tab is not active, navigate to the tab
-        if (!tabElement.$(byXpath("parent::li")).has(cssClass("active"))) {
+        if (!tabElement.has(cssClass("active"))) {
 
-            // if the tabs are not displayed, refresh the page (workaround for a slow network connection)
+            // if the tab is not displayed, refresh the page (workaround for a slow network connection)
+            // after the refresh, camel page is reset and camel tree is collapsed, so it is needed to get back
             if (!tabElement.isDisplayed()) {
                 Selenide.refresh();
+                $(byAttribute("aria-label", "Expand Collapse")).shouldBe(enabled).click();
+                $(byTagAndText("button", currentCamelTreeNode)).shouldBe(visible).click();
             }
 
             // if the tab is hidden, scroll to the right

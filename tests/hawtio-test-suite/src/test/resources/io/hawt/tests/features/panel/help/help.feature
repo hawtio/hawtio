@@ -20,13 +20,13 @@ Feature:  Checking the functionality of Help page.
     Then The content of Help page is present
 
     Examples: Standard Help page tabs
-      | tab         |
-      | Home        |
-      | Preferences |
-      | Connect     |
-      | JMX         |
-      | Camel       |
-    
-    @notQuarkus
-    Examples: Plugin Help page tabs
+      | tab           |
+      | Home          |
+      | Preferences   |
+      | Connect       |
+      | JMX           |
+      | Camel         |
+
+    @notHawtioNext # - plugins are not present in hawtio-next CI runs
+    Examples:
       | Sample Plugin |
