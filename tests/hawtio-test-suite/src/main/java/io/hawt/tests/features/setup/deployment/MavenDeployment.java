@@ -59,7 +59,7 @@ public class MavenDeployment implements AppDeployment {
             if (TestConfiguration.isSpringboot()) {
                 final Optional<String> jarName =
                     Arrays.stream(file.list()).filter(it -> it.endsWith(".jar")).filter(it -> !it.contains("sources")).findFirst();
-                assertThat(jarName).describedAs("Expecting Springboot WAR to exist").isPresent();
+                assertThat(jarName).describedAs("Expecting Springboot JAR to exist").isPresent();
 
                 cmd.add(Path.of(file.getAbsolutePath(), jarName.get()).toString());
 

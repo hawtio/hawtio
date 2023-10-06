@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>hawtio-tests</artifactId>
     <groupId>io.hawt.tests</groupId>
     <version>4.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hawtio-tests-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Spring Boot 2.x E2E tests</description>
+  <description>Hawtio :: Spring Boot 3.x E2E tests</description>
   <packaging>jar</packaging>
 
   <properties>
