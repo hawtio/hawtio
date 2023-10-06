@@ -86,6 +86,12 @@
       <artifactId>camel-quarkus-debug</artifactId>
     </dependency>
 
+    <!-- Workaround for https://github.com/apache/camel-quarkus/issues/5407 -->
+    <dependency>
+      <groupId>org.graalvm.sdk</groupId>
+      <artifactId>graal-sdk</artifactId>
+    </dependency>
+
     <!-- Quarkus -->
     <dependency>
       <groupId>io.quarkus</groupId>
