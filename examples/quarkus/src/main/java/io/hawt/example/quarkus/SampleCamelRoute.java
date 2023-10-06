@@ -8,7 +8,7 @@ import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 public class SampleCamelRoute extends EndpointRouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from(quartz("cron").cron("{{quartz.cron}}")).routeId("cron")
             .setBody().constant("Hello Camel! - cron")
             .to(stream("out"))

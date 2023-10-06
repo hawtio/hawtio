@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component;
 public class SampleCamelRouter extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
-        // Uncomment to enable the Camel plugin Debug tab
-        // getContext().setDebugging(true);
-
+    public void configure() {
         from("quartz:cron?cron={{quartz.cron}}").routeId("cron")
             .setBody().constant("Hello Camel! - cron")
             .to("stream:out")
