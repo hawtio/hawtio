@@ -12,8 +12,8 @@ E2E UI tests
 
 ### Runtime Support
 
-- Spring Boot 2.x
-- Quarkus 2.x
+- Spring Boot 3.x
+- Quarkus 3.x
 
 ### Test scenarios cover the following areas
 
@@ -41,13 +41,13 @@ First of all, it's needed to build the project.
 mvn install -DskipTests
 ```
 
-### Spring Boot 2.x E2E tests
+### Spring Boot 3.x E2E tests
 
 ```console
 mvn install -Pe2e,e2e-springboot -am -pl :hawtio-test-suite -Dlocal-app=true
 ```
 
-### Quarkus 2.x E2E tests
+### Quarkus 3.x E2E tests
 
 ```console
 mvn install -Pe2e,e2e-quarkus -am -pl :hawtio-test-suite -Dlocal-app=true
@@ -56,10 +56,10 @@ mvn install -Pe2e,e2e-quarkus -am -pl :hawtio-test-suite -Dlocal-app=true
 ### Additional Command Options
 
 - `-Dtest=` - defines the type of test set to be run.
-  - Spring Boot 2.x
+  - Spring Boot 3.x
     - `SpringBootAllTest`
     - `SpringBootSmokeTest`
-  - Quarkus 2.x
+  - Quarkus 3.x
     - `QuarkusAllTest`
     - `QuarkusSmokeTest`
 

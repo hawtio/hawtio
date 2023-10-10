@@ -1,6 +1,6 @@
 {
   "branding": {
-    "appName": "Hawtio Sample Quarkus 2.x Application",
+    "appName": "Hawtio Sample Quarkus 3.x Application",
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg",
     "css": "css/app.css",
@@ -24,7 +24,7 @@
     ]
   },
   "about": {
-    "title": "Hawtio Sample Quarkus 2.x Application",
+    "title": "Hawtio Sample Quarkus 3.x Application",
     "productInfo": [],
     "additionalInfo": "",
     "copyright": "(c) 2023 Hawtio team",

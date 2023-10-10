@@ -1,6 +1,6 @@
 {
   "branding": {
-    "appName": "Hawtio Spring Boot 2 Sample app for E2E testing purposes",
+    "appName": "Hawtio Spring Boot 3 Sample app for E2E testing purposes",
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg",
     "css": "css/app.css",

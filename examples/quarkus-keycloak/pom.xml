@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-quarkus-keycloak</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Quarkus 2.x application with Keycloak authentication</description>
+  <description>Hawtio :: Sample Quarkus 3.x application with Keycloak authentication</description>
 
   <properties>
     <skipITs>true</skipITs>

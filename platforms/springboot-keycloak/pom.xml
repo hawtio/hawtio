@@ -11,7 +11,7 @@
 
   <artifactId>hawtio-springboot-keycloak</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Spring Boot 2.x Keycloak starter</description>
+  <description>Hawtio :: Spring Boot 3.x Keycloak starter</description>
 
   <dependencyManagement>
     <dependencies>

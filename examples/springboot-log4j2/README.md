@@ -1,6 +1,6 @@
-# Hawtio Spring Boot 2 Example with Log4J2
+# Hawtio Spring Boot 3 Example with Log4J2
 
-This sample application shows how to run Hawtio with Spring Boot 2 and Log4J2.
+This sample application shows how to run Hawtio with Spring Boot 3 and Log4J2.
 
 ## How to run
 

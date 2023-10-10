@@ -36,7 +36,7 @@ hawtio --help
 
 ### Running a Spring Boot app
 
-**The currently supported Spring Boot versions are 2.x.**
+**Hawtio v4 supports Spring Boot 3.x.**
 
 You can attach the Hawtio console to your Spring Boot app with the following steps.
 
@@ -69,7 +69,7 @@ See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-3.0-beta-
 
 ### Running a Quarkus app
 
-**The currently supported Quarkus versions are 2.x.**
+**Hawtio v4 supports Quarkus 3.x.**
 
 You can attach the Hawtio console to your Quarkus app by adding `io.hawt:hawtio-quarkus` to the dependencies in `pom.xml`:
 

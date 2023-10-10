@@ -1,6 +1,6 @@
-# Hawtio Spring Boot 2 Example
+# Hawtio Spring Boot 3 with Spring Security Example
 
-This sample application shows how to run Hawtio with Spring Boot 2.
+This sample application shows how to run Hawtio with Spring Boot 3 and Spring Security.
 
 ## How to run
 

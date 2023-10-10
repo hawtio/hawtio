@@ -1,6 +1,6 @@
-# Hawtio Spring Boot 2 with Plugin Example
+# Hawtio Spring Boot 3 with Plugin Example
 
-This sample application demonstrates how to write and use a custom plugin with Spring Boot 2.
+This sample application demonstrates how to write and use a custom plugin with Spring Boot 3.
 
 ## Key components
 
