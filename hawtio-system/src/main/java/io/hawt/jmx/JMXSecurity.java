@@ -38,7 +38,7 @@ public class JMXSecurity extends MBeanSupport implements JMXSecurityMBean {
         for (Map.Entry<String, List<String>> entry : bulkQuery.entrySet()) {
             String objectName = entry.getKey();
             List<String> methods = entry.getValue();
-            if (methods.size() == 0) {
+            if (methods.isEmpty()) {
                 CompositeData data = new CompositeDataSupport(CAN_INVOKE_RESULT_ROW_TYPE,
                     CAN_INVOKE_RESULT_COLUMNS,
                     new Object[] { objectName, "", true });

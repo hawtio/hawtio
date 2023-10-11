@@ -38,10 +38,8 @@ public class QuartzFacade implements QuartzFacadeMBean {
     }
 
     public void destroy() throws Exception {
-        if (mBeanServer != null) {
-            if (objectName != null) {
-                mBeanServer.unregisterMBean(objectName);
-            }
+        if (mBeanServer != null && objectName != null) {
+            mBeanServer.unregisterMBean(objectName);
         }
     }
 

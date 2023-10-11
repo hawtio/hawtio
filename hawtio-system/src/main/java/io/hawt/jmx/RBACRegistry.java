@@ -76,6 +76,7 @@ public class RBACRegistry implements RBACRegistryMBean {
 
     public void destroy() throws Exception {
         if (objectName != null && mBeanServer != null) {
+            try{
             mBeanServer.unregisterMBean(objectName);
         }
     }
@@ -193,22 +194,12 @@ public class RBACRegistry implements RBACRegistryMBean {
         Map<String, Object> opMap = new LinkedHashMap<>();
         result.put("op", opMap);
         for (MBeanOperationInfo opInfo : mBeanInfo.getOperations()) {
-            Map<String, Object> map = new HashMap<>();
-            List<Map<String, String>> argList = new ArrayList<>(opInfo.getSignature().length);
-            for (MBeanParameterInfo paramInfo : opInfo.getSignature()) {
-                Map<String, String> args = new HashMap<>();
-                args.put("desc", paramInfo.getDescription());
-                args.put("name", paramInfo.getName());
-                args.put("type", paramInfo.getType());
-                argList.add(args);
-            }
-            map.put("args", argList);
-            map.put("ret", opInfo.getReturnType());
-            map.put("desc", opInfo.getDescription());
+            Map<String, Object> map = toMap(opInfo);
             Object ops = opMap.get(opInfo.getName());
             if (ops != null) {
                 if (ops instanceof List) {
                     // If it is already a list, simply add it to the end
+                    //noinspection unchecked,rawtypes
                     ((List) ops).add(map);
                 } else if (ops instanceof Map) {
                     // If it is a map, add a list with two elements
@@ -242,6 +233,22 @@ public class RBACRegistry implements RBACRegistryMBean {
         result.put("canInvoke", true);
 
         return result;
+    }
+
+    private static Map<String, Object> toMap(MBeanOperationInfo opInfo) {
+        Map<String, Object> map = new HashMap<>();
+        List<Map<String, String>> argList = new ArrayList<>(opInfo.getSignature().length);
+        for (MBeanParameterInfo paramInfo : opInfo.getSignature()) {
+            Map<String, String> args = new HashMap<>();
+            args.put("desc", paramInfo.getDescription());
+            args.put("name", paramInfo.getName());
+            args.put("type", paramInfo.getType());
+            argList.add(args);
+        }
+        map.put("args", argList);
+        map.put("ret", opInfo.getReturnType());
+        map.put("desc", opInfo.getDescription());
+        return map;
     }
 
     /**
