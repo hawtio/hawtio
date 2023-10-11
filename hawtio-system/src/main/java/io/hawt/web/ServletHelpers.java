@@ -16,13 +16,14 @@ import java.util.Set;
 import javax.management.AttributeNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
-import io.hawt.system.Authenticator;
 import io.hawt.util.IOHelper;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static io.hawt.system.Authentication.AUTHENTICATION_SCHEME_BASIC;
 
 /**
  * Helpers for servlet
@@ -53,7 +54,7 @@ public class ServletHelpers {
     public static void doAuthPrompt(String realm, HttpServletResponse response) {
         // request authentication
         try {
-            response.setHeader(HEADER_WWW_AUTHENTICATE, Authenticator.AUTHENTICATION_SCHEME_BASIC + " realm=\"" + realm + "\"");
+            response.setHeader(HEADER_WWW_AUTHENTICATE, AUTHENTICATION_SCHEME_BASIC + " realm=\"" + realm + "\"");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentLength(0);
             response.flushBuffer();

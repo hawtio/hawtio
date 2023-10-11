@@ -46,6 +46,27 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-system</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.wildfly.security</groupId>
+      <artifactId>wildfly-elytron</artifactId>
+      <version>${elytron-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- for converting Elytron SecurityIdentity to Subject (SubjectUtil#fromSecurityIdentity) -->
+    <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-webservices-server-integration</artifactId>
+      <version>${wildfly-integration-version}</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -8,7 +8,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.Authenticator;
+import io.hawt.system.Authentication;
+import io.hawt.system.AuthenticationManager;
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public final class AuthSessionHelpers {
         Subject subject = (Subject) session.getAttribute("subject");
         LOG.info("Logging out existing user: {}", session.getAttribute("user"));
         if (authenticatorLogout) {
-            Authenticator.logout(authConfig, subject);
+            AuthenticationManager.logout(authConfig, subject);
         }
         session.invalidate();
     }
@@ -80,7 +81,7 @@ public final class AuthSessionHelpers {
         String sessionUser = (String) session.getAttribute("user");
         AtomicReference<String> username = new AtomicReference<>();
         AtomicReference<String> password = new AtomicReference<>();
-        Authenticator.extractAuthHeader(request, (u, p) -> {
+        Authentication.extractAuthHeader(request, (u, p) -> {
             username.set(u);
             password.set(p);
         });

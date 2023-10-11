@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.AuthenticateResult;
-import io.hawt.system.Authenticator;
+import io.hawt.system.AuthenticationManager;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class AuthenticationFilter implements Filter {
 
         LOG.debug("Doing authentication and authorization for path {}", path);
 
-        AuthenticateResult result = new Authenticator(httpRequest, authConfiguration).authenticate(
+        AuthenticateResult result = AuthenticationManager.authenticate(httpRequest, authConfiguration,
             subject -> executeAs(request, response, chain, subject));
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
