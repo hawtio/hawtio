@@ -22,7 +22,7 @@ public class JMXSecurity extends MBeanSupport implements JMXSecurityMBean {
     }
 
     @Override
-    public boolean canInvoke(String objectName, String methodName) throws Exception {
+    public boolean canInvoke(String objectName, String methodName) {
         return true;
     }
 

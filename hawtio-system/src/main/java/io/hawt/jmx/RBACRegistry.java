@@ -47,8 +47,7 @@ import org.slf4j.LoggerFactory;
  * objects with RBAC information.</p>
  */
 public class RBACRegistry implements RBACRegistryMBean {
-
-    public static Logger LOG = LoggerFactory.getLogger(RBACRegistry.class);
+    public static final Logger LOG = LoggerFactory.getLogger(RBACRegistry.class);
 
     private ObjectName rbacDecorator = null;
 
@@ -76,8 +75,11 @@ public class RBACRegistry implements RBACRegistryMBean {
 
     public void destroy() throws Exception {
         if (objectName != null && mBeanServer != null) {
-            try{
-            mBeanServer.unregisterMBean(objectName);
+            try {
+                mBeanServer.unregisterMBean(objectName);
+            } catch (InstanceNotFoundException e) {
+                LOG.debug("Error unregistering mbean " + objectName + ". This exception is ignored.", e);
+            }
         }
     }
 

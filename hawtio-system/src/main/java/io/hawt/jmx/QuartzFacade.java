@@ -7,12 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class QuartzFacade implements QuartzFacadeMBean {
+    public static final Logger LOG = LoggerFactory.getLogger(QuartzFacade.class);
 
     private ObjectName objectName;
     private MBeanServer mBeanServer;
@@ -39,7 +44,11 @@ public class QuartzFacade implements QuartzFacadeMBean {
 
     public void destroy() throws Exception {
         if (mBeanServer != null && objectName != null) {
-            mBeanServer.unregisterMBean(objectName);
+            try {
+                mBeanServer.unregisterMBean(objectName);
+            } catch (InstanceNotFoundException e) {
+                LOG.debug("Error unregistering mbean " + objectName + ". This exception is ignored.", e);
+            }
         }
     }
 
