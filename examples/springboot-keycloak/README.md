@@ -1,6 +1,6 @@
-# Hawtio Spring Boot 2 with Keycloak Authentication Example
+# Hawtio Spring Boot 3 with Keycloak Authentication Example
 
-Sample application for Hawtio + Spring Boot 2 with authentication enabled through Keycloak integration.
+Sample application for Hawtio + Spring Boot 3 with authentication enabled through Keycloak integration.
 
 ## How to run
 

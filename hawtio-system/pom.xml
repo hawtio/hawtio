@@ -25,49 +25,49 @@
     <!-- Jolokia -->
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-server-core</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-serializer</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-jmx</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-discovery</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-history</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-jsr160</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-notif-pull</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-service-notif-sse</artifactId>
       <version>${jolokia-version}</version>
     </dependency>

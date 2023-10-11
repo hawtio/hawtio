@@ -24,7 +24,7 @@
 
     <dependency>
       <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.jolokia.jolokia</groupId>
+      <groupId>com.github.tadayosi.jolokia</groupId>
       <artifactId>jolokia-agent-jvm</artifactId>
       <version>${jolokia-version}</version>
       <exclusions>
