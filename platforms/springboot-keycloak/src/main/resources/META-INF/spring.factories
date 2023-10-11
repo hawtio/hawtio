@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.hawt.springboot.keycloak.HawtioKeycloakConfiguration,\
-io.hawt.springboot.keycloak.KeycloakConfigResolverConfiguration

@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot-keycloak</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Spring Boot 2.x process with Keycloak authentication</description>
+  <description>Hawtio :: Sample Spring Boot 3.x process with Keycloak authentication</description>
 
   <dependencyManagement>
     <dependencies>
@@ -61,14 +61,20 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
+    <!-- Dependencies required for Keycloak integration -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+
     <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-springboot-keycloak</artifactId>
     </dependency>
   </dependencies>
 

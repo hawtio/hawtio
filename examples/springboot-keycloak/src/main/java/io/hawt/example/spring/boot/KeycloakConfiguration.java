@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.hawt.springboot.EndpointPathResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,20 +24,32 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class KeycloakConfiguration {
+
+    private final EndpointPathResolver endpointPath;
+
+    public KeycloakConfiguration(EndpointPathResolver endpointPath) {
+        this.endpointPath = endpointPath;
+    }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        String hawtioPath = endpointPath.resolve("hawtio");
+
         http
             .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(antMatcher(hawtioPath + "/css/**")).permitAll()
+                .requestMatchers(antMatcher(hawtioPath + "/fonts/**")).permitAll()
+                .requestMatchers(antMatcher(hawtioPath + "/img/**")).permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(withDefaults())
-            .httpBasic(withDefaults())
-            // see https://docs.spring.io/spring-security/reference/6.1/servlet/exploits/csrf.html#csrf-integration-javascript-spa
+            .oauth2Client(withDefaults())
+            .oauth2Login(withDefaults())
+            // see https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#csrf-integration-javascript-spa
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())

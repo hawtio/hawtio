@@ -98,6 +98,7 @@
       <artifactId>quarkus-elytron-security-properties-file</artifactId>
     </dependency>
     -->
+    <!-- quarkus-oidc is required for Keycloak integration -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-oidc</artifactId>
