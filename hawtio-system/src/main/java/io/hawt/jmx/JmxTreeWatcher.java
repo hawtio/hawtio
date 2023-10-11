@@ -1,10 +1,12 @@
 package io.hawt.jmx;
 
+import java.io.Serial;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerDelegate;
 import javax.management.Notification;
@@ -64,7 +66,11 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
                 mBeanServer.removeNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener);
             }
             if (objectName != null) {
-                mBeanServer.unregisterMBean(objectName);
+                try {
+                    mBeanServer.unregisterMBean(objectName);
+                } catch (InstanceNotFoundException e) {
+                    LOG.debug("Error unregistering mbean " + objectName + ". This exception is ignored.", e);
+                }
             }
         }
     }
@@ -96,6 +102,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
 
     protected NotificationFilter getNotificationFilter() {
         return new NotificationFilter() {
+            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override

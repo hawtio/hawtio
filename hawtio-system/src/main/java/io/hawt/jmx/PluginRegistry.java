@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
  * Hawtio plugin registry
  */
 public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBean {
-
     private static final Logger LOG = LoggerFactory.getLogger(PluginRegistry.class);
 
     private final AtomicLong updateCounter = new AtomicLong(0);
