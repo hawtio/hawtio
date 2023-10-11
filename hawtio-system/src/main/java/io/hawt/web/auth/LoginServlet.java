@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
-import io.hawt.system.Authenticator;
-import io.hawt.system.ConfigManager;
+import io.hawt.system.AuthenticationManager;
 import io.hawt.web.ServletHelpers;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
@@ -72,7 +71,7 @@ public class LoginServlet extends HttpServlet {
         String username = (String) json.get("username");
         String password = (String) json.get("password");
 
-        AuthenticateResult result = new Authenticator(request, authConfiguration, username, password).authenticate(
+        AuthenticateResult result = AuthenticationManager.authenticate(request, authConfiguration, username, password,
             subject -> {
                 LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
                 AuthSessionHelpers.setup(

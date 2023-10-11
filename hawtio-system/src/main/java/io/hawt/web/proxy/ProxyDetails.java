@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import io.hawt.system.Authenticator;
+import io.hawt.system.Authentication;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class ProxyDetails implements ProxyAddress {
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
 
-        Authenticator.extractAuthHeader(httpServletRequest, (user, pass) -> {
+        Authentication.extractAuthHeader(httpServletRequest, (user, pass) -> {
             userName = user;
             password = pass;
         });

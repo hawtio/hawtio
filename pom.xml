@@ -95,6 +95,8 @@
     <slf4j-version>1.7.26</slf4j-version>
     <wildfly-version>11.0.0.Final</wildfly-version>
     <wildfly-maven-plugin-version>1.2.1.Final</wildfly-maven-plugin-version>
+    <wildfly-integration-version>29.0.1.Final</wildfly-integration-version>
+    <elytron-version>2.2.2.Final</elytron-version>
   </properties>
 
   <modules>

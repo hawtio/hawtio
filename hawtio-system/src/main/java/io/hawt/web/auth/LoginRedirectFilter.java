@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
-import io.hawt.system.Authenticator;
+import io.hawt.system.AuthenticationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class LoginRedirectFilter implements Filter {
     }
 
     boolean tryAuthenticateRequest(HttpServletRequest request, HttpSession session) {
-        AuthenticateResult result = new Authenticator(request, authConfiguration).authenticate(
+        AuthenticateResult result = AuthenticationManager.authenticate(request, authConfiguration,
            subject -> {
                String username = AuthHelpers.getUsername(subject);
                LOG.info("Logging in user: {}", username);
