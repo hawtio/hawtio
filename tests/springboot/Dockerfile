@@ -3,7 +3,7 @@ FROM registry.access.redhat.com/ubi8/openjdk-${JAVA_VERSION}
 
 ENV LANGUAGE='en_US:en'
 
-COPY --chown=185 target/hawtio-tests-springboot-4.0-SNAPSHOT.jar /deployments/hawtio-springboot.jar
+COPY --chown=185 target/hawtio-tests-springboot-4.0.0-SNAPSHOT.jar /deployments/hawtio-springboot.jar
 
 EXPOSE 8080 10001 10000
 USER 185
