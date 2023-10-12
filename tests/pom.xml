@@ -21,12 +21,12 @@
 
   <properties>
     <camel-version>3.20.6</camel-version>
-    <selenium-version>4.8.3</selenium-version>
-    <selenide-version>6.12.4</selenide-version>
-    <cucumber-version>7.11.2</cucumber-version>
+    <selenium-version>4.13.0</selenium-version>
+    <selenide-version>6.19.0</selenide-version>
+    <cucumber-version>7.14.0</cucumber-version>
     <http5-version>5.2.1</http5-version>
-    <guava-version>31.1-jre</guava-version>
-    <slf4j-version>2.0.7</slf4j-version>
+    <guava-version>32.1.2-jre</guava-version>
+    <slf4j-version>2.0.9</slf4j-version>
   </properties>
 
   <dependencies>
