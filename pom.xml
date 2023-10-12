@@ -363,12 +363,24 @@
     </profile>
   </profiles>
 
-  <!-- Temporarily used for Jolokia 2.0.0 snapshot -->
   <repositories>
+    <repository>
+      <id>redhat-ga-repository</id>
+      <name>Red Hat GA Repository</name>
+      <url>https://maven.repository.redhat.com/ga/</url>
+    </repository>
+    <!-- Temporarily used for Jolokia 2.0.0 snapshot -->
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>redhat-ga-repository</id>
+      <name>Red Hat GA Repository</name>
+      <url>https://maven.repository.redhat.com/ga/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>
