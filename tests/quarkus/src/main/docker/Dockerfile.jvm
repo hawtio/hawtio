@@ -76,7 +76,7 @@
 #
 ###
 ARG JAVA_VERSION=11
-FROM registry.access.redhat.com/ubi8/openjdk-${JAVA_VERSION}
+FROM eclipse-temurin:${JAVA_VERSION}
 
 ENV LANGUAGE='en_US:en'
 
@@ -93,3 +93,4 @@ ENV AB_JOLOKIA_OFF=""
 ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
+CMD java -jar ${JAVA_OPTS} ${JAVA_APP_JAR}
