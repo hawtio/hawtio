@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        java: ['11', '17']
+        java: ['17', '21']
         runtime: ['quarkus', 'springboot']
 #        browser: ['firefox', 'chrome']
         browser: ['firefox'] # chrome disabled because of https://github.com/hawtio/hawtio-next/issues/478
@@ -84,7 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '11', '17' ]
+        java: ['17', '21']
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
