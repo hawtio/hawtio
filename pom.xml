@@ -77,9 +77,7 @@
     <jackson-version-range>[2.8,3)</jackson-version-range>
     <jetty-version>12.0.1</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
-    <!-- <jolokia-version>2.0.0-SNAPSHOT</jolokia-version> -->
-    <!-- jitpack snapshot of jolokia -->
-    <jolokia-version>downgrade-node-SNAPSHOT</jolokia-version>
+    <jolokia-version>2.0.0-M4</jolokia-version>
     <junit-version>4.13.2</junit-version>
     <junit5-version>5.9.3</junit5-version>
     <karaf-version>4.3.3</karaf-version>
@@ -368,11 +366,6 @@
       <id>redhat-ga-repository</id>
       <name>Red Hat GA Repository</name>
       <url>https://maven.repository.redhat.com/ga/</url>
-    </repository>
-    <!-- Temporarily used for Jolokia 2.0.0 snapshot -->
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
     </repository>
   </repositories>
   <pluginRepositories>

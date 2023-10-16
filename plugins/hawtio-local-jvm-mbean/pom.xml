@@ -23,8 +23,7 @@
     </dependency>
 
     <dependency>
-      <!-- <groupId>org.jolokia</groupId> -->
-      <groupId>com.github.tadayosi.jolokia</groupId>
+      <groupId>org.jolokia</groupId>
       <artifactId>jolokia-agent-jvm</artifactId>
       <version>${jolokia-version}</version>
       <exclusions>
