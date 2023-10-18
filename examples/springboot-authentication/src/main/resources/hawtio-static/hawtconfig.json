@@ -1,6 +1,7 @@
 {
   "branding": {
     "appName": "Hawtio Spring Boot 3 Authentication Example",
+    "showAppName": true,
     "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
     "companyLogoUrl": "img/Logo-RedHat-A-Reverse-RGB.png",
     "css": "css/app.css",
