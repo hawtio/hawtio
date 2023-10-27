@@ -14,6 +14,8 @@
   <packaging>pom</packaging>
 
   <properties>
+    <node-version>v16.15.0</node-version>
+    <yarn-version>v1.22.19</yarn-version>
   </properties>
 
   <build>
@@ -22,7 +24,6 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>${frontend-maven-plugin-version}</version>
         <executions>
           <execution>
             <id>install node and yarn</id>
@@ -30,8 +31,8 @@
               <goal>install-node-and-yarn</goal>
             </goals>
             <configuration>
-              <nodeVersion>v16.15.0</nodeVersion>
-              <yarnVersion>v1.22.19</yarnVersion>
+              <nodeVersion>${node-version}</nodeVersion>
+              <yarnVersion>${yarn-version}</yarnVersion>
               <environmentVariables>
                 <PUBLIC_URL>/hawtio</PUBLIC_URL>
               </environmentVariables>
@@ -53,6 +54,15 @@
             </goals>
             <configuration>
               <arguments>build</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn replace-version</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <arguments>replace-version ${project.version} ./build/static -r</arguments>
             </configuration>
           </execution>
         </executions>
