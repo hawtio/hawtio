@@ -6,7 +6,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "replace-version": "replace __HAWTIO_VERSION_PLACEHOLDER__"
   },
   "dependencies": {
     "@hawtio/react": "^0.6.1",
@@ -21,7 +22,8 @@
     "craco-esbuild": "^0.5.2",
     "monaco-editor-webpack-plugin": "^7.0.1",
     "os-browserify": "^0.3.0",
-    "path-browserify": "^1.0.1"
+    "path-browserify": "^1.0.1",
+    "replace": "^1.2.2"
   },
   "eslintConfig": {
     "extends": [

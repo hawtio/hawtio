@@ -1,7 +1,6 @@
-import { hawtio, Hawtio, registerPlugins } from '@hawtio/react'
+import { configManager, hawtio, Hawtio, registerPlugins } from '@hawtio/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { configure } from './config'
 import { reportWebVitals } from './reportWebVitals'
 
 // Register builtin plugins
@@ -13,8 +12,8 @@ hawtio
   // Bootstrap Hawtio
   .bootstrap()
 
-// Configure the console
-configure()
+// Configure the console version
+configManager.addProductInfo('Hawtio', '__HAWTIO_VERSION_PLACEHOLDER__')
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
