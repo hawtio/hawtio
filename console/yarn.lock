@@ -2259,16 +2259,16 @@ __metadata:
   linkType: hard
 
 "@hawtio/camel-model-v3@npm:@hawtio/camel-model@^3.21.0":
-  version: 3.21.1
-  resolution: "@hawtio/camel-model@npm:3.21.1"
-  checksum: ae920bd9c3b75286c31f0a0b5168e09b982c61cfbeeca000201a175490afa6060b5b7900fd01be156db92020aab505cd6dc6a812fc0e181db6ae5cb178b729e1
+  version: 3.21.0
+  resolution: "@hawtio/camel-model@npm:3.21.0"
+  checksum: 6e4f02eda269a0e53966fdfc126b6467ed965edb34a56a749c81fcacdb68c28644d1970e45ee0b4df1c912f664c5be99afe4ca7e3d9c7f3758b0c571d55400a2
   languageName: node
   linkType: hard
 
 "@hawtio/camel-model-v4@npm:@hawtio/camel-model@^4.0.0":
-  version: 4.0.1
-  resolution: "@hawtio/camel-model@npm:4.0.1"
-  checksum: d203615c4fae515fbfc56d735fcb0f853c79cadb56e0f7020c6e192a67c185c0a25d511dd623f34786e5e5fdbc7f6a006743093df24e402576c5baf399c349f3
+  version: 4.0.0
+  resolution: "@hawtio/camel-model@npm:4.0.0"
+  checksum: d02d19170ef9ff2ccdbceae6a2f9848dc88be80878e1b13de426ef0cf876b80c3c40570d9193585e74251d9bb45da9ad5bdaf0be7efa051189657e3a53d6491e
   languageName: node
   linkType: hard
 
