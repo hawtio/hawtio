@@ -10,7 +10,7 @@
     "replace-version": "replace __HAWTIO_VERSION_PLACEHOLDER__"
   },
   "dependencies": {
-    "@hawtio/react": "^0.6.1",
+    "@hawtio/react": "^0.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
@@ -18,12 +18,17 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
-    "@hawtio/backend-middleware": "^1.0.3",
+    "@hawtio/backend-middleware": "^1.0.4",
     "craco-esbuild": "^0.5.2",
     "monaco-editor-webpack-plugin": "^7.0.1",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "replace": "^1.2.2"
+  },
+  "resolutions": {
+    "@typescript-eslint/eslint-plugin": "6.9.0",
+    "@typescript-eslint/parser": "6.9.0",
+    "fork-ts-checker-webpack-plugin": "6.5.3"
   },
   "eslintConfig": {
     "extends": [
