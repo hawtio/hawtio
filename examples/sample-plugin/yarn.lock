@@ -2248,26 +2248,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v3@npm:@hawtio/camel-model@^3.21.0":
-  version: 3.21.0
-  resolution: "@hawtio/camel-model@npm:3.21.0"
-  checksum: 6e4f02eda269a0e53966fdfc126b6467ed965edb34a56a749c81fcacdb68c28644d1970e45ee0b4df1c912f664c5be99afe4ca7e3d9c7f3758b0c571d55400a2
+"@hawtio/camel-model-v3@npm:@hawtio/camel-model@^3.21.1":
+  version: 3.21.1
+  resolution: "@hawtio/camel-model@npm:3.21.1"
+  checksum: ae920bd9c3b75286c31f0a0b5168e09b982c61cfbeeca000201a175490afa6060b5b7900fd01be156db92020aab505cd6dc6a812fc0e181db6ae5cb178b729e1
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4@npm:@hawtio/camel-model@^4.0.0":
-  version: 4.0.0
-  resolution: "@hawtio/camel-model@npm:4.0.0"
-  checksum: d02d19170ef9ff2ccdbceae6a2f9848dc88be80878e1b13de426ef0cf876b80c3c40570d9193585e74251d9bb45da9ad5bdaf0be7efa051189657e3a53d6491e
+"@hawtio/camel-model-v4@npm:@hawtio/camel-model@^4.0.1":
+  version: 4.0.1
+  resolution: "@hawtio/camel-model@npm:4.0.1"
+  checksum: d203615c4fae515fbfc56d735fcb0f853c79cadb56e0f7020c6e192a67c185c0a25d511dd623f34786e5e5fdbc7f6a006743093df24e402576c5baf399c349f3
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "@hawtio/react@npm:0.6.1"
+"@hawtio/react@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@hawtio/react@npm:0.7.0"
   dependencies:
-    "@hawtio/camel-model-v3": "npm:@hawtio/camel-model@^3.21.0"
-    "@hawtio/camel-model-v4": "npm:@hawtio/camel-model@^4.0.0"
+    "@hawtio/camel-model-v3": "npm:@hawtio/camel-model@^3.21.1"
+    "@hawtio/camel-model-v4": "npm:@hawtio/camel-model@^4.0.1"
     "@module-federation/utilities": ^3.0.0
     "@patternfly/react-charts": ^7.1.1
     "@patternfly/react-code-editor": ^5.1.1
@@ -2276,20 +2276,20 @@ __metadata:
     "@testing-library/jest-dom": ^6.1.4
     "@testing-library/react": ^14.0.0
     "@testing-library/user-event": ^14.5.1
-    "@types/dagre": ^0.7.50
-    "@types/dagre-layout": ^0.8.3
-    "@types/jest": ^29.5.5
-    "@types/jquery": ^3.5.22
-    "@types/node": ^18.18.5
+    "@types/dagre": ^0.7.51
+    "@types/dagre-layout": ^0.8.4
+    "@types/jest": ^29.5.6
+    "@types/jquery": ^3.5.25
+    "@types/node": ^18.18.6
     "@types/react": ^18.2.23
-    "@types/react-dom": ^18.2.13
+    "@types/react-dom": ^18.2.14
     "@types/react-router-dom": ^5.3.3
     dagre: ^0.8.5
     eventemitter3: ^5.0.1
     jolokia.js: ^2.0.0-m4.0
     jquery: ^3.7.1
     js-logger: ^1.6.1
-    keycloak-js: ^22.0.4
+    keycloak-js: ^22.0.5
     monaco-editor: ^0.44.0
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -2299,8 +2299,8 @@ __metadata:
     react-split: ^2.0.14
     reactflow: ^11.9.4
     superstruct: ^1.0.3
-    typescript: ^4.9.5
-    xml-formatter: ^3.5.0
+    typescript: ^5.2.2
+    xml-formatter: ^3.6.0
   peerDependencies:
     "@patternfly/react-core": ^4.278.0
     keycloak-js: ^21
@@ -2309,7 +2309,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 99c840d046402451b03c4821932742c48219dc4f817292dc59f4f46d7e7865b75dd61e48b9c0addaf0843797178e06e8bdb74959a15b4f60b41816aa3efc1526
+  checksum: 10077d82388c183e02a7111a131dc3eb7405e22cb2fa30cb7f95e67dbdf9c55042e78c6011b96b4dd56aa6ae28fae3190cde2cc27c09f5e9058afa36d2d9304e
   languageName: node
   linkType: hard
 
@@ -3858,14 +3858,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dagre-layout@npm:^0.8.3":
+"@types/dagre-layout@npm:^0.8.4":
   version: 0.8.4
   resolution: "@types/dagre-layout@npm:0.8.4"
   checksum: 6357034b7cf4302b9480cc8e2e92db0a279de7801c04e941fa2c72a8b8d27bc1002e240a28aecbcd8c2921cdc5ef93be75aee395f5fad438e66179d32f14fef8
   languageName: node
   linkType: hard
 
-"@types/dagre@npm:^0.7.50":
+"@types/dagre@npm:^0.7.51":
   version: 0.7.51
   resolution: "@types/dagre@npm:0.7.51"
   checksum: 6a23cc406082fe867dc0be0a117ae0c493bcfb6e08b83ea55a09b4f43e6eb5efc34a102d1a039fa82d2df700d55ee5481c0c3febdf710b972bb345c8a7f6c316
@@ -4018,22 +4018,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.5":
-  version: 29.5.5
-  resolution: "@types/jest@npm:29.5.5"
+"@types/jest@npm:^29.5.6":
+  version: 29.5.6
+  resolution: "@types/jest@npm:29.5.6"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 56e55cde9949bcc0ee2fa34ce5b7c32c2bfb20e53424aa4ff3a210859eeaaa3fdf6f42f81a3f655238039cdaaaf108b054b7a8602f394e6c52b903659338d8c6
+  checksum: fa13a27bd1c8efd0381a419478769d0d6d3a8e93e1952d7ac3a16274e8440af6f73ed6f96ac1ff00761198badf2ee226b5ab5583a5d87a78d609ea78da5c5a24
   languageName: node
   linkType: hard
 
-"@types/jquery@npm:^3.5.22":
-  version: 3.5.23
-  resolution: "@types/jquery@npm:3.5.23"
+"@types/jquery@npm:^3.5.25":
+  version: 3.5.25
+  resolution: "@types/jquery@npm:3.5.25"
   dependencies:
     "@types/sizzle": "*"
-  checksum: 9231af0b80efe63257d898d41c4ee03bbe2152654e0d4709a9fd27eba255622f837315ad7529865ad9796312812dacfa4fc2d11dd4559ff13585c642ffd989b4
+  checksum: 912ce4212447a7c640147345c6b46bde5b12bafc2c97e1abc76939174c3109e3dbb361a534af717be2da4e907bc257558a6bc631971fcc47f7e5f044d315183e
   languageName: node
   linkType: hard
 
@@ -4081,10 +4081,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.18.5":
-  version: 18.18.5
-  resolution: "@types/node@npm:18.18.5"
-  checksum: fc8c9b2bf226270cf9085a7dac76ce09dd7c3519ec9b687ee2b50385954ab3709c45ca82d002d1536e24286803cd194d7ab7008acebdcd6681b8b19d4277fa5c
+"@types/node@npm:^18.18.6":
+  version: 18.18.7
+  resolution: "@types/node@npm:18.18.7"
+  dependencies:
+    undici-types: ~5.26.4
+  checksum: 972f8b214f961b6c8d99f84aab8bfadc656bb71fc7ad4a543ad3405286c95f27385ee0c3844f88d612f3cf225cd4d49ce8a7d9aea05a2aba9b2524ac525040aa
   languageName: node
   linkType: hard
 
@@ -4139,12 +4141,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.13":
-  version: 18.2.13
-  resolution: "@types/react-dom@npm:18.2.13"
+"@types/react-dom@npm:^18.2.14":
+  version: 18.2.14
+  resolution: "@types/react-dom@npm:18.2.14"
   dependencies:
     "@types/react": "*"
-  checksum: 22ba066b141dca5a5a9227fae0afc7c94b470fff8e8a38ade72649da57a8ea04d0cb2ba3e22005e7d8e772d49bddd28855b1dd98e6defd033bba6afb6edff883
+  checksum: 890289c70d1966c168037637c09cacefe6205bdd27a33252144a6b432595a2943775ac1a1accac0beddaeb67f8fdf721e076acb1adc990b08e51c3d9fd4e780c
   languageName: node
   linkType: hard
 
@@ -8934,7 +8936,7 @@ __metadata:
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
     "@craco/craco": ^7.1.0
-    "@hawtio/react": ^0.6.1
+    "@hawtio/react": ^0.7.0
     craco-esbuild: ^0.5.2
     os-browserify: ^0.3.0
     path-browserify: ^1.0.1
@@ -10833,13 +10835,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keycloak-js@npm:^22.0.4":
-  version: 22.0.4
-  resolution: "keycloak-js@npm:22.0.4"
+"keycloak-js@npm:^22.0.5":
+  version: 22.0.5
+  resolution: "keycloak-js@npm:22.0.5"
   dependencies:
     base64-js: ^1.5.1
     js-sha256: ^0.9.0
-  checksum: 60703ccbc06ffd485392fa5384b5fbe1ea716f97519a4b5e5b0057ce48a3310d691292d2faf452be1755be5253695c2024701a8125aeb39d154ab8610879be35
+  checksum: e3790656f5cfd25b2e89e508d7d96d47c4557f4125ecef131905a7c1f3177a89ed7d38163a1af7d6a739ba7af0397dba726ca337254eb675a22d8a9340710313
   languageName: node
   linkType: hard
 
@@ -15794,23 +15796,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.9.5":
-  version: 4.9.5
-  resolution: "typescript@npm:4.9.5"
+"typescript@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "typescript@npm:5.2.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ee000bc26848147ad423b581bd250075662a354d84f0e06eb76d3b892328d8d4440b7487b5a83e851b12b255f55d71835b008a66cbf8f255a11e4400159237db
+  checksum: 7912821dac4d962d315c36800fe387cdc0a6298dba7ec171b350b4a6e988b51d7b8f051317786db1094bd7431d526b648aba7da8236607febb26cf5b871d2d3c
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
-  version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=23ec76"
+"typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
+  version: 5.2.2
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ab417a2f398380c90a6cf5a5f74badd17866adf57f1165617d6a551f059c3ba0a3e4da0d147b3ac5681db9ac76a303c5876394b13b3de75fdd5b1eaa06181c9d
+  checksum: 07106822b4305de3f22835cbba949a2b35451cad50888759b6818421290ff95d522b38ef7919e70fb381c5fe9c1c643d7dea22c8b31652a717ddbd57b7f4d554
   languageName: node
   linkType: hard
 
@@ -15823,6 +15825,13 @@ __metadata:
     has-symbols: ^1.0.3
     which-boxed-primitive: ^1.0.2
   checksum: b7a1cf5862b5e4b5deb091672ffa579aa274f648410009c81cca63fed3b62b610c4f3b773f912ce545bb4e31edc3138975b5bc777fc6e4817dca51affb6380e9
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
   languageName: node
   linkType: hard
 
@@ -17125,12 +17134,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-formatter@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "xml-formatter@npm:3.5.0"
+"xml-formatter@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "xml-formatter@npm:3.6.0"
   dependencies:
     xml-parser-xo: ^4.1.0
-  checksum: 25a4ef21f5d7c1002f9441641260f755880c923902ec1b22afc32b1c1cea3e3bb66f7c390a124b14da5f6ae2141e36cffe2048518f0fbb774bd12f736fdc25f7
+  checksum: 36b7fca38eeef6b0a1f27960b43c43723263de26d5b27996199de3284c43d8cb52f30035307594f9b0971cf139b4650ec29581ef0293f122a8232f579f0dc16d
   languageName: node
   linkType: hard
 
