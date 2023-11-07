@@ -2262,9 +2262,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@hawtio/react@npm:0.7.0"
+"@hawtio/react@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@hawtio/react@npm:0.8.0"
   dependencies:
     "@hawtio/camel-model-v3": "npm:@hawtio/camel-model@^3.21.1"
     "@hawtio/camel-model-v4": "npm:@hawtio/camel-model@^4.0.1"
@@ -2278,8 +2278,8 @@ __metadata:
     "@testing-library/user-event": ^14.5.1
     "@types/dagre": ^0.7.51
     "@types/dagre-layout": ^0.8.4
-    "@types/jest": ^29.5.6
-    "@types/jquery": ^3.5.25
+    "@types/jest": ^29.5.7
+    "@types/jquery": ^3.5.26
     "@types/node": ^18.18.6
     "@types/react": ^18.2.23
     "@types/react-dom": ^18.2.14
@@ -2295,7 +2295,7 @@ __metadata:
     react-dom: ^18.2.0
     react-markdown: ^8.0.7
     react-monaco-editor: ^0.54.0
-    react-router-dom: ^6.17.0
+    react-router-dom: ^6.18.0
     react-split: ^2.0.14
     reactflow: ^11.9.4
     superstruct: ^1.0.3
@@ -2309,7 +2309,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10077d82388c183e02a7111a131dc3eb7405e22cb2fa30cb7f95e67dbdf9c55042e78c6011b96b4dd56aa6ae28fae3190cde2cc27c09f5e9058afa36d2d9304e
+  checksum: 6681ce192b5f1c76fc441fdb764731f6c580433a7816cc121be87a342c514985f400c1067f23bf343fd182b6dd4389324149572da54138d72de0397bab046724
   languageName: node
   linkType: hard
 
@@ -3115,10 +3115,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.10.0":
-  version: 1.10.0
-  resolution: "@remix-run/router@npm:1.10.0"
-  checksum: f8f9fcd5f08465a7e0a05378398ff6df2c5c5ef5766df3490a134d64260b3b16f1bd490bb0c3f5925c2671a0c1d8d1fa01dfbdc7ecc3b2447dc6eafe6b73bcc2
+"@remix-run/router@npm:1.11.0":
+  version: 1.11.0
+  resolution: "@remix-run/router@npm:1.11.0"
+  checksum: 1966436ab3ab982862195e4871790644ce21e01511aa3f4350436296224e4dec2e6ee35f1f4cb83db69f7aa0e8ad4a0a01928b05359ae654edc8e2aa82bf754b
   languageName: node
   linkType: hard
 
@@ -4018,22 +4018,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.6":
-  version: 29.5.6
-  resolution: "@types/jest@npm:29.5.6"
+"@types/jest@npm:^29.5.7":
+  version: 29.5.7
+  resolution: "@types/jest@npm:29.5.7"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: fa13a27bd1c8efd0381a419478769d0d6d3a8e93e1952d7ac3a16274e8440af6f73ed6f96ac1ff00761198badf2ee226b5ab5583a5d87a78d609ea78da5c5a24
+  checksum: e28624ccb0ef1255a03fbbb4b5bc3e5cbcdc450d39e0739985ff679b124198f808c38c8c3e67859c6efc0e848196deeb8cfed028e12a821c511dfc1112a2d6e9
   languageName: node
   linkType: hard
 
-"@types/jquery@npm:^3.5.25":
-  version: 3.5.25
-  resolution: "@types/jquery@npm:3.5.25"
+"@types/jquery@npm:^3.5.26":
+  version: 3.5.26
+  resolution: "@types/jquery@npm:3.5.26"
   dependencies:
     "@types/sizzle": "*"
-  checksum: 912ce4212447a7c640147345c6b46bde5b12bafc2c97e1abc76939174c3109e3dbb361a534af717be2da4e907bc257558a6bc631971fcc47f7e5f044d315183e
+  checksum: 4c46902939d35a791a798f44567ef485d7aacf709a93e6f18d3fe4060c79183829b12050c53576014c4e25ee7bfd42e545e6b9c721a28f3e9d53e24d46653b3c
   languageName: node
   linkType: hard
 
@@ -8936,7 +8936,7 @@ __metadata:
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
     "@craco/craco": ^7.1.0
-    "@hawtio/react": ^0.7.0
+    "@hawtio/react": ^0.8.0
     craco-esbuild: ^0.5.2
     os-browserify: ^0.3.0
     path-browserify: ^1.0.1
@@ -13774,27 +13774,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.17.0":
-  version: 6.17.0
-  resolution: "react-router-dom@npm:6.17.0"
+"react-router-dom@npm:^6.18.0":
+  version: 6.18.0
+  resolution: "react-router-dom@npm:6.18.0"
   dependencies:
-    "@remix-run/router": 1.10.0
-    react-router: 6.17.0
+    "@remix-run/router": 1.11.0
+    react-router: 6.18.0
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: e0ba4f4c507681e2ffdecdf2e67edf7ec0e2bf4be35222e29d013afdb03866a5e6ecacc8b452bd55797b9672785d02f81bd6dbf6b05ac93a59e48e774b0060de
+  checksum: ca5c9a9f748f4ff9677d25762970fc59cb216568aad0ebc668b22398222a940f767680bc9a3e65a92e940d3fe05731eda8a4b352ccbf1054904b3b785a9f5e6f
   languageName: node
   linkType: hard
 
-"react-router@npm:6.17.0":
-  version: 6.17.0
-  resolution: "react-router@npm:6.17.0"
+"react-router@npm:6.18.0":
+  version: 6.18.0
+  resolution: "react-router@npm:6.18.0"
   dependencies:
-    "@remix-run/router": 1.10.0
+    "@remix-run/router": 1.11.0
   peerDependencies:
     react: ">=16.8"
-  checksum: 99c30d94fbb34657e4c8c3ef1aaae33b143167d3869b442e06c83b4006f35200fde810029180e209654bef2f47f0b27a928f77cc2d859a358a2722cc9d494f03
+  checksum: 03e9a23c5b75d8813720745e2952bb9e62ec310d238cde4f19e0ce73582701fa5e04cf609ff9ced978e9e6c531b5e333b9aee35371e6c4743afc2829e32e926a
   languageName: node
   linkType: hard
 
