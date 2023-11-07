@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>2.18-SNAPSHOT</version>
+    <version>2.17.7</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
   <artifactId>hawtio-tests</artifactId>
   <name>${project.artifactId}</name>
   <description>hawtio :: Hawtio Tests</description>
-  <version>2.18-SNAPSHOT</version>
+  <version>2.17.7</version>
   <packaging>pom</packaging>
 
   <modules>
