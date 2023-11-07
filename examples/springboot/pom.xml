@@ -105,8 +105,15 @@
       via JMX / Hawtio.
     -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-management</artifactId>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-management-starter</artifactId>
+    </dependency>
+    <!--
+      This dependency is required for viewing Camel routes source XML.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-spring-boot-xml</artifactId>
     </dependency>
     <!--
       To enable Camel plugin debugging feature, add this dependency.
