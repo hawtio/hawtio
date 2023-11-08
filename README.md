@@ -46,7 +46,7 @@ You can attach the Hawtio console to your Spring Boot app with the following ste
    <dependency>
      <groupId>io.hawt</groupId>
      <artifactId>hawtio-springboot</artifactId>
-     <version>3.0-beta-2</version>
+     <version>3.0-beta-3</version>
    </dependency>
    ```
 
@@ -65,7 +65,7 @@ mvn spring-boot:run
 
 Opening <http://localhost:8080/actuator/hawtio> should show the Hawtio console.
 
-See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-3.0-beta-2/examples/springboot) for a working example app.
+See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-3.0-beta-3/examples/springboot) for a working example app.
 
 ### Running a Quarkus app
 
@@ -77,7 +77,7 @@ You can attach the Hawtio console to your Quarkus app by adding `io.hawt:hawtio-
 <dependency>
   <groupId>io.hawt</groupId>
   <artifactId>hawtio-quarkus</artifactId>
-  <version>3.0-beta-2</version>
+  <version>3.0-beta-3</version>
 </dependency>
 ```
 
@@ -89,7 +89,7 @@ mvn compile quarkus:dev
 
 Opening <http://localhost:8080/hawtio> should show the Hawtio console.
 
-See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-3.0-beta-2/examples/quarkus) for a working example app.
+See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-3.0-beta-3/examples/quarkus) for a working example app.
 
 ## Contributing
 
