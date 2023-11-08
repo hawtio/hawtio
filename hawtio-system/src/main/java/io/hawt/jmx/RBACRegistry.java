@@ -24,8 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-
+import java.util.Stack;
+import javax.annotation.Nullable;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
 import javax.management.IntrospectionException;
@@ -36,9 +38,11 @@ import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanParameterInfo;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
+import org.jolokia.server.core.util.EscapeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +89,11 @@ public class RBACRegistry implements RBACRegistryMBean {
 
     @Override
     public Map<String, Object> list() throws Exception {
+        return list(null);
+    }
+
+    @Override
+    public Map<String, Object> list(String path) throws Exception {
         Map<String, Object> result = new HashMap<>();
 
         // domain -> [mbean, mbean, ...], where mbean is either inline jsonified MBeanInfo or a key to shared
@@ -104,14 +113,38 @@ public class RBACRegistry implements RBACRegistryMBean {
 
         Set<ObjectName> visited = new HashSet<>();
 
-        // see: org.jolokia.backend.executor.AbstractMBeanServerExecutor.each()
-        for (ObjectName nameObject : mBeanServer.queryNames(null, null)) {
+        // see: org.jolokia.server.core.util.jmx.DefaultMBeanServerAccess#each(ObjectName, MBeanEachCallback)
+        ObjectName pathQuery = objectNameFromPath(path);
+        for (ObjectName nameObject : mBeanServer.queryNames(pathQuery, null)) {
             addMBeanInfo(cache, domains, visited, nameObject);
         }
 
         tryAddRBACInfo(result);
 
         return result;
+    }
+
+    /**
+     * @see org.jolokia.service.jmx.handler.ListHandler#objectNameFromPath(Stack)
+     */
+    @SuppressWarnings("JavadocReference")
+    @Nullable
+    private ObjectName objectNameFromPath(String path) throws MalformedObjectNameException {
+        if (path == null) {
+            return null;
+        }
+
+        Stack<String> pathStack = EscapeUtil.extractElementsFromPath(path);
+        String domain = pathStack.pop();
+        if (pathStack.empty()) {
+            return new ObjectName(domain + ":*");
+        }
+        String props = pathStack.pop();
+        ObjectName mbean = new ObjectName(domain + ":" + props);
+        if (mbean.isPattern()) {
+            throw new IllegalArgumentException("Cannot use an MBean pattern as path (given MBean: " + mbean + ")");
+        }
+        return mbean;
     }
 
     private void addMBeanInfo(Map<String, Map<String, Object>> cache, Map<String, Map<String, Object>> domains, Set<ObjectName> visited,
@@ -158,13 +191,7 @@ public class RBACRegistry implements RBACRegistryMBean {
         Map<String, Object> domain = domains.computeIfAbsent(nameObject.getDomain(), key -> new HashMap<>());
 
         // jsonifiedMBeanInfo should not be null here and *may* be cached
-        if (mbeanInfoKey != null) {
-            // in hawtio we'll check `typeof info === 'string'` (angular.isString(info))
-            domain.put(nameObject.getKeyPropertyListString(), mbeanInfoKey);
-        } else {
-            // angular.isObject(info)
-            domain.put(nameObject.getKeyPropertyListString(), jsonifiedMBeanInfo);
-        }
+        domain.put(nameObject.getKeyPropertyListString(), Objects.requireNonNullElse(mbeanInfoKey, jsonifiedMBeanInfo));
 
         visited.add(nameObject);
     }
