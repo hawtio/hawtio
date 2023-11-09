@@ -5,5 +5,3 @@ dist
 
 # any directories specifically labelled ignore
 **/ignore/**
-
-console/app/**
