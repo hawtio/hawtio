@@ -149,7 +149,7 @@ jobs:
       - name: Update summary
         run: |
           cat summary.md >> $GITHUB_STEP_SUMMARY
-      - uses: tibdex/github-app-token@v1
+      - uses: tibdex/github-app-token@v2
         if: github.event_name == 'pull_request_target'
         id: generate-token
         with:
