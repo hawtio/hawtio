@@ -20,7 +20,7 @@
     <http5-version>5.2.1</http5-version>
     <guava-version>32.1.2-jre</guava-version>
     <slf4j-version>2.0.9</slf4j-version>
-    <selenium-version>4.12.1</selenium-version>
+    <selenium-version>4.15.0</selenium-version>
     <selenide-version>6.18.0</selenide-version>
     <cucumber-version>7.14.0</cucumber-version>
     <testcontainers-version>1.18.3</testcontainers-version>
