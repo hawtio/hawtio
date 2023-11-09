@@ -17,7 +17,7 @@
 
   <properties>
     <!-- node & yarn versions used for build -->
-    <node-version>v16.15.0</node-version>
+    <node-version>v18.18.2</node-version>
     <yarn-version>v1.22.19</yarn-version>
     <!--
       Path to the Hawtio plugin TS project. You can specify the path if it's placed
