@@ -20,7 +20,7 @@
     "@craco/craco": "^7.1.0",
     "@hawtio/backend-middleware": "^1.0.4",
     "craco-esbuild": "^0.5.2",
-    "monaco-editor-webpack-plugin": "^7.0.1",
+    "monaco-editor-webpack-plugin": "^7.1.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "replace": "^1.2.2"
