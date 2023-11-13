@@ -2298,7 +2298,7 @@ __metadata:
     "@hawtio/backend-middleware": "npm:^1.0.4"
     "@hawtio/react": "npm:^0.8.0"
     craco-esbuild: "npm:^0.5.2"
-    monaco-editor-webpack-plugin: "npm:^7.0.1"
+    monaco-editor-webpack-plugin: "npm:^7.1.0"
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
     react: "npm:^18.2.0"
@@ -11934,15 +11934,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor-webpack-plugin@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "monaco-editor-webpack-plugin@npm:7.0.1"
+"monaco-editor-webpack-plugin@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "monaco-editor-webpack-plugin@npm:7.1.0"
   dependencies:
     loader-utils: "npm:^2.0.2"
   peerDependencies:
     monaco-editor: ">= 0.31.0"
     webpack: ^4.5.0 || 5.x
-  checksum: 06426ab5e55d41477ea440b7694d15288cebb793f49f6b08ce658a1bbf09aeb0c5087dfb9314a0baea24a659e773934f310a35d16924b3881d87874794d8783e
+  checksum: d73ebac884d130bcff1bf9503f061c085aeee1121277994ec20f63166f228dd44224a220be6bf1c39a98d49277a38dbc9cc6a45623578b18f80ec21a22a79847
   languageName: node
   linkType: hard
 
