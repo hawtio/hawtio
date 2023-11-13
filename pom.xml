@@ -55,7 +55,7 @@
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
     <blueprint-web-version>1.1.0</blueprint-web-version>
-    <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
+    <build-helper-maven-plugin-version>3.4.0</build-helper-maven-plugin-version>
 
     <!-- Spring versions -->
     <spring-version>5.3.30</spring-version>
