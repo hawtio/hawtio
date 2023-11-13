@@ -59,7 +59,7 @@
 
     <!-- Spring versions -->
     <spring-version>6.0.10</spring-version>
-    <spring-boot-version>3.1.4</spring-boot-version>
+    <spring-boot-version>3.1.5</spring-boot-version>
 
     <!-- Quarkus version -->
     <quarkus-version>3.5.1</quarkus-version>
