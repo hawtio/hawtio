@@ -23,7 +23,7 @@
     <selenium-version>4.12.1</selenium-version>
     <selenide-version>6.18.0</selenide-version>
     <cucumber-version>7.14.0</cucumber-version>
-    <testcontainers-version>1.18.3</testcontainers-version>
+    <testcontainers-version>1.19.1</testcontainers-version>
     <awaitility-version>4.2.0</awaitility-version>
   </properties>
 
