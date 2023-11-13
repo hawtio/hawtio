@@ -23,11 +23,11 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-base</artifactId>
+      <artifactId>hawtio-war</artifactId>
       <version>${project.version}</version>
       <!--
         NOTE this WAR dependency type which enables this WAR to
-        inherit all the plugins and content from the core hawtio-base WAR
+        inherit all the plugins and content from the core hawtio-war WAR
       -->
       <type>war</type>
     </dependency>
