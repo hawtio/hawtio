@@ -111,7 +111,6 @@
   <modules>
     <module>bom</module>
     <module>console</module>
-    <module>deploy/hawtio-base</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
     <module>examples/quarkus</module>
