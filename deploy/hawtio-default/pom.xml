@@ -31,6 +31,12 @@
       -->
       <type>war</type>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-system</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
 
     <!-- let's mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
     <dependency>
@@ -41,14 +47,16 @@
     </dependency>
 
     <!-- now let's add some components -->
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-log</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!-- Connect plugin -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-local-jvm-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Log plugin -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-log</artifactId>
       <version>${project.version}</version>
     </dependency>
 
