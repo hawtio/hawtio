@@ -37,7 +37,7 @@ module.exports = {
           },
         }),
         new MonacoWebpackPlugin({
-          languages: ['xml', 'json', 'html', 'plaintext'],
+          languages: ['xml', 'json', 'plaintext'],
           globalAPI: true,
         }),
       ],

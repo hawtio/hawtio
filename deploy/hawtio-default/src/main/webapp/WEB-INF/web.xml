@@ -293,7 +293,7 @@
   </mime-mapping>
 
   <listener>
-    <listener-class>io.hawt.HawtioContextListener</listener-class>
+    <listener-class>io.hawt.HawtioDefaultContextListener</listener-class>
   </listener>
 
   <error-page>
