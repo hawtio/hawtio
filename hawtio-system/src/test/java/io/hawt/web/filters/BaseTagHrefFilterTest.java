@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 import static org.mockito.Mockito.mock;
@@ -33,7 +34,7 @@ public class BaseTagHrefFilterTest {
     private ServletOutputStream outputStream;
     private FilterChain filterChain;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = new BaseTagHrefFilter();
         filterConfig = mock(FilterConfig.class);

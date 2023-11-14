@@ -22,9 +22,11 @@ import javax.management.ObjectName;
 
 import io.hawt.jmx.JMXSecurity;
 import org.jolokia.config.Configuration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,13 +39,13 @@ public class RBACRestrictorTest {
 
     private JMXSecurity mockJMXSecurity;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.mockJMXSecurity = new MockJMXSecurity();
         this.mockJMXSecurity.init();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         this.mockJMXSecurity.destroy();
         this.mockJMXSecurity = null;

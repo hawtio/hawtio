@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.hawt.web.ServletHelpers.HEADER_HAWTIO_FORBIDDEN_REASON;
 import static org.hamcrest.CoreMatchers.equalTo;
