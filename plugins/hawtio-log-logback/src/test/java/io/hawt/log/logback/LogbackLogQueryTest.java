@@ -6,11 +6,12 @@ import java.util.stream.IntStream;
 
 import io.hawt.log.LogEvent;
 import io.hawt.log.LogFilter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,13 +20,13 @@ public class LogbackLogQueryTest {
 
     private LogbackLogQuery logQuery;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         logQuery = new LogbackLogQuery();
         logQuery.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         logQuery.stop();
     }

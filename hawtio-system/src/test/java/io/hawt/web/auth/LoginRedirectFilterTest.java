@@ -1,12 +1,13 @@
 package io.hawt.web.auth;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class LoginRedirectFilterTest {
@@ -15,7 +16,7 @@ public class LoginRedirectFilterTest {
     private FilterConfig filterConfig;
     private ServletContext servletContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filterConfig = mock(FilterConfig.class);
         servletContext = mock(ServletContext.class);

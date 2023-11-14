@@ -1,11 +1,11 @@
 package io.hawt.springboot;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTestCommon {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
         contextRunner = contextRunner.withPropertyValues("management.server.port=" + MANAGEMENT_PORT);

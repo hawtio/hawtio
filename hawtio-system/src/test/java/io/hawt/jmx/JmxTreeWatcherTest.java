@@ -1,20 +1,22 @@
 package io.hawt.jmx;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 
 public class JmxTreeWatcherTest {
     JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         treeWatcher.init();
     }
 
-    @After
+    @AfterEach
     public void destroy() throws Exception {
         treeWatcher.destroy();
     }
@@ -36,6 +38,6 @@ public class JmxTreeWatcherTest {
     }
 
     private void assertCounterGreater(long value1, long value2) {
-        assertTrue("Counter: " + value1 + " should be less than counter2 = " + value2, value1 < value2);
+        assertTrue(value1 < value2, "Counter: " + value1 + " should be less than counter2 = " + value2);
     }
 }

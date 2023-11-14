@@ -8,9 +8,10 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class RedirectorTest {
 
@@ -19,7 +20,7 @@ public class RedirectorTest {
     private HttpServletResponse response;
     private ServletContext servletContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -30,7 +31,7 @@ public class RedirectorTest {
         when(request.getServletContext()).thenReturn(servletContext);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         System.clearProperty(Redirector.HAWTIO_REDIRECT_SCHEME);
     }

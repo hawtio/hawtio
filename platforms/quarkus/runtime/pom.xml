@@ -15,6 +15,7 @@
 
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-bom</artifactId>
