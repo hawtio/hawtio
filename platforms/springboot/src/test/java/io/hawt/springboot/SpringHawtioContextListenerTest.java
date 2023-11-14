@@ -3,7 +3,8 @@ package io.hawt.springboot;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import org.mockito.Mockito;
 
 import io.hawt.system.ConfigManager;

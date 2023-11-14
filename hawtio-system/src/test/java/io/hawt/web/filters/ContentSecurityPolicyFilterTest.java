@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -28,7 +28,7 @@ public class ContentSecurityPolicyFilterTest {
     private HttpServletResponse response;
     private String keycloakConfigFile;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         contentSecurityPolicyFilter = new ContentSecurityPolicyFilter();
         filterConfig = mock(FilterConfig.class);

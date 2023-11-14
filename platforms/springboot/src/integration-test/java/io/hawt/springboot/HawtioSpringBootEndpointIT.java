@@ -1,6 +1,6 @@
 package io.hawt.springboot;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.context.support.ServletContextPropertySource;
 

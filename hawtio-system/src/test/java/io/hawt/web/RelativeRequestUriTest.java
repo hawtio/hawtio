@@ -3,70 +3,86 @@ package io.hawt.web;
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.web.auth.RelativeRequestUri;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-@RunWith(Parameterized.class)
+import java.util.stream.Stream;
+
+
 public class RelativeRequestUriTest {
+    private static class Parameters {
 
-    @Parameters
-    public static Object[][] params() {
-        return new Object[][] { // @formatter:off
-            { "", 0, "",        "",        "",      new String[0] },
-            { "", 1, "",        "",        "",      new String[0] },
-            { "", 0, "/",       "",        "",      new String[0] },
-            { "", 1, "/",       "",        "",      new String[0] },
-            { "", 0, "/a",      "/",       "a",     new String[] { "a" } },
-            { "", 0, "/a/b",    "/",       "a/b",   new String[] { "a", "b" } },
-            { "", 1, "/a",      "/a",      "",      new String[0] },
-            { "", 1, "/a/b",    "/a/",     "b",     new String[] { "b" } },
-            { "", 2, "/a/b",    "/a/b",    "",      new String[0] },
-            { "", 0, "/a/b/c",  "/",       "a/b/c", new String[] { "a", "b", "c"} },
-            { "", 1, "/a/b/c",  "/a/",     "b/c",   new String[] { "b", "c"} },
-            { "", 2, "/a/b/c",  "/a/b/",   "c",     new String[] { "c" } },
-            { "", 3, "/a/b/c",  "/a/b/c",  "",      new String[0] },
-            { "/a", 0, "",       "",       "",      new String[0] },
-            { "/a", 1, "",       "",       "",      new String[0] },
-            { "/a", 0, "/",      "",       "",      new String[0] },
-            { "/a", 1, "/",      "",       "",      new String[0] },
-            { "/a", 0, "/a",     "/a",     "",      new String[0] },
-            { "/a", 0, "/a/b",   "/a/",    "b",     new String[] { "b" } },
-            { "/a", 1, "/a",     "/a",     "",      new String[0] },
-            { "/a", 1, "/a/b",   "/a/b",   "",      new String[0] },
-            { "/a", 2, "/a/b",   "/a/b",   "",      new String[0] },
-            { "/a", 0, "/a/b/c", "/a/",    "b/c",   new String[] { "b", "c" } },
-            { "/a", 1, "/a/b/c", "/a/b/",  "c",     new String[] { "c" } },
-            { "/a", 2, "/a/b/c", "/a/b/c", "",      new String[0] },
-            { "/a", 3, "/a/b/c", "/a/b/c", "",      new String[0] },
-        }; // @formatter:on
+        private final String contextPath;
+        private final int pathIndex;
+        private final String requestUri;
+        private final String expectedPrefix;
+        private final String expectedUri;
+        private final String[] expectedComponents;
+        private final String expectedLastComponent;
+
+        private Parameters(final String contextPath, final int pathIndex,
+                           final String requestUri, final String expectedPrefix,
+                           final String expectedUri, final String[] expectedComponents) {
+            this.contextPath = contextPath;
+            this.pathIndex = pathIndex;
+            this.expectedPrefix = expectedPrefix;
+            this.expectedUri = expectedUri;
+            this.requestUri = requestUri;
+            this.expectedComponents = expectedComponents;
+            this.expectedLastComponent = expectedComponents.length == 0 ? null
+                : expectedComponents[expectedComponents.length - 1];
+        }
     }
 
-    @Mock
-    private HttpServletRequest request;
 
-    private final String contextPath;
-    private final int pathIndex;
-    private final String requestUri;
-    private final String expectedPrefix;
-    private final String expectedUri;
-    private final String[] expectedComponents;
-    private final String expectedLastComponent;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        Mockito.when(request.getContextPath()).thenReturn(contextPath);
-        Mockito.when(request.getRequestURI()).thenReturn(requestUri);
-    }
 
-    public RelativeRequestUriTest(final String contextPath, final int pathIndex,
+        public static Stream<Parameters> params() {
+            return Stream.of(// @formatter:off
+                new Parameters( "", 0, "",        "",        "",      new String[0] ),
+                new Parameters( "", 1, "",        "",        "",      new String[0] ),
+                new Parameters ( "", 0, "/",       "",        "",      new String[0] ),
+                new Parameters( "", 1, "/",       "",        "",      new String[0] ),
+                new Parameters( "", 0, "/a",      "/",       "a",     new String[] { "a" } ),
+                new Parameters( "", 0, "/a/b",    "/",       "a/b",   new String[] { "a", "b" } ),
+                new Parameters( "", 1, "/a",      "/a",      "",      new String[0] ),
+                new Parameters( "", 1, "/a/b",    "/a/",     "b",     new String[] { "b" } ),
+                new Parameters( "", 2, "/a/b",    "/a/b",    "",      new String[0] ),
+                new Parameters( "", 0, "/a/b/c",  "/",       "a/b/c", new String[] { "a", "b", "c"} ),
+                new Parameters( "", 1, "/a/b/c",  "/a/",     "b/c",   new String[] { "b", "c"} ),
+                new Parameters( "", 2, "/a/b/c",  "/a/b/",   "c",     new String[] { "c" } ),
+                new Parameters( "", 3, "/a/b/c",  "/a/b/c",  "",      new String[0] ),
+                new Parameters( "/a", 0, "",       "",       "",      new String[0] ),
+                new Parameters( "/a", 1, "",       "",       "",      new String[0] ),
+                new Parameters( "/a", 0, "/",      "",       "",      new String[0] ),
+                new Parameters( "/a", 1, "/",      "",       "",      new String[0] ),
+                new Parameters( "/a", 0, "/a",     "/a",     "",      new String[0] ),
+                new Parameters( "/a", 0, "/a/b",   "/a/",    "b",     new String[] { "b" } ),
+                new Parameters( "/a", 1, "/a",     "/a",     "",      new String[0] ),
+                new Parameters( "/a", 1, "/a/b",   "/a/b",   "",      new String[0] ),
+                new Parameters( "/a", 2, "/a/b",   "/a/b",   "",      new String[0] ),
+                new Parameters( "/a", 0, "/a/b/c", "/a/",    "b/c",   new String[] { "b", "c" } ),
+                new Parameters( "/a", 1, "/a/b/c", "/a/b/",  "c",     new String[] { "c" } ),
+                new Parameters( "/a", 2, "/a/b/c", "/a/b/c", "",      new String[0] ),
+                new Parameters( "/a", 3, "/a/b/c", "/a/b/c", "",      new String[0] )
+         ); // @formatter:on
+        }
+
+        @Mock
+        private HttpServletRequest request;
+
+
+
+
+    /*public RelativeRequestUriTest(final String contextPath, final int pathIndex,
                                   final String requestUri, final String expectedPrefix,
                                   final String expectedUri, final String[] expectedComponents) {
         this.contextPath = contextPath;
@@ -77,17 +93,21 @@ public class RelativeRequestUriTest {
         this.expectedComponents = expectedComponents;
         this.expectedLastComponent = expectedComponents.length == 0 ? null
             : expectedComponents[expectedComponents.length - 1];
+    }*/
+
+        @ParameterizedTest
+        @MethodSource("params")
+        public void test(Parameters args) {
+            MockitoAnnotations.initMocks(this);
+            Mockito.when(request.getContextPath()).thenReturn(args.contextPath);
+            Mockito.when(request.getRequestURI()).thenReturn(args.requestUri);
+            final RelativeRequestUri underTest = new RelativeRequestUri(request, args.pathIndex);
+            Assertions.assertEquals(args.expectedPrefix, underTest.getPrefix());
+            Assertions.assertEquals(args.expectedUri, underTest.getUri());
+            Assertions.assertEquals(args.expectedUri, underTest.toString());
+            Assertions.assertArrayEquals(args.expectedComponents, underTest.getComponents());
+            Assertions.assertEquals(args.expectedLastComponent, underTest.getLastComponent());
+        }
+
     }
 
-    @Test
-    public void test() {
-        final RelativeRequestUri underTest = new RelativeRequestUri(request,
-                                                                    pathIndex);
-        Assert.assertEquals(expectedPrefix, underTest.getPrefix());
-        Assert.assertEquals(expectedUri, underTest.getUri());
-        Assert.assertEquals(expectedUri, underTest.toString());
-        Assert.assertArrayEquals(expectedComponents, underTest.getComponents());
-        Assert.assertEquals(expectedLastComponent, underTest.getLastComponent());
-    }
-
-}
