@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import io.hawt.util.Strings;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration;
@@ -32,7 +32,7 @@ public class HawtioSpringBootTestSupport {
     protected WebApplicationContextRunner contextRunner;
     protected boolean isCustomManagementPortConfigured = false;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         contextRunner = new WebApplicationContextRunner(
             AnnotationConfigServletWebServerApplicationContext::new)

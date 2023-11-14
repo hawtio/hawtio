@@ -4,17 +4,18 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
+
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(Enclosed.class)
+
 public abstract class StringsTest {
 
     public static class SplitTest {
@@ -40,126 +41,137 @@ public abstract class StringsTest {
         }
     }
 
-    @RunWith(Parameterized.class)
+
     public static class CleanPathTest {
 
-        @Parameters(name = "\"{0}\" -> \"{1}\"")
-        public static Object[][] params() {
-            return new Object[][] { // @formatter:off
-                { "",        "" },
-                { "  ",      "  " },
-                { "/",       "/" },
-                { "a",       "a" },
-                { "/a",      "/a" },
-                { "a/",      "a" },
-                { "/a/",     "/a" },
-                { "//a/",    "/a" },
-                { "/a//",    "/a" },
-                { "//a//",   "/a" },
-                { "/a/b/",   "/a/b" },
-                { "/a///b/", "/a/b" }
-            }; // @formatter:on
+
+        public static Stream<Arguments> params() {
+            return Stream.of ( // @formatter:off
+                Arguments.arguments( "",        "" ),
+            Arguments.arguments( "  ",      "  " ),
+            Arguments.arguments( "/",       "/" ),
+            Arguments.arguments( "a",       "a" ),
+            Arguments.arguments( "/a",      "/a" ),
+            Arguments.arguments( "a/",      "a" ),
+            Arguments.arguments( "/a/",     "/a" ),
+            Arguments.arguments( "//a/",    "/a" ),
+            Arguments.arguments( "/a//",    "/a" ),
+            Arguments.arguments( "//a//",   "/a" ),
+            Arguments.arguments( "/a/b/",   "/a/b" ),
+            Arguments.arguments( "/a///b/", "/a/b" )
+            ); // @formatter:on
         }
 
-        private final String input;
-        private final String expected;
 
-        public CleanPathTest(final String input, final String expected) {
+
+        /*public CleanPathTest(final String input, final String expected) {
             this.input = input;
             this.expected = expected;
-        }
+        }*/
 
-        @Test
-        public void test() {
+        @ParameterizedTest
+        @MethodSource("params")
+        public void test(String input, String expected) {
             assertThat(Strings.cleanPath(input), CoreMatchers.equalTo(expected));
         }
     }
 
-    @RunWith(Parameterized.class)
+
     public static class WebContextPathFromSingleComponentTest {
 
-        @Parameters(name = "\"{0}\" -> \"{1}\"")
-        public static Object[][] params() {
-            return new Object[][] { // @formatter:off
-                { null,      ""     },
-                { "",        ""     },
-                { " ",       "/ "   },
-                { "/",       ""     },
-                { "a",       "/a"   },
-                { "/a",      "/a"   },
-                { "a/",      "/a"   },
-                { "/a/",     "/a"   },
-                { "//a/",    "/a"   },
-                { "/a//",    "/a"   },
-                { "//a//",   "/a"   },
-                { "/a/b/",   "/a/b" },
-                { "/a///b/", "/a/b" }
-            }; // @formatter:on
+
+        public static Stream<Arguments> params() {
+            return Stream.of(// @formatter:off
+                Arguments.arguments( null,      ""     ),
+                Arguments.arguments( "",        ""     ),
+                Arguments.arguments( " ",       "/ "   ),
+                Arguments.arguments( "/",       ""     ),
+                Arguments.arguments( "a",       "/a"   ),
+                Arguments.arguments( "/a",      "/a"   ),
+                Arguments.arguments( "a/",      "/a"   ),
+                Arguments.arguments( "/a/",     "/a"   ),
+                Arguments.arguments( "//a/",    "/a"   ),
+                Arguments.arguments( "/a//",    "/a"   ),
+                Arguments.arguments( "//a//",   "/a"   ),
+                Arguments.arguments( "/a/b/",   "/a/b" ),
+                Arguments.arguments( "/a///b/", "/a/b" )
+            ); // @formatter:on
         }
 
-        private final String input;
-        private final String expected;
 
-        public WebContextPathFromSingleComponentTest(final String input,
-                final String expected) {
-            this.input = input;
-            this.expected = expected;
-        }
 
-        @Test
-        public void test() {
-            assertThat(Strings.webContextPath(input),
-                    CoreMatchers.equalTo(expected));
+
+        @ParameterizedTest
+        @MethodSource("params")
+        public void test(String input, String expected) {
+            assertThat(Strings.webContextPath((input)),
+                   CoreMatchers.equalTo(expected));
         }
     }
 
-    @RunWith(Parameterized.class)
+
     public static class WebContextPathFromMultipleComponentsTest {
 
-        @Parameters
-        public static Object[][] params() {
-            return new Object[][][] { // @formatter:off
-                { { null,           ""     } },
-                { {"",              ""     } },
-                { { " ",            "/ "   } },
-                { { "/",            ""     } },
-                { { "a",            "/a"   } },
-                { { "/a",           "/a"   } },
-                { { "a/",           "/a"   } },
-                { { "/a/",          "/a"   } },
-                { { "//a/",         "/a"   } },
-                { { "/a//",         "/a"   } },
-                { { "//a//",        "/a"   } },
-                { { null,    null,  ""     } },
-                { { null,    "a",   "/a"   } },
-                { { "a",     null,  "/a"   } },
-                { { "a",     "b",   "/a/b" } },
-                { { "/a",    "b",   "/a/b" } },
-                { { "a",     "/b",  "/a/b" } },
-                { { "/a",    "/b",  "/a/b" } },
-                { { "/a/",   "b",   "/a/b" } },
-                { { "/a/",   "/b",  "/a/b" } },
-                { { "/a/",   "/b/", "/a/b" } },
-                { { "/a//", "/b//", "/a/b" } },
-            }; // @formatter:on
+        private static class Parameters {
+            private final String input;
+            private final String expected;
+            private final String more;
+
+            private Parameters(String input, String more, String expected) {
+                this.input = input;
+                this.expected = expected;
+                this.more = more;
+            }
+
+            public Parameters(String input, String expected) {
+                this.input = input;
+                this.expected = expected;
+                this.more = null;
+            }
         }
 
-        private final String first;
-        private final String[] more;
-        private final String expected;
+        public static Stream<Parameters> params() {
+            return Stream.of(// @formatter:off
+                new Parameters( null,           ""  ),
+                new Parameters("",              ""     ),
+                new Parameters( " ",            "/ "   ),
+                new Parameters( "/",            ""     ),
+                new Parameters( "a",            "/a"   ),
+                new Parameters( "/a",           "/a"   ),
+                new Parameters( "a/",           "/a"   ),
+                new Parameters( "/a/",          "/a"   ),
+                new Parameters( "//a/",         "/a"   ),
+                new Parameters( "/a//",         "/a"   ),
+                new Parameters( "//a//",        "/a"   ),
+                new Parameters( null,    null,  ""     ),
+                new Parameters( null,    "a",   "/a"   ),
+                new Parameters( "a",     null,  "/a"   ),
+                new Parameters( "a",     "b",   "/a/b" ),
+                new Parameters( "/a",    "b",   "/a/b" ),
+                new Parameters( "a",     "/b",  "/a/b" ),
+                new Parameters( "/a",    "/b",  "/a/b" ),
+                new Parameters( "/a/",   "b",   "/a/b" ),
+                new Parameters( "/a/",   "/b",  "/a/b" ),
+                new Parameters( "/a/",   "/b/", "/a/b" ),
+                new Parameters( "/a//", "/b//", "/a/b" )
+            ); // @formatter:on
+        }
 
-        public WebContextPathFromMultipleComponentsTest(final Object... input) {
+
+
+       /* public WebContextPathFromMultipleComponentsTest(final Object... input) {
             this.first = (String) input[0];
             this.more = input.length > 2
                     ? Arrays.copyOfRange(input, 1, input.length - 1, String[].class)
                     : new String[0];
             this.expected = (String) input[input.length - 1];
-        }
+        }*/
 
-        @Test
-        public void test() {
-            assertThat(Strings.webContextPath(first, more),
-                    CoreMatchers.equalTo(expected));
+        @ParameterizedTest
+        @MethodSource("params")
+        public void test(Parameters args) {
+            assertThat(Strings.webContextPath(args.input, args.more),
+                    CoreMatchers.equalTo(args.expected));
         }
     }
 

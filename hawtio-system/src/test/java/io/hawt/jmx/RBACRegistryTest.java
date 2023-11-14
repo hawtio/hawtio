@@ -2,24 +2,27 @@ package io.hawt.jmx;
 
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+
 
 public class RBACRegistryTest {
 
     private final RBACRegistry rbacRegistry = new RBACRegistry();
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         rbacRegistry.init();
     }
 
-    @After
+    @AfterEach
     public void destroy() throws Exception {
         rbacRegistry.destroy();
     }
