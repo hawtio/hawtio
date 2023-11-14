@@ -36,8 +36,24 @@ public class JVMList implements JVMListMBean {
     protected static final Map<String, String> VM_ALIAS_OVERRIDE_MAP = new HashMap<>();
 
     static {
-        VM_ALIAS_MAP.put("hawtio-app", "hawtio");
+        // Hawtio
+        VM_ALIAS_MAP.put("hawtio-app", "Hawtio");
+        VM_ALIAS_MAP.put("main.HawtioJBang", "Hawtio JBang");
 
+        // Apache Camel
+        VM_ALIAS_MAP.put("org.apache.camel:camel-maven-plugin:run", "Apache Camel");
+        VM_ALIAS_MAP.put("camel:run", "Apache Camel");
+        VM_ALIAS_MAP.put("main.CamelJBang", "Camel JBang");
+
+        // Quarkus
+        VM_ALIAS_MAP.put("quarkus-run.jar", "Quarkus");
+        VM_ALIAS_MAP.put("quarkus-dev.jar", "Quarkus Dev");
+
+        // Spring Boot
+        VM_ALIAS_MAP.put("org.codehaus.plexus.classworlds.launcher.Launcher spring-boot:run", "Spring Boot");
+        VM_ALIAS_MAP.put("org.springframework.boot.loader.JarLauncher shell", "Spring Boot Shell");
+
+        // IntelliJ IDEA
         VM_ALIAS_MAP.put("com.intellij.idea.Main", "IntelliJ IDEA");
         VM_ALIAS_MAP.put("com.intellij.rt.execution.application.AppMain", "IntelliJ IDEA");
         VM_ALIAS_MAP.put("org.jetbrains.idea.maven.server.RemoteMavenServer", "IntelliJ IDEA");
@@ -63,11 +79,6 @@ public class JVMList implements JVMListMBean {
 
         VM_ALIAS_MAP.put("target/surefire", "Maven Surefire Test");
 
-        VM_ALIAS_MAP.put("org.apache.camel:camel-maven-plugin:run", "Apache Camel");
-        VM_ALIAS_MAP.put("camel:run", "Apache Camel");
-
-        VM_ALIAS_MAP.put("org.codehaus.plexus.classworlds.launcher.Launcher spring-boot:run", "Spring Boot");
-        VM_ALIAS_MAP.put("org.springframework.boot.loader.JarLauncher shell", "Spring Boot Shell");
         VM_ALIAS_MAP.put("org.jboss.forge.bootstrap.Bootstrap", "JBoss Forge Shell");
 
         VM_ALIAS_OVERRIDE_MAP.put("${zk:root/http}/jolokia", "Fabric8");
