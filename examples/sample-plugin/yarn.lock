@@ -2262,9 +2262,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@hawtio/react@npm:0.9.0"
+"@hawtio/react@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@hawtio/react@npm:0.9.1"
   dependencies:
     "@hawtio/camel-model-v3": "npm:@hawtio/camel-model@^3.21.1"
     "@hawtio/camel-model-v4": "npm:@hawtio/camel-model@^4.0.1"
@@ -2274,11 +2274,11 @@ __metadata:
     "@patternfly/react-core": "npm:^4.278.0"
     "@patternfly/react-table": "npm:^4.113.6"
     "@testing-library/jest-dom": "npm:^6.1.4"
-    "@testing-library/react": "npm:^14.0.0"
+    "@testing-library/react": "npm:^14.1.0"
     "@testing-library/user-event": "npm:^14.5.1"
-    "@types/dagre": "npm:^0.7.51"
+    "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
-    "@types/jest": "npm:^29.5.7"
+    "@types/jest": "npm:^29.5.8"
     "@types/jquery": "npm:^3.5.27"
     "@types/node": "npm:^18.18.6"
     "@types/react": "npm:^18.2.23"
@@ -2309,7 +2309,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 1cdbcb9bf6afd19d5917454f5ca1df94f7e59db56726bbcb4f4eda58c9de0ab5ac8682bdc8fa6b4822a76bee2300040a6ddf8a88e4a57b3ab3b677b467ef84b6
+  checksum: ce9f24fb72e9127905828027378948428952a1becbf67bf7f2bad2d7806b74727342d60346e4ea81a3447f85f7d46097255f1d218d09deca3a17b09ab4514212
   languageName: node
   linkType: hard
 
@@ -3408,9 +3408,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^14.0.0":
-  version: 14.0.0
-  resolution: "@testing-library/react@npm:14.0.0"
+"@testing-library/react@npm:^14.1.0":
+  version: 14.1.0
+  resolution: "@testing-library/react@npm:14.1.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^9.0.0"
@@ -3418,7 +3418,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 1f2a4f78d107e741b35671e9c7dd992d5c9f49b48ee24112ccfe636179be72f3c62a65b1405901b59eb6cde996176ebc2c99099e04d9f14575641e46688747f0
+  checksum: d181f13cc684515dfe7ca0a961c75e5f506ffde897e5c96628bab71ddc264e67d1477ad7ad0615a1add1f82a6437143843c33c05292783ff0dc72d1a009c512f
   languageName: node
   linkType: hard
 
@@ -3865,10 +3865,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dagre@npm:^0.7.51":
-  version: 0.7.51
-  resolution: "@types/dagre@npm:0.7.51"
-  checksum: 6a23cc406082fe867dc0be0a117ae0c493bcfb6e08b83ea55a09b4f43e6eb5efc34a102d1a039fa82d2df700d55ee5481c0c3febdf710b972bb345c8a7f6c316
+"@types/dagre@npm:^0.7.52":
+  version: 0.7.52
+  resolution: "@types/dagre@npm:0.7.52"
+  checksum: 89e046e73f9f83855fcecc0f79838e0e3e0e42d88b6cc42bb573249364a606909ff7ded5b6a0377246eb0648047b330b5003c8dd975358de3135635ddae0f589
   languageName: node
   linkType: hard
 
@@ -4018,13 +4018,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.7":
-  version: 29.5.7
-  resolution: "@types/jest@npm:29.5.7"
+"@types/jest@npm:^29.5.8":
+  version: 29.5.8
+  resolution: "@types/jest@npm:29.5.8"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 64a31afa2c8bd003c7e637c36933170f731341957150274e518564e513d6dd7cb8dae61afea29ff703c2c8d3bdbbc8fb97095029a4fc91f55707f26753557583
+  checksum: a8194e26c642780d5b2e22170ac538f7975e04aeaa76d87f8e5ac921f7a8fffc5252029a9e6efacdb0ec4b45320322c8e1f27a5338083f49efbd3c6021314f7e
   languageName: node
   linkType: hard
 
@@ -8936,7 +8936,7 @@ __metadata:
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
     "@craco/craco": "npm:^7.1.0"
-    "@hawtio/react": "npm:^0.9.0"
+    "@hawtio/react": "npm:^0.9.1"
     craco-esbuild: "npm:^0.5.2"
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
