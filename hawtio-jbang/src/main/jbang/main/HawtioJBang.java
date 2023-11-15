@@ -20,7 +20,7 @@
 
 //JAVA 17+
 //REPOS mavencentral
-//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:4.0-M2}
+//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:4.0-M3}
 
 package main;
 
