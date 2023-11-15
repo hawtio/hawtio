@@ -1,21 +1,15 @@
 package io.hawt.jvm.local;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
-
-
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
-
-
-import java.util.List;
-
-/**
- *
- */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JVMListTest {
 
@@ -72,7 +66,7 @@ public class JVMListTest {
             assertNull(me.getAgentUrl());
         } catch (Exception e) {
             System.out.print("Error stopping agent due " + e.getMessage() + ". This exception is ignored.");
-            // may fail on some servers, so lets ignore for now
+            // may fail on some servers, so let's ignore for now
         }
     }
 
@@ -109,7 +103,7 @@ public class JVMListTest {
             assertNotNull(me.getAgentUrl());
         } catch (Exception e) {
             System.out.print("Error starting agent due " + e.getMessage() + ". This exception is ignored.");
-            // may fail on some servers, so lets ignore for now
+            // may fail on some servers, so let's ignore for now
         }
     }
 }

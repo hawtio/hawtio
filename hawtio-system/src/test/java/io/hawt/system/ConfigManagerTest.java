@@ -2,15 +2,12 @@ package io.hawt.system;
 
 import java.util.Hashtable;
 import java.util.Optional;
-
 import javax.naming.Context;
 import javax.naming.spi.InitialContextFactory;
-
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -24,7 +21,7 @@ public class ConfigManagerTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         TestInitialContextFactory.setCurrentContext(jndiContext);
         System.clearProperty("hawtio.forceProperties");
         System.clearProperty("hawtio.foo");
@@ -128,7 +125,7 @@ public class ConfigManagerTest {
         underTest.init();
         underTest.destroy();
 
-        Mockito.verifyZeroInteractions(jndiContext);
+        Mockito.verifyNoInteractions(jndiContext);
     }
 
     @Test
