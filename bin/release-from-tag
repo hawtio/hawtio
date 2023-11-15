@@ -15,12 +15,15 @@ fi
 RELEASE_VERSION=$1
 M2_SETTINGS=${2:-$HOME/.m2/settings.xml}
 
+MAVEN_RELEASE_PLUGIN_VERSION=3.0.1
+NEXUS_STAGING_PLUGIN_VERSION=1.6.13
+
 echo ============================================================================
 echo Deploying version $RELEASE_VERSION to Sonatype OSSRH
 echo ============================================================================
 
 mvn -s $M2_SETTINGS \
-  org.apache.maven.plugins:maven-release-plugin:2.5.3:perform -Prelease \
+  org.apache.maven.plugins:maven-release-plugin:$MAVEN_RELEASE_PLUGIN_VERSION:perform -Prelease \
   -DconnectionUrl=scm:git:git@github.com:hawtio/hawtio.git \
   -Dtag=hawtio-$RELEASE_VERSION
 
@@ -35,7 +38,7 @@ echo REPO_ID = $REPO_ID
 echo ============================================================================
 
 mvn -s $M2_SETTINGS \
-  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-close \
+  org.sonatype.plugins:nexus-staging-maven-plugin:$NEXUS_STAGING_PLUGIN_VERSION:rc-close \
   -DserverId=oss-sonatype-staging \
   -DnexusUrl=https://oss.sonatype.org \
   -DstagingRepositoryId=$REPO_ID \
@@ -43,7 +46,7 @@ mvn -s $M2_SETTINGS \
   -DstagingProgressTimeoutMinutes=60
 
 mvn -s $M2_SETTINGS \
-  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-release \
+  org.sonatype.plugins:nexus-staging-maven-plugin:$NEXUS_STAGING_PLUGIN_VERSION:rc-release \
   -DserverId=oss-sonatype-staging \
   -DnexusUrl=https://oss.sonatype.org \
   -DstagingRepositoryId=$REPO_ID \
