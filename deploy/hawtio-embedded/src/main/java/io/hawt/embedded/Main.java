@@ -44,52 +44,52 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(versionProvider = Main.ManifestVersionProvider.class,
     name = "hawtio", description = "Run Hawtio")
-public class Main implements Callable<Integer>  {
-    private static Logger log = LoggerFactory.getLogger(Main.class);
+public class Main implements Callable<Integer> {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static CommandLine commandLine;
 
-    @CommandLine.Option(names = {"--war-location", "--l"},
+    @CommandLine.Option(names = { "--war-location", "-l" },
         description = "Directory to search for .war files.")
     String warLocation;
-    @CommandLine.Option(names = {"--war", "--w"},
+    @CommandLine.Option(names = { "--war", "-w" },
         description = "War file or directory of the hawtio web application.")
     String war;
-    @CommandLine.Option(names = {"--context-path", "--c"},
+    @CommandLine.Option(names = { "--context-path", "-c" },
         description = "Context path.",
         defaultValue = "/hawtio")
     String contextPath = "/hawtio";
-    @CommandLine.Option(names = {"--plugins-dir", "--pd"},
+    @CommandLine.Option(names = { "--plugins-dir", "-d" },
         description = "Directory to search for .war files to install as 3rd party plugins.",
         defaultValue = "plugins")
     String plugins = "plugins";
-    @CommandLine.Option(names = {"--host", "--hst"},
+    @CommandLine.Option(names = { "--host", "-H" },
         description = "Hostname to listen to.",
         defaultValue = "0.0.0.0")
     String host = "0.0.0.0";
-    @CommandLine.Option(names = {"--port", "--p"},
+    @CommandLine.Option(names = { "--port", "-p" },
         description = "Port number.",
         defaultValue = "8080")
     Integer port = 8080;
-    @CommandLine.Option(names = {"--extra-class-path", "--ecp"},
+    @CommandLine.Option(names = { "--extra-class-path", "-e" },
         description = "Extra class path.")
     String extraClassPath;
-    @CommandLine.Option(names = {"--join", "--j"},
+    @CommandLine.Option(names = { "--join", "-j" },
         description = "Join server thread.",
         defaultValue = "true")
     boolean jointServerThread;
-    @CommandLine.Option(names = {"--open-url", "--ou"},
+    @CommandLine.Option(names = { "--open-url", "-o" },
         description = "Open the web console automatic in the web browser.",
         defaultValue = "true")
     boolean openUrl;
-    @CommandLine.Option(names = {"--key-store", "--ks"},
+    @CommandLine.Option(names = { "--key-store", "-k" },
         description = "JKS keyStore with the keys for https.")
     String keyStore;
-    @CommandLine.Option(names = {"--key-store-pass", "--kp"},
+    @CommandLine.Option(names = { "--key-store-pass", "-s" },
         description = "Password for the JKS keyStore with the keys for https.")
     String keyStorePass;
-    @CommandLine.Option(names = {"-V", "--version"}, versionHelp = true, description = "Print Hawtio version")
+    @CommandLine.Option(names = { "--version", "-V" }, versionHelp = true, description = "Print Hawtio version")
     boolean versionRequested;
-    @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true,
+    @CommandLine.Option(names = { "--help", "-h" }, usageHelp = true,
         description = "Print usage help and exit.")
     boolean usageHelpRequested;
     private boolean welcome = true;
@@ -245,7 +245,7 @@ public class Main implements Callable<Integer>  {
             }
             try (ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf))) {
                 sslconn.setPort(port);
-                server.setConnectors(new Connector[]{sslconn});
+                server.setConnectors(new Connector[] { sslconn });
 
             }
             scheme = "https";
