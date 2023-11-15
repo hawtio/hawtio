@@ -16,17 +16,14 @@
 package io.hawt.system;
 
 import java.util.Arrays;
-
 import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
 import io.hawt.jmx.JMXSecurity;
 import org.jolokia.config.Configuration;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

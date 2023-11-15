@@ -1,11 +1,11 @@
 package io.hawt.springboot;
 
-import org.junit.jupiter.api.*;
-
-import org.mockito.Mockito;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 
 public class HawtioEndpointTest {

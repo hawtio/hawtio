@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.jolokia.converter.Converters;
