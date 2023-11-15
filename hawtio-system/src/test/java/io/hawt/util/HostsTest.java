@@ -36,7 +36,6 @@ public class HostsTest {
     @Test
     public void getAddresses() {
         assertFalse(Hosts.getAddresses().isEmpty());
-
     }
 
     @Test

@@ -6,12 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-
 
 public class RBACRegistryTest {
 
