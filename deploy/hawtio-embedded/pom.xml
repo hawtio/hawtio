@@ -116,14 +116,7 @@
           <descriptors>
             <descriptor>src/main/assembly/assembly.xml</descriptor>
           </descriptors>
-          <archive>
-            <manifest>
-              <mainClass>io.hawt.embedded.Main</mainClass>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-          </archive>
         </configuration>
-
         <executions>
           <execution>
             <id>make-assembly</id>
