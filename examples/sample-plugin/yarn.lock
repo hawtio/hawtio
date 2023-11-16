@@ -2262,9 +2262,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^0.9.1":
-  version: 0.9.1
-  resolution: "@hawtio/react@npm:0.9.1"
+"@hawtio/react@npm:^0.9.2":
+  version: 0.9.2
+  resolution: "@hawtio/react@npm:0.9.2"
   dependencies:
     "@hawtio/camel-model-v3": "npm:@hawtio/camel-model@^3.21.1"
     "@hawtio/camel-model-v4": "npm:@hawtio/camel-model@^4.0.1"
@@ -2309,7 +2309,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: ce9f24fb72e9127905828027378948428952a1becbf67bf7f2bad2d7806b74727342d60346e4ea81a3447f85f7d46097255f1d218d09deca3a17b09ab4514212
+  checksum: 950cf0c3b520b0568c883a2dddcff17d6898061f4ab0d4a3e41259242e226431d241e630e355d4c4176758deb720b35951e4f0d3c02f74ab092dd82aa41c5d5a
   languageName: node
   linkType: hard
 
@@ -8936,7 +8936,7 @@ __metadata:
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
     "@craco/craco": "npm:^7.1.0"
-    "@hawtio/react": "npm:^0.9.1"
+    "@hawtio/react": "npm:^0.9.2"
     craco-esbuild: "npm:^0.5.2"
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
