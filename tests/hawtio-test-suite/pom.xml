@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>hawtio-tests</artifactId>
     <groupId>io.hawt.tests</groupId>
@@ -18,6 +19,7 @@
     <junit-platform-commons-version>1.10.1</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.10.1</gson-version>
+    <xtf.version>0.31</xtf.version>
   </properties>
 
   <dependencies>
@@ -168,6 +170,26 @@
       <artifactId>gson</artifactId>
       <version>${gson-version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>cz.xtf</groupId>
+      <artifactId>core</artifactId>
+      <version>${xtf.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java</artifactId>
+      <version>3.3.1</version>
+    </dependency>
+
+    <!-- Used by the generated CRD classes -->
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>2.0.1.Final</version>
+    </dependency>
+
   </dependencies>
 
   <profiles>
@@ -178,7 +200,6 @@
         <hawtio.url>/hawtio</hawtio.url>
         <skipTests>false</skipTests>
         <local-app>true</local-app>
-        <test-class>QuarkusAllTest</test-class>
       </properties>
     </profile>
     <profile>
@@ -188,7 +209,6 @@
         <hawtio.url>/actuator/hawtio</hawtio.url>
         <skipTests>false</skipTests>
         <local-app>true</local-app>
-        <test-class>SpringBootAllTest</test-class>
       </properties>
     </profile>
     <profile>
@@ -249,7 +269,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skipTests>${skipTests}</skipTests>
-          <test>${test-class}</test>
           <systemProperties>
             <io.hawt.test.runtime>${test-runtime}</io.hawt.test.runtime>
             <io.hawt.test.url.suffix>${hawtio.url}</io.hawt.test.url.suffix>

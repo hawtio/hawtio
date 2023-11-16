@@ -10,6 +10,7 @@ import static com.codeborne.selenide.Selenide.$;
 import com.codeborne.selenide.SelenideElement;
 
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
+import io.hawt.tests.features.utils.ByUtils;
 
 /**
  * Represents Debug Tab page in Camel.
@@ -67,6 +68,10 @@ public class CamelDebug extends CamelPage {
     public void debuggingIsStarted() {
         $(byTagAndText("button", "Stop Debugging")).shouldBe(visible).shouldBe(enabled);
         $(byTagAndText("p", "Debugging allows you to step through camel routes to diagnose issues.")).shouldNotBe(visible);
+    }
+
+    public boolean isDebuggingOn() {
+        return !$(ByUtils.byDataTestId("no-debugging")).exists();
     }
 
     /**

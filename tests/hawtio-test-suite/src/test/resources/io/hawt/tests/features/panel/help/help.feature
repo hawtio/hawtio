@@ -1,4 +1,3 @@
-@springBootSmokeTest @springBootAllTest @quarkusSmokeTest @quarkusAllTest
 Feature:  Checking the functionality of Help page.
 
   Scenario Outline: Check that the titles are presented
