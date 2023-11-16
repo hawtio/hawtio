@@ -1,5 +1,4 @@
-@springBootSmokeTest @springBootAllTest @notHawtioNext
- @quarkusSmokeTest @quarkusAllTest
+@notHawtioNext @notOnline
 Feature: Checking the functionality of Plugin page.
 
   Scenario: Check that Sample Plugin got installed and accessible

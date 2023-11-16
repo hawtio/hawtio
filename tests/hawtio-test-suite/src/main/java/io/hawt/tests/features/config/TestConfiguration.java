@@ -2,12 +2,15 @@ package io.hawt.tests.features.config;
 
 import org.junit.Assume;
 
+import org.assertj.core.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -15,6 +18,7 @@ import java.util.function.Supplier;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.DockerDeployment;
 import io.hawt.tests.features.setup.deployment.MavenDeployment;
+import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 import io.hawt.tests.features.setup.deployment.URLDeployment;
 
 public class TestConfiguration {
@@ -34,10 +38,25 @@ public class TestConfiguration {
     public static final String CONNECT_URL = "io.hawt.test.app.connect.url";
     public static final String CONNECT_APP_USERNAME = "io.hawt.test.app.connect.username";
     public static final String CONNECT_APP_PASSWORD = "io.hawt.test.app.connect.password";
-    
+
+    public static final String USE_OPENSHIFT = "io.hawt.test.use.openshift";
+    public static final String OPENSHIFT_URL = "io.hawt.test.openshift.url";
+    public static final String OPENSHIFT_USERNAME = "io.hawt.test.openshift.username";
+    public static final String OPENSHIFT_PASSWORD = "io.hawt.test.openshift.password";
+    public static final String OPENSHIFT_NAMESPACE = "io.hawt.test.openshift.namespace";
+    public static final String OPENSHIFT_KUBECONFIG = "io.hawt.test.openshift.kubeconfig";
+    public static final String OPENSHIFT_NAMESPACE_DELETE = "io.hawt.test.openshift.namespace.delete";
+    public static final String OPENSHIFT_INDEX_IMAGE = "io.hawt.test.openshift.index.image";
+    private static final String NAMESPACE_PREFIX = "hawtio-tests-";
+
+    private static AppDeployment deployment;
+
     public static String getUrlSuffix() {
         if (getAppDeploymentMethod() instanceof URLDeployment) {
             return "";
+        }
+        if (getAppDeploymentMethod() instanceof OpenshiftDeployment) {
+            return "/online";
         }
         return getRequiredProperty(APP_URL_SUFFIX);
     }
@@ -47,23 +66,35 @@ public class TestConfiguration {
     }
 
     public static AppDeployment getAppDeploymentMethod() {
+        if (deployment != null) {
+            return deployment;
+        }
         if (hasProperty(APP_URL)) {
-            return new URLDeployment(getRequiredProperty(APP_URL));
+            deployment = new URLDeployment(getRequiredProperty(APP_URL));
+            return deployment;
         }
         if (hasProperty(APP_DOCKER_IMAGE)){
-            return new DockerDeployment(getRequiredProperty(APP_DOCKER_IMAGE));
+            deployment = new DockerDeployment(getRequiredProperty(APP_DOCKER_IMAGE));
+            return deployment;
         }
         if (isRunningInContainer()) {
             throw new RuntimeException("Containerized testsuite can't run maven application from inside the container, specify URL or a Docker image");
         }
 
+        if (getBoolean(USE_OPENSHIFT)) {
+            deployment = new OpenshiftDeployment();
+            return deployment;
+        }
+
         if (hasProperty(APP_PATH)) {
-            return new MavenDeployment(getRequiredProperty(APP_PATH));
+            deployment = new MavenDeployment(getRequiredProperty(APP_PATH));
+            return deployment;
         }
 
         if (hasProperty(RUNTIME) && getRequiredProperty(RUNTIME).toLowerCase().matches("quarkus|springboot")) {
             final String path = Path.of("").toAbsolutePath().getParent().resolve(getRequiredProperty(RUNTIME)).resolve("target").toString();
-            return new MavenDeployment(path);
+            deployment = new MavenDeployment(path);
+            return deployment;
         }
 
         LOG.error("Invalid configuration for tested app deployment");
@@ -95,6 +126,10 @@ public class TestConfiguration {
         return null;
     }
 
+    public static String getHawtioOnlineSHA() {
+        return getProperty("io.hawt.test.online.sha");
+    }
+
     public static String getConnectAppUsername() {
         return getProperty(CONNECT_APP_USERNAME, TestConfiguration::getAppUsername);
     }
@@ -111,6 +146,48 @@ public class TestConfiguration {
         return getProperty(APP_PASSWORD, "hawtio");
     }
 
+    public static boolean useOpenshift() {
+        return getBoolean(USE_OPENSHIFT);
+    }
+
+    public static String getIndexImage() {
+        return getRequiredProperty(OPENSHIFT_INDEX_IMAGE);
+    }
+
+    private static Boolean getBoolean(String name) {
+        return getOptionalProperty(name).map(Boolean::parseBoolean).orElse(false);
+    }
+
+    public static String getOpenshiftUrl() {
+        return getProperty(OPENSHIFT_URL);
+    }
+
+    public static String getOpenshiftUsername() {
+        return getProperty(OPENSHIFT_USERNAME, "admin");
+    }
+
+    public static String getOpenshiftPassword() {
+        return getProperty(OPENSHIFT_PASSWORD, "admin");
+    }
+
+    public static String getOpenshiftNamespace() {
+        if (getOptionalProperty(OPENSHIFT_NAMESPACE).isEmpty()) {
+            System.setProperty(OPENSHIFT_NAMESPACE, NAMESPACE_PREFIX + RandomStringUtils.randomAlphabetic(5).toLowerCase());
+        }
+
+        return getRequiredProperty(OPENSHIFT_NAMESPACE);
+    }
+
+    public static Path openshiftKubeconfig() {
+        String kubeconfig = getProperty(OPENSHIFT_KUBECONFIG, getProperty("kubeconfig"));
+        return kubeconfig == null ? null : Paths.get(kubeconfig);
+    }
+
+    public static boolean openshiftNamespaceDelete() {
+        return getBoolean(OPENSHIFT_NAMESPACE_DELETE);
+    }
+
+
     public static String getRequiredProperty(String name) {
         return Objects.requireNonNull(System.getProperty(name), String.format("Missing required property value '%s'!", name));
     }
@@ -126,7 +203,19 @@ public class TestConfiguration {
         return Optional.ofNullable(System.getProperty(name)).orElseGet(defaultValue);
     }
 
+    public static String getProperty(String name) {
+        return getProperty(name, (String) null);
+    }
+
     public static String getProperty(String name, String defaultValue) {
         return System.getProperty(name, defaultValue);
+    }
+
+    public static String getRuntime() {
+        return getRequiredProperty(RUNTIME);
+    }
+
+    public static String getNeedleForLogs() {
+        return isSpringboot() ? "Started SpringBootService" : "(SampleCamel) started";
     }
 }

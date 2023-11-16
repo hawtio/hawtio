@@ -1,6 +1,5 @@
 Feature: Checking the functionality of a Camel Specific Endpoint page.
 
-  @springBootSmokeTest @springBootAllTest @quarkusSmokeTest @quarkusAllTest
   Scenario Outline: Check that the Attributes table under Attribute tab on Camel Specific Endpoint page is not empty
     Given User is on "Camel" page
     And User is on Camel "mock://result" item of "endpoints" folder of "SampleCamel" context
@@ -13,7 +12,6 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     | Attribute | EndpointUri | mock://result |
     | Value     | CamelId     | SampleCamel   |
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check specific endpoint attribute's detail information
     Given User is on "Camel" page
     And User is on Camel "mock://result" item of "endpoints" folder of "SampleCamel" context
@@ -21,7 +19,6 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     When User opens Attribute detail dialog with the name "CamelId"
     Then Camel Attribute Detail Dialog has "Value" key and "SampleCamel" value
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check to execute operation of Specific Endpoint
     Given User is on "Camel" page
     And User is on Camel "mock://result" item of "endpoints" folder of "SampleCamel" context
@@ -29,7 +26,6 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     When User executes operation with name "getCamelId()"
     Then Result of "getCamelId()" operation is "SampleCamel"
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check sending a message
     Given User is on "Camel" page
     And User is on Camel "mock://bar" item of "endpoints" folder of "SampleCamel" context
@@ -42,7 +38,6 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     Then User clicks on Camel "Browse" tab
     And User can browse the message with "Hello Test" body
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check forwarding the message
     Given User is on "Camel" page
     And User is on Camel "mock://bar" item of "endpoints" folder of "SampleCamel" context
@@ -53,7 +48,6 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     And User clicks on Camel "Browse" tab
     And User can browse the message with "Hello Test" body
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check details of the message
     Given User is on "Camel" page
     And User is on Camel "endpoints" folder of "SampleCamel" context

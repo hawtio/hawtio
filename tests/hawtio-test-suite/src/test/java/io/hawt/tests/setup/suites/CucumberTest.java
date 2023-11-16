@@ -7,6 +7,6 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("io/hawt/tests/features/")
-public class TestParent {
+public class CucumberTest {
 
 }

@@ -1,4 +1,3 @@
-@springBootSmokeTest @springBootAllTest @quarkusSmokeTest @quarkusAllTest
 Feature: Checking the changes of states after performing some operation on Camel Contexts page.
 
   Scenario Outline: Check the operations on Camel Context

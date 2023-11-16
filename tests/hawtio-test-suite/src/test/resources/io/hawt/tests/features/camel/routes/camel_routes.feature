@@ -1,6 +1,5 @@
 Feature: Checking the functionality of Camel Routes page.
 
-  @springBootSmokeTest @springBootAllTest @quarkusSmokeTest @quarkusAllTest
   Scenario Outline: Check that Routes table on Camel Routes page is not empty
     Given User is on "Camel" page
     When User is on Camel "routes" folder of "SampleCamel" context
@@ -12,7 +11,6 @@ Feature: Checking the functionality of Camel Routes page.
       | Name   | cron   | Started |
       | State  | simple | Started |
 
-  @springBootAllTest @quarkusAllTest
   Scenario Outline: Check the operations on Camel Routes page
     Given User is on "Camel" page
     And User is on Camel "routes" folder of "SampleCamel" context
@@ -26,7 +24,6 @@ Feature: Checking the functionality of Camel Routes page.
       | Stop   | Started       | Stopped       |
       | Start  | Stopped       | Started       |
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check the delete operation on Camel route
     Given User is on "Camel" page
     And User is on Camel "routes" folder of "SampleCamel" context
@@ -37,14 +34,12 @@ Feature: Checking the functionality of Camel Routes page.
     And User confirms deletion on Camel Routes page
     Then Camel "cron" item searched by "Name" is not in Camel table
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check that Camel Routes diagram is presented
     Given User is on "Camel" page
     And User is on Camel "routes" folder of "SampleCamel" context
     When User clicks on Camel "Route Diagram" tab
     Then Camel Route diagram is presented
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check that Camel Source is not empty
     Given User is on "Camel" page
     And User is on Camel "routes" folder of "SampleCamel" context

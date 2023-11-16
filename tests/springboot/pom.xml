@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -32,6 +33,13 @@
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-bom</artifactId>
         <version>${camel-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-bom</artifactId>
+        <version>${hawtio.bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -98,7 +106,6 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!--
@@ -108,7 +115,6 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-log-logback</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- Camel -->
@@ -160,6 +166,7 @@
       <artifactId>hawtio-example-sample-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -230,5 +237,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

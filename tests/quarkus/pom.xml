@@ -38,7 +38,7 @@
       <dependency>
         <groupId>io.hawt</groupId>
         <artifactId>hawtio-bom</artifactId>
-        <version>${project.version}</version>
+        <version>${hawtio.bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -136,7 +136,7 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-quarkus-deployment</artifactId>
-      <version>${project.version}</version>
+      <version>${hawtio.bom.version}</version>
       <type>pom</type>
       <scope>test</scope>
       <exclusions>
