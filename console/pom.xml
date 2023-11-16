@@ -13,11 +13,6 @@
   <description>Hawtio :: ${project.artifactId}</description>
   <packaging>pom</packaging>
 
-  <properties>
-    <node-version>v18.18.2</node-version>
-    <yarn-version>v1.22.19</yarn-version>
-  </properties>
-
   <build>
     <plugins>
 
