@@ -17,7 +17,7 @@
 
   <properties>
     <!-- node & yarn versions used for build -->
-    <node-version>v16.15.0</node-version>
+    <node-version>v18.18.2</node-version>
     <yarn-version>v1.22.19</yarn-version>
     <!--
       Path to the Hawtio plugin TS project. You can specify the path if it's placed
@@ -55,6 +55,15 @@
             <configuration>
               <nodeVersion>${node-version}</nodeVersion>
               <yarnVersion>${yarn-version}</yarnVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn npm audit</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <arguments>npm audit --all</arguments>
             </configuration>
           </execution>
           <execution>

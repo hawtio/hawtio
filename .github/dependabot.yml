@@ -1,0 +1,94 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: maven
+    directory: '/'
+    schedule:
+      interval: weekly
+    target-branch: '4.x'
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: npm
+    directory: '/console'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: npm
+    directory: '/console'
+    schedule:
+      interval: weekly
+    target-branch: '4.x'
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: npm
+    directory: '/examples/sample-plugin'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: npm
+    directory: '/examples/sample-plugin'
+    schedule:
+      interval: weekly
+    target-branch: '4.x'
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    target-branch: '4.x'
+    open-pull-requests-limit: 10
+    reviewers:
+      - tadayosi
+      - phantomjinx
+      - mmelko
+      - jsolovjo
+      - mmuzikar

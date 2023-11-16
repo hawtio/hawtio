@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <node-version>v16.15.0</node-version>
+    <node-version>v18.18.2</node-version>
     <yarn-version>v1.22.19</yarn-version>
   </properties>
 
@@ -36,6 +36,15 @@
               <environmentVariables>
                 <PUBLIC_URL>/hawtio</PUBLIC_URL>
               </environmentVariables>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn npm audit</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <arguments>npm audit --all</arguments>
             </configuration>
           </execution>
           <execution>

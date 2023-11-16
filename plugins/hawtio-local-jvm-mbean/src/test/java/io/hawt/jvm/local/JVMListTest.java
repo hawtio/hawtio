@@ -1,17 +1,16 @@
 package io.hawt.jvm.local;
 
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.Ignore;
-import org.junit.runners.MethodSorters;
-
 import java.util.List;
 
-/**
- *
- */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JVMListTest {
 
     public JVMList getJVMList() {
@@ -38,7 +37,7 @@ public class JVMListTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void test02StopAgent() {
         JVMList list = getJVMList();
         List<VMDescriptorDTO> jvms = list.listLocalJVMs();
@@ -50,7 +49,7 @@ public class JVMListTest {
                 me = jvm;
             }
         }
-        Assert.assertNotNull(me);
+        assertNotNull(me);
 
         try {
             list.stopAgent(me.getId());
@@ -64,15 +63,15 @@ public class JVMListTest {
             }
 
             System.out.println("Agent URL: " + me.getAgentUrl());
-            Assert.assertNull(me.getAgentUrl());
+            assertNull(me.getAgentUrl());
         } catch (Exception e) {
             System.out.print("Error stopping agent due " + e.getMessage() + ". This exception is ignored.");
-            // may fail on some servers, so lets ignore for now
+            // may fail on some servers, so let's ignore for now
         }
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void test01StartAgent() {
         JVMList list = getJVMList();
         List<VMDescriptorDTO> jvms = list.listLocalJVMs();
@@ -84,7 +83,7 @@ public class JVMListTest {
                 me = jvm;
             }
         }
-        Assert.assertNotNull(me);
+        assertNotNull(me);
 
         try {
             System.out.println("Starting agent in " + me.getId());
@@ -101,10 +100,10 @@ public class JVMListTest {
             }
 
             System.out.println("Agent URL: " + me.getAgentUrl());
-            Assert.assertNotNull(me.getAgentUrl());
+            assertNotNull(me.getAgentUrl());
         } catch (Exception e) {
             System.out.print("Error starting agent due " + e.getMessage() + ". This exception is ignored.");
-            // may fail on some servers, so lets ignore for now
+            // may fail on some servers, so let's ignore for now
         }
     }
 }

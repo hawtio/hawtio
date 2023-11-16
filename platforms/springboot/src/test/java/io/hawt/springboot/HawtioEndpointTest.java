@@ -1,12 +1,12 @@
 package io.hawt.springboot;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import jakarta.servlet.http.HttpServletRequest;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 
 public class HawtioEndpointTest {
 
@@ -14,7 +14,7 @@ public class HawtioEndpointTest {
     private HawtioEndpoint hawtioEndpoint;
     private HttpServletRequest httpServletRequest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         resolver = Mockito.mock(EndpointPathResolver.class);
         hawtioEndpoint = new HawtioEndpoint(resolver);
@@ -26,7 +26,7 @@ public class HawtioEndpointTest {
         Mockito.when(resolver.resolve("hawtio")).thenReturn("/actuator/hawtio");
         Mockito.when(httpServletRequest.getRequestURI()).thenReturn("/actuator/hawtio/");
         String result = hawtioEndpoint.forwardHawtioRequestToIndexHtml(httpServletRequest);
-        assertEquals("forward:/actuator/hawtio/index.html", result);
+        Assertions.assertEquals("forward:/actuator/hawtio/index.html", result);
     }
 
     @Test
@@ -35,6 +35,6 @@ public class HawtioEndpointTest {
         Mockito.when(httpServletRequest.getRequestURI()).thenReturn("/actuator/hawtio");
 
         String result = hawtioEndpoint.forwardHawtioRequestToIndexHtml(httpServletRequest);
-        assertEquals("redirect:/actuator/hawtio/index.html", result);
+        Assertions.assertEquals("redirect:/actuator/hawtio/index.html", result);
     }
 }

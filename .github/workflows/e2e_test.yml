@@ -3,14 +3,14 @@ name: E2E Test
 on:
   pull_request_target:
     branches:
-      - main
+      - 2.x
       - 3.x
       - 4.x
     paths-ignore:
       - "**.md"
   push:
     branches:
-      - main
+      - 2.x
       - 3.x
       - 4.x
     paths-ignore:
@@ -35,7 +35,7 @@ jobs:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}} 
     steps:
       - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v2.2.0
+        uses: docker/setup-qemu-action@v3.0.0
       - name: Download images
         uses: actions/cache/restore@v3
         with:
@@ -87,12 +87,12 @@ jobs:
         java: ['17', '21']
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'pull_request_target'
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'push'
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -101,7 +101,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v2.2.0
+        uses: docker/setup-qemu-action@v3.0.0
       - name: Build
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -Ddocker.buildArg.JAVA_VERSION=${{ matrix.java }} -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
@@ -127,7 +127,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download Test Results
         uses: actions/download-artifact@v3
         with: 
@@ -149,7 +149,7 @@ jobs:
       - name: Update summary
         run: |
           cat summary.md >> $GITHUB_STEP_SUMMARY
-      - uses: tibdex/github-app-token@v1
+      - uses: tibdex/github-app-token@v2
         if: github.event_name == 'pull_request_target'
         id: generate-token
         with:

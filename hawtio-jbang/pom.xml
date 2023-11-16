@@ -72,11 +72,12 @@
                 <id>update-jbang-version</id>
                 <phase>prepare-package</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <replaceregexp match="hawtio.jbang.version:(.*)}" replace="hawtio.jbang.version:${project.version}}">
                       <fileset dir="${basedir}" includes="**/HawtioJBang.java" />
                     </replaceregexp>
-                  </tasks>
+                    <chmod file="${dist.dir}/*.java" perm="u+x" />
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>

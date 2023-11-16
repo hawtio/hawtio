@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>26</version>
+    <version>41</version>
   </parent>
 
   <groupId>io.hawt</groupId>
@@ -58,11 +58,11 @@
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
 
     <!-- Spring versions -->
-    <spring-version>6.0.10</spring-version>
-    <spring-boot-version>3.1.4</spring-boot-version>
+    <spring-version>6.0.13</spring-version>
+    <spring-boot-version>3.1.5</spring-boot-version>
 
     <!-- Quarkus version -->
-    <quarkus-version>3.4.2</quarkus-version>
+    <quarkus-version>3.5.1</quarkus-version>
 
     <assertj-core-version>3.24.2</assertj-core-version>
     <commons-codec-version>1.15</commons-codec-version>
@@ -71,14 +71,13 @@
     <exec-maven-plugin-version>1.5.0</exec-maven-plugin-version>
     <frontend-maven-plugin-version>1.12.1</frontend-maven-plugin-version>
     <guava-version>32.1.1-jre</guava-version>
-    <hamcrest-version>1.3</hamcrest-version>
-    <httpclient-version>4.5.13</httpclient-version>
-    <jackson-version>2.14.1</jackson-version>
+    <hamcrest-version>2.2</hamcrest-version>
+    <httpclient-version>4.5.14</httpclient-version>
+    <jackson-version>2.15.3</jackson-version>
     <jackson-version-range>[2.8,3)</jackson-version-range>
-    <jetty-version>12.0.1</jetty-version>
+    <jetty-version>12.0.3</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jolokia-version>2.0.0-M4</jolokia-version>
-    <junit-version>4.13.2</junit-version>
     <junit5-version>5.9.3</junit5-version>
     <karaf-version>4.3.3</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
@@ -90,15 +89,16 @@
     <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
     <maven-dependency-plugin-version>3.1.1</maven-dependency-plugin-version>
     <maven-failsafe-plugin-version>3.1.0</maven-failsafe-plugin-version>
+    <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-    <maven-surefire-plugin-version>3.1.0</maven-surefire-plugin-version>
-    <mockito-core-version>4.3.1</mockito-core-version>
+    <maven-surefire-plugin-version>3.2.2</maven-surefire-plugin-version>
+    <mockito-core-version>5.7.0</mockito-core-version>
     <org-json-version>20231013</org-json-version>
     <osgi-version>5.0.0</osgi-version>
     <servlet-api-version>6.0.0</servlet-api-version>
     <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.7.26</slf4j-version>
+    <slf4j-version>2.0.9</slf4j-version>
     <wildfly-version>11.0.0.Final</wildfly-version>
     <wildfly-maven-plugin-version>1.2.1.Final</wildfly-maven-plugin-version>
     <jaxb-version>2.3.2</jaxb-version>
@@ -111,7 +111,6 @@
   <modules>
     <module>bom</module>
     <module>console</module>
-    <module>deploy/hawtio-base</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
     <module>examples/quarkus</module>
@@ -174,9 +173,7 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.4.1</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <!--
@@ -230,8 +227,8 @@
           </excludes>
         </configuration>
       </plugin>
-
     </plugins>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -247,14 +244,16 @@
           <version>${maven-dependency-plugin-version}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${maven-failsafe-plugin-version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven-release-plugin-version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>com.github.eirslett</groupId>
@@ -278,6 +277,7 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
   </build>
 
   <profiles>
