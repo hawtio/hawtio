@@ -39,15 +39,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>yarn npm audit</id>
-            <goals>
-              <goal>yarn</goal>
-            </goals>
-            <configuration>
-              <arguments>npm audit --all</arguments>
-            </configuration>
-          </execution>
-          <execution>
             <id>yarn install</id>
             <goals>
               <goal>yarn</goal>
