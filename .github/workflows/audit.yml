@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * 0'
 
 jobs:
-  test:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
