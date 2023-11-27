@@ -1,13 +1,13 @@
 package io.hawt.quarkus;
 
+import java.util.Map;
+import java.util.Objects;
+
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Vert.x handler to output JSON content for custom Hawtio plugins
@@ -28,7 +28,7 @@ public class HawtioPluginHandler implements Handler<RoutingContext> {
         pluginConfigs.forEach((name, config) -> {
             JsonObject object = new JsonObject();
             // mandatory parameters
-            object.put("url", config.url.orElse("") );
+            object.put("url", config.url.orElse(""));
             object.put("scope", config.scope);
             object.put("module", config.module);
             // optional parameters
