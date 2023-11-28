@@ -48,7 +48,7 @@ public class AuthenticationFilter implements Filter {
 
         LOG.debug("Handling request for path: {}", path);
 
-        if (authConfiguration.getRealm() == null || authConfiguration.getRealm().equals("") || !authConfiguration.isEnabled()) {
+        if (authConfiguration.getRealm() == null || authConfiguration.getRealm().isEmpty() || !authConfiguration.isEnabled()) {
             LOG.debug("No authentication needed for path: {}", path);
             chain.doFilter(request, response);
             return;
