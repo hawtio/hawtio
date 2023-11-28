@@ -22,9 +22,9 @@ package io.hawt.web.plugin;
  * Hawtio v3 plugin system is based on <a href="https://module-federation.github.io/">Webpack Module Federation</a>.
  * <p>
  * This interface is the Java representation of
- * <a href="https://github.com/hawtio/hawtio-next/blob/v0.2.0-dev.5/packages/hawtio/src/core/core.ts#L37-L39">HawtioRemote</a>
- * interface in hawtio-next project, which is compatible with
- * <a href="https://github.com/module-federation/universe/blob/utils-1.4.0/packages/utilities/src/utils/importRemote.ts#L9-L15">ImportRemoteOptions</a>
+ * <a href="https://github.com/hawtio/hawtio-next/blob/v0.9.2/packages/hawtio/src/core/core.ts#L90-L92">HawtioRemote</a>
+ * interface in hawtio-react project, which is compatible with
+ * <a href="https://github.com/module-federation/universe/blob/utils-3.0.0/packages/utilities/src/utils/importRemote.ts#L23-L29">ImportRemoteOptions</a>
  * interface defined in @module-federation/utilities package.
  */
 public interface HawtioRemote {
