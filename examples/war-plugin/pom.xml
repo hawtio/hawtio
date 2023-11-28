@@ -55,10 +55,9 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>war-plugin</finalName>
 
     <plugins>
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -108,7 +107,6 @@
           </systemProperties>
         </configuration>
       </plugin>
-      -->
     </plugins>
   </build>
 </project>
