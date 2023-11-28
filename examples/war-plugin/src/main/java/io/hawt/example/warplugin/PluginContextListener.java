@@ -1,6 +1,5 @@
 package io.hawt.example.warplugin;
 
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
@@ -16,10 +15,9 @@ public class PluginContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        ServletContext context = servletContextEvent.getServletContext();
-
         plugin = new HawtioPlugin()
-            .url("http://localhost:8080/hawtio-example-war-plugin")
+            // url is optional unless it is hosted on a different location
+            //.url("http://localhost:8080")
             .scope("samplePlugin")
             .module("./plugin");
         plugin.init();

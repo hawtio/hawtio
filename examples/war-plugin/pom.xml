@@ -55,10 +55,9 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>war-plugin</finalName>
 
     <plugins>
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -85,8 +84,8 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
+        <groupId>org.eclipse.jetty.ee10</groupId>
+        <artifactId>jetty-ee10-maven-plugin</artifactId>
         <configuration>
           <deployMode>EMBED</deployMode>
           <scan>10</scan>
@@ -94,7 +93,7 @@
             <contextPath>/</contextPath>
           </webApp>
           <contextHandlers>
-            <contextHandler implementation="org.eclipse.jetty.maven.plugin.MavenWebAppContext">
+            <contextHandler implementation="org.eclipse.jetty.ee10.maven.plugin.MavenWebAppContext">
               <war>${project.build.directory}/deploy/hawtio.war</war>
               <contextPath>/hawtio</contextPath>
             </contextHandler>
@@ -107,7 +106,6 @@
           </systemProperties>
         </configuration>
       </plugin>
-      -->
     </plugins>
   </build>
 </project>

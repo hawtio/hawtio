@@ -32,7 +32,11 @@ public class HawtioPlugin implements HawtioPluginMBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioPlugin.class);
 
-    private String url;
+    /**
+     * URL's default value should be "" to show the plugin is hosted on the same
+     * location as Hawtio console.
+     */
+    private String url = "";
     private String scope;
     private String module;
     private String remoteEntryFileName;
