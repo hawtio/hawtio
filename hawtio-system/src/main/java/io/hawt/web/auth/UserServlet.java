@@ -1,6 +1,7 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
+import java.io.Serial;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import io.hawt.web.ServletHelpers;
  */
 public class UserServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID = -1239510748236245667L;
     private static final String DEFAULT_USER = "public";
 
@@ -58,11 +60,15 @@ public class UserServlet extends HttpServlet {
 
     protected String getUsername(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
-
-        if (session != null) {
-            return (String) session.getAttribute("user");
-        } else {
+        if (session == null) {
             return null;
         }
+
+        // For Spring Security
+        if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+            return request.getRemoteUser();
+        }
+
+        return (String) session.getAttribute("user");
     }
 }
