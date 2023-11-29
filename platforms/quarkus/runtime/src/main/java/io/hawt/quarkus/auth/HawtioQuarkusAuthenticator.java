@@ -33,7 +33,7 @@ public class HawtioQuarkusAuthenticator {
 
         try {
             SecurityIdentity identity = identityProviderManager.authenticateBlocking(authRequest);
-            String roleConfig = authConfiguration.getRole();
+            String roleConfig = authConfiguration.getRoles();
             // Verify the allowed roles matches with those specified in Quarkus security config
             if (!verifyRole(identity, roleConfig)) {
                 return AuthenticateResult.NOT_AUTHORIZED;
