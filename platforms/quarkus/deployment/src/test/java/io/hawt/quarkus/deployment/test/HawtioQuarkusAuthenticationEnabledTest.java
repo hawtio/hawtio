@@ -75,7 +75,7 @@ public class HawtioQuarkusAuthenticationEnabledTest {
 
         Properties props = new Properties();
         props.setProperty("quarkus.hawtio.authenticationEnabled", "true");
-        props.setProperty("quarkus.hawtio.role", "admin");
+        props.setProperty("quarkus.hawtio.roles", "admin");
         props.setProperty("quarkus.security.users.embedded.enabled", "true");
         props.setProperty("quarkus.security.users.embedded.plain-text", "true");
         props.setProperty("quarkus.security.users.embedded.users.hawtio", "s3cr3t");
