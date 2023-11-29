@@ -37,7 +37,9 @@ module.exports = {
           },
         }),
         new MonacoWebpackPlugin({
-          languages: ['xml', 'json', 'plaintext'],
+          // 'html' is required as workaround for 'xml'
+          // https://github.com/microsoft/monaco-editor/issues/1509
+          languages: ['xml', 'json', 'html', 'plaintext'],
           globalAPI: true,
         }),
       ],
