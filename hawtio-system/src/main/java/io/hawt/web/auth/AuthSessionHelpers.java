@@ -20,6 +20,14 @@ public final class AuthSessionHelpers {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthSessionHelpers.class);
 
+    /**
+     * The maximum time interval, in seconds, that the servlet container will
+     * keep this session open between client accesses.
+     */
+    public static final String SESSION_TIMEOUT = "sessionTimeout";
+
+    public static final String HAWTIO_SESSION_TIMEOUT = "hawtio." + SESSION_TIMEOUT;
+
     public static final int DEFAULT_SESSION_TIMEOUT = 1800; // 30 mins
 
     private AuthSessionHelpers() {
@@ -32,7 +40,7 @@ public final class AuthSessionHelpers {
         if (configManager == null) {
             return timeout;
         }
-        String timeoutStr = configManager.get("sessionTimeout").orElse(Integer.toString(DEFAULT_SESSION_TIMEOUT));
+        String timeoutStr = configManager.get(SESSION_TIMEOUT).orElse(Integer.toString(DEFAULT_SESSION_TIMEOUT));
         try {
             timeout = Integer.parseInt(timeoutStr);
             // timeout of 0 means default timeout

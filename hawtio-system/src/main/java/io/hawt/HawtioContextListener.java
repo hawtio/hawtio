@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link javax.servlet.ServletContextListener} which initialises key hawtio services in the webapp
+ * A {@link javax.servlet.ServletContextListener} which initialises key Hawtio services in the webapp.
  */
 public class HawtioContextListener implements ServletContextListener {
 
@@ -46,10 +46,9 @@ public class HawtioContextListener implements ServletContextListener {
     }
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        LOGGER.info("Initialising hawtio services");
+        LOGGER.info("Initialising Hawtio services");
         try {
             about.init();
-            configManager.init();
             treeWatcher.init();
             registry.init();
             jmxSecurity.init();
@@ -62,13 +61,12 @@ public class HawtioContextListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        LOGGER.info("Destroying hawtio services");
+        LOGGER.info("Destroying Hawtio services");
         try {
             rbacRegistry.destroy();
             about.destroy();
             treeWatcher.destroy();
             registry.destroy();
-            configManager.destroy();
             jmxSecurity.destroy();
             quartzFacade.destroy();
         } catch (Exception e) {

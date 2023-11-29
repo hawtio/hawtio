@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 import io.hawt.system.ConfigManager;
 import io.hawt.web.ServletHelpers;
 
+import static io.hawt.web.auth.AuthenticationConfiguration.AUTHENTICATION_ENABLED;
+
 /**
  * Returns the username associated with the current session, if any
  */
@@ -25,20 +27,14 @@ public class UserServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         config = (ConfigManager) getServletConfig().getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
-        if (config != null) {
-            this.authenticationEnabled = config.getBoolean(AuthenticationConfiguration.AUTHENTICATION_ENABLED, true);
+        if (config == null) {
+            throw new ServletException("Hawtio config manager not found, cannot initialise servlet");
         }
-
-        // JVM system properties can override always
-        if (System.getProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED) != null) {
-            this.authenticationEnabled = Boolean.getBoolean(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED);
-        }
+        authenticationEnabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!authenticationEnabled) {
             ServletHelpers.sendJSONResponse(response, wrapQuote(DEFAULT_USER));
             return;

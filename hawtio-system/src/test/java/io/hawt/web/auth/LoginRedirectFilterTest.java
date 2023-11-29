@@ -1,14 +1,17 @@
 package io.hawt.web.auth;
 
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import io.hawt.system.ConfigManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class LoginRedirectFilterTest {
 
@@ -26,6 +29,7 @@ public class LoginRedirectFilterTest {
     public void shouldTestSecuredPaths() throws Exception {
         loginRedirectFilter = new LoginRedirectFilter();
         when(filterConfig.getServletContext()).thenReturn(servletContext);
+        when(servletContext.getAttribute(ConfigManager.CONFIG_MANAGER)).thenReturn(new ConfigManager());
         loginRedirectFilter.init(filterConfig);
         assertTrue(loginRedirectFilter.isSecuredPath("/d"));
         assertTrue(loginRedirectFilter.isSecuredPath("/e/f"));
@@ -36,10 +40,10 @@ public class LoginRedirectFilterTest {
 
     @Test
     public void customizedUnsecuredPaths() throws Exception {
-        String[] unsecuredPaths = {"/hawtio/auth", "/hawtio/secret/content"};
+        String[] unsecuredPaths = { "/hawtio/auth", "/hawtio/secret/content" };
         loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
-
         when(filterConfig.getServletContext()).thenReturn(servletContext);
+        when(servletContext.getAttribute(ConfigManager.CONFIG_MANAGER)).thenReturn(new ConfigManager());
         loginRedirectFilter.init(filterConfig);
         assertTrue(loginRedirectFilter.isSecuredPath("/d"));
         assertTrue(loginRedirectFilter.isSecuredPath("/e/f"));
