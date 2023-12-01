@@ -5,11 +5,11 @@
 
 ## Introduction
 
-[Hawtio](http://hawt.io) is a lightweight and modular Web console for managing Java applications.
+[Hawtio](https://hawt.io) is a lightweight and modular Web console for managing Java applications.
 
 ![Hawtio screenshot](./docs/hawtio-console.png)
 
-Hawtio has [plugins](http://hawt.io/docs/plugins/) such as: Apache Camel and JMX (Logs, Spring Boot, Quartz, and more will be provided soon).
+Hawtio has [plugins](https://hawt.io/docs/plugins/) such as: Apache Camel and JMX (Logs, Spring Boot, Quartz, and more will be provided soon).
 You can dynamically extend Hawtio with [your own plugins](https://github.com/hawtio/hawtio-sample-plugin-ts) or automatically discover plugins inside the JVM.
 
 The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent [Jolokia library](http://jolokia.org) which has small footprint (around 300KB) and is available as a [JVM agent](http://jolokia.org/agent/jvm.html), or comes embedded as a servlet inside the `hawtio-default.war`.
@@ -21,7 +21,7 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 - [Running a Quarkus app](#running-a-quarkus-app)
 - [Deploying on OpenShift](https://github.com/hawtio/hawtio-online)
 
-For more details and other containers, see [Get Started Guide](http://hawt.io/docs/get-started/).
+For more details and other containers, see [Get Started Guide](https://hawt.io/docs/get-started/).
 
 ### Running from CLI (JBang)
 
@@ -93,12 +93,12 @@ See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-M4/exampl
 
 ## Contributing
 
-We love [contributions](http://hawt.io/docs/contributing/)!  Here are the resources on how to get you involved in Hawtio development.
+We love [contributions](https://hawt.io/docs/contributing/)!  Here are the resources on how to get you involved in Hawtio development.
 
-- [FAQ](http://hawt.io/docs/faq/)
+- [FAQ](https://hawt.io/docs/faq/)
 - [Change Log](CHANGES.md)
-- [How to contribute](http://hawt.io/docs/contributing/)
-- [Community](http://hawt.io/community/)
+- [How to contribute](https://hawt.io/docs/contributing/)
+- [Community](https://hawt.io/community/)
 
 Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for finding issues to work on.
 
@@ -106,4 +106,4 @@ Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for findi
 
 Hawtio is licensed under [Apache License, Version 2.0](LICENSE.txt).
 
-[logo]: http://hawt.io/images/hawtio_logo.svg "hawtio"
+[logo]: https://hawt.io/images/hawtio_logo.svg "hawtio"
