@@ -93,7 +93,7 @@
     <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>3.2.2</maven-surefire-plugin-version>
-    <mockito-core-version>4.3.1</mockito-core-version>
+    <mockito-core-version>5.8.0</mockito-core-version>
     <org-json-version>20231013</org-json-version>
     <osgi-version>5.0.0</osgi-version>
     <servlet-api-version>4.0.1</servlet-api-version>
