@@ -64,7 +64,7 @@
     <!-- Quarkus version -->
     <quarkus-version>2.16.12.Final</quarkus-version>
 
-    <assertj-core-version>3.22.0</assertj-core-version>
+    <assertj-core-version>3.24.2</assertj-core-version>
     <commons-codec-version>1.16.0</commons-codec-version>
     <commons-io-version>2.15.0</commons-io-version>
     <commons-logging-version>1.2</commons-logging-version>
