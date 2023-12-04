@@ -2,6 +2,8 @@ package io.hawt.tests.features.pageobjects.fragments.camel.tabs.endpoints;
 
 import static com.codeborne.selenide.Condition.editable;
 import static com.codeborne.selenide.Condition.enabled;
+import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
 
@@ -30,7 +32,7 @@ public class CamelEndpointsAdd extends CamelPage {
     public void fromData(String endpoint, String component) {
         clickButton("From Data");
         $("#pf-select-toggle-id-0").shouldBe(enabled).click();
-        clickButton(component);
+        $(byXpath("//li/button[text()='" + component + "']")).shouldBe(interactable).click();
         $("#endpoint-path-input").shouldBe(editable).sendKeys(endpoint);
         clickButton("Submit");
     }
