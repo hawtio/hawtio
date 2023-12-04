@@ -62,7 +62,7 @@
     <spring-boot-version>3.1.5</spring-boot-version>
 
     <!-- Quarkus version -->
-    <quarkus-version>3.5.3</quarkus-version>
+    <quarkus-version>3.6.0</quarkus-version>
 
     <assertj-core-version>3.24.2</assertj-core-version>
     <commons-codec-version>1.16.0</commons-codec-version>
