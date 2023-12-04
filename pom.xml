@@ -80,7 +80,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jolokia-version>1.7.2</jolokia-version>
     <junit5-version>5.9.3</junit5-version>
-    <karaf-version>4.3.3</karaf-version>
+    <karaf-version>4.4.4</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
     <keycloak-version>23.0.0</keycloak-version>
     <log4j-version>1.2.17</log4j-version>
