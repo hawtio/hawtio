@@ -139,7 +139,7 @@
     -->
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
-      <artifactId>camel-spring-boot-xml</artifactId>
+      <artifactId>camel-spring-boot-xml-starter</artifactId>
     </dependency>
 
     <!--
