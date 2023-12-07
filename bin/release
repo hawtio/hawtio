@@ -51,6 +51,9 @@ mvn -s $M2_SETTINGS \
   -Ddescription="$RELEASE_VERSION is ready" \
   -DstagingProgressTimeoutMinutes=60
 
+# Workaround: https://issues.sonatype.org/browse/OSSRH-66257
+export MAVEN_OPTS="--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
+
 mvn -s $M2_SETTINGS \
   org.sonatype.plugins:nexus-staging-maven-plugin:$NEXUS_STAGING_PLUGIN_VERSION:rc-release \
   -DserverId=oss-sonatype-staging \

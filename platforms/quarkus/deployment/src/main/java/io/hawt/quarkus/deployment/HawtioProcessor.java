@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
@@ -49,9 +48,9 @@ import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 
 import static io.hawt.quarkus.HawtioConfig.DEFAULT_CONTEXT_PATH;
+import static io.hawt.web.auth.AuthSessionHelpers.HAWTIO_SESSION_TIMEOUT;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_KEYCLOAK_ENABLED;
-import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLE;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
 import static io.hawt.web.auth.keycloak.KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
@@ -211,10 +210,6 @@ public class HawtioProcessor {
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing.toString()));
 
-        config.role
-            .map(role -> new SystemPropertyBuildItem(HAWTIO_ROLE, role))
-            .ifPresent(systemProperties::produce);
-
         config.roles
             .map(roles -> new SystemPropertyBuildItem(HAWTIO_ROLES, String.join(",", roles)))
             .ifPresent(systemProperties::produce);
@@ -228,7 +223,7 @@ public class HawtioProcessor {
             .ifPresent(systemProperties::produce);
 
         config.sessionTimeout
-            .map(sessionTimeout -> new SystemPropertyBuildItem("hawtio.sessionTimeout", sessionTimeout.toString()))
+            .map(sessionTimeout -> new SystemPropertyBuildItem(HAWTIO_SESSION_TIMEOUT, sessionTimeout.toString()))
             .ifPresent(systemProperties::produce);
     }
 

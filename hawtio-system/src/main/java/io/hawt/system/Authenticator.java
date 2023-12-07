@@ -164,7 +164,7 @@ public class Authenticator {
 
     protected Subject doAuthenticate() {
         String realm = authConfiguration.getRealm();
-        String role = authConfiguration.getRole();
+        String role = authConfiguration.getRoles();
         String rolePrincipalClasses = authConfiguration.getRolePrincipalClasses();
         Configuration configuration = authConfiguration.getConfiguration();
 

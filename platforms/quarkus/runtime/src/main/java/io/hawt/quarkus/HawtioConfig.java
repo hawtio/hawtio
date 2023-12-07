@@ -22,12 +22,6 @@ public class HawtioConfig {
     public Boolean authenticationEnabled;
 
     /**
-     * The user role required to log in to the console
-     */
-    @ConfigItem
-    public Optional<String> role;
-
-    /**
      * Comma separated list of user roles required to log in to the console
      */
     @ConfigItem

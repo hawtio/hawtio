@@ -45,7 +45,7 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
 
             if (isTomcat) {
                 configuration.setConfiguration(new TomcatLoginContextConfiguration(System.getProperty(AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM, "NONE").toUpperCase(),
-                    System.getProperty(AUTHENTICATION_TOMCAT_USER_LOCATION,null)));
+                    System.getProperty(AUTHENTICATION_TOMCAT_USER_LOCATION, null)));
                 configuration.setRolePrincipalClasses(TomcatPrincipal.class.getName());
             }
             return isTomcat;
