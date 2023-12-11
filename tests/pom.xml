@@ -20,7 +20,7 @@
     <guava-version>32.1.3-jre</guava-version>
     <slf4j-version>2.0.9</slf4j-version>
     <selenium-version>4.12.1</selenium-version>
-    <selenide-version>7.0.2</selenide-version>
+    <selenide-version>7.0.4</selenide-version>
     <cucumber-version>7.14.0</cucumber-version>
     <testcontainers-version>1.18.3</testcontainers-version>
     <awaitility-version>4.2.0</awaitility-version>
