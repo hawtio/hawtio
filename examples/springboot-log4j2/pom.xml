@@ -16,7 +16,7 @@
   <description>Hawtio :: Sample Spring Boot 2.x process with Log4J2</description>
 
   <properties>
-    <camel-version>3.21.0</camel-version>
+    <camel-version>3.21.2</camel-version>
   </properties>
 
   <dependencyManagement>
