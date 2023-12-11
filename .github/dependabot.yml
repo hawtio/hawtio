@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: maven
     directory: '/'
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -14,7 +14,7 @@ updates:
   - package-ecosystem: maven
     directory: '/'
     schedule:
-      interval: weekly
+      interval: monthly
     target-branch: '4.x'
     open-pull-requests-limit: 10
     reviewers:
@@ -26,7 +26,7 @@ updates:
   - package-ecosystem: npm
     directory: '/console'
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -37,7 +37,7 @@ updates:
   - package-ecosystem: npm
     directory: '/console'
     schedule:
-      interval: weekly
+      interval: monthly
     target-branch: '4.x'
     open-pull-requests-limit: 10
     reviewers:
@@ -49,7 +49,7 @@ updates:
   - package-ecosystem: npm
     directory: '/examples/sample-plugin'
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -60,7 +60,7 @@ updates:
   - package-ecosystem: npm
     directory: '/examples/sample-plugin'
     schedule:
-      interval: weekly
+      interval: monthly
     target-branch: '4.x'
     open-pull-requests-limit: 10
     reviewers:
@@ -72,7 +72,7 @@ updates:
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -83,7 +83,7 @@ updates:
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: weekly
+      interval: monthly
     target-branch: '4.x'
     open-pull-requests-limit: 10
     reviewers:
