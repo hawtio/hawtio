@@ -37,7 +37,7 @@ public class HawtioEndpoint implements WebMvcConfigurer {
      * @return The Spring Web forward directive for the Hawtio index.html resource.
      */
     @RequestMapping(
-        value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|static|\\.).)*$}/**"},
+        value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|static|\\.).)*$}/**"},
         produces = MediaType.TEXT_HTML_VALUE)
     public String forwardHawtioRequestToIndexHtml(HttpServletRequest request) {
         final String path = endpointPath.resolve("hawtio");

@@ -29,7 +29,7 @@ public class HawtioQuarkusPathFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusPathFilter.class);
 
-    private static final String FILTERED_PATH_PATTERN = "^/(?:(?!\\bjolokia\\b|auth|proxy|keycloak|css|fonts|img|js|user|oauth|static|\\.).)*";
+    private static final String FILTERED_PATH_PATTERN = "^/(?:(?!\\bjolokia\\b|auth|proxy|keycloak|css|fonts|img|js|user|static|\\.).)*";
 
     private static final String FILTERED_PATH_HAWTCONFIG = "/hawtconfig.json";
 
