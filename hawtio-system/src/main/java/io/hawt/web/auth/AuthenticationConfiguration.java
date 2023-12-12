@@ -14,7 +14,7 @@ public class AuthenticationConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
 
-    public static final String LOGIN_URL = "/auth/login";
+    public static final String LOGIN_URL = "/login";
     public static final String[] UNSECURED_PATHS = {
         "/login", "/auth/login", "/auth/logout",
         "/css", "/fonts", "/img", "/js", "/static", "/hawtconfig.json",

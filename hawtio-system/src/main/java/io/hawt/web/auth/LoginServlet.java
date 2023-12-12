@@ -32,8 +32,6 @@ public class LoginServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
 
-    private static final String LOGIN_PAGE_PATH = "/login";
-
     protected int timeout;
     protected AuthenticationConfiguration authConfiguration;
 
@@ -54,7 +52,7 @@ public class LoginServlet extends HttpServlet {
         if (authConfiguration.isKeycloakEnabled()) {
             redirector.doRedirect(request, response, "/");
         } else {
-            redirector.doRedirect(request, response, LOGIN_PAGE_PATH);
+            redirector.doRedirect(request, response, AuthenticationConfiguration.LOGIN_URL);
         }
     }
 
