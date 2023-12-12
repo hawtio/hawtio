@@ -56,7 +56,7 @@ public class HawtioSpringBootEndpointIT extends HawtioSpringBootTestCommon {
             .build();
 
         getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            String loginRedirectUrlRegex = "http://localhost:[0-9]+/context/actuator/hawtio/auth/login";
+            String loginRedirectUrlRegex = "http://localhost:[0-9]+/context/actuator/hawtio/login";
             WebTestClient client = getTestClient(context);
 
             client.get().uri(properties.getJolokiaPath(false)).exchange()
