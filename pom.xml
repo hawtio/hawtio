@@ -81,8 +81,7 @@
     <junit5-version>5.9.3</junit5-version>
     <karaf-version>4.3.3</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
-    <keycloak-version>22.0.4</keycloak-version>
-    <log4j-version>1.2.17</log4j-version>
+    <keycloak-version>23.0.1</keycloak-version>
     <log4j2-version>2.22.0</log4j2-version>
     <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
     <maven-clean-plugin-version>3.3.2</maven-clean-plugin-version>
@@ -94,10 +93,8 @@
     <maven-surefire-plugin-version>3.2.2</maven-surefire-plugin-version>
     <mockito-core-version>5.8.0</mockito-core-version>
     <org-json-version>20231013</org-json-version>
-    <osgi-version>5.0.0</osgi-version>
+    <osgi-version>6.0.0</osgi-version>
     <servlet-api-version>6.0.0</servlet-api-version>
-    <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
-    <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>2.0.9</slf4j-version>
     <wildfly-version>11.0.0.Final</wildfly-version>
     <wildfly-maven-plugin-version>1.2.1.Final</wildfly-maven-plugin-version>
