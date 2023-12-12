@@ -72,6 +72,7 @@ public class LoginRedirectFilter implements Filter {
     }
 
     private boolean isRedirectRequired(HttpSession session, String path, HttpServletRequest request) {
+        LOG.debug("Check if path [{}] requires redirect", path);
         return authConfiguration.isEnabled()
             && !authConfiguration.isKeycloakEnabled()
             && !AuthSessionHelpers.isSpringSecurityEnabled()
