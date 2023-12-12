@@ -230,7 +230,6 @@ public class HawtioManagementConfiguration {
         filter.setFilter(baseTagHrefFilter);
         filter.addUrlPatterns(hawtioPath + "/");
         filter.addUrlPatterns(hawtioPath + "/index.html");
-        filter.addUrlPatterns(hawtioPath + "/login.html");
         filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
         filter.addInitParameter(PARAM_APPLICATION_CONTEXT_PATH, pathResolver.resolve("hawtio"));
         return filter;
