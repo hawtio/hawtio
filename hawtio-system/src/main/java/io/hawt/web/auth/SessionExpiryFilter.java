@@ -3,11 +3,9 @@ package io.hawt.web.auth;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -19,8 +17,6 @@ import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static io.hawt.web.auth.AuthenticationConfiguration.AUTHENTICATION_ENABLED;
 
 /**
  * If the user has a session, this will ensure it will expire if the user hasn't clicked on any links
@@ -45,12 +41,12 @@ public class SessionExpiryFilter implements Filter {
 
     private static final List<String> IGNORED_PATHS = List.of("jolokia", "proxy");
 
-    private ServletContext context;
+    private AuthenticationConfiguration authConfiguration;
     private int pathIndex;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        context = filterConfig.getServletContext();
+        authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
 
         String servletPath = (String) filterConfig.getServletContext().getAttribute(SERVLET_PATH);
         if (servletPath == null) {
@@ -86,14 +82,7 @@ public class SessionExpiryFilter implements Filter {
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (context.getAttribute(AUTHENTICATION_ENABLED) == null) {
-            // most likely the authentication filter hasn't been started up yet, let this request through, and it can be dealt with by the authentication filter
-            chain.doFilter(request, response);
-            return;
-        }
-
         HttpSession session = request.getSession(false);
-        boolean enabled = (boolean) context.getAttribute(AUTHENTICATION_ENABLED);
         final RelativeRequestUri uri = new RelativeRequestUri(request, pathIndex);
         LOG.debug("Accessing [{}], hawtio path is [{}]", request.getRequestURI(), uri.getUri());
 
@@ -109,7 +98,7 @@ public class SessionExpiryFilter implements Filter {
 
         String subContext = uri.getComponents()[0];
         if (session == null || session.getMaxInactiveInterval() < 0) {
-            if (subContext.equals("refresh") && !enabled) {
+            if (subContext.equals("refresh") && !authConfiguration.isEnabled()) {
                 LOG.debug("Authentication disabled, received refresh response, responding with ok");
                 writeOk(response);
             } else {
