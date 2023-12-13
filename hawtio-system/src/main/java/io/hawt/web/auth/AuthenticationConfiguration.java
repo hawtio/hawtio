@@ -31,6 +31,11 @@ public class AuthenticationConfiguration {
     public static final String AUTHENTICATION_ENABLED = "authenticationEnabled";
 
     /**
+     * Shorthand for {@link AuthenticationConfiguration#AUTHENTICATION_ENABLED}.
+     */
+    public static final String AE = "ae";
+
+    /**
      * JAAS realm used to authenticate users.
      */
     public static final String REALM = "realm";
@@ -67,6 +72,7 @@ public class AuthenticationConfiguration {
 
     // JVM system properties
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio." + AUTHENTICATION_ENABLED;
+    public static final String HAWTIO_AE = "hawtio." + AE;
     public static final String HAWTIO_REALM = "hawtio." + REALM;
     public static final String HAWTIO_ROLES = "hawtio." + ROLES;
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio." + ROLE_PRINCIPAL_CLASSES;
@@ -95,10 +101,17 @@ public class AuthenticationConfiguration {
     private final boolean keycloakEnabled;
     private Configuration configuration;
 
-    public AuthenticationConfiguration(ServletContext servletContext) {
+    private AuthenticationConfiguration(ServletContext servletContext) {
         ConfigManager config = (ConfigManager) servletContext.getAttribute(ConfigManager.CONFIG_MANAGER);
         if (config == null) {
             throw new RuntimeException("Hawtio config manager not found, cannot proceed Hawtio configuration");
+        }
+
+        // AE takes precedence over AUTHENTICATION_ENABLED because AE is mostly set manually by the user
+        // whereas AUTHENTICATION_ENABLED may be predefined in a distribution.
+        String ae = System.getProperty(HAWTIO_AE);
+        if (ae != null) {
+            System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, ae);
         }
 
         this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
@@ -136,8 +149,6 @@ public class AuthenticationConfiguration {
         if (authConfig == null) {
             authConfig = new AuthenticationConfiguration(servletContext);
             servletContext.setAttribute(AUTHENTICATION_CONFIGURATION, authConfig);
-            // TODO: Used only from SessionExpiryFilter
-            servletContext.setAttribute(AUTHENTICATION_ENABLED, authConfig.isEnabled());
         }
         return authConfig;
     }
