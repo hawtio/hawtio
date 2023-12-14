@@ -32,7 +32,7 @@ public class AuthenticationConfiguration {
     /**
      * Shorthand for {@link AuthenticationConfiguration#AUTHENTICATION_ENABLED}.
      */
-    public static final String AE = "ae";
+    public static final String AUTH = "auth";
 
     /**
      * JAAS realm used to authenticate users.
@@ -71,7 +71,7 @@ public class AuthenticationConfiguration {
 
     // JVM system properties
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio." + AUTHENTICATION_ENABLED;
-    public static final String HAWTIO_AE = "hawtio." + AE;
+    public static final String HAWTIO_AUTH = "hawtio." + AUTH;
     public static final String HAWTIO_REALM = "hawtio." + REALM;
     public static final String HAWTIO_ROLES = "hawtio." + ROLES;
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio." + ROLE_PRINCIPAL_CLASSES;
@@ -106,11 +106,11 @@ public class AuthenticationConfiguration {
             throw new RuntimeException("Hawtio config manager not found, cannot proceed Hawtio configuration");
         }
 
-        // AE takes precedence over AUTHENTICATION_ENABLED because AE is mostly set manually by the user
+        // AUTH takes precedence over AUTHENTICATION_ENABLED because AUTH is mostly set manually by the user
         // whereas AUTHENTICATION_ENABLED may be predefined in a distribution.
-        String ae = System.getProperty(HAWTIO_AE);
-        if (ae != null) {
-            System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, ae);
+        String auth = System.getProperty(HAWTIO_AUTH);
+        if (auth != null) {
+            System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, auth);
         }
 
         this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
