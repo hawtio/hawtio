@@ -93,11 +93,11 @@ See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-3.0.0/example
 
 ## Contributing
 
-We love [contributions](https://hawt.io/docs/contributing/)!  Here are the resources on how to get you involved in Hawtio development.
+We love [contributions](https://hawt.io/docs/contributing)!  Here are the resources on how to get you involved in Hawtio development.
 
-- [FAQ](https://hawt.io/docs/faq/)
+- [FAQ](https://hawt.io/docs/faq)
 - [Change Log](CHANGES.md)
-- [How to contribute](https://hawt.io/docs/contributing/)
+- [How to contribute](https://hawt.io/docs/contributing)
 - [Community](https://hawt.io/community/)
 
 Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for finding issues to work on.
