@@ -106,4 +106,4 @@ Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for findi
 
 Hawtio is licensed under [Apache License, Version 2.0](LICENSE.txt).
 
-[logo]: https://hawt.io/images/hawtio_logo.svg "hawtio"
+[logo]: https://hawt.io/_/img/hawtio_logo.svg "hawtio"
