@@ -46,6 +46,15 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- hawtio-war is needed to ensure build order -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-war</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <type>war</type>
+    </dependency>
+
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
