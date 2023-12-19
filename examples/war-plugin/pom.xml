@@ -38,21 +38,21 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Servlet API is provided by the container -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet-api-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- hawtio-war is needed to ensure build order -->
+    <!-- hawtio-war is needed to ensure build order for the example -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-war</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
       <type>war</type>
+    </dependency>
+
+    <!-- Servlet API is provided by the container -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Logging -->
