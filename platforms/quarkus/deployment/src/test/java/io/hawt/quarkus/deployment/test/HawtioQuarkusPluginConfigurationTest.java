@@ -23,7 +23,7 @@ public class HawtioQuarkusPluginConfigurationTest {
 
     @RegisterExtension
     static final QuarkusUnitTest CONFIG = new QuarkusUnitTest()
-        .setForcedDependencies(List.of(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "3.0-SNAPSHOT")))
+        .setForcedDependencies(List.of(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "3.1-SNAPSHOT")))
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(applicationProperties(), "application.properties"));
