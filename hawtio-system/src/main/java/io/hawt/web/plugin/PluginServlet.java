@@ -3,7 +3,6 @@ package io.hawt.web.plugin;
 import java.beans.Introspector;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serial;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PluginServlet extends HttpServlet {
 
-    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(PluginServlet.class);
 
