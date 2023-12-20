@@ -13,7 +13,8 @@
   <description>Hawtio :: hawtio-embedded</description>
 
   <properties>
-    <picocli-version>4.7.5</picocli-version>
+    <jettyPort>8282</jettyPort>
+    <context>/hawtio</context>
   </properties>
 
   <dependencies>
