@@ -1,7 +1,6 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
-import java.io.Serial;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +15,6 @@ import io.hawt.web.ServletHelpers;
  */
 public class UserServlet extends HttpServlet {
 
-    @Serial
     private static final long serialVersionUID = -1239510748236245667L;
     private static final String DEFAULT_USER = "public";
 

@@ -2,7 +2,6 @@ package io.hawt.web.proxy;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serial;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -74,7 +73,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ProxyServlet extends HttpServlet {
 
-    @Serial
     private static final long serialVersionUID = 7792226114533360114L;
 
     private static final Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);

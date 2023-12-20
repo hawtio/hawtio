@@ -1,10 +1,8 @@
 package io.hawt.jmx;
 
-import java.io.Serial;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
@@ -102,7 +100,6 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
 
     protected NotificationFilter getNotificationFilter() {
         return new NotificationFilter() {
-            @Serial
             private static final long serialVersionUID = 1L;
 
             @Override
