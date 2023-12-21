@@ -1972,7 +1972,7 @@ __metadata:
   dependencies:
     "@craco/craco": "npm:^7.1.0"
     "@hawtio/backend-middleware": "npm:^1.0.4"
-    "@hawtio/react": "npm:^1.0.2"
+    "@hawtio/react": "npm:^1.0.3"
     craco-esbuild: "npm:^0.5.2"
     monaco-editor-webpack-plugin: "npm:^7.1.0"
     os-browserify: "npm:^0.3.0"
@@ -1985,9 +1985,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@hawtio/react@npm:1.0.2"
+"@hawtio/react@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@hawtio/react@npm:1.0.3"
   dependencies:
     "@hawtio/camel-model-v3": "npm:@hawtio/camel-model@^3.21.2"
     "@hawtio/camel-model-v4": "npm:@hawtio/camel-model@~4.0.3"
@@ -2032,7 +2032,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 5f3a330f102fb9c2dba2cef13359225e02575f40ab452d5e4e7983c8c9a60bdb06e78d579ea41be8e42efeb1dea20925f8b2a9a6eb58b229a1a9be4550c0ae7f
+  checksum: 611bd405df078331094bae4a9ef55a032f2a49f491159eee21f0590172cf8caea75eae7566919f61fa46b7b20ce5e38d404e7c54ad88c14f84197c12093fa21c
   languageName: node
   linkType: hard
 
