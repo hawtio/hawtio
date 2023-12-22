@@ -38,6 +38,15 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- hawtio-war is needed to ensure build order for the example -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-war</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <type>war</type>
+    </dependency>
+
     <!-- Servlet API is provided by the container -->
     <dependency>
       <groupId>jakarta.servlet</groupId>

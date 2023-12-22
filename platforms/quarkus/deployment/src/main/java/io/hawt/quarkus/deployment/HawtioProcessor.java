@@ -25,6 +25,7 @@ import io.hawt.web.filters.BaseTagHrefFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.Capabilities;
 import io.quarkus.deployment.Capability;
+import io.quarkus.deployment.IsDevelopment;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -32,9 +33,12 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeBuild;
+import io.quarkus.devui.spi.page.CardPageBuildItem;
+import io.quarkus.devui.spi.page.Page;
 import io.quarkus.undertow.deployment.FilterBuildItem;
 import io.quarkus.undertow.deployment.ListenerBuildItem;
 import io.quarkus.undertow.deployment.ServletBuildItem;
+import io.quarkus.vertx.http.deployment.NonApplicationRootPathBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import org.jboss.metadata.parser.servlet.WebMetaDataParser;
 import org.jboss.metadata.parser.util.MetaDataElementParser;
@@ -268,5 +272,18 @@ public class HawtioProcessor {
             .stream()
             .filter(filterMappingMetaData -> filterMappingMetaData.getFilterName().equals(filterName))
             .findFirst();
+    }
+
+    @BuildStep(onlyIf = IsDevelopment.class)
+    public CardPageBuildItem pages(NonApplicationRootPathBuildItem nonApplicationRootPathBuildItem) {
+
+        CardPageBuildItem cardPageBuildItem = new CardPageBuildItem();
+
+        cardPageBuildItem.addPage(Page.externalPageBuilder("Hawtio Console")
+            .url(nonApplicationRootPathBuildItem.resolvePath("/hawtio"))
+            .doNotEmbed()
+            .icon("font-awesome-solid:server"));
+
+        return cardPageBuildItem;
     }
 }

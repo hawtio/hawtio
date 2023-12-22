@@ -36,7 +36,8 @@ hawtio4 --help
 
 ### Running a Spring Boot app
 
-**Hawtio v4 supports Spring Boot 3.x.**
+> [!NOTE]
+> Hawtio v4 supports Spring Boot 3.x.
 
 You can attach the Hawtio console to your Spring Boot app with the following steps.
 
@@ -46,7 +47,7 @@ You can attach the Hawtio console to your Spring Boot app with the following ste
    <dependency>
      <groupId>io.hawt</groupId>
      <artifactId>hawtio-springboot</artifactId>
-     <version>4.0-M4</version>
+     <version>4.0-beta-1</version>
    </dependency>
    ```
 
@@ -65,11 +66,12 @@ mvn spring-boot:run
 
 Opening <http://localhost:8080/actuator/hawtio> should show the Hawtio console.
 
-See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-M4/examples/springboot) for a working example app.
+See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-beta-1/examples/springboot) for a working example app.
 
 ### Running a Quarkus app
 
-**Hawtio v4 supports Quarkus 3.x.**
+> [!NOTE]
+> Hawtio v4 supports Quarkus 3.x.
 
 You can attach the Hawtio console to your Quarkus app by adding `io.hawt:hawtio-quarkus` to the dependencies in `pom.xml`:
 
@@ -77,7 +79,7 @@ You can attach the Hawtio console to your Quarkus app by adding `io.hawt:hawtio-
 <dependency>
   <groupId>io.hawt</groupId>
   <artifactId>hawtio-quarkus</artifactId>
-  <version>4.0-M4</version>
+  <version>4.0-beta-1</version>
 </dependency>
 ```
 
@@ -89,15 +91,15 @@ mvn compile quarkus:dev
 
 Opening <http://localhost:8080/hawtio> should show the Hawtio console.
 
-See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-M4/examples/quarkus) for a working example app.
+See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-beta-1/examples/quarkus) for a working example app.
 
 ## Contributing
 
-We love [contributions](https://hawt.io/docs/contributing/)!  Here are the resources on how to get you involved in Hawtio development.
+We love [contributions](https://hawt.io/docs/contributing)!  Here are the resources on how to get you involved in Hawtio development.
 
-- [FAQ](https://hawt.io/docs/faq/)
+- [FAQ](https://hawt.io/docs/faq)
 - [Change Log](CHANGES.md)
-- [How to contribute](https://hawt.io/docs/contributing/)
+- [How to contribute](https://hawt.io/docs/contributing)
 - [Community](https://hawt.io/community/)
 
 Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for finding issues to work on.
@@ -106,4 +108,4 @@ Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for findi
 
 Hawtio is licensed under [Apache License, Version 2.0](LICENSE.txt).
 
-[logo]: https://hawt.io/images/hawtio_logo.svg "hawtio"
+[logo]: https://hawt.io/_/img/hawtio_logo.svg "hawtio"

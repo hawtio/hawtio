@@ -23,6 +23,7 @@ node/
 bower_components/
 .vscode
 .attach_pid*
+.camel-jbang
 
 # dependencies
 node_modules

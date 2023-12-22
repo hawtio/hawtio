@@ -2,7 +2,6 @@ package io.hawt.web.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serial;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +26,9 @@ import org.slf4j.LoggerFactory;
  */
 public class LoginServlet extends HttpServlet {
 
-    @Serial
     private static final long serialVersionUID = 187076436862364207L;
 
     private static final Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
-
-    private static final String LOGIN_PAGE_PATH = "/login";
 
     protected int timeout;
     protected AuthenticationConfiguration authConfiguration;
@@ -54,7 +50,7 @@ public class LoginServlet extends HttpServlet {
         if (authConfiguration.isKeycloakEnabled()) {
             redirector.doRedirect(request, response, "/");
         } else {
-            redirector.doRedirect(request, response, LOGIN_PAGE_PATH);
+            redirector.doRedirect(request, response, AuthenticationConfiguration.LOGIN_URL);
         }
     }
 

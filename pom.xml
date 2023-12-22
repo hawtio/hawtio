@@ -45,71 +45,57 @@
   </distributionManagement>
 
   <properties>
-    <failIfNoTests>false</failIfNoTests>
-    <jettyPort>8282</jettyPort>
-    <context>/hawtio</context>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
-    <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-
-    <blueprint-web-version>1.1.0</blueprint-web-version>
-    <build-helper-maven-plugin-version>3.4.0</build-helper-maven-plugin-version>
-
-    <!-- Spring versions -->
-    <spring-version>6.0.13</spring-version>
+    <!-- Versions for major components -->
+    <!-- Jolokia -->
+    <jolokia-version>2.0.0</jolokia-version>
+    <!-- Quarkus -->
+    <quarkus-version>3.6.1</quarkus-version>
+    <!-- Spring -->
+    <spring-version>6.1.1</spring-version>
     <spring-boot-version>3.1.5</spring-boot-version>
+    <!-- Jetty -->
+    <jetty-version>11.0.18</jetty-version>
+    <!-- Keycloak -->
+    <keycloak-version>23.0.1</keycloak-version>
 
-    <!-- Quarkus version -->
-    <quarkus-version>3.6.0</quarkus-version>
-
+    <!-- Other dependencies -->
     <assertj-core-version>3.24.2</assertj-core-version>
     <commons-codec-version>1.16.0</commons-codec-version>
     <commons-io-version>2.15.1</commons-io-version>
     <commons-logging-version>1.3.0</commons-logging-version>
-    <exec-maven-plugin-version>3.1.1</exec-maven-plugin-version>
-    <frontend-maven-plugin-version>1.14.2</frontend-maven-plugin-version>
     <guava-version>32.1.3-jre</guava-version>
     <hamcrest-version>2.2</hamcrest-version>
     <httpclient-version>4.5.14</httpclient-version>
     <jackson-version>2.16.0</jackson-version>
-    <jackson-version-range>[2.8,3)</jackson-version-range>
-    <jetty-version>12.0.3</jetty-version>
-    <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
-    <jolokia-version>2.0.0-M4</jolokia-version>
     <junit5-version>5.9.3</junit5-version>
-    <karaf-version>4.3.3</karaf-version>
-    <karaf-version-range>[4.0,5)</karaf-version-range>
-    <keycloak-version>22.0.4</keycloak-version>
-    <log4j-version>1.2.17</log4j-version>
     <log4j2-version>2.22.0</log4j2-version>
+    <mockito-core-version>5.8.0</mockito-core-version>
+    <org-json-version>20231013</org-json-version>
+    <picocli-version>4.7.5</picocli-version>
+    <servlet-api-version>5.0.0</servlet-api-version>
+    <slf4j-version>2.0.9</slf4j-version>
+
+    <!-- Used for maven-frontend-plugin -->
+    <node-version>v20.9.0</node-version>
+    <yarn-version>v1.22.21</yarn-version>
+
+    <!-- Maven plugins -->
+    <build-helper-maven-plugin-version>3.5.0</build-helper-maven-plugin-version>
+    <docker-plugin-version>0.43.4</docker-plugin-version>
+    <exec-maven-plugin-version>3.1.1</exec-maven-plugin-version>
+    <frontend-maven-plugin-version>1.15.0</frontend-maven-plugin-version>
+    <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
-    <maven-clean-plugin-version>3.0.0</maven-clean-plugin-version>
+    <maven-clean-plugin-version>3.3.2</maven-clean-plugin-version>
     <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
     <maven-dependency-plugin-version>3.6.1</maven-dependency-plugin-version>
     <maven-failsafe-plugin-version>3.2.2</maven-failsafe-plugin-version>
     <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>3.2.2</maven-surefire-plugin-version>
-    <mockito-core-version>5.8.0</mockito-core-version>
-    <org-json-version>20231013</org-json-version>
-    <osgi-version>5.0.0</osgi-version>
-    <servlet-api-version>6.0.0</servlet-api-version>
-    <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
-    <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>2.0.9</slf4j-version>
-    <wildfly-version>11.0.0.Final</wildfly-version>
-    <wildfly-maven-plugin-version>1.2.1.Final</wildfly-maven-plugin-version>
-    <jaxb-version>2.3.2</jaxb-version>
-    <activation-version>1.2.0</activation-version>
-    <spring-hateoas-version>0.25.0.RELEASE</spring-hateoas-version>
-    <spring-plugin-core-version>1.2.0.RELEASE</spring-plugin-core-version>
-    <docker-plugin-version>0.43.4</docker-plugin-version>
-
-    <!-- Used for maven-frontend-plugin -->
-    <node-version>v20.9.0</node-version>
-    <yarn-version>v1.22.21</yarn-version>
   </properties>
 
   <modules>
@@ -120,19 +106,12 @@
     <module>examples/quarkus</module>
     <module>examples/quarkus-keycloak</module>
     <module>examples/sample-plugin</module>
-    <module>examples/springboot</module>
-    <module>examples/springboot-authentication</module>
-    <module>examples/springboot-keycloak</module>
-    <module>examples/springboot-log4j2</module>
-    <module>examples/springboot-plugin</module>
-    <module>examples/springboot-security</module>
     <module>examples/war-plugin</module>
     <module>hawtio-jbang</module>
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>
     <module>platforms/quarkus</module>
-    <module>platforms/springboot</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
     <module>plugins/hawtio-log</module>
@@ -142,6 +121,18 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>11</source>
+          <testSource>11</testSource>
+          <target>11</target>
+          <testTarget>11</testTarget>
+          <release>11</release>
+          <testRelease>11</testRelease>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -180,9 +171,6 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <!--
-          <tag>hawtio-${project.version}</tag>
-          -->
         </configuration>
       </plugin>
 
@@ -275,8 +263,8 @@
           <version>${docker-plugin-version}</version>
         </plugin>
         <plugin>
-          <groupId>org.eclipse.jetty.ee10</groupId>
-          <artifactId>jetty-ee10-maven-plugin</artifactId>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
           <version>${jetty-plugin-version}</version>
         </plugin>
       </plugins>
@@ -285,6 +273,22 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>jdk17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <modules>
+        <module>examples/springboot</module>
+        <module>examples/springboot-authentication</module>
+        <module>examples/springboot-keycloak</module>
+        <module>examples/springboot-log4j2</module>
+        <module>examples/springboot-plugin</module>
+        <module>examples/springboot-security</module>
+        <module>platforms/springboot</module>
+      </modules>
+    </profile>
+
     <profile>
       <id>fastinstall</id>
       <properties>
@@ -376,6 +380,12 @@
       <name>Red Hat GA Repository</name>
       <url>https://maven.repository.redhat.com/ga/</url>
     </repository>
+    <!-- Only when testing a staged release of new Jolokia version
+    <repository>
+      <id>orgjolokia-1074</id>
+      <url>https://oss.sonatype.org/content/repositories/orgjolokia-1074/</url>
+    </repository>
+    -->
   </repositories>
   <pluginRepositories>
     <pluginRepository>

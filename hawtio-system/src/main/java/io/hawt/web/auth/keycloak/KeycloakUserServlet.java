@@ -8,26 +8,20 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.Authenticator;
-import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.UserServlet;
 
 public class KeycloakUserServlet extends UserServlet {
 
     private static final long serialVersionUID = 1734127369954899957L;
 
-    private AuthenticationConfiguration authConfiguration;
-    private boolean keycloakEnabled;
-
     @Override
     public void init() throws ServletException {
         super.init();
-        authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
-        keycloakEnabled = authConfiguration.isKeycloakEnabled();
     }
 
     @Override
     protected String getUsername(HttpServletRequest req, HttpServletResponse resp) {
-        if (keycloakEnabled) {
+        if (authConfiguration.isKeycloakEnabled()) {
             return getKeycloakUsername(req);
         } else {
             return super.getUsername(req, resp);
