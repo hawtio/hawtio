@@ -69,7 +69,7 @@
     <guava-version>32.1.3-jre</guava-version>
     <hamcrest-version>2.2</hamcrest-version>
     <httpclient-version>4.5.14</httpclient-version>
-    <jackson-version>2.16.0</jackson-version>
+    <jackson-version>2.16.1</jackson-version>
     <junit5-version>5.9.3</junit5-version>
     <log4j2-version>2.22.0</log4j2-version>
     <mockito-core-version>5.8.0</mockito-core-version>
