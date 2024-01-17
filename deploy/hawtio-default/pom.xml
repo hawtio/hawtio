@@ -76,52 +76,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.eclipse.jetty.ee10</groupId>
-        <artifactId>jetty-ee10-maven-plugin</artifactId>
-        <configuration>
-          <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
-          <scanIntervalSeconds>1</scanIntervalSeconds>
-          <webAppConfig>
-            <contextPath>${context}</contextPath>
-          </webAppConfig>
-          <httpConnector>
-            <port>${jettyPort}</port>
-            <idleTimeout>60000</idleTimeout>
-          </httpConnector>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.0</version>
-        <configuration>
-          <port>9090</port>
-          <path>${context}</path>
-          <systemProperties>
-          </systemProperties>
-          <useTestClasspath>false</useTestClasspath>
-          <!--
-                    <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
-          -->
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat6-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <port>9090</port>
-          <path>${context}</path>
-          <systemProperties>
-          </systemProperties>
-          <useTestClasspath>false</useTestClasspath>
-          <!--
-                    <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
-          -->
-        </configuration>
-      </plugin>
-
-      <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
           <filesets>

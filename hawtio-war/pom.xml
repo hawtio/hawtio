@@ -59,7 +59,6 @@
     <finalName>${finalName}</finalName>
 
     <plugins>
-
       <!-- Add hawtio console resources to the WAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -75,7 +74,6 @@
           </webResources>
         </configuration>
       </plugin>
-
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
@@ -90,9 +88,6 @@
           </filesets>
         </configuration>
       </plugin>
-
     </plugins>
-
   </build>
-
 </project>
