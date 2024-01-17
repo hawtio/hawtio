@@ -16,21 +16,14 @@
   <description>Hawtio :: Sample Spring Boot 3.x process</description>
 
   <properties>
-    <camel-version>4.0.0.redhat-00028</camel-version>
+    <camel-version>4.0.0.redhat-00039</camel-version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <groupId>com.redhat.camel.springboot.platform</groupId>
+        <artifactId>camel-spring-boot-bom</artifactId>
         <version>${camel-version}</version>
         <type>pom</type>
         <scope>import</scope>

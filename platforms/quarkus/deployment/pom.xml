@@ -18,7 +18,7 @@
       <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-bom</artifactId>
-        <version>${quarkus-version}</version>
+        <version>${quarkus-extension-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -68,7 +68,7 @@
             <path>
               <groupId>io.quarkus</groupId>
               <artifactId>quarkus-extension-processor</artifactId>
-              <version>${quarkus-version}</version>
+              <version>${quarkus-extension-version}</version>
             </path>
           </annotationProcessorPaths>
         </configuration>

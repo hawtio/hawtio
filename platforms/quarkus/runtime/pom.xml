@@ -18,7 +18,7 @@
       <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-bom</artifactId>
-        <version>${quarkus-version}</version>
+        <version>${quarkus-extension-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -87,7 +87,7 @@
       <plugin>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-extension-maven-plugin</artifactId>
-        <version>${quarkus-version}</version>
+        <version>${quarkus-extension-version}</version>
         <executions>
           <execution>
             <goals>
@@ -107,7 +107,7 @@
             <path>
               <groupId>io.quarkus</groupId>
               <artifactId>quarkus-extension-processor</artifactId>
-              <version>${quarkus-version}</version>
+              <version>${quarkus-extension-version}</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
