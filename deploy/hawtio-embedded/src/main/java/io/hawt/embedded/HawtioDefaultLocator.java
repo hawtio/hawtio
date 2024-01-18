@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +35,8 @@ public class HawtioDefaultLocator {
 
                 boolean found = false;
                 for (String path : paths) {
-                    File file = new File(path, "lib/tools.jar");
+                    String normalizedPath = Paths.get(path).normalize().toString();
+                    File file = new File(normalizedPath, "lib/tools.jar");
                     if (file.exists()) {
                         found = true;
                         String url = file.toURI().toURL().toString();
