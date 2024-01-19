@@ -39,6 +39,16 @@ public class Strings {
     }
 
     /**
+     * Strip out unwanted characters from the header such a CR/LF chars
+     *
+     */
+    public static String sanitizeHeader(String header) {
+        String sanitizedHeader = header.replaceAll("[\\r\\n]", "");
+        return sanitizedHeader;
+
+    }
+
+    /**
      * Also remove any dots in the directory name
      */
     public static String sanitizeDirectory(String name) {

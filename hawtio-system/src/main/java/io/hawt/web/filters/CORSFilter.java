@@ -2,6 +2,7 @@ package io.hawt.web.filters;
 
 import java.util.concurrent.TimeUnit;
 
+import io.hawt.util.Strings;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +53,7 @@ public class CORSFilter extends HttpHeaderFilter {
             response.addHeader("Access-Control-Request-Method", "GET, POST, PUT, DELETE");
             String headers = request.getHeader("Access-Control-Request-Headers");
             if (headers != null) {
-                response.addHeader("Access-Control-Allow-Headers", headers);
+                response.addHeader("Access-Control-Allow-Headers", Strings.sanitizeHeader(headers));
             }
             response.addHeader("Access-Control-Max-Age", "" + TimeUnit.DAYS.toSeconds(1));
         }
