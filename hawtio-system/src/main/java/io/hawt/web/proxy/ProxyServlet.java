@@ -407,7 +407,7 @@ public class ProxyServlet extends HttpServlet {
                         }
                     }
                 }
-                proxyRequest.addHeader(headerName, headerValue);
+                proxyRequest.addHeader(headerName, Strings.sanitizeHeader(headerValue));
             }
         }
     }
@@ -421,7 +421,7 @@ public class ProxyServlet extends HttpServlet {
             if (existingHeader != null) {
                 newHeader = existingHeader + ", " + newHeader;
             }
-            proxyRequest.setHeader(headerName, newHeader);
+            proxyRequest.setHeader(headerName, Strings.sanitizeHeader(newHeader));
         }
     }
 
