@@ -341,7 +341,7 @@ public class ProxyServlet extends HttpServlet {
                     + " but no " + HttpHeaders.LOCATION + " header was found in the response");
             }
 
-            String locStr = rewriteUrlFromResponse(servletRequest,locationHeader.getValue(), Strings.sanitize(targetUriObj.toString());
+            String locStr = rewriteUrlFromResponse(servletRequest,locationHeader.getValue(), Strings.sanitize(targetUriObj.toString()));
             servletResponse.sendRedirect(locStr);
             return true;
         }
