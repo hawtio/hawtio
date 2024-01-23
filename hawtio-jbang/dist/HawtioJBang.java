@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-//JAVA 17+
+//JAVA 11+
 //REPOS mavencentral
 //DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:4.0-beta-1}
 
