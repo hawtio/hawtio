@@ -19,7 +19,7 @@
  */
 
 //JAVA 11+
-//REPOS mavencentral
+//REPOS mavencentral,redhat-ga=https://maven.repository.redhat.com/ga,redhat-ea=https://maven.repository.redhat.com/earlyaccess/all
 //DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:4.0-beta-1}
 
 package main;
