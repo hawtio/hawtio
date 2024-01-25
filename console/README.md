@@ -34,4 +34,7 @@ Suppose you have cloned the `hawtio-next` project in the same directory as the `
 
 Then you can build the console with the local `hawtio-next` component by running the following command from the project root directory:
 
-    mvn clean install
+    mvn install
+
+> [!WARNING]
+> Do not run `mvn clean install` as it would also wash out `node_modules/` that's linked to the local `hawtio-next` project.
