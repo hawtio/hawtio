@@ -3,6 +3,7 @@ package io.hawt.tests.features.setup;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,8 @@ import io.hawt.tests.features.pageobjects.pages.LoginPage;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 
+import java.time.Duration;
+
 public class LoginLogout {
     private static final Panel panel = new Panel();
     private static final Logger LOG = LoggerFactory.getLogger(LoginLogout.class);
@@ -34,6 +37,7 @@ public class LoginLogout {
      * @param password to be used.
      */
     public static void login(String username, String password) {
+
         final String connectionName = "test-connection";
         final AppDeployment deploymentMethod = TestConfiguration.getAppDeploymentMethod();
         LOG.info("Opening and logging in on " + DeployAppHook.getBaseURL());
