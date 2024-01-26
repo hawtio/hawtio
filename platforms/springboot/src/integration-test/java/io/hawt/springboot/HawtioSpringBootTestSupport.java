@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import io.hawt.util.Strings;
 import org.assertj.core.api.Assertions;
+import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
