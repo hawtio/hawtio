@@ -1,4 +1,3 @@
-io.hawt.springboot.JolokiaEndpointAutoConfiguration
 io.hawt.springboot.HawtioEndpointAutoConfiguration
 io.hawt.springboot.HawtioLogAutoConfiguration
 io.hawt.springboot.HawtioManagementConfiguration
