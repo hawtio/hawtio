@@ -75,7 +75,7 @@
     <httpclient-version>4.5.14</httpclient-version>
     <jackson-version>2.16.0</jackson-version>
     <jackson-version-range>[2.8,3)</jackson-version-range>
-    <jetty-version>10.0.18</jetty-version>
+    <jetty-version>10.0.19</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jolokia-version>1.7.2</jolokia-version>
     <junit5-version>5.9.3</junit5-version>
