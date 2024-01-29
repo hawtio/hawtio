@@ -4,12 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import jakarta.servlet.Filter;
@@ -48,7 +42,7 @@ public class HawtioQuarkusPathFilter implements Filter {
         // TODO: Is there a better way to handle hawtconfig.json from classpath in Quarkus?
         if (path.equals(FILTERED_PATH_HAWTCONFIG)) {
             LOG.debug("path = {} -- reading from classpath", path);
-            String content = loadFromHawtioStatic(path);
+            String content = loadHawtconfigFromHawtioStatic();
             if (content != null) {
                 ServletHelpers.sendJSONResponse((HttpServletResponse) response, content);
                 return;
@@ -64,34 +58,14 @@ public class HawtioQuarkusPathFilter implements Filter {
     }
 
     // TODO: We might not need to load hawtconfig.json from hawtio-static. For Quarkus, static resources can be loaded from META-INF/resources.
-    private static String loadFromHawtioStatic(String path) {
-        String hawtioStaticPath = String.format("classpath:/hawtio-static%s", path);
-        String sanitizedPath = sanitizeUri(path);
-
-        if (sanitizedPath == null) {
-            LOG.error("path = {} -- invalid path to resource", hawtioStaticPath);
-            return null;
-        }
-
-        try (InputStream is = ServletHelpers.loadFile(sanitizedPath);
+    private static String loadHawtconfigFromHawtioStatic() {
+        String hawtioStaticPath = String.format("classpath:/hawtio-static%s", FILTERED_PATH_HAWTCONFIG);
+        try (InputStream is = ServletHelpers.loadFile(hawtioStaticPath);
              BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)))) {
-            LOG.debug("path = {} -- classpath resource found", sanitizedPath);
+            LOG.debug("path = {} -- classpath resource found", hawtioStaticPath);
             return IOHelper.readFully(reader);
         } catch (Exception e) {
-            LOG.debug("path = {} -- classpath resource not found: {}", sanitizedPath, e.getMessage());
-        }
-        return null;
-    }
-
-    private static String sanitizeUri(String path) {
-        try {
-            URI uri = new URI(path);
-            String cleanedPath = uri.getPath();
-            return URLDecoder.decode(cleanedPath, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            LOG.error(e.getMessage(), e);
-        } catch (URISyntaxException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.debug("path = {} -- classpath resource not found: {}", hawtioStaticPath, e.getMessage());
         }
         return null;
     }
