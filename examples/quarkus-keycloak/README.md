@@ -12,7 +12,7 @@ Before running this example application, you need to have a Keycloak server up a
 docker run --rm -p 18080:8080 --name keycloak \
   -e KEYCLOAK_ADMIN=admin \
   -e KEYCLOAK_ADMIN_PASSWORD=admin \
-  -v "../keycloak-integration/hawtio-demo-realm.json":/opt/keycloak/data/import/hawtio-demo-realm.json:Z \
+  -v "$(dirname $PWD)/keycloak-integration/hawtio-demo-realm.json":/opt/keycloak/data/import/hawtio-demo-realm.json:Z \
   quay.io/keycloak/keycloak \
   -v start-dev --import-realm
 ```
