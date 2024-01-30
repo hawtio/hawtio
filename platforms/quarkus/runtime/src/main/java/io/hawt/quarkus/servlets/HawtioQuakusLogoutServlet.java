@@ -23,6 +23,9 @@ public class HawtioQuakusLogoutServlet extends LogoutServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Send some HTTP headers on logout
+        addHeaders(response);
+
         request.logout();
         AuthSessionHelpers.clear(request, authConfiguration, false);
         redirector.doRedirect(request, response, AuthenticationConfiguration.LOGIN_URL);
