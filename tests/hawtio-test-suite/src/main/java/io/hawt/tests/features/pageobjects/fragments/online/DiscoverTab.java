@@ -14,9 +14,9 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.pageobjects.fragments.openshift.DeploymentEntry;
 import io.hawt.tests.features.pageobjects.fragments.openshift.PodEntry;
 import io.hawt.tests.features.utils.ByUtils;
@@ -69,16 +69,22 @@ public class DiscoverTab {
         return getDeployments().values().stream().map(DeploymentEntry::getPods).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
-    public DeploymentEntry assertContainsDeployment(String name) {
+    public DeploymentEntry assertContainsDeployment(String name, String namespace) {
         final Map<String, DeploymentEntry> deployments = getDeployments();
         if (REPLICA_SET_WORKAROUND) {
-            final List<String> matchingKeys = deployments.keySet().stream().filter(key -> key.startsWith(name)).collect(Collectors.toList());
-            Assertions.assertThat(matchingKeys).hasSize(1);
-            return deployments.get(matchingKeys.get(0));
+            final List<DeploymentEntry> matchingEntries = deployments.entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith(name) && entry.getValue().getPods().get(0).getNamespace().equals(namespace)).map(
+                    Map.Entry::getValue).collect(Collectors.toList());
+            Assertions.assertThat(matchingEntries).hasSize(1);
+            return matchingEntries.get(0);
         } else {
             Assertions.assertThat(deployments).containsKey(name);
             return deployments.get(name);
         }
+    }
+
+    public DeploymentEntry assertContainsDeployment(String name) {
+        return assertContainsDeployment(name, TestConfiguration.getOpenshiftNamespace());
     }
 
     private void waitForPageLoaded() {

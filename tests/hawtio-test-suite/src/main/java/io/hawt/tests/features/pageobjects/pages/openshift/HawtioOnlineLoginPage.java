@@ -2,7 +2,12 @@ package io.hawt.tests.features.pageobjects.pages.openshift;
 
 import static com.codeborne.selenide.Selenide.$;
 
+import org.junit.Assert;
+
+import org.assertj.core.api.Assertions;
 import org.openqa.selenium.By;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
@@ -12,11 +17,26 @@ import com.codeborne.selenide.ex.ElementNotFound;
 import java.time.Duration;
 
 import io.hawt.tests.features.openshift.WaitUtils;
+import io.hawt.tests.features.utils.ByUtils;
 
 public class HawtioOnlineLoginPage {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HawtioOnlineLoginPage.class);
+
     public void login(String username, String password) {
         WaitUtils.waitForPageLoad();
+
+        final By appUnavailableSelector = ByUtils.byText("h1", "Application is not available");
+        if ($(appUnavailableSelector).exists()) {
+            LOG.info("Application is not available, let's wait and reload :)");
+            WaitUtils.wait(Duration.ofSeconds(10));
+            Selenide.refresh();
+            WaitUtils.waitForPageLoad();
+            if ($(appUnavailableSelector).exists()) {
+                Assertions.assertThat($(appUnavailableSelector).exists()).withFailMessage(() -> "App wasn't available in time :(").isFalse();
+            }
+        }
+
         final By loginButtonSelector = By.cssSelector("a[title=\"Log in with my_htpasswd_provider\"]");
 
         try {
