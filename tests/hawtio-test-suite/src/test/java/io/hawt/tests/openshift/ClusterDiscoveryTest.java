@@ -1,6 +1,6 @@
 package io.hawt.tests.openshift;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.codeborne.selenide.Selenide.$;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 
 import java.time.Duration;
@@ -18,6 +19,7 @@ import io.hawt.tests.features.openshift.OpenshiftClient;
 import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.features.pageobjects.fragments.online.DiscoverTab;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
+import io.hawt.tests.features.utils.ByUtils;
 import io.hawt.tests.openshift.utils.BaseHawtioOnlineTest;
 import io.hawt.tests.utils.HawtioOnlineTestUtils;
 import io.hawt.v1alpha1.Hawtio;
@@ -28,13 +30,15 @@ public class ClusterDiscoveryTest extends BaseHawtioOnlineTest {
     @BeforeAll
     public static void patchHawtio() {
         final String clusterUrl = HawtioOnlineUtils.deployClusterHawtio(CLUSTER_HAWTIO_NAME,
-                TestConfiguration.getOpenshiftNamespace());
+            TestConfiguration.getOpenshiftNamespace());
         Selenide.open(clusterUrl, HawtioOnlineLoginPage.class)
-                .login(TestConfiguration.getOpenshiftUsername(), TestConfiguration.getOpenshiftPassword());
+            .login(TestConfiguration.getOpenshiftUsername(), TestConfiguration.getOpenshiftPassword());
+        //The initial load of the whole cluster takes a while
+        $(ByUtils.byDataTestId("loading")).shouldNot(Condition.exist, Duration.ofSeconds(60));
     }
 
     @AfterAll
-    public static void setHawtioNamespaced() {
+    public static void cleanup() {
         OpenshiftClient.get().resources(Hawtio.class).withName(CLUSTER_HAWTIO_NAME).delete();
     }
 
@@ -49,7 +53,7 @@ public class ClusterDiscoveryTest extends BaseHawtioOnlineTest {
 
             var discoverPage = new DiscoverTab();
             WaitUtils.untilAsserted(() -> {
-                discoverPage.assertContainsDeployment("e2e-discover-app");
+                discoverPage.assertContainsDeployment("e2e-discover-app", namespace);
             }, Duration.ofSeconds(10));
         }, () -> {
             OpenshiftClient.get().namespaces().withName(namespace).delete();
