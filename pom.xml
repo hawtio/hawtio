@@ -62,7 +62,7 @@
     <keycloak-version>23.0.1</keycloak-version>
 
     <!-- Other dependencies -->
-    <assertj-core-version>3.25.0</assertj-core-version>
+    <assertj-core-version>3.25.2</assertj-core-version>
     <commons-codec-version>1.16.0</commons-codec-version>
     <commons-io-version>2.15.1</commons-io-version>
     <commons-logging-version>1.3.0</commons-logging-version>
