@@ -1995,7 +1995,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-scripts: "npm:^5.0.1"
     replace: "npm:^1.2.2"
-    web-vitals: "npm:^3.5.1"
+    web-vitals: "npm:^3.5.2"
   languageName: unknown
   linkType: soft
 
@@ -16380,10 +16380,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-vitals@npm:^3.5.1":
-  version: 3.5.1
-  resolution: "web-vitals@npm:3.5.1"
-  checksum: 10/7f2b63d3ba701433af7e2eaa26a8de4ac7cf78fed1ba77bc69048d037998e4f639e4d3c533abd64f972342c09da9ee7c6c6eccc0600261642e4d8ce0ba67e671
+"web-vitals@npm:^3.5.2":
+  version: 3.5.2
+  resolution: "web-vitals@npm:3.5.2"
+  checksum: 10/59c5d7775c32977eb9156d186113f4de66c235cfea7a113d2f430ef25db25a5efe1980d2ba466f7ceefc7b1a3847764933dc1567b6d9b8f340d12e75209e3f79
   languageName: node
   linkType: hard
 
