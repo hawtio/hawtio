@@ -28,8 +28,8 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
     private static final String POLICY_TEMPLATE =
         "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' %s; " +
-            "style-src 'self' 'unsafe-inline'; " +
+            "script-src 'self' %s; " +
+            "style-src 'self'; " +
             "font-src 'self' data:; " +
             "img-src 'self' data:; " +
             "connect-src 'self' %s; " +
