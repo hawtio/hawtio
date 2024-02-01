@@ -75,7 +75,7 @@
     <mockito-core-version>5.8.0</mockito-core-version>
     <org-json-version>20231013</org-json-version>
     <picocli-version>4.7.5</picocli-version>
-    <servlet-api-version>5.0.0</servlet-api-version>
+    <servlet-api-version>6.0.0</servlet-api-version>
     <slf4j-version>2.0.9</slf4j-version>
 
     <!-- Used for maven-frontend-plugin -->
