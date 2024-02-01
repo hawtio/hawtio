@@ -63,7 +63,7 @@ jobs:
           cp $REPORT_DIR/cucumber-reports/* results/$REPORT_DIR/ 
           ls $REPORT_DIR/cucumber-reports/
       - name: Archive test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: 'test-results-${{ matrix.runtime }}-java-${{ matrix.java }}-${{ matrix.browser }}'
@@ -73,7 +73,7 @@ jobs:
             ${{ env.REPORT_DIR }}/cucumber-reports/*
 
       - name: Archive failed test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: 'test-results'
