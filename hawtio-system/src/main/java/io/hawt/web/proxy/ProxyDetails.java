@@ -42,7 +42,7 @@ public class ProxyDetails implements ProxyAddress {
             password = pass;
         });
 
-        // lets add the query parameters
+        // let's add the query parameters
         Enumeration<?> iter = httpServletRequest.getParameterNames();
         while (iter != null && iter.hasMoreElements()) {
             Object next = iter.nextElement();
@@ -55,6 +55,7 @@ public class ProxyDetails implements ProxyAddress {
                         if (stringProxyURL.contains("?")) {
                             prefix = "&";
                         }
+                        //noinspection StringConcatenationInLoop
                         stringProxyURL += prefix + name + "=" + value;
                     }
                 }
@@ -184,14 +185,6 @@ public class ProxyDetails implements ProxyAddress {
         return answer;
     }
 
-    public String getStringProxyURL() {
-        return stringProxyURL;
-    }
-
-    public String getProxyHostAndPort() {
-        return hostAndPort;
-    }
-
     public String getProxyPath() {
         return path;
     }
@@ -226,7 +219,4 @@ public class ProxyDetails implements ProxyAddress {
         return path;
     }
 
-    public boolean isValid() {
-        return hostAndPort != null;
-    }
 }
