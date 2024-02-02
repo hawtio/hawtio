@@ -340,9 +340,8 @@ public class ProxyServlet extends HttpServlet {
                 throw new ServletException("Received status code: " + statusCode
                     + " but no " + HttpHeaders.LOCATION + " header was found in the response");
             }
-            // Modify the redirect to go to this proxy servlet rather that the proxied host
-            String locStr = rewriteUrlFromResponse(servletRequest, locationHeader.getValue(), targetUriObj.toString());
 
+            String locStr = rewriteUrlFromResponse(servletRequest,locationHeader.getValue(), targetUriObj.toString());
             servletResponse.sendRedirect(locStr);
             return true;
         }
@@ -407,7 +406,7 @@ public class ProxyServlet extends HttpServlet {
                         }
                     }
                 }
-                proxyRequest.addHeader(headerName, headerValue);
+                proxyRequest.addHeader(headerName, Strings.sanitizeHeader(headerValue));
             }
         }
     }
@@ -421,7 +420,7 @@ public class ProxyServlet extends HttpServlet {
             if (existingHeader != null) {
                 newHeader = existingHeader + ", " + newHeader;
             }
-            proxyRequest.setHeader(headerName, newHeader);
+            proxyRequest.setHeader(headerName, Strings.sanitizeHeader(newHeader));
         }
     }
 
@@ -453,14 +452,15 @@ public class ProxyServlet extends HttpServlet {
      */
     protected String rewriteUrlFromResponse(HttpServletRequest servletRequest, String theUrl, String targetUri) {
         //TODO document example paths
+
         if (theUrl.startsWith(targetUri)) {
-            String curUrl = servletRequest.getRequestURL().toString();//no query
-            String pathInfo = servletRequest.getPathInfo();
-            if (pathInfo != null) {
-                assert curUrl.endsWith(pathInfo);
-                curUrl = curUrl.substring(0, curUrl.length() - pathInfo.length());//take pathInfo off
-            }
-            theUrl = curUrl + theUrl.substring(targetUri.length());
+           String curUrl = String.format("%s://%s:%s%s%s", servletRequest.getScheme(),
+               servletRequest.getServerName(),
+               servletRequest.getServerPort(),
+               servletRequest.getContextPath(),
+               servletRequest.getServletPath());
+
+            theUrl = curUrl + theUrl.substring(targetUri.length() - 1);
         }
         return theUrl;
     }

@@ -13,6 +13,7 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -169,6 +170,11 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
     protected String[] getUserPasswordRole(String username) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
+
+        factory.setFeature( "http://xml.org/sax/features/external-parameter-entities,",false);
+        factory.setFeature( "http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document dom = builder.parse(file);
 
