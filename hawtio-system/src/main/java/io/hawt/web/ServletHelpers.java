@@ -121,4 +121,14 @@ public class ServletHelpers {
             return null;
         }
     }
+
+    /**
+     * Strip out unwanted characters from the header such a CR/LF chars
+     */
+    public static String sanitizeHeader(String header) {
+        if (header == null) {
+            return header;
+        }
+        return header.replaceAll("[\\r\\n]", "");
+    }
 }
