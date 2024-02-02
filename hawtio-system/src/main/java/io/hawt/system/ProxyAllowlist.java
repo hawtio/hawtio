@@ -41,10 +41,6 @@ public class ProxyAllowlist {
     protected MBeanServer mBeanServer;
     protected ObjectName fabricMBean;
 
-    public ProxyAllowlist(String allowlistStr) {
-        this(allowlistStr, true);
-    }
-
     public ProxyAllowlist(String allowlistStr, boolean probeLocal) {
         if (Strings.isBlank(allowlistStr)) {
             allowlist = new CopyOnWriteArraySet<>();

@@ -12,7 +12,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.BitSet;
 import java.util.Enumeration;
-import java.util.Formatter;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
