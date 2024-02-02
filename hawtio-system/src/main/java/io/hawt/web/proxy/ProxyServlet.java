@@ -38,8 +38,8 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -49,6 +49,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +154,7 @@ public class ProxyServlet extends HttpServlet {
                 SSLContextBuilder builder = new SSLContextBuilder();
                 builder.loadTrustMaterial(null, (X509Certificate[] x509Certificates, String s) -> true);
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                    builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                    builder.build(), NoopHostnameVerifier.INSTANCE);
                 httpClientBuilder.setSSLSocketFactory(sslsf);
             } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
                 throw new ServletException(e);
@@ -279,7 +280,6 @@ public class ProxyServlet extends HttpServlet {
 
             // Pass the response code. This method with the "reason phrase" is deprecated, but it's the only way to pass the
             //  reason along too.
-            //noinspection deprecation
             servletResponse.setStatus(statusCode);
             copyResponseHeaders(proxyResponse, servletResponse);
 
@@ -287,8 +287,11 @@ public class ProxyServlet extends HttpServlet {
             copyResponseEntity(proxyResponse, servletResponse);
 
         } catch (Exception e) {
-            //abort request, according to best practice with HttpClient
-            if (proxyRequest instanceof AbortableHttpRequest) {
+            // abort request, according to best practice with HttpClient
+            @SuppressWarnings("deprecation")
+            boolean isAbortable = proxyRequest instanceof AbortableHttpRequest;
+            if (isAbortable) {
+                @SuppressWarnings("deprecation")
                 AbortableHttpRequest abortableHttpRequest = (AbortableHttpRequest) proxyRequest;
                 abortableHttpRequest.abort();
             }
@@ -341,7 +344,7 @@ public class ProxyServlet extends HttpServlet {
                     + " but no " + HttpHeaders.LOCATION + " header was found in the response");
             }
 
-            String locStr = rewriteUrlFromResponse(servletRequest,locationHeader.getValue(), targetUriObj.toString());
+            String locStr = rewriteUrlFromResponse(servletRequest, locationHeader.getValue(), targetUriObj.toString());
             servletResponse.sendRedirect(locStr);
             return true;
         }
@@ -369,9 +372,9 @@ public class ProxyServlet extends HttpServlet {
 
     static {
         hopByHopHeaders = new HeaderGroup();
-        String[] headers = new String[]{
+        String[] headers = new String[] {
             "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-            "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie"};
+            "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie" };
         for (String header : headers) {
             hopByHopHeaders.addHeader(new BasicHeader(header, null));
         }
@@ -406,7 +409,7 @@ public class ProxyServlet extends HttpServlet {
                         }
                     }
                 }
-                proxyRequest.addHeader(headerName, Strings.sanitizeHeader(headerValue));
+                proxyRequest.addHeader(headerName, ServletHelpers.sanitizeHeader(headerValue));
             }
         }
     }
@@ -420,7 +423,7 @@ public class ProxyServlet extends HttpServlet {
             if (existingHeader != null) {
                 newHeader = existingHeader + ", " + newHeader;
             }
-            proxyRequest.setHeader(headerName, Strings.sanitizeHeader(newHeader));
+            proxyRequest.setHeader(headerName, ServletHelpers.sanitizeHeader(newHeader));
         }
     }
 
@@ -454,56 +457,15 @@ public class ProxyServlet extends HttpServlet {
         //TODO document example paths
 
         if (theUrl.startsWith(targetUri)) {
-           String curUrl = String.format("%s://%s:%s%s%s", servletRequest.getScheme(),
-               servletRequest.getServerName(),
-               servletRequest.getServerPort(),
-               servletRequest.getContextPath(),
-               servletRequest.getServletPath());
+            String curUrl = String.format("%s://%s:%s%s%s", servletRequest.getScheme(),
+                servletRequest.getServerName(),
+                servletRequest.getServerPort(),
+                servletRequest.getContextPath(),
+                servletRequest.getServletPath());
 
             theUrl = curUrl + theUrl.substring(targetUri.length() - 1);
         }
         return theUrl;
-    }
-
-    /**
-     * Encodes characters in the query or fragment part of the URI.
-     * <p/>
-     * <p>Unfortunately, an incoming URI sometimes has characters disallowed by the spec.  HttpClient
-     * insists that the outgoing proxied request has a valid URI because it uses Java's {@link URI}.
-     * To be more forgiving, we must escape the problematic characters.  See the URI class for the
-     * spec.
-     *
-     * @param in example: name=value&foo=bar#fragment
-     */
-    protected static CharSequence encodeUriQuery(CharSequence in) {
-        //Note that I can't simply use URI.java to encode because it will escape pre-existing escaped things.
-        StringBuilder outBuf = null;
-        Formatter formatter = null;
-        for (int i = 0; i < in.length(); i++) {
-            char c = in.charAt(i);
-            boolean escape = true;
-            if (c < 128) {
-                if (asciiQueryChars.get(c)) {
-                    escape = false;
-                }
-            } else if (!Character.isISOControl(c) && !Character.isSpaceChar(c)) {//not-ascii
-                escape = false;
-            }
-            if (!escape) {
-                if (outBuf != null)
-                    outBuf.append(c);
-            } else {
-                //escape
-                if (outBuf == null) {
-                    outBuf = new StringBuilder(in.length() + 5 * 3);
-                    outBuf.append(in, 0, i);
-                    formatter = new Formatter(outBuf);
-                }
-                //leading %, 0 padded, width 2, capital hex
-                formatter.format("%%%02X", (int) c);//TODO
-            }
-        }
-        return outBuf != null ? outBuf : in;
     }
 
     protected static final BitSet asciiQueryChars;

@@ -2,12 +2,12 @@ package io.hawt.web.filters;
 
 import java.util.concurrent.TimeUnit;
 
-import io.hawt.util.Strings;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +19,11 @@ public class CORSFilter extends HttpHeaderFilter {
     private static final Logger LOG = LoggerFactory.getLogger(CORSFilter.class);
 
     public static final String ENABLE_CORS = "http.enableCORS";
+    @SuppressWarnings("unused")
     public static final String HAWTIO_ENABLE_CORS = "hawtio." + ENABLE_CORS;
 
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "http.accessControlAllowOrigin";
+    @SuppressWarnings("unused")
     public static final String HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN = "hawtio." + ACCESS_CONTROL_ALLOW_ORIGIN;
 
     private boolean enabled = false;
@@ -53,7 +55,7 @@ public class CORSFilter extends HttpHeaderFilter {
             response.addHeader("Access-Control-Request-Method", "GET, POST, PUT, DELETE");
             String headers = request.getHeader("Access-Control-Request-Headers");
             if (headers != null) {
-                response.addHeader("Access-Control-Allow-Headers", Strings.sanitizeHeader(headers));
+                response.addHeader("Access-Control-Allow-Headers", ServletHelpers.sanitizeHeader(headers));
             }
             response.addHeader("Access-Control-Max-Age", "" + TimeUnit.DAYS.toSeconds(1));
         }
