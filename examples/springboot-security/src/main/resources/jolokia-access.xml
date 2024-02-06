@@ -108,7 +108,9 @@
 
 
   <cors>
-     <!-- Allow cross origin access -->
-     <allow-origin>*</allow-origin>
+    <!-- Allow cross origin access -->
+    <allow-origin>*</allow-origin>
+
+    <strict-checking />
   </cors>
 </restrict>
