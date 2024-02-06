@@ -1,5 +1,7 @@
 package io.hawt.web.filters;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.servlet.FilterConfig;
@@ -7,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,16 +36,47 @@ public class CORSFilter extends HttpHeaderFilter {
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         String enableCORS = getConfigParameter(ENABLE_CORS);
-        if (Boolean.parseBoolean(enableCORS)) {
-            enabled = true;
-            LOG.debug("CORS enabled");
+        enabled = Boolean.parseBoolean(enableCORS);
+        if (!enabled) {
+            LOG.debug("CORS disabled");
+            return;
         }
+
+        LOG.debug("CORS enabled");
 
         String origin = getConfigParameter(ACCESS_CONTROL_ALLOW_ORIGIN);
         if (origin != null) {
             headerValue = origin;
         }
         LOG.debug("Access-Control-Allow-Origin is configured: {}", headerValue);
+    }
+
+    /**
+     * Requests with HTTPS origin over HTTP should be refused to process.
+     */
+    @Override
+    protected ForbiddenReason verifyHeaders(HttpServletRequest request) {
+        if (!enabled) {
+            return null;
+        }
+
+        String origin = request.getHeader("Origin");
+        String reqScheme = request.getScheme();
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Origin
+        if (origin == null || "null".equals(origin) || "https".equals(reqScheme)) {
+            return null;
+        }
+
+        try {
+            String originScheme = new URL(origin).getProtocol();
+            if ("http".equals(reqScheme) && "https".equals(originScheme)) {
+                return ForbiddenReason.UNSECURED_CORS_REQUEST;
+            }
+        } catch (MalformedURLException e) {
+            LOG.warn("Origin header value is malformed: {}", origin);
+        }
+
+        return null;
     }
 
     @Override
@@ -57,8 +91,8 @@ public class CORSFilter extends HttpHeaderFilter {
             if (headers != null) {
                 response.addHeader("Access-Control-Allow-Headers", ServletHelpers.sanitizeHeader(headers));
             }
-            response.addHeader("Access-Control-Max-Age", "" + TimeUnit.DAYS.toSeconds(1));
         }
+        response.addHeader("Access-Control-Max-Age", String.valueOf(TimeUnit.DAYS.toSeconds(1)));
         response.addHeader("Access-Control-Allow-Origin", headerValue);
     }
 }
