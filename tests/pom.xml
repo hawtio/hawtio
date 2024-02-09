@@ -22,8 +22,10 @@
     <selenium-version>4.12.1</selenium-version>
     <selenide-version>7.0.4</selenide-version>
     <cucumber-version>7.14.0</cucumber-version>
-    <testcontainers-version>1.19.3</testcontainers-version>
+    <testcontainers-version>1.19.4</testcontainers-version>
     <awaitility-version>4.2.0</awaitility-version>
+    <!-- Used for testing different versions of the Hawtio project then the current one - ie. testing 4.0.0 with a SNAPSHOT version -->
+    <hawtio.bom.version>${project.version}</hawtio.bom.version>
   </properties>
 
   <modules>
@@ -87,6 +89,10 @@
                     <name>${image.name}:${java.vm.specification.version}</name>
                     <build>
                       <dockerFile>${basedir}/Dockerfile</dockerFile>
+                      <args>
+                        <IMAGE>registry.access.redhat.com/ubi8/openjdk-17</IMAGE>
+                        <IMAGE_VERSION>1.17-4</IMAGE_VERSION>
+                      </args>
                     </build>
                   </image>
                 </images>

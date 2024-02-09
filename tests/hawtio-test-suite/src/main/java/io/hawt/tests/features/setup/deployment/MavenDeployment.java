@@ -92,7 +92,7 @@ public class MavenDeployment implements AppDeployment {
     }
 
     private void waitForAppRunning() {
-        final String needle = TestConfiguration.isSpringboot() ? "Started SpringBootService" : "(SampleCamel) started";
+        final String needle = TestConfiguration.getNeedleForLogs();
         Awaitility.await().pollInSameThread().atMost(Duration.ofSeconds(10)).pollInterval(Duration.ofMillis(500)).until(() -> {
             final String logs = IOUtils.toString(logFile.toURI(), Charset.defaultCharset());
             return logs.contains(needle);

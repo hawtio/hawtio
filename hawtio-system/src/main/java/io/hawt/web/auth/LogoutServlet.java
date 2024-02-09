@@ -30,6 +30,11 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LOG.debug("Logging out");
+
+        // Send some HTTP headers on logout
+        addHeaders(response);
+
         request.logout();
         if (AuthSessionHelpers.isSpringSecurityEnabled()) {
             AuthSessionHelpers.clear(request, authConfiguration, false);
@@ -38,6 +43,12 @@ public class LogoutServlet extends HttpServlet {
             AuthSessionHelpers.clear(request, authConfiguration, true);
             redirector.doRedirect(request, response, AuthenticationConfiguration.LOGIN_URL);
         }
+    }
+
+    protected void addHeaders(HttpServletResponse response) {
+        // Do not specify "storage" as local storage contains persistent data such as
+        // preferences and connections but without credentials.
+        response.addHeader("Clear-Site-Data", "\"cache\", \"cookies\"");
     }
 
     public void setRedirector(Redirector redirector) {

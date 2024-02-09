@@ -33,6 +33,8 @@ import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.proxy.ProxyServlet;
+import org.jolokia.support.spring.actuator.JolokiaEndpoint;
+import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

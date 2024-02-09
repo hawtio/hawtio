@@ -1,6 +1,5 @@
 Feature: Checking the functionality of a Camel Specific Component page.
 
-  @springBootSmokeTest @springBootAllTest @quarkusSmokeTest @quarkusAllTest
   Scenario Outline: Check that the Attributes table under Attribute tab on Camel Specific Component page is not empty
     Given User is on "Camel" page
     And User is on Camel "mock" item of "components" folder of "SampleCamel" context
@@ -13,7 +12,6 @@ Feature: Checking the functionality of a Camel Specific Component page.
       | Attribute | ComponentName | mock        |
       | Value     | CamelId       | SampleCamel |
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check specific endpoint attribute's detail information
     Given User is on "Camel" page
     And User is on Camel "mock" item of "components" folder of "SampleCamel" context
@@ -21,7 +19,6 @@ Feature: Checking the functionality of a Camel Specific Component page.
     When User opens Attribute detail dialog with the name "ComponentName"
     Then Camel Attribute Detail Dialog has "Value" key and "mock" value
 
-  @springBootAllTest @quarkusAllTest
   Scenario: Check to execute operation of Specific Endpoint
     Given User is on "Camel" page
     And User is on Camel "mock" item of "components" folder of "SampleCamel" context
