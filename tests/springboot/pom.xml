@@ -95,7 +95,7 @@
     <!-- jetty -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-jaas</artifactId>
+      <artifactId>jetty-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
