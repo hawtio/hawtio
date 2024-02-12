@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 
-import org.eclipse.jetty.jaas.spi.AbstractLoginModule;
+import org.eclipse.jetty.security.jaas.spi.AbstractLoginModule;
 import org.eclipse.jetty.security.PropertyUserStore;
 import org.eclipse.jetty.security.RolePrincipal;
 import org.eclipse.jetty.security.UserPrincipal;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,9 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
         parseConfig(options);
         if (PROPERTY_USERSTORES.get(filename) == null) {
             final PropertyUserStore propertyUserStore = new PropertyUserStore();
-            propertyUserStore.setConfig(filename);
+            ResourceFactory resourceFactory = ResourceFactory.of(propertyUserStore);
+            Resource config = resourceFactory.newResource(filename);
+            propertyUserStore.setConfig(config);
             propertyUserStore.setHotReload(hotReload);
 
             final PropertyUserStore prev = PROPERTY_USERSTORES.putIfAbsent(filename, propertyUserStore);
@@ -73,16 +77,18 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
             throw new IllegalStateException("PropertyUserStore should never be null here!");
         }
 
-        LOG.trace("Checking PropertyUserStore " + filename + " for " + userName);
+        LOG.warn("Checking PropertyUserStore " + filename + " for " + userName);
         final UserPrincipal userPrincipal = propertyUserStore.getUserPrincipal(userName);
         final List<RolePrincipal> rolePrincipals = propertyUserStore.getRolePrincipals(userName);
 
         if (userPrincipal == null || rolePrincipals == null) {
+            LOG.warn("User principal is null");
             return null;
         }
 
         final List<String> roles = rolePrincipals.stream().map(RolePrincipal::getName).collect(Collectors.toList());
 
+        LOG.warn("roles "+ userPrincipal.getName()+" " +roles.toString());
         return new HawtioJAASUser(userPrincipal, roles);
     }
 
