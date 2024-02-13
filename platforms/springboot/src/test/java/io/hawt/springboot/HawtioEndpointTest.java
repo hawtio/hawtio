@@ -5,7 +5,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockMakers;
 import org.mockito.Mockito;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 
 public class HawtioEndpointTest {
@@ -16,9 +21,11 @@ public class HawtioEndpointTest {
 
     @BeforeEach
     public void setUp() {
-        resolver = Mockito.mock(EndpointPathResolver.class);
+        resolver = mock(EndpointPathResolver.class,withSettings().mockMaker(MockMakers.SUBCLASS));
+
+
         hawtioEndpoint = new HawtioEndpoint(resolver);
-        httpServletRequest = Mockito.mock(HttpServletRequest.class);
+        httpServletRequest = mock(HttpServletRequest.class,withSettings().mockMaker(MockMakers.SUBCLASS));
     }
 
     @Test
