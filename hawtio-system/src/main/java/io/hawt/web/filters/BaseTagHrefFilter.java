@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -114,12 +113,12 @@ public class BaseTagHrefFilter implements Filter {
         }
 
         @Override
-        public void write(@Nonnull byte[] b) throws IOException {
+        public void write(byte[] b) throws IOException {
             stream.write(b);
         }
 
         @Override
-        public void write(@Nonnull byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) throws IOException {
             stream.write(b, off, len);
         }
 

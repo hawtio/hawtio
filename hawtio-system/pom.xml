@@ -90,10 +90,11 @@
       <version>${commons-codec-version}</version>
     </dependency>
 
+    <!-- For caching -->
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava-version}</version>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>${caffeine-version}</version>
     </dependency>
 
     <!-- Used to read hawtconfig.json file -->
