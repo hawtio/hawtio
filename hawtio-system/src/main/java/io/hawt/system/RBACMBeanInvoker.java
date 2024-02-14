@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -36,9 +34,8 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.security.auth.Subject;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,23 +130,17 @@ public class RBACMBeanInvoker {
     }
 
     protected void initCaches() {
-        this.canInvokeCache = CacheBuilder.newBuilder()
+        this.canInvokeCache = Caffeine.newBuilder()
             .expireAfterWrite(CAN_INVOKE_CACHE_DURATION, TimeUnit.MINUTES)
-            .build(new CacheLoader<CanInvokeKey, Boolean>() {
-                @Override
-                public Boolean load(@Nonnull CanInvokeKey key) throws Exception {
-                    LOG.debug("Do invoking canInvoke() for {}", key);
-                    return doCanInvoke(key.objectName, key.operation);
-                }
+            .build(key -> {
+                LOG.debug("Do invoking canInvoke() for {}", key);
+                return doCanInvoke(key.objectName, key.operation);
             });
-        this.mbeanInfoCache = CacheBuilder.newBuilder()
+        this.mbeanInfoCache = Caffeine.newBuilder()
             .expireAfterWrite(MBEAN_INFO_CACHE_DURATION, TimeUnit.MINUTES)
-            .build(new CacheLoader<ObjectName, Map<String, MBeanAttributeInfo>>() {
-                @Override
-                public Map<String, MBeanAttributeInfo> load(@Nonnull ObjectName objectName) throws Exception {
-                    LOG.debug("Do loading MBean attributes for {}", objectName);
-                    return loadMBeanAttributes(objectName);
-                }
+            .build(objectName -> {
+                LOG.debug("Do loading MBean attributes for {}", objectName);
+                return loadMBeanAttributes(objectName);
             });
     }
 

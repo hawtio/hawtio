@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -330,7 +329,6 @@ public class HawtioManagementConfiguration {
         }
 
         @Override
-        @Nonnull
         protected String getViewNameForRequest(final HttpServletRequest request) {
             // Forward requests from hawtio/jolokia to the Spring Boot Jolokia actuator endpoint
             final StringBuilder b = new StringBuilder();
@@ -351,7 +349,7 @@ public class HawtioManagementConfiguration {
         private static final String DUMMY = "/<DUMMY>";
 
         @Override
-        protected void registerHandler(@Nonnull final String urlPath, @Nonnull final Object handler) {
+        protected void registerHandler(final String urlPath, final Object handler) {
             if (!DUMMY.equals(urlPath)) {
                 super.registerHandler(urlPath, handler);
             }
