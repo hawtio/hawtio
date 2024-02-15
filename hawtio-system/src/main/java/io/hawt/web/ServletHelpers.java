@@ -127,7 +127,7 @@ public class ServletHelpers {
      */
     public static String sanitizeHeader(String header) {
         if (header == null) {
-            return header;
+            return null;
         }
         return header.replaceAll("[\\r\\n]", "");
     }
