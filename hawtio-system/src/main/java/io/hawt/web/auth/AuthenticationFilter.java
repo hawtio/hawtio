@@ -5,6 +5,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
 import javax.security.auth.Subject;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -82,7 +83,7 @@ public class AuthenticationFilter implements Filter {
             subject -> executeAs(request, response, chain, subject));
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        switch (result) {
+        switch (result.getType()) {
         case AUTHORIZED:
             // request was executed using the authenticated subject, nothing more to do
             break;
@@ -92,11 +93,14 @@ public class AuthenticationFilter implements Filter {
         case NO_CREDENTIALS:
             if (authConfiguration.isNoCredentials401()) {
                 // return auth prompt 401
-                ServletHelpers.doAuthPrompt(authConfiguration.getRealm(), httpResponse);
+                ServletHelpers.doAuthPrompt(httpResponse, authConfiguration.getRealm());
             } else {
                 // return forbidden 403 so the browser login does not popup
                 ServletHelpers.doForbidden(httpResponse);
             }
+            break;
+        case THROTTLED:
+            ServletHelpers.doTooManyRequests(httpResponse, result.getRetryAfter());
             break;
         }
     }

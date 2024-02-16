@@ -3,6 +3,7 @@ package io.hawt.quarkus.servlets;
 import java.io.IOException;
 
 import javax.security.auth.Subject;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -39,8 +40,8 @@ public class HawtioQuakusLoginServlet extends LoginServlet {
         String username = (String) json.get("username");
         String password = (String) json.get("password");
 
-        AuthenticateResult result = authenticator.authenticate(request, authConfiguration, username, password);
-        switch (result) {
+        AuthenticateResult result = authenticator.authenticate(authConfiguration, username, password);
+        switch (result.getType()) {
         case AUTHORIZED:
             LOG.info("Logging in user: {}", username);
             AuthSessionHelpers.setup(request.getSession(true), new Subject(), username, timeout);
@@ -48,6 +49,9 @@ public class HawtioQuakusLoginServlet extends LoginServlet {
         case NOT_AUTHORIZED:
         case NO_CREDENTIALS:
             ServletHelpers.doForbidden(response);
+            break;
+        case THROTTLED:
+            ServletHelpers.doTooManyRequests(response, result.getRetryAfter());
             break;
         }
     }

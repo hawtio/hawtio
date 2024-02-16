@@ -54,6 +54,7 @@ import org.jboss.metadata.web.spec.WebMetaData;
 import static io.hawt.quarkus.HawtioConfig.DEFAULT_CONTEXT_PATH;
 import static io.hawt.web.auth.AuthSessionHelpers.HAWTIO_SESSION_TIMEOUT;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
+import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_THROTTLED;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_KEYCLOAK_ENABLED;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
 import static io.hawt.web.auth.keycloak.KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG;
@@ -210,6 +211,7 @@ public class HawtioProcessor {
         }
 
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_ENABLED, config.authenticationEnabled.toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_THROTTLED, config.authenticationThrottled.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_ENABLED, config.keycloakEnabled.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy.toString()));
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing.toString()));

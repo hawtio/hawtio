@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.security.auth.Subject;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -73,11 +74,10 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
             username.set(u);
             password.set(p);
         });
-        AuthenticateResult result = authenticator.authenticate(
-            httpRequest, authConfiguration, username.get(), password.get());
+        AuthenticateResult result = authenticator.authenticate(authConfiguration, username.get(), password.get());
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        switch (result) {
+        switch (result.getType()) {
         case AUTHORIZED:
             chain.doFilter(request, response);
             break;
@@ -87,11 +87,14 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
         case NO_CREDENTIALS:
             if (authConfiguration.isNoCredentials401()) {
                 // return auth prompt 401
-                ServletHelpers.doAuthPrompt(authConfiguration.getRealm(), httpResponse);
+                ServletHelpers.doAuthPrompt(httpResponse, authConfiguration.getRealm());
             } else {
                 // return forbidden 403 so the browser login does not popup
                 ServletHelpers.doForbidden(httpResponse);
             }
+            break;
+        case THROTTLED:
+            ServletHelpers.doTooManyRequests(httpResponse, result.getRetryAfter());
             break;
         }
     }
