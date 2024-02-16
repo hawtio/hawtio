@@ -22,6 +22,12 @@ public class HawtioConfig {
     public Boolean authenticationEnabled;
 
     /**
+     * Throttles authentication to protect Hawtio from brute force attacks.
+     */
+    @ConfigItem(name = "authenticationThrottled", defaultValue = "true")
+    public Boolean authenticationThrottled;
+
+    /**
      * Comma separated list of user roles required to log in to the console
      */
     @ConfigItem

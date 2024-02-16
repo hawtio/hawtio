@@ -6,6 +6,7 @@ import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.security.auth.Subject;
@@ -22,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
+import io.hawt.web.auth.AuthenticationThrottler;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,13 +137,26 @@ public class Authenticator {
 
     public AuthenticateResult authenticate(Consumer<Subject> callback) {
         if (hasNoCredentials()) {
-            return AuthenticateResult.NO_CREDENTIALS;
+            return AuthenticateResult.noCredentials();
+        }
+
+        // Try throttling authentication request when necessary
+        Optional<AuthenticationThrottler> throttler = authConfiguration.getThrottler();
+        AuthenticationThrottler.Attempt attempt = throttler
+            .map(t -> t.attempt(username))
+            .filter(AuthenticationThrottler.Attempt::isBlocked)
+            .orElse(null);
+        if (attempt != null) {
+            LOG.debug("Authentication throttled: {}", attempt);
+            return AuthenticateResult.throttled(attempt.retryAfter());
         }
 
         Subject subject = doAuthenticate();
         if (subject == null) {
-            return AuthenticateResult.NOT_AUTHORIZED;
+            throttler.ifPresent(t -> t.increase(username));
+            return AuthenticateResult.notAuthorized();
         }
+        throttler.ifPresent(t -> t.reset(username));
 
         if (callback != null) {
             try {
@@ -151,7 +166,7 @@ public class Authenticator {
             }
         }
 
-        return AuthenticateResult.AUTHORIZED;
+        return AuthenticateResult.authorized();
     }
 
     protected Subject doAuthenticate() {
