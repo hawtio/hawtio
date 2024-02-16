@@ -171,7 +171,7 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
 
-        factory.setFeature( "http://xml.org/sax/features/external-parameter-entities,",false);
+        factory.setFeature( "http://xml.org/sax/features/external-parameter-entities",false);
         factory.setFeature( "http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
