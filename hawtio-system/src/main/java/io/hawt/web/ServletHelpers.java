@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
  */
 public class ServletHelpers {
 
-    protected static final String HEADER_HAWTIO_FORBIDDEN_REASON = "Hawtio-Forbidden-Reason";
-
     private static final Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
 
+    protected static final String HEADER_HAWTIO_FORBIDDEN_REASON = "Hawtio-Forbidden-Reason";
     private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
+    private static final String HEADER_RETRY_AFTER = "Retry-After";
 
     private static final JolokiaSerializer SERIALIZER = new JolokiaSerializer();
 
@@ -37,23 +37,36 @@ public class ServletHelpers {
     public static void doForbidden(HttpServletResponse response, ForbiddenReason reason) {
         try {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.setContentLength(0);
             response.setHeader(HEADER_HAWTIO_FORBIDDEN_REASON, reason.name());
+            response.setContentLength(0);
             response.flushBuffer();
         } catch (IOException ioe) {
             LOG.debug("Failed to send forbidden response: {}", ioe.toString());
         }
     }
 
-    public static void doAuthPrompt(String realm, HttpServletResponse response) {
+    public static void doAuthPrompt(HttpServletResponse response, String realm) {
         // request authentication
         try {
-            response.setHeader(HEADER_WWW_AUTHENTICATE, Authenticator.AUTHENTICATION_SCHEME_BASIC + " realm=\"" + realm + "\"");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setHeader(HEADER_WWW_AUTHENTICATE, Authenticator.AUTHENTICATION_SCHEME_BASIC + " realm=\"" + realm + "\"");
             response.setContentLength(0);
             response.flushBuffer();
         } catch (IOException ioe) {
             LOG.debug("Failed to send auth response: {}", ioe.toString());
+        }
+    }
+
+    public static void doTooManyRequests(HttpServletResponse response, long retryAfter) {
+        try {
+            // HTTP status code: 429 Too Many Requests
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+            response.setStatus(429);
+            response.setHeader(HEADER_RETRY_AFTER, Long.toString(retryAfter));
+            response.setContentLength(0);
+            response.flushBuffer();
+        } catch (IOException ioe) {
+            LOG.debug("Failed to send throttling response: {}", ioe.toString());
         }
     }
 
