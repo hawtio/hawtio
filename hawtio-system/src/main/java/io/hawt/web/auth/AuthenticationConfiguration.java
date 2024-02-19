@@ -17,7 +17,7 @@ public class AuthenticationConfiguration {
 
     public static final String LOGIN_URL = "/login";
     public static final String[] UNSECURED_PATHS = {
-        "/login", "/auth/login", "/auth/logout",
+        "/login", "/auth/login", "/auth/logout", "/auth/config",
         "/css", "/fonts", "/img", "/js", "/static", "/hawtconfig.json",
         "/jolokia", "/user", "/keycloak", "/plugin"
     };
@@ -242,4 +242,5 @@ public class AuthenticationConfiguration {
             ", keycloakEnabled=" + keycloakEnabled +
             ']';
     }
+
 }
