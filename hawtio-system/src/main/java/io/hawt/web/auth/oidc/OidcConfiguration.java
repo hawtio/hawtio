@@ -15,15 +15,71 @@
  */
 package io.hawt.web.auth.oidc;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.security.KeyFactory;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
 
 import io.hawt.util.Strings;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.PrivateKeyStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.ssl.TrustStrategy;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Configuration of OpenID Connect.
  */
-public class OidcConfiguration {
+public class OidcConfiguration extends Configuration {
+
+    public static final Logger LOG = LoggerFactory.getLogger(OidcConfiguration.class);
+
+    public static final String OIDC_JAAS_CONFIGURATION = "OidcConfiguration";
 
     /**
      * URL for the provider. Must be the base part where {@code .well-known/openid-configuration} can be appended
@@ -67,60 +123,105 @@ public class OidcConfiguration {
      */
     private String json;
 
-    public URL getProviderURL() {
-        return providerURL;
+    private AppConfigurationEntry[] jaasAppConfigurationEntries;
+
+    /**
+     * When we can set this URL, it means everything that's needed to validate JWT access tokens is available.
+     */
+    private URL jwksURL;
+
+    private final Set<String> supportedECCurves = Set.of("P-256", "P-384", "P-521");
+
+    private final Map<String, PublicKey> publicKeys = new ConcurrentHashMap<>();
+    private volatile long cacheTime;
+    private volatile long lastCheck = 0L;
+
+    private CloseableHttpClient httpClient;
+
+    public OidcConfiguration(Properties props) throws IOException {
+        String provider = props.getProperty("provider");
+        if (Strings.isBlank(provider)) {
+            // means there's no OIDC configuration
+            return;
+        }
+
+        // client-side configuration
+
+        providerURL = new URL(provider);
+        clientId = props.getProperty("client_id");
+        responseMode = OidcConfiguration.ResponseMode.fromString(props.getProperty("response_mode"));
+        String redirectUri = props.getProperty("redirect_uri");
+        if (Strings.isNotBlank(redirectUri)) {
+            this.redirectUri = new URL(redirectUri);
+        }
+        codeChallengeMethod = props.getProperty("code_challenge_method");
+        String scopes = props.getProperty("scope");
+        if (scopes == null) {
+            this.scopes = new String[0];
+        } else {
+            this.scopes = Arrays.stream(scopes.split("\\s+"))
+                    .map(String::trim).toArray(String[]::new);
+        }
+        prompt = OidcConfiguration.PromptType.fromString(props.getProperty("prompt"));
+
+        // server-side configuration
+
+        String jwksCacheTime = props.getProperty("jwks.cacheTime");
+        if (jwksCacheTime != null) {
+            try {
+                int minutes = Integer.parseInt(jwksCacheTime);
+                LOG.debug("Setting public key cache time to {} minutes", minutes);
+                cacheTime = minutes * 60 * 1000L;
+            } catch (NumberFormatException e) {
+                LOG.warn("Illegal value of min-time-between-jwks-requests property. Defaulting to 60 minutes.");
+                cacheTime = 60 * 60 * 1000L;
+            }
+        }
+
+        buildHttpClient(props);
+        buildConfiguration(props);
     }
 
-    public void setProviderURL(URL providerURL) {
-        this.providerURL = providerURL;
+    @Override
+    public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
+        return jaasAppConfigurationEntries;
+    }
+
+    public URL getProviderURL() {
+        return providerURL;
     }
 
     public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
     public ResponseMode getResponseMode() {
         return responseMode;
-    }
-
-    public void setResponseMode(ResponseMode responseMode) {
-        this.responseMode = responseMode;
     }
 
     public String[] getScopes() {
         return scopes;
     }
 
-    public void setScopes(String[] scopes) {
-        this.scopes = scopes;
-    }
-
     public URL getRedirectUri() {
         return redirectUri;
-    }
-
-    public void setRedirectUri(URL redirectUri) {
-        this.redirectUri = redirectUri;
     }
 
     public String getCodeChallengeMethod() {
         return codeChallengeMethod;
     }
 
-    public void setCodeChallengeMethod(String codeChallengeMethod) {
-        this.codeChallengeMethod = codeChallengeMethod;
-    }
-
     public PromptType getPrompt() {
         return prompt;
     }
 
-    public void setPrompt(PromptType prompt) {
-        this.prompt = prompt;
+    /**
+     * When token arrives, find a {@link PublicKey} based on {@code kid} field from JWT header.
+     * @param kid
+     * @return
+     */
+    public PublicKey findPublicKey(String kid) {
+        return publicKeys.get(kid);
     }
 
     /**
@@ -131,7 +232,115 @@ public class OidcConfiguration {
         return this.json;
     }
 
-    public void buildJSON() {
+    /**
+     * Prepare an instance of {@link org.apache.http.client.HttpClient} to be used with OpenID Connect provider
+     * @param props
+     */
+    private void buildHttpClient(Properties props) {
+        int connectionTimeout = integerProperty(props, "http.connectionTimeout", 5000);
+        int readTimeout = integerProperty(props, "http.readTimeout", 10000);
+        String proxy = stringProperty(props, "http.proxyURL", null);
+        String protocol = stringProperty(props, "ssl.protocol", "TLSv1.3");
+        String truststore = stringProperty(props, "ssl.truststore", null);
+        String truststorePassword = stringProperty(props, "ssl.truststorePassword", "");
+        String keystore = stringProperty(props, "ssl.keystore", null);
+        String keystorePassword = stringProperty(props, "ssl.keystorePassword", "");
+        String keyAlias = stringProperty(props, "ssl.keyAlias", null);
+        String keyPassword = stringProperty(props, "ssl.keyPassword", "");
+
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        requestConfigBuilder.setConnectTimeout(connectionTimeout);
+        requestConfigBuilder.setSocketTimeout(readTimeout);
+        SocketConfig.Builder socketConfigBuilder = SocketConfig.custom();
+        socketConfigBuilder.setSoTimeout(readTimeout);
+        ConnectionConfig.Builder connectionConfigBuilder = ConnectionConfig.custom();
+
+        SSLConnectionSocketFactory csf;
+        if (truststore == null && keystore == null) {
+            csf = SSLConnectionSocketFactory.getSystemSocketFactory();
+        } else {
+            truststore = Strings.resolvePlaceholders(truststore);
+            keystore = Strings.resolvePlaceholders(keystore);
+            SSLContextBuilder sslContextBuilder = SSLContexts.custom();
+            sslContextBuilder.setProtocol(protocol);
+
+            try {
+                sslContextBuilder.loadTrustMaterial((TrustStrategy) null);
+            } catch (NoSuchAlgorithmException | KeyStoreException e) {
+                throw new IllegalArgumentException("Problem loading default truststore", e);
+            }
+            if (truststore != null) {
+                try {
+                    sslContextBuilder.loadTrustMaterial(new File(truststore), truststorePassword.toCharArray());
+                } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
+                    throw new IllegalArgumentException("Problem loading truststore from " + truststore, e);
+                }
+            }
+            if (keystore != null) {
+                try {
+                    PrivateKeyStrategy pks = null;
+                    if (keyAlias != null) {
+                        pks = (aliases, socket) -> aliases.containsKey(keyAlias) ? keyAlias : null;
+                    }
+                    sslContextBuilder.loadKeyMaterial(new File(keystore),
+                            keystorePassword.toCharArray(), keyPassword.toCharArray(), pks);
+                } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException |
+                         UnrecoverableKeyException e) {
+                    throw new IllegalArgumentException("Problem loading keystore from " + keystore, e);
+                }
+            }
+            try {
+                csf = new SSLConnectionSocketFactory(sslContextBuilder.build(), new DefaultHostnameVerifier());
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                throw new IllegalArgumentException("Can't create SSL Socket Factory", e);
+            }
+        }
+
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", csf)
+                .build();
+
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setDefaultConnectionConfig(connectionConfigBuilder.build());
+        connectionManager.setDefaultSocketConfig(socketConfigBuilder.build());
+        connectionManager.setMaxTotal(20);
+        connectionManager.setDefaultMaxPerRoute(connectionManager.getMaxTotal());
+
+        HttpClientBuilder builder = HttpClients.custom();
+        builder.useSystemProperties();
+        builder.setDefaultCookieStore(new NopCookieStore());
+        builder.setSSLSocketFactory(csf);
+        builder.setConnectionManager(connectionManager);
+        builder.setDefaultRequestConfig(requestConfigBuilder.build());
+        if (proxy != null) {
+            URI uri = URI.create(proxy);
+            String scheme = uri.getScheme();
+            String host = uri.getScheme();
+            int port = uri.getPort();
+            if (port <= 0) {
+                if (scheme.equals("http")) {
+                    port = 80;
+                } else if (scheme.equals("https")) {
+                    port = 443;
+                } else {
+                    LOG.warn("Invalid proxy definition: {}", proxy);
+                }
+            }
+            if (port > 0) {
+                builder.setProxy(new HttpHost(host, port, scheme));
+            }
+        }
+
+        this.httpClient = builder.build();
+    }
+
+    /**
+     * Prepares JSON configuration to be used by client side and JAAS configuration to be used by server side.
+     *
+     * @param props
+     */
+    public void buildConfiguration(Properties props) throws IOException {
         JSONObject json = new JSONObject();
         json.put("method", "oidc");
         if (providerURL != null) {
@@ -152,7 +361,209 @@ public class OidcConfiguration {
             json.put("prompt", prompt.asValue());
         }
 
+        // we can fetch `/.well-known/openid-configuration` data to:
+        // 1) cache it for the client side
+        // 2) get jwks_uri for public key validation of JWTs
+        String base = providerURL.toString();
+        if (!base.endsWith("/")) {
+            base += "/";
+        }
+
+        boolean fetchConfig = booleanProperty(props, "oidc.cacheConfig", true);
+        if (!fetchConfig) {
+            LOG.info("OpenID Connect configuration will not be loaded for {}", base);
+        } else {
+            URL configurationURL = new URL(new URL(base), ".well-known/openid-configuration");
+            JSONObject openidConfiguration = fetchJSON(configurationURL);
+
+            if (openidConfiguration == null) {
+                LOG.error("Problem getting OpenID Connect configuration. OpenID/OAuth2 authentication disabled.");
+                json = new JSONObject(); // empty config
+            } else {
+                String jwksURI = openidConfiguration.getString("jwks_uri");
+                if (jwksURI == null) {
+                    LOG.error("No JWKS endpoint available - it is not possible to validate JWT access tokens. OpenID/OAuth2 authentication disabled.");
+                    json = new JSONObject(); // empty config
+                } else {
+                    URL url = new URL(jwksURI);
+                    JSONObject jwksConfiguration = fetchJSON(url);
+                    if (jwksConfiguration == null) {
+                        LOG.error("Problem getting JWKS configuration - it is not possible to validate JWT access tokens. OpenID/OAuth2 authentication disabled.");
+                        json = new JSONObject(); // empty config
+                    } else {
+                        jwksURL = url;
+                        cachePublicKeys(jwksConfiguration);
+                        lastCheck = System.currentTimeMillis();
+                    }
+                }
+            }
+
+            if (jwksURL != null) {
+                // everything is fine, we can attach entire .well-known/openid-configuration to the JSON
+                // presented to hawtio client side
+                json.put("openid-configuration", openidConfiguration);
+            }
+        }
+
         this.json = json.toString();
+
+        this.jaasAppConfigurationEntries = new AppConfigurationEntry[] {
+                new AppConfigurationEntry(OidcLoginModule.class.getName(),
+                        AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, Map.of(OIDC_JAAS_CONFIGURATION, this))
+        };
+    }
+
+    public boolean isEnabled() {
+        return getProviderURL() != null;
+    }
+
+    public void refreshPublicKeysIfNeeded() {
+        if (lastCheck + cacheTime > System.currentTimeMillis()) {
+            return;
+        }
+
+        if (jwksURL != null) {
+            JSONObject jwksConfiguration = fetchJSON(jwksURL);
+            if (jwksConfiguration != null) {
+                cachePublicKeys(jwksConfiguration);
+            }
+        }
+
+        lastCheck = System.currentTimeMillis();
+    }
+
+    /**
+     * Cache information coming from {@code jwks_uri} endpoint
+     * @param config
+     */
+    private void cachePublicKeys(JSONObject config) {
+        publicKeys.clear();
+        try {
+            JSONArray keys = config.getJSONArray("keys");
+            if (keys != null) {
+                for (int k = 0; k < keys.length(); k++) {
+                    JSONObject key = keys.getJSONObject(k);
+                    String type = key.has("kty") ? key.getString("kty") : null;
+                    String kid = key.has("kid") ? key.getString("kid") : null;
+                    if (type == null || kid == null) {
+                        LOG.warn("Invalid key definition: {}", key.toString());
+                        continue;
+                    }
+                    if ("RSA".equals(type)) {
+                        // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.3
+                        String n = key.has("n") ? key.getString("n") : null;
+                        String e = key.has("e") ? key.getString("e") : null;
+                        if (n == null || e == null) {
+                            LOG.warn("Invalid RSA key definition: {}", key.toString());
+                            continue;
+                        }
+                        cacheRSAKey(key);
+                    } else if ("EC".equals(type)) {
+                        LOG.warn("EC keys are not (yet) supported");
+//                        // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.2
+//                        String crv = key.has("crv") ? key.getString("crv") : null; // P-256, P-384 or P-521
+//                        if (crv == null || !supportedECCurves.contains(crv)) {
+//                            LOG.warn("Unsupported \"crv\" parameter for EC key: {}", crv);
+//                            continue;
+//                        }
+//                        String x = key.has("x") ? key.getString("x") : null;
+//                        String y = key.has("y") ? key.getString("y") : null;
+//                        if (x == null || y == null) {
+//                            LOG.warn("Invalid EC key definition: {}", key.toString());
+//                            continue;
+//                        }
+//                        cacheECKey(key);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            LOG.error("Problem caching public keys: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Fetch JSON object from given URL
+     * @param url
+     * @return
+     */
+    private JSONObject fetchJSON(URL url) {
+        try {
+            HttpGet get = new HttpGet(url.toURI());
+            LOG.info("Fetching data: {}", get.getRequestLine());
+            try (CloseableHttpResponse res = httpClient.execute(get)) {
+                if (res.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    LOG.error("Invalid response from {}: {}", url, res.getStatusLine());
+                    return null;
+                }
+                HttpEntity entity = res.getEntity();
+                if (entity != null) {
+                    ContentType ct = ContentType.get(entity);
+                    if (!ct.getMimeType().equals(ContentType.APPLICATION_JSON.getMimeType())) {
+                        LOG.warn("Expected {}, got {}", ContentType.APPLICATION_JSON, ct);
+                    } else {
+                        return new JSONObject(EntityUtils.toString(entity,
+                                ct.getCharset() == null ? Charset.defaultCharset() : ct.getCharset()));
+                    }
+                }
+                return null;
+            }
+        } catch (URISyntaxException e) {
+            LOG.error("Problem with URI {}", url, e);
+            return null;
+        } catch (IOException e) {
+            LOG.error("Problem connecting to {}", url, e);
+            return null;
+        }
+    }
+
+    private void cacheRSAKey(JSONObject key) {
+        String kid = key.getString("kid");
+        String nv = key.getString("n");
+        String ev = key.getString("e");
+
+        BigInteger n = new BigInteger(1, Base64.getUrlDecoder().decode(nv));
+        BigInteger e = new BigInteger(1, Base64.getUrlDecoder().decode(ev));
+
+        KeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
+        try {
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = kf.generatePublic(publicKeySpec);
+            this.publicKeys.put(kid, publicKey);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            LOG.warn("Can't cache RSA public key: {}", ex.getMessage());
+        }
+    }
+
+    private void cacheECKey(JSONObject key) {
+        // TODO: cache EC keys (using BouncyCastle...)
+    }
+
+    private int integerProperty(Properties props, String key, int defaultValue) {
+        String v = props.getProperty(key);
+        if (v == null || v.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(v);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    private String stringProperty(Properties props, String key, String defaultValue) {
+        String v = props.getProperty(key);
+        if (v == null || v.isBlank()) {
+            return defaultValue;
+        }
+        return v;
+    }
+
+    private boolean booleanProperty(Properties props, String key, boolean defaultValue) {
+        String v = props.getProperty(key);
+        if (v == null || v.isBlank()) {
+            return defaultValue;
+        }
+        return v.equalsIgnoreCase("true");
     }
 
     /**

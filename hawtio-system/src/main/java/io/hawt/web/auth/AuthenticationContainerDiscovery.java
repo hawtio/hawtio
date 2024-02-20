@@ -13,9 +13,11 @@ public interface AuthenticationContainerDiscovery {
     String getContainerName();
 
     /**
-     * Whether the container can/should be used for authentication
+     * Whether the container can/should be used for authentication. If given discovery can be used,
+     * {@link AuthenticationConfiguration} may be changed (for example by setting JAAS
+     * {@link javax.security.auth.login.Configuration}).
      *
-     * @param configuration the configuration option (muteable)
+     * @param configuration the configuration option (mutable)
      * @return <tt>true</tt> if the container is being used for authentication.
      */
     boolean canAuthenticate(AuthenticationConfiguration configuration);
