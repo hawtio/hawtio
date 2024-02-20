@@ -3,6 +3,7 @@ package io.hawt.web.filters;
 import java.util.Objects;
 import java.util.Optional;
 
+import io.hawt.web.auth.AuthenticationConfiguration;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ public class ContentSecurityPolicyFilterTest {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private String keycloakConfigFile;
+    private String oidcConfigFile;
 
     @BeforeEach
     public void setUp() {
@@ -37,7 +39,9 @@ public class ContentSecurityPolicyFilterTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         keycloakConfigFile = Objects.requireNonNull(getClass().getClassLoader().getResource("keycloak-hawtio-client.json")).getFile();
+        oidcConfigFile = Objects.requireNonNull(getClass().getClassLoader().getResource("hawtio-oidc.properties")).getFile();
 
+        when(configManager.getBoolean("authenticationEnabled", true)).thenReturn(true);
         when(filterConfig.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute("ConfigManager")).thenReturn(configManager);
 
@@ -52,9 +56,10 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-            "default-src 'self'; script-src 'self' ; "
+            "default-src 'self'; script-src 'self'; "
                 + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
-                + "connect-src 'self' ; frame-src 'self' ; "
+                + "connect-src 'self'; frame-src 'self'; "
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
     }
 
@@ -70,6 +75,7 @@ public class ContentSecurityPolicyFilterTest {
             "default-src 'self'; script-src 'self' http://localhost:8180; "
                 + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
     }
 
@@ -85,6 +91,27 @@ public class ContentSecurityPolicyFilterTest {
             "default-src 'self'; script-src 'self' http://localhost:8180; "
                 + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
+                + "frame-ancestors 'none'");
+    }
+
+    @Test
+    public void shouldSetHeaderWithOidcProvider() throws Exception {
+        // given
+        AuthenticationConfiguration authConfig = AuthenticationConfiguration.getConfiguration(servletContext);
+        when(servletContext.getAttribute(AuthenticationConfiguration.AUTHENTICATION_CONFIGURATION)).thenReturn(authConfig);
+        when(configManager.get(AuthenticationConfiguration.OIDC_CLIENT_CONFIG))
+                .thenReturn(Optional.ofNullable(oidcConfigFile));
+        authConfig.configureOidc();
+        contentSecurityPolicyFilter.init(filterConfig);
+        // when
+        contentSecurityPolicyFilter.addHeaders(request, response);
+        // then
+        verify(response).addHeader("Content-Security-Policy",
+            "default-src 'self'; script-src 'self' https://login.microsoftonline.com; "
+                + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
+                + "connect-src 'self' https://login.microsoftonline.com; frame-src 'self' https://login.microsoftonline.com; "
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
     }
 
@@ -97,7 +124,10 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader(eq("Content-Security-Policy"), eq(
-            "default-src 'self'; script-src 'self' ; style-src 'self'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' ; frame-src 'self' ; frame-ancestors 'none'"));
+            "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self' data:; "
+                    + "img-src 'self' data:; connect-src 'self'; frame-src 'self'; "
+                    + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
+                    + "frame-ancestors 'none'"));
     }
 
     @Test
@@ -109,9 +139,10 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-            "default-src 'self'; script-src 'self' ; "
+            "default-src 'self'; script-src 'self'; "
                 + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
-                + "connect-src 'self' ; frame-src 'self' ; "
+                + "connect-src 'self'; frame-src 'self'; "
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'self'");
     }
 }
