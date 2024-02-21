@@ -82,7 +82,7 @@ public class Strings {
 
     /**
      * Simple, recursively-safe property placeholder resolver. Only system properties are used (for now). De-facto
-     * standard {@code ${...}} syntax is used. Unresolvable properties are not replaces and separators pass to
+     * standard {@code ${...}} syntax is used. Unresolvable properties are not replaced and separators pass to
      * resulting value.
      *
      * @param value

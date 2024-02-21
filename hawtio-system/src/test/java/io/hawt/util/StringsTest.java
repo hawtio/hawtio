@@ -58,9 +58,19 @@ public class StringsTest {
         }
 
         @Test
+        public void multibyteSystemProperties() {
+            System.setProperty("hawtio.what", "世界");
+            System.setProperty("こんにちは", "Hello");
+            assertThat(Strings.resolvePlaceholders(null), nullValue());
+            assertThat(Strings.resolvePlaceholders("こんにちは、${hawtio.what}！"), is("こんにちは、世界！"));
+            assertThat(Strings.resolvePlaceholders("${こんにちは} world!"), is("Hello world!"));
+        }
+
+        @Test
         public void valuesWithPlaceholdersAreNotResolved() {
             System.setProperty("hawtio.what", "${world}");
             assertThat(Strings.resolvePlaceholders("Hello ${hawtio.what}!"), is("Hello ${world}!"));
+            assertThat(Strings.resolvePlaceholders("Hello ${world}!"), is("Hello ${world}!"));
         }
 
         @Test
