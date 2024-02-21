@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
-import javax.annotation.Nullable;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
 import javax.management.IntrospectionException;
@@ -128,7 +127,6 @@ public class RBACRegistry implements RBACRegistryMBean {
      * @see org.jolokia.service.jmx.handler.ListHandler#objectNameFromPath(Stack)
      */
     @SuppressWarnings("JavadocReference")
-    @Nullable
     private ObjectName objectNameFromPath(String path) throws MalformedObjectNameException {
         if (path == null) {
             return null;

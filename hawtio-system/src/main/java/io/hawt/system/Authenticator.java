@@ -1,18 +1,14 @@
 package io.hawt.system;
 
-import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -22,10 +18,12 @@ import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
+import io.hawt.web.auth.AuthenticationThrottler;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +51,6 @@ public class Authenticator {
     private static Boolean jbosseapDetected;
     private static Method jbosseapGetGroupsMethod;
 
-    private final HttpServletRequest request;
     private final AuthenticationConfiguration authConfiguration;
     private String username;
     private String password;
@@ -62,9 +59,7 @@ public class Authenticator {
     /**
      * Explicit username/password authenticator when authenticating users from login page.
      */
-    public Authenticator(HttpServletRequest request, AuthenticationConfiguration authConfiguration,
-                         String username, String password) {
-        this.request = request;
+    public Authenticator(AuthenticationConfiguration authConfiguration, String username, String password) {
         this.authConfiguration = authConfiguration;
         this.username = username;
         this.password = password;
@@ -74,7 +69,6 @@ public class Authenticator {
      * Request-based authenticator such as when authenticating direct Jolokia accesses.
      */
     public Authenticator(HttpServletRequest request, AuthenticationConfiguration authConfiguration) {
-        this.request = request;
         this.authConfiguration = authConfiguration;
 
         // Basic auth
@@ -143,13 +137,26 @@ public class Authenticator {
 
     public AuthenticateResult authenticate(Consumer<Subject> callback) {
         if (hasNoCredentials()) {
-            return AuthenticateResult.NO_CREDENTIALS;
+            return AuthenticateResult.noCredentials();
+        }
+
+        // Try throttling authentication request when necessary
+        Optional<AuthenticationThrottler> throttler = authConfiguration.getThrottler();
+        AuthenticationThrottler.Attempt attempt = throttler
+            .map(t -> t.attempt(username))
+            .filter(AuthenticationThrottler.Attempt::isBlocked)
+            .orElse(null);
+        if (attempt != null) {
+            LOG.debug("Authentication throttled: {}", attempt);
+            return AuthenticateResult.throttled(attempt.retryAfter());
         }
 
         Subject subject = doAuthenticate();
         if (subject == null) {
-            return AuthenticateResult.NOT_AUTHORIZED;
+            throttler.ifPresent(t -> t.increase(username));
+            return AuthenticateResult.notAuthorized();
         }
+        throttler.ifPresent(t -> t.reset(username));
 
         if (callback != null) {
             try {
@@ -159,7 +166,7 @@ public class Authenticator {
             }
         }
 
-        return AuthenticateResult.AUTHORIZED;
+        return AuthenticateResult.authorized();
     }
 
     protected Subject doAuthenticate() {
@@ -458,46 +465,25 @@ public class Authenticator {
                 }
                 // currently supports only Apache ActiveMQ Artemis
                 switch (callback.getClass().getName()) {
-                    case ARTEMIS_CALLBACK:
-                        setCertificates(callback);
-                        break;
-                    default:
-                        LOG.warn("Callback class not supported: {}", callback.getClass().getName());
+                case ARTEMIS_CALLBACK:
+                    setCertificates(callback);
+                    break;
+                default:
+                    LOG.warn("Callback class not supported: {}", callback.getClass().getName());
                 }
             }
         }
 
-        @SuppressWarnings("deprecation")
         private void setCertificates(Callback callback) {
             try {
                 // Artemis uses java.security.cert.X509Certificate class since the 2.18.0 version.
-                Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, java.security.cert.X509Certificate[].class);
-                method.invoke(callback, new Object[]{certificates});
+                Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, X509Certificate[].class);
+                method.invoke(callback, new Object[] { certificates });
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                LOG.warn("Setting certificates to new callback failed", e);
+                LOG.error("Setting certificates to callback failed", e);
 
-                try {
-                    // Artemis used deprecated javax.security.cert.X509Certificate class up to the 2.17.0 version.
-                    Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, java.security.cert.X509Certificate[].class);
-                    method.invoke(callback, new Object[]{toJavax(certificates)});
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                         CertificateException ex) {
-                    LOG.error("Setting certificates to callback failed", ex);
-                }
+                // Artemis <=2.17 is no longer supported as it used deprecated javax.security.cert.X509Certificate class.
             }
-        }
-
-        @SuppressWarnings("deprecation")
-        private static java.security.cert.X509Certificate[] toJavax(X509Certificate[] certificates)
-            throws CertificateException {
-            List<java.security.cert.X509Certificate> answer = new ArrayList<>();
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            for (X509Certificate cert : certificates) {
-                java.security.cert.X509Certificate x509Cert =
-                    (java.security.cert.X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(cert.getEncoded()));
-                answer.add(x509Cert);
-            }
-            return answer.toArray(new java.security.cert.X509Certificate[certificates.length]);
         }
     }
 

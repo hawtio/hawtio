@@ -65,7 +65,7 @@ public class LoginServlet extends HttpServlet {
         String username = (String) json.get("username");
         String password = (String) json.get("password");
 
-        AuthenticateResult result = new Authenticator(request, authConfiguration, username, password).authenticate(
+        AuthenticateResult result = new Authenticator(authConfiguration, username, password).authenticate(
             subject -> {
                 LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
                 AuthSessionHelpers.setup(
@@ -73,13 +73,16 @@ public class LoginServlet extends HttpServlet {
                 sendResponse(response, subject);
             });
 
-        switch (result) {
+        switch (result.getType()) {
         case AUTHORIZED:
             // response was sent using the authenticated subject, nothing more to do
             break;
         case NOT_AUTHORIZED:
         case NO_CREDENTIALS:
             ServletHelpers.doForbidden(response);
+            break;
+        case THROTTLED:
+            ServletHelpers.doTooManyRequests(response, result.getRetryAfter());
             break;
         }
     }

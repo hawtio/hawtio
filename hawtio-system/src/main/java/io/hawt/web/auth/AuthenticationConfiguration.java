@@ -2,6 +2,7 @@ package io.hawt.web.auth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.security.auth.login.Configuration;
 
 import jakarta.servlet.ServletContext;
@@ -34,6 +35,11 @@ public class AuthenticationConfiguration {
      * Shorthand for {@link AuthenticationConfiguration#AUTHENTICATION_ENABLED}.
      */
     public static final String AUTH = "auth";
+
+    /**
+     * Throttle authentication to protect Hawtio from brute force attacks.
+     */
+    public static final String AUTHENTICATION_THROTTLED = "authenticationThrottled";
 
     /**
      * JAAS realm used to authenticate users.
@@ -73,10 +79,14 @@ public class AuthenticationConfiguration {
     // JVM system properties
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio." + AUTHENTICATION_ENABLED;
     public static final String HAWTIO_AUTH = "hawtio." + AUTH;
+    @SuppressWarnings("unused")
+    public static final String HAWTIO_AUTHENTICATION_THROTTLED = "hawtio." + AUTHENTICATION_THROTTLED;
     public static final String HAWTIO_REALM = "hawtio." + REALM;
     public static final String HAWTIO_ROLES = "hawtio." + ROLES;
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio." + ROLE_PRINCIPAL_CLASSES;
+    @SuppressWarnings("unused")
     public static final String HAWTIO_NO_CREDENTIALS_401 = "hawtio." + NO_CREDENTIALS_401;
+    @SuppressWarnings("unused")
     public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio." + AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES;
     public static final String HAWTIO_KEYCLOAK_ENABLED = "hawtio." + KEYCLOAK_ENABLED;
 
@@ -94,6 +104,7 @@ public class AuthenticationConfiguration {
         "io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery";
 
     private final boolean enabled;
+    private final Optional<AuthenticationThrottler> throttler;
     private final String realm;
     private final String roles;
     private String rolePrincipalClasses;
@@ -115,6 +126,9 @@ public class AuthenticationConfiguration {
         }
 
         this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
+        boolean throttled = config.getBoolean(AUTHENTICATION_THROTTLED, true);
+        LOG.info("Authentication throttling is {}", throttled ? "enabled" : "disabled");
+        this.throttler = throttled ? Optional.of(new AuthenticationThrottler()) : Optional.empty();
         this.realm = config.get(REALM).orElse(DEFAULT_REALM);
         this.roles = config.get(ROLES).orElse(DEFAULT_KARAF_ROLES);
         String defaultRolePrincipalClasses = isKaraf() ? DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES : "";
@@ -178,6 +192,10 @@ public class AuthenticationConfiguration {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public Optional<AuthenticationThrottler> getThrottler() {
+        return throttler;
     }
 
     public boolean isNoCredentials401() {

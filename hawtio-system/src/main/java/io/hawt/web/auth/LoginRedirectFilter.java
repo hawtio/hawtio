@@ -90,15 +90,11 @@ public class LoginRedirectFilter implements Filter {
                     request.getSession(true), subject, username, timeout);
             });
 
-        return result == AuthenticateResult.AUTHORIZED;
+        return result.is(AuthenticateResult.Type.AUTHORIZED);
     }
 
     boolean isSecuredPath(String path) {
         return Arrays.stream(unsecuredPaths).noneMatch(path::startsWith);
-    }
-
-    @Override
-    public void destroy() {
     }
 
     public void setRedirector(Redirector redirector) {

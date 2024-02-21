@@ -1,18 +1,22 @@
 package io.hawt.quarkus.auth;
 
 import java.util.Arrays;
+import java.util.Optional;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.system.AuthenticateResult;
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
+import io.hawt.web.auth.AuthenticationThrottler;
 import io.quarkus.security.AuthenticationFailedException;
 import io.quarkus.security.credential.PasswordCredential;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hawtio authenticator for Quarkus.
@@ -20,12 +24,28 @@ import io.quarkus.security.identity.request.UsernamePasswordAuthenticationReques
 @ApplicationScoped
 public class HawtioQuarkusAuthenticator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusAuthenticator.class);
+
     @Inject
     private IdentityProviderManager identityProviderManager;
 
-    public AuthenticateResult authenticate(HttpServletRequest request, AuthenticationConfiguration authConfiguration, String username, String password) {
+    public AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
+                                           String username, String password) {
+        LOG.debug("Authenticate user: {}", username);
+
         if (Strings.isBlank(username) || Strings.isBlank(password)) {
-            return AuthenticateResult.NO_CREDENTIALS;
+            return AuthenticateResult.noCredentials();
+        }
+
+        // Try throttling authentication request when necessary
+        Optional<AuthenticationThrottler> throttler = authConfiguration.getThrottler();
+        AuthenticationThrottler.Attempt attempt = throttler
+            .map(t -> t.attempt(username))
+            .filter(AuthenticationThrottler.Attempt::isBlocked)
+            .orElse(null);
+        if (attempt != null) {
+            LOG.debug("Authentication throttled: {}", attempt);
+            return AuthenticateResult.throttled(attempt.retryAfter());
         }
 
         PasswordCredential credential = new PasswordCredential(password.toCharArray());
@@ -36,12 +56,14 @@ public class HawtioQuarkusAuthenticator {
             String roleConfig = authConfiguration.getRoles();
             // Verify the allowed roles matches with those specified in Quarkus security config
             if (!verifyRole(identity, roleConfig)) {
-                return AuthenticateResult.NOT_AUTHORIZED;
+                return AuthenticateResult.notAuthorized();
             }
-            return AuthenticateResult.AUTHORIZED;
-        } catch (
-            AuthenticationFailedException e) {
-            return AuthenticateResult.NOT_AUTHORIZED;
+            throttler.ifPresent(t -> t.reset(username));
+            return AuthenticateResult.authorized();
+        } catch (AuthenticationFailedException e) {
+            LOG.warn("Login failed due to: {}", e.getMessage());
+            throttler.ifPresent(t -> t.increase(username));
+            return AuthenticateResult.notAuthorized();
         }
 
     }
