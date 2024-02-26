@@ -2,6 +2,7 @@ package io.hawt.util;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Nested;
@@ -102,6 +103,15 @@ public class StringsTest {
             // no risk, because we don't resolve properties in system property values at all
 //            assertThrows(IllegalArgumentException.class,
 //                    () -> Strings.resolvePlaceholders("Hello ${hawtio.${nestedProperty}}!"));
+        }
+
+        @Test
+        public void customProperties() {
+            System.setProperty("hawtio.what", "world");
+            Properties props = new Properties();
+            props.setProperty("hawtio.what", "universe");
+            assertThat(Strings.resolvePlaceholders("Hello ${hawtio.what}!"), is("Hello world!"));
+            assertThat(Strings.resolvePlaceholders("Hello ${hawtio.what}!", props), is("Hello universe!"));
         }
     }
 

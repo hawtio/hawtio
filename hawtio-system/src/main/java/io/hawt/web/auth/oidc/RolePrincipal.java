@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.web.auth.oidc.token;
+package io.hawt.web.auth.oidc;
 
-import com.nimbusds.jwt.JWT;
+import java.security.Principal;
 
-/**
- * A representation of OpenID Connect / OAuth2 access token.
- */
-public class ValidAccessToken {
+public class RolePrincipal implements Principal {
 
-    private final JWT jwt;
-    private final String accessToken;
+    private final String roleName;
 
-    public JWT getJwt() {
-        return jwt;
+    public RolePrincipal(String roleName) {
+        this.roleName = roleName;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public ValidAccessToken(JWT jwt, String token) {
-        this.jwt = jwt;
-        this.accessToken = token;
+    @Override
+    public String getName() {
+        return roleName;
     }
 
 }

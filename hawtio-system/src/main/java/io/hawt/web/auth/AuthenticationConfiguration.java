@@ -266,14 +266,13 @@ public class AuthenticationConfiguration {
         }
 
         InputStream is = ServletHelpers.loadFile(oidcConfigFile);
-        if (is == null) {
-            LOG.info("OIDC configuration {} not found.", oidcConfigFile);
-        } else {
+        if (is != null) {
             LOG.info("Will load OIDC config from location: {}", oidcConfigFile);
             Properties props = new Properties();
             try {
                 props.load(is);
                 this.oidcConfiguration = new OidcConfiguration(props);
+                this.oidcConfiguration.setRolePrincipalClasses(this.rolePrincipalClasses);
             } catch (IOException e) {
                 LOG.warn("Couldn't read OIDC configuration file", e);
             } finally {
