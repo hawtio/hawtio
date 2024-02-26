@@ -52,6 +52,7 @@ public class AuthConfigurationServlet extends HttpServlet {
         }
 
         oidcConfiguration = authConfig.getOidcConfiguration();
+        authConfig.setConfiguration(oidcConfiguration);
         enabled = oidcConfiguration.isEnabled();
     }
 

@@ -16,7 +16,15 @@
 package io.hawt.web.auth.oidc;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.Principal;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -26,6 +34,14 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.proc.BadJOSEException;
+import com.nimbusds.jose.proc.JWKSecurityContext;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import io.hawt.web.auth.oidc.token.KidKeySelector;
 import io.hawt.web.auth.oidc.token.ValidAccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +66,8 @@ public class OidcLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
     private OidcConfiguration oidcConfiguration;
 
+    private ValidAccessToken parsedToken;
+
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
         this.subject = subject;
@@ -72,9 +90,17 @@ public class OidcLoginModule implements LoginModule {
             ((PasswordCallback) callbacks[1]).clearPassword();
 
             // we're interested only in the token, which is passed as base64(JWT)
+            // token is validated and container information is stored until commit(), where
+            // javax.security.auth.Subject is populated with principals and credentials
             ValidAccessToken token = validateToken(password);
 
-            return true;
+            if (token == null) {
+                return false;
+            } else {
+                this.parsedToken = token;
+                // roles/groups/subject will be extracted in commit()
+                return true;
+            }
         } catch (IOException e) {
             LoginException loginException = new LoginException(e.getMessage());
             loginException.initCause(e);
@@ -82,13 +108,35 @@ public class OidcLoginModule implements LoginModule {
         } catch (UnsupportedCallbackException e) {
             LOG.error("JAAS configuration error {}", e.getMessage(), e);
             return false;
+        } catch (ParseException e) {
+            LOG.error("JWT parse exception: {}", e.getMessage());
+            LoginException loginException = new LoginException(e.getMessage());
+            loginException.initCause(e);
+            throw loginException;
         }
     }
 
     @Override
-    public boolean commit() throws LoginException {
+    public boolean commit() {
+        if (parsedToken == null) {
+            return false;
+        }
+
         // populate the subject with roles extracted from access_token (if any)
-        return true;
+        Class<?> clz = oidcConfiguration.getRoleClass();
+        try {
+            String[] roles = oidcConfiguration.extractRoles(parsedToken);
+            for (String role : roles) {
+                Constructor<?> ctr = clz.getConstructor(String.class);
+                this.subject.getPrincipals().add((Principal) ctr.newInstance(role));
+            }
+            this.subject.getPrivateCredentials().add(parsedToken.getAccessToken());
+            return true;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LOG.warn("Problem instantiating role principal for class {}", clz);
+        }
+
+        return false;
     }
 
     @Override
@@ -99,6 +147,13 @@ public class OidcLoginModule implements LoginModule {
     @Override
     public boolean logout() throws LoginException {
         // clear OIDC principals from the subject
+        if (subject != null) {
+            subject.getPrivateCredentials().clear();
+
+            Set<Principal> principals = new HashSet<>(subject.getPrincipals());
+            principals.removeIf(p ->
+                    oidcConfiguration.getRoleClass().isAssignableFrom(p.getClass()) || RolePrincipal.class == p.getClass());
+        }
         return true;
     }
 
@@ -107,15 +162,38 @@ public class OidcLoginModule implements LoginModule {
      * @param token
      * @return
      */
-    private ValidAccessToken validateToken(String token) {
+    private ValidAccessToken validateToken(String token) throws ParseException {
+        // see also:
+        //  - org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenValidator#validate()
+        //  - org.keycloak.adapters.rotation.AdapterTokenVerifier.createVerifier()
+
         // for now the validations are inspired by org.keycloak.adapters.rotation.AdapterTokenVerifier.createVerifier():
         //  - existence of "sub" claim
         //  - "typ" == "bearer"
         //  - date between "nbf" and "exp"
         //  - "iss" is what we've configured, but for now I see Entra tokens with "iss": "https://sts.windows.net/<guid>/"
         //  - "aud" should be our client
+        try {
+            JWT jwt = JWTParser.parse(token);
 
-        return new ValidAccessToken();
+            oidcConfiguration.refreshPublicKeysIfNeeded();
+            // context built on available signature public keys
+            JWKSecurityContext jwkContext = oidcConfiguration.getJwkContext();
+            DefaultJWTProcessor<JWKSecurityContext> processor = new DefaultJWTProcessor<>();
+            processor.setJWSKeySelector(new KidKeySelector());
+            DefaultJWTClaimsVerifier<JWKSecurityContext> claimsVerifier = new DefaultJWTClaimsVerifier<>(null, null, Set.of("sub"));
+            processor.setJWTClaimsSetVerifier(claimsVerifier);
+
+            processor.process(jwt, jwkContext);
+
+            return new ValidAccessToken(jwt, token);
+        } catch (ParseException e) {
+            LOG.error("JWT parsing error", e);
+        } catch (BadJOSEException | JOSEException e) {
+            LOG.error("JWT processing error: {}", e.getMessage());
+        }
+
+        return null;
     }
 
 }
