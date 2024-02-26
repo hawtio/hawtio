@@ -2,6 +2,7 @@ package io.hawt.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +81,10 @@ public class Strings {
         return cleanedPath.length() == 1 ? "" : cleanedPath;
     }
 
+    public static String resolvePlaceholders(String value) {
+        return resolvePlaceholders(value, System.getProperties());
+    }
+
     /**
      * Simple, recursively-safe property placeholder resolver. Only system properties are used (for now). De-facto
      * standard {@code ${...}} syntax is used. Unresolvable properties are not replaced and separators pass to
@@ -88,7 +93,7 @@ public class Strings {
      * @param value
      * @return
      */
-    public static String resolvePlaceholders(String value) {
+    public static String resolvePlaceholders(String value, Properties properties) {
         if (value == null || !value.contains("$")) {
             return value;
         }
@@ -119,7 +124,7 @@ public class Strings {
                     // no matching '}'
                     result.append('$');
                 } else {
-                    pos1 = resolve(value, result, pos1, pos2) - 1;
+                    pos1 = resolve(value, result, pos1, pos2, properties) - 1;
                 }
             } else {
                 result.append(c1);
@@ -136,12 +141,13 @@ public class Strings {
      * @param result
      * @param from
      * @param to
+     * @param properties
      * @return
      */
-    private static int resolve(String value, StringBuilder result, int from, int to) {
+    private static int resolve(String value, StringBuilder result, int from, int to, Properties properties) {
         // "from" always points to "${" and "to" points to _matching_ "}"
-        String key = resolvePlaceholders(value.substring(from + 2, to - 1));
-        String v = System.getProperty(key);
+        String key = resolvePlaceholders(value.substring(from + 2, to - 1), properties);
+        String v = properties.getProperty(key);
         if (v == null) {
             result.append("${").append(key).append("}");
         } else {

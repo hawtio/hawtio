@@ -17,6 +17,7 @@ package io.hawt.web.auth.oidc;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,14 +27,20 @@ import java.security.KeyFactory;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -41,10 +48,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.proc.JWKSecurityContext;
 import io.hawt.util.Strings;
+import io.hawt.web.auth.oidc.token.ValidAccessToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -137,6 +150,18 @@ public class OidcConfiguration extends Configuration {
     private volatile long lastCheck = 0L;
 
     private CloseableHttpClient httpClient;
+    private String[] rolePrincipalClasses;
+    private Class<?> roleClass;
+
+    private String rolesPathConfig;
+    private String[] rolesPath;
+    private final Map<String, String> roleMapping = new HashMap<>();
+
+    // a context used to validate JWT tokens using Nimbus JOSE library
+    private JWKSecurityContext jwkContext;
+
+    // for tests
+    private boolean offline;
 
     public OidcConfiguration(Properties props) throws IOException {
         String provider = props.getProperty("provider");
@@ -149,7 +174,7 @@ public class OidcConfiguration extends Configuration {
 
         providerURL = new URL(provider);
         clientId = props.getProperty("client_id");
-        responseMode = OidcConfiguration.ResponseMode.fromString(props.getProperty("response_mode"));
+        responseMode = ResponseMode.fromString(props.getProperty("response_mode"));
         String redirectUri = props.getProperty("redirect_uri");
         if (Strings.isNotBlank(redirectUri)) {
             this.redirectUri = new URL(redirectUri);
@@ -162,7 +187,7 @@ public class OidcConfiguration extends Configuration {
             this.scopes = Arrays.stream(scopes.split("\\s+"))
                     .map(String::trim).toArray(String[]::new);
         }
-        prompt = OidcConfiguration.PromptType.fromString(props.getProperty("prompt"));
+        prompt = PromptType.fromString(props.getProperty("prompt"));
 
         // server-side configuration
 
@@ -178,7 +203,28 @@ public class OidcConfiguration extends Configuration {
             }
         }
 
-        buildHttpClient(props);
+        String rolesPath = props.getProperty("oidc.rolesPath");
+        if (rolesPath == null || rolesPath.isBlank()) {
+            LOG.info("No oidc.rolesPath configured. Defaults to \"roles\".");
+            rolesPath = "roles";
+        }
+        this.rolesPathConfig = Strings.resolvePlaceholders(rolesPath, props);
+        this.rolesPath = Arrays.stream(this.rolesPathConfig.split("\\.")).map(String::trim).toArray(String[]::new);
+
+        for (String p : props.stringPropertyNames()) {
+            if (!p.startsWith("roleMapping.")) {
+                continue;
+            }
+            String jwtRole = p.substring("roleMapping.".length());
+            String targetRole = props.getProperty(p);
+            roleMapping.put(jwtRole, targetRole);
+        }
+
+        this.offline = booleanProperty(props, "offline", false);
+
+        if (!offline) {
+            buildHttpClient(props);
+        }
         buildConfiguration(props);
     }
 
@@ -215,6 +261,18 @@ public class OidcConfiguration extends Configuration {
         return prompt;
     }
 
+    public String[] getRolesPath() {
+        return rolesPath;
+    }
+
+    public Class<?> getRoleClass() {
+        return roleClass;
+    }
+
+    public Map<String, String> getRoleMapping() {
+        return roleMapping;
+    }
+
     /**
      * When token arrives, find a {@link PublicKey} based on {@code kid} field from JWT header.
      * @param kid
@@ -233,7 +291,7 @@ public class OidcConfiguration extends Configuration {
     }
 
     /**
-     * Prepare an instance of {@link org.apache.http.client.HttpClient} to be used with OpenID Connect provider
+     * Prepare an instance of {@link HttpClient} to be used with OpenID Connect provider
      * @param props
      */
     private void buildHttpClient(Properties props) {
@@ -340,7 +398,7 @@ public class OidcConfiguration extends Configuration {
      *
      * @param props
      */
-    public void buildConfiguration(Properties props) throws IOException {
+    private void buildConfiguration(Properties props) throws IOException {
         JSONObject json = new JSONObject();
         json.put("method", "oidc");
         if (providerURL != null) {
@@ -370,7 +428,7 @@ public class OidcConfiguration extends Configuration {
         }
 
         boolean fetchConfig = booleanProperty(props, "oidc.cacheConfig", true);
-        if (!fetchConfig) {
+        if (!fetchConfig || this.offline) {
             LOG.info("OpenID Connect configuration will not be loaded for {}", base);
         } else {
             URL configurationURL = new URL(new URL(base), ".well-known/openid-configuration");
@@ -417,6 +475,10 @@ public class OidcConfiguration extends Configuration {
         return getProviderURL() != null;
     }
 
+    public JWKSecurityContext getJwkContext() {
+        return jwkContext;
+    }
+
     public void refreshPublicKeysIfNeeded() {
         if (lastCheck + cacheTime > System.currentTimeMillis()) {
             return;
@@ -436,8 +498,9 @@ public class OidcConfiguration extends Configuration {
      * Cache information coming from {@code jwks_uri} endpoint
      * @param config
      */
-    private void cachePublicKeys(JSONObject config) {
+    public void cachePublicKeys(JSONObject config) {
         publicKeys.clear();
+        List<JWK> contextKeys = new ArrayList<>();
         try {
             JSONArray keys = config.getJSONArray("keys");
             if (keys != null) {
@@ -450,6 +513,7 @@ public class OidcConfiguration extends Configuration {
                         continue;
                     }
                     if ("RSA".equals(type)) {
+                        // manually
                         // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.3
                         String n = key.has("n") ? key.getString("n") : null;
                         String e = key.has("e") ? key.getString("e") : null;
@@ -457,25 +521,43 @@ public class OidcConfiguration extends Configuration {
                             LOG.warn("Invalid RSA key definition: {}", key.toString());
                             continue;
                         }
-                        cacheRSAKey(key);
+                        try {
+                            JWK jwk = JWK.parse(key.toMap());
+                            if (jwk.getKeyUse() == KeyUse.SIGNATURE) {
+                                cacheRSAKey(key);
+                                contextKeys.add(jwk);
+                            }
+                        } catch (ParseException ex) {
+                            LOG.warn("Problem parsing RSA key: {}", ex.getMessage());
+                        }
                     } else if ("EC".equals(type)) {
-                        LOG.warn("EC keys are not (yet) supported");
-//                        // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.2
-//                        String crv = key.has("crv") ? key.getString("crv") : null; // P-256, P-384 or P-521
-//                        if (crv == null || !supportedECCurves.contains(crv)) {
-//                            LOG.warn("Unsupported \"crv\" parameter for EC key: {}", crv);
-//                            continue;
-//                        }
-//                        String x = key.has("x") ? key.getString("x") : null;
-//                        String y = key.has("y") ? key.getString("y") : null;
-//                        if (x == null || y == null) {
-//                            LOG.warn("Invalid EC key definition: {}", key.toString());
-//                            continue;
-//                        }
-//                        cacheECKey(key);
+                        // using Nimbusds
+                        // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.2
+                        String crv = key.has("crv") ? key.getString("crv") : null; // P-256, P-384 or P-521
+                        if (crv == null || !supportedECCurves.contains(crv)) {
+                            LOG.warn("Unsupported \"crv\" parameter for EC key: {}", crv);
+                            continue;
+                        }
+                        String x = key.has("x") ? key.getString("x") : null;
+                        String y = key.has("y") ? key.getString("y") : null;
+                        if (x == null || y == null) {
+                            LOG.warn("Invalid EC key definition: {}", key.toString());
+                            continue;
+                        }
+                        try {
+                            JWK jwk = JWK.parse(key.toMap());
+                            if (jwk.getKeyUse() == KeyUse.SIGNATURE) {
+                                cacheECKey(key, jwk.toECKey().toECPublicKey());
+                                contextKeys.add(jwk);
+                            }
+                        } catch (ParseException | JOSEException e) {
+                            LOG.warn("Problem parsing EC key: {}", e.getMessage());
+                        }
                     }
                 }
             }
+
+            this.jwkContext = new JWKSecurityContext(contextKeys);
         } catch (JSONException e) {
             LOG.error("Problem caching public keys: {}", e.getMessage());
         }
@@ -534,8 +616,9 @@ public class OidcConfiguration extends Configuration {
         }
     }
 
-    private void cacheECKey(JSONObject key) {
-        // TODO: cache EC keys (using BouncyCastle...)
+    private void cacheECKey(JSONObject key, PublicKey publicKey) {
+        String kid = key.getString("kid");
+        this.publicKeys.put(kid, publicKey);
     }
 
     private int integerProperty(Properties props, String key, int defaultValue) {
@@ -564,6 +647,114 @@ public class OidcConfiguration extends Configuration {
             return defaultValue;
         }
         return v.equalsIgnoreCase("true");
+    }
+
+    /**
+     * Configure roles available for OIDC. This is not part of the configuration file, as HawtIO takes the roles
+     * from {@code hawtio.roles} property which defaults to {@code admin,manager,viewer}
+     *
+     * @param rolePrincipalClasses
+     */
+    public void setRolePrincipalClasses(String rolePrincipalClasses) {
+        if (rolePrincipalClasses == null || rolePrincipalClasses.isBlank()) {
+            this.rolePrincipalClasses = new String[0];
+        } else {
+            this.rolePrincipalClasses = rolePrincipalClasses.split("\\s*,\\s*");
+            Class<?> roleClass = null;
+
+            // let's load first available class - needs 1-arg String constructor
+            for (String classCandidate : this.rolePrincipalClasses) {
+                Class<?> clz = tryLoadClass(classCandidate);
+                if (clz != null) {
+                    try {
+                        Constructor<?> ctr = clz.getConstructor(String.class);
+                        if (Principal.class.isAssignableFrom(clz)) {
+                            roleClass = clz;
+                            break;
+                        } else {
+                            LOG.warn("Role class doesn't implement java.security.Principal");
+                        }
+                    } catch (NoSuchMethodException e) {
+                        LOG.warn("Can't role principal class {}: {}", classCandidate, e.getMessage());
+                    }
+                }
+            }
+
+            if (roleClass == null) {
+                roleClass = RolePrincipal.class;
+            }
+
+            this.roleClass = roleClass;
+        }
+    }
+
+    private Class<?> tryLoadClass(String roleClass) {
+        try {
+            return getClass().getClassLoader().loadClass(roleClass);
+        } catch (ClassNotFoundException ignored) {
+        }
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass(roleClass);
+        } catch (ClassNotFoundException ignored) {
+        }
+        return null;
+    }
+
+    public String[] getRolePrincipalClasses() {
+        return rolePrincipalClasses;
+    }
+
+    /**
+     * Extract roles (and maps them if needed) from Access Token according to current configuration
+     *
+     * @param parsedToken
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public String[] extractRoles(ValidAccessToken parsedToken) {
+        Set<String> roles = new LinkedHashSet<>();
+        try {
+            Map<String, Object> claims = parsedToken.getJwt().getJWTClaimsSet().toJSONObject();
+
+            String[] path = this.getRolesPath();
+            for (int s = 0; s < path.length; s++) {
+                String segment = path[s];
+                Object _claims = claims.get(segment);
+                if (s < path.length - 1) {
+                    // expect object - another map
+                    if (!(_claims instanceof Map)) {
+                        LOG.warn("Wrong roles path for JWT: {}", this.rolesPathConfig);
+                        break;
+                    } else {
+                        claims = (Map<String, Object>) _claims;
+                    }
+                } else {
+                    // expect an array of roles
+                    if (_claims instanceof String[]) {
+                        roles.addAll(Arrays.asList((String[]) _claims));
+                    } else if (_claims instanceof List) {
+                        roles.addAll((List<String>) _claims);
+                    } else {
+                        LOG.warn("Wrong roles path for JWT: {}", this.rolesPathConfig);
+                    }
+                    break;
+                }
+            }
+
+            // map the roles
+            String[] actualRoles = new String[roles.size()];
+            if (actualRoles.length == 0) {
+                return actualRoles;
+            }
+            int idx = 0;
+            for (String role : roles) {
+                actualRoles[idx++] = this.roleMapping.getOrDefault(role, role);
+            }
+
+            return actualRoles;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
