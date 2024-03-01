@@ -58,7 +58,7 @@
     <build-helper-maven-plugin-version>3.5.0</build-helper-maven-plugin-version>
 
     <!-- Spring versions -->
-    <spring-version>5.3.31</spring-version>
+    <spring-version>5.3.32</spring-version>
     <spring-boot-version>2.7.18</spring-boot-version>
 
     <!-- Quarkus version -->
