@@ -19,7 +19,7 @@
     <http5-version>5.2.3</http5-version>
     <slf4j-version>2.0.9</slf4j-version>
     <selenium-version>4.12.1</selenium-version>
-    <selenide-version>7.0.4</selenide-version>
+    <selenide-version>7.2.0</selenide-version>
     <cucumber-version>7.14.0</cucumber-version>
     <testcontainers-version>1.19.4</testcontainers-version>
     <awaitility-version>4.2.0</awaitility-version>
