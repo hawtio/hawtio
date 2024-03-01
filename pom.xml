@@ -102,7 +102,7 @@
     <activation-version>1.2.0</activation-version>
     <spring-hateoas-version>0.25.0.RELEASE</spring-hateoas-version>
     <spring-plugin-core-version>1.2.0.RELEASE</spring-plugin-core-version>
-    <docker-plugin-version>0.43.4</docker-plugin-version>
+    <docker-plugin-version>0.44.0</docker-plugin-version>
 
     <!-- Used for maven-frontend-plugin -->
     <node-version>v20.9.0</node-version>
