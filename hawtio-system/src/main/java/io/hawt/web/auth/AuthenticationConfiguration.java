@@ -128,6 +128,8 @@ public class AuthenticationConfiguration {
     private Configuration configuration;
 
     private final ConfigManager configManager;
+    // OidcConfiguration implements javax.security.auth.login.Configuration, but let's keep it separate from
+    // this.configuration field
     private OidcConfiguration oidcConfiguration;
 
     private AuthenticationConfiguration(ServletContext servletContext) {
@@ -273,6 +275,7 @@ public class AuthenticationConfiguration {
                 props.load(is);
                 this.oidcConfiguration = new OidcConfiguration(props);
                 this.oidcConfiguration.setRolePrincipalClasses(this.rolePrincipalClasses);
+                this.configuration = this.oidcConfiguration;
             } catch (IOException e) {
                 LOG.warn("Couldn't read OIDC configuration file", e);
             } finally {
