@@ -658,6 +658,7 @@ public class OidcConfiguration extends Configuration {
     public void setRolePrincipalClasses(String rolePrincipalClasses) {
         if (rolePrincipalClasses == null || rolePrincipalClasses.isBlank()) {
             this.rolePrincipalClasses = new String[0];
+            this.roleClass = RolePrincipal.class;
         } else {
             this.rolePrincipalClasses = rolePrincipalClasses.split("\\s*,\\s*");
             Class<?> roleClass = null;
