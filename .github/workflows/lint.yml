@@ -1,0 +1,24 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - 4.x
+    paths-ignore:
+      - '**.md'
+  push:
+    branches:
+      - 4.x
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Shellcheck
+        shell: bash
+        run: |
+          ./scripts/shellcheck.sh
