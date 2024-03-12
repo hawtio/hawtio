@@ -100,6 +100,12 @@
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>3.2.3</maven-surefire-plugin-version>
     <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
+
+    <!-- Overrides jboss-parent properties as otherwise releasing starts to fail since jboss-parent 43. -->
+    <jboss.releases.repo.id>oss-sonatype-staging</jboss.releases.repo.id>
+    <jboss.releases.repo.url>https://oss.sonatype.org/service/local/staging/deploy/maven2</jboss.releases.repo.url>
+    <jboss.snapshots.repo.id>oss-sonatype-snapshots</jboss.snapshots.repo.id>
+    <jboss.snapshots.repo.url>https://oss.sonatype.org/content/repositories/snapshots</jboss.snapshots.repo.url>
   </properties>
 
   <modules>
