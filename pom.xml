@@ -57,7 +57,7 @@
     <spring-version>6.1.2</spring-version>
     <spring-boot-version>3.2.2</spring-boot-version>
     <!-- Jetty -->
-    <jetty-version>11.0.18</jetty-version>
+    <jetty-version>11.0.20</jetty-version>
     <!-- Keycloak -->
     <keycloak-version>23.0.1</keycloak-version>
 
