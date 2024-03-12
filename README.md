@@ -30,8 +30,8 @@ If you haven't installed [JBang](https://www.jbang.dev/) yet, first install it: 
 You can start up Hawtio on your machine using the following `jbang` command.
 
 ```console
-jbang app install hawtio@hawtio/hawtio
-hawtio --help
+jbang app install --name hawtio3 hawtio@hawtio/hawtio/3.x
+hawtio3 --help
 ```
 
 ### Running a Spring Boot app
