@@ -15,7 +15,7 @@ updates:
     directory: '/'
     schedule:
       interval: monthly
-    target-branch: '4.x'
+    target-branch: '3.x'
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -38,7 +38,7 @@ updates:
     directory: '/console'
     schedule:
       interval: monthly
-    target-branch: '4.x'
+    target-branch: '3.x'
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -61,7 +61,7 @@ updates:
     directory: '/examples/sample-plugin'
     schedule:
       interval: monthly
-    target-branch: '4.x'
+    target-branch: '3.x'
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
@@ -84,7 +84,7 @@ updates:
     directory: '/'
     schedule:
       interval: monthly
-    target-branch: '4.x'
+    target-branch: '3.x'
     open-pull-requests-limit: 10
     reviewers:
       - tadayosi
