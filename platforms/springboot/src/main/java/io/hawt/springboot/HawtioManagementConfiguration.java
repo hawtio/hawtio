@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.hawt.web.auth.AuthConfigurationServlet;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -287,6 +288,13 @@ public class HawtioManagementConfiguration {
         return new ServletRegistrationBean<>(
             new KeycloakServlet(),
             hawtioPath + "/keycloak/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean<AuthConfigurationServlet> oidcServlet() {
+        return new ServletRegistrationBean<>(
+            new AuthConfigurationServlet(),
+            hawtioPath + "/auth/config/*");
     }
 
     // -------------------------------------------------------------------------
