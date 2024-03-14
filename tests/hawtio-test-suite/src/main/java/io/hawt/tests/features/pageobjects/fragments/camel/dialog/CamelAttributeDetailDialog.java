@@ -34,6 +34,6 @@ public class CamelAttributeDetailDialog extends CamelPage {
      * Close the Detail dialog.
      */
     public void closeAttributeDetailDialog() {
-        clickButton("Close");
+        clickButtonByAriaLabel("Close");
     }
 }
