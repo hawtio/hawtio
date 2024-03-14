@@ -48,6 +48,16 @@ public class HawtioPage {
     }
 
     /**
+     * Click on button with a given aria-label.
+     *
+     * @param ariaLabel on the given button
+     */
+    public HawtioPage clickButtonByAriaLabel(String ariaLabel) {
+        $(byXpath("//button[@aria-label='" + ariaLabel + "']")).shouldBe(enabled).click();
+        return this;
+    }
+
+    /**
      * Check an alert message of a successful action.
      *
      * @return this
