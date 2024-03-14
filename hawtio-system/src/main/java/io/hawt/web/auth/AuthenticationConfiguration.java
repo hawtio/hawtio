@@ -275,7 +275,9 @@ public class AuthenticationConfiguration {
                 props.load(is);
                 this.oidcConfiguration = new OidcConfiguration(props);
                 this.oidcConfiguration.setRolePrincipalClasses(this.rolePrincipalClasses);
-                this.configuration = this.oidcConfiguration;
+                if (this.oidcConfiguration.isEnabled()) {
+                    this.configuration = this.oidcConfiguration;
+                }
             } catch (IOException e) {
                 LOG.warn("Couldn't read OIDC configuration file", e);
             } finally {
