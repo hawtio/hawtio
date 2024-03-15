@@ -1972,7 +1972,7 @@ __metadata:
   dependencies:
     "@craco/craco": "npm:^7.1.0"
     "@hawtio/backend-middleware": "npm:^1.0.4"
-    "@hawtio/react": "npm:^1.1.1"
+    "@hawtio/react": "npm:^1.1.2"
     craco-esbuild: "npm:^0.5.2"
     monaco-editor-webpack-plugin: "npm:^7.1.0"
     os-browserify: "npm:^0.3.0"
@@ -1985,9 +1985,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@hawtio/react@npm:1.1.1"
+"@hawtio/react@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@hawtio/react@npm:1.1.2"
   dependencies:
     "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.4"
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.0"
@@ -1999,14 +1999,14 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
     "@testing-library/user-event": "npm:^14.5.2"
-    "@thumbmarkjs/thumbmarkjs": "npm:^0.14.1"
+    "@thumbmarkjs/thumbmarkjs": "npm:^0.14.4"
     "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.12"
     "@types/jquery": "npm:^3.5.29"
-    "@types/node": "npm:^18.19.21"
+    "@types/node": "npm:^18.19.23"
     "@types/react": "npm:^18.2.23"
-    "@types/react-dom": "npm:^18.2.19"
+    "@types/react-dom": "npm:^18.2.21"
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
@@ -2015,16 +2015,16 @@ __metadata:
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
     keycloak-js: "npm:^23.0.7"
-    monaco-editor: "npm:^0.46.0"
+    monaco-editor: "npm:^0.47.0"
     oauth4webapi: "npm:^2.10.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-markdown: "npm:^8.0.7"
     react-monaco-editor: "npm:^0.55.0"
-    react-router-dom: "npm:^6.22.2"
+    react-router-dom: "npm:^6.22.3"
     react-split: "npm:^2.0.14"
     reactflow: "npm:^11.10.4"
-    superstruct: "npm:^1.0.3"
+    superstruct: "npm:^1.0.4"
     typescript: "npm:^5.3.3"
     xml-formatter: "npm:^3.6.2"
   peerDependencies:
@@ -2035,7 +2035,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/fae7f28100bb4497a822fd31458d6b6d90e2d9b1d71406560fba6d3da8742776262f72cd2aaa9c42d6473717bb2d92b2a8cb8741b119868143efd9ea1041f41b
+  checksum: 10/b5eac62ef86edfa16c20c38fe6cbe42da340a44252ccaadcf21ee9907dac1445f433f056cb5305645566bc71323651c7b2ad8701e49b7b0d74ce1d94b4923f4a
   languageName: node
   linkType: hard
 
@@ -3117,10 +3117,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^0.14.1":
-  version: 0.14.2
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:0.14.2"
-  checksum: 10/ce1c359b134c3b0c0a7bc5ee09813a2d5fca8fdbfb873b43531f2fb0f445583cf1085da90961f76d838277c67f7fee947c7039bc7479b03f447b5ea30ea2b7cb
+"@thumbmarkjs/thumbmarkjs@npm:^0.14.4":
+  version: 0.14.4
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:0.14.4"
+  checksum: 10/6515882cd025fe22ece45b52e4a49c71beb6c52af9ff25c29ec90f53f28484a9d18a89935a8f15cd07e556d4c1ff1c8ca4a3b2fdde73e11f27fb64715fcb3efa
   languageName: node
   linkType: hard
 
@@ -3749,12 +3749,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.21":
-  version: 18.19.22
-  resolution: "@types/node@npm:18.19.22"
+"@types/node@npm:^18.19.23":
+  version: 18.19.24
+  resolution: "@types/node@npm:18.19.24"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/4da0bd3e6cb8d85d2194d6ce241fc7fadd6fd1983914283cbc264e12c8a5ee8b646af9f6bf3f3b35d825890cfc908ff9e8ae5535597ac93aa02b826b6bbb24f7
+  checksum: 10/75aa69309d76c6be300d7264c462952ab0d37d69c289a0fd5d27ccf06273b3a9c745317c2004f757bdbcc8f48d693a625b5925c09cac77605979ecb825066627
   languageName: node
   linkType: hard
 
@@ -3809,12 +3809,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.19":
-  version: 18.2.19
-  resolution: "@types/react-dom@npm:18.2.19"
+"@types/react-dom@npm:^18.2.21":
+  version: 18.2.22
+  resolution: "@types/react-dom@npm:18.2.22"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10/98eb760ce78f1016d97c70f605f0b1a53873a548d3c2192b40c897f694fd9c8bb12baeada16581a9c7b26f5022c1d2613547be98284d8f1b82d1611b1e3e7df0
+  checksum: 10/310da22244c1bb65a7f213f8727bda821dd211cfb2dd62d1f9b28dd50ef1c196d59e908494bd5f25c13a3844343f3a6135f39fb830aca6f79646fa56c1b56c08
   languageName: node
   linkType: hard
 
@@ -8105,23 +8105,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0":
-  version: 1.15.2
-  resolution: "follow-redirects@npm:1.15.2"
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.4":
+  version: 1.15.6
+  resolution: "follow-redirects@npm:1.15.6"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10/8be0d39919770054812537d376850ccde0b4762b0501c440bd08724971a078123b55f57704f2984e0664fecc0c86adea85add63295804d9dce401cd9604c91d3
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.15.4":
-  version: 1.15.5
-  resolution: "follow-redirects@npm:1.15.5"
-  peerDependenciesMeta:
-    debug:
-      optional: true
-  checksum: 10/d467f13c1c6aa734599b8b369cd7a625b20081af358f6204ff515f6f4116eb440de9c4e0c49f10798eeb0df26c95dd05d5e0d9ddc5786ab1a8a8abefe92929b4
+  checksum: 10/70c7612c4cab18e546e36b991bbf8009a1a41cf85354afe04b113d1117569abf760269409cb3eb842d9f7b03d62826687086b081c566ea7b1e6613cf29030bf7
   languageName: node
   linkType: hard
 
@@ -11524,10 +11514,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.46.0":
-  version: 0.46.0
-  resolution: "monaco-editor@npm:0.46.0"
-  checksum: 10/827b8e8e73a2032c14c4f5c7f112e6a42467c1f43ae3b9d63eec68539345156ccef91fd2efcb65b063c960692efe44b8b482832e5d078a781cdff2b0fe5c906c
+"monaco-editor@npm:^0.47.0":
+  version: 0.47.0
+  resolution: "monaco-editor@npm:0.47.0"
+  checksum: 10/d4c21c9011dbe419f9474ccec525f29089f3d785314cf5643259d339e374d6bfde9db651cb084d4ea8942028f242cfe05d726c29a26894a827c368e9ec41e80e
   languageName: node
   linkType: hard
 
@@ -13526,7 +13516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.22.2":
+"react-router-dom@npm:^6.22.3":
   version: 6.22.3
   resolution: "react-router-dom@npm:6.22.3"
   dependencies:
@@ -15006,10 +14996,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"superstruct@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "superstruct@npm:1.0.3"
-  checksum: 10/632b6171ac136b6750e62a55f806cc949b3dbf2b4a7dc70cc85f54adcdf19d21eab9711f04e8a643b7dd622bbd8658366ead924f467adaccb2c8005c133b7976
+"superstruct@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "superstruct@npm:1.0.4"
+  checksum: 10/9b3fd70a08c5ad3ea78b5c6b7ab90d31dde71af10448208d296c3d29ba2e55dfd817dfef75957163ee032163d04c4b2e0cb2fddff30313516aa60f748c1a48da
   languageName: node
   linkType: hard
 
