@@ -17,8 +17,12 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.page;
 
+import org.openqa.selenium.By;
+
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+
+import java.time.Duration;
 
 /**
  * Represents Tree menu in Hawtio (e.g. Camel, JMX).
@@ -35,6 +39,7 @@ public class Tree {
      * @return the given page object class
      */
     public <P> P expandSpecificFolder(Class<P> pageObjectClass, String folderPartialId) {
+        assureLoaded();
         if (!$("[id*='" + folderPartialId + "']").has(cssClass("pf-m-expanded"))) {
             $("[id*='" + folderPartialId + "']").$("[class$='node-toggle']").shouldBe(interactable).click();
         }
@@ -47,6 +52,7 @@ public class Tree {
      * @param itemPartialId of the item to be selected
      */
     public void selectSpecificItem(String itemPartialId) {
+        assureLoaded();
         $("[id*='" + itemPartialId + "']").$("[class$='node-text']").shouldBe(interactable).click();
     }
 
@@ -56,6 +62,7 @@ public class Tree {
      * @param fullId of the item to be selected.
      */
     public void selectSpecificItemByExactId(String fullId) {
+        assureLoaded();
         $(byId(fullId)).$("[class$='node-text']").shouldBe(interactable).click();
     }
 
@@ -88,6 +95,7 @@ public class Tree {
      * Expand and collapse tree.
      */
     private void toggleExpandCollapseTree() {
+        assureLoaded();
         // there is only one button responsible for expanding and collapsing, it works as toggle button
         expandCollapseBtn.shouldBe(enabled).click();
     }
@@ -98,6 +106,7 @@ public class Tree {
      * @param state of the tree nodes
      */
     public void allTreeNodesState(String state) {
+        assureLoaded();
         if (state.contains("expanded")) {
             // when the tree is expanded, all list items should contain expanded class
             camelTreeNodes.should(allMatch("Each node is expanded", e -> e.getAttribute("class").contains(state)));
@@ -114,6 +123,7 @@ public class Tree {
      * @param value to filter the tree
      */
     public void filterTree(String value) {
+        assureLoaded();
         $(byId("input-search")).shouldBe(enabled).setValue(value);
     }
 
@@ -123,6 +133,11 @@ public class Tree {
      * @param value by which the tree is filtered
      */
     public void treeIsFiltered(String value) {
+        assureLoaded();
         $(byTagAndText("button", value)).should(exist).shouldBe(visible);
+    }
+
+    private void assureLoaded() {
+        $(By.className("pf-c-tree-view__list")).should(exist, Duration.ofSeconds(10));
     }
 }

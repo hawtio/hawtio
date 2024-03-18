@@ -11,6 +11,8 @@ import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 
+import org.openqa.selenium.By;
+
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
@@ -21,6 +23,9 @@ import io.hawt.tests.features.pageobjects.fragments.menu.Menu;
  * Represents Hawtio page with common methods.
  */
 public class HawtioPage {
+
+    private static final By HEADER_SELECTOR = By.id("hawtio-header-brand");
+
     private final Menu menu;
     private final Panel panel;
 
@@ -102,5 +107,13 @@ public class HawtioPage {
 
             tabElement.should(exist).shouldNotBe(hidden).click();
         }
+    }
+
+    public SelenideElement getLogo() {
+        return $(HEADER_SELECTOR).$(By.className("pf-c-brand"));
+    }
+
+    public String getAppName() {
+        return $(HEADER_SELECTOR).$(By.tagName("h1")).text();
     }
 }
