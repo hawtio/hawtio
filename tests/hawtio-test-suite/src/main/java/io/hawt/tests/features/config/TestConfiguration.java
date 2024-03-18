@@ -81,7 +81,7 @@ public class TestConfiguration {
             throw new RuntimeException("Containerized testsuite can't run maven application from inside the container, specify URL or a Docker image");
         }
 
-        if (getBoolean(USE_OPENSHIFT)) {
+        if (useOpenshift()) {
             deployment = new OpenshiftDeployment();
             return deployment;
         }
@@ -130,6 +130,10 @@ public class TestConfiguration {
         return getProperty("io.hawt.test.online.sha");
     }
 
+    public static String getHawtioOnlineImageRepository() {
+        return getProperty("io.hawt.test.online.image.repository");
+    }
+
     public static String getConnectAppUsername() {
         return getProperty(CONNECT_APP_USERNAME, TestConfiguration::getAppUsername);
     }
@@ -147,15 +151,15 @@ public class TestConfiguration {
     }
 
     public static boolean useOpenshift() {
-        return getBoolean(USE_OPENSHIFT);
+        return getBoolean(USE_OPENSHIFT, false);
     }
 
     public static String getIndexImage() {
-        return getRequiredProperty(OPENSHIFT_INDEX_IMAGE);
+        return getProperty(OPENSHIFT_INDEX_IMAGE);
     }
 
-    private static Boolean getBoolean(String name) {
-        return getOptionalProperty(name).map(Boolean::parseBoolean).orElse(false);
+    private static Boolean getBoolean(String name, boolean defaultValue) {
+        return getOptionalProperty(name).map(Boolean::parseBoolean).orElse(defaultValue);
     }
 
     public static String getOpenshiftUrl() {
@@ -184,7 +188,7 @@ public class TestConfiguration {
     }
 
     public static boolean openshiftNamespaceDelete() {
-        return getBoolean(OPENSHIFT_NAMESPACE_DELETE);
+        return getBoolean(OPENSHIFT_NAMESPACE_DELETE, true);
     }
 
 

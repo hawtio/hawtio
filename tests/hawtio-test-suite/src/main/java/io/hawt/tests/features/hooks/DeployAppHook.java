@@ -32,7 +32,10 @@ public class DeployAppHook {
             app = TestConfiguration.getAppDeploymentMethod();
             app.start();
 
-            Runtime.getRuntime().addShutdownHook(new Thread(app::stop));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                LOG.info("Cleaning up");
+                app.stop();
+            }));
         } catch (Throwable e) {
             startupFailure = e;
             LOG.error("Failed to start the test app", e);

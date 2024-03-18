@@ -1,4 +1,4 @@
-package io.hawt.tests.utils.rp;
+package io.hawt.tests.features.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,15 @@ public final class Attachments {
     private Attachments() {
     }
 
-    static void startTestClass(String testClass) {
+    public static void startTestClass(String testClass) {
         currentTestClass = testClass;
     }
 
-    static void startTestCase(String testCase) {
+    public static void startTestCase(String testCase) {
         currentTestCase = testCase;
     }
 
-    static void endTestCase(boolean failure) {
+    public static void endTestCase(boolean failure) {
         if (failure) {
             createAttachments(Stream.concat(testClassAttachments.stream(), testCaseAttachments.stream()).collect(Collectors.toList()),
                 currentTestClass + "." + currentTestCase);
@@ -39,7 +39,7 @@ public final class Attachments {
         currentTestCase = null;
     }
 
-    static void endTestClass() {
+    public static void endTestClass() {
         testClassAttachments.clear();
         currentTestClass = null;
     }
