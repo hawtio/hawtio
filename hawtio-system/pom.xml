@@ -90,6 +90,13 @@
       <version>${commons-codec-version}</version>
     </dependency>
 
+    <!-- For JWT parsing - no external dependencies -->
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>${nimbusds-jose-version}</version>
+    </dependency>
+
     <!-- For caching -->
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>

@@ -12,6 +12,7 @@ import io.hawt.jmx.PluginRegistry;
 import io.hawt.jmx.QuartzFacade;
 import io.hawt.jmx.RBACRegistry;
 import io.hawt.system.ConfigManager;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,15 @@ public class HawtioContextListener implements ServletContextListener {
             throw createServletException(e);
         }
         servletContextEvent.getServletContext().setAttribute(ConfigManager.CONFIG_MANAGER, configManager);
+
+        // configure OIDC here, because it's needed later both in CSP filter and AuthConfigurationServlet
+        AuthenticationConfiguration authConfig
+                = AuthenticationConfiguration.getConfiguration(servletContextEvent.getServletContext());
+        if (!authConfig.isEnabled()) {
+            return;
+        }
+
+        authConfig.configureOidc();
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {

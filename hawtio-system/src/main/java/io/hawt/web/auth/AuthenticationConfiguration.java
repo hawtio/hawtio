@@ -1,10 +1,19 @@
 package io.hawt.web.auth;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import javax.security.auth.login.Configuration;
 
+import io.hawt.util.IOHelper;
+import io.hawt.util.Strings;
+import io.hawt.web.ServletHelpers;
+import io.hawt.web.auth.oidc.OidcConfiguration;
 import jakarta.servlet.ServletContext;
 
 import io.hawt.system.ConfigManager;
@@ -17,7 +26,7 @@ public class AuthenticationConfiguration {
 
     public static final String LOGIN_URL = "/login";
     public static final String[] UNSECURED_PATHS = {
-        "/login", "/auth/login", "/auth/logout",
+        "/login", "/auth/login", "/auth/logout", "/auth/config",
         "/css", "/fonts", "/img", "/js", "/static", "/hawtconfig.json",
         "/jolokia", "/user", "/keycloak", "/plugin"
     };
@@ -74,6 +83,12 @@ public class AuthenticationConfiguration {
      */
     public static final String KEYCLOAK_ENABLED = "keycloakEnabled";
 
+    /**
+     * Configuration property to specify a location for OIDC properties file.
+     */
+    public static final String OIDC_CLIENT_CONFIG = "oidcConfig";
+    public static final String HAWTIO_OIDC_CLIENT_CONFIG = "hawtio." + OIDC_CLIENT_CONFIG;
+
     // =========================================================================
 
     // JVM system properties
@@ -112,11 +127,17 @@ public class AuthenticationConfiguration {
     private final boolean keycloakEnabled;
     private Configuration configuration;
 
+    private final ConfigManager configManager;
+    // OidcConfiguration implements javax.security.auth.login.Configuration, but let's keep it separate from
+    // this.configuration field
+    private OidcConfiguration oidcConfiguration;
+
     private AuthenticationConfiguration(ServletContext servletContext) {
         ConfigManager config = (ConfigManager) servletContext.getAttribute(ConfigManager.CONFIG_MANAGER);
         if (config == null) {
             throw new RuntimeException("Hawtio config manager not found, cannot proceed Hawtio configuration");
         }
+        configManager = config;
 
         // AUTH takes precedence over AUTHENTICATION_ENABLED because AUTH is mostly set manually by the user
         // whereas AUTHENTICATION_ENABLED may be predefined in a distribution.
@@ -230,6 +251,80 @@ public class AuthenticationConfiguration {
         return keycloakEnabled;
     }
 
+    /**
+     * Initialize OIDC configuration, so it is available both in {@link AuthConfigurationServlet} and
+     * {@link io.hawt.web.filters.ContentSecurityPolicyFilter}.
+     */
+    public void configureOidc() {
+        String oidcConfigFile = configManager.get(OIDC_CLIENT_CONFIG).orElse(null);
+
+        // JVM system properties can override always
+        if (System.getProperty(HAWTIO_OIDC_CLIENT_CONFIG) != null) {
+            oidcConfigFile = System.getProperty(HAWTIO_OIDC_CLIENT_CONFIG);
+        }
+
+        if (Strings.isBlank(oidcConfigFile)) {
+            oidcConfigFile = defaultOidcConfigLocation();
+        }
+
+        InputStream is = ServletHelpers.loadFile(oidcConfigFile);
+        if (is != null) {
+            LOG.info("Will load OIDC config from location: {}", oidcConfigFile);
+            Properties props = new Properties();
+            try {
+                props.load(is);
+                this.oidcConfiguration = new OidcConfiguration(props);
+                this.oidcConfiguration.setRolePrincipalClasses(this.rolePrincipalClasses);
+                if (this.oidcConfiguration.isEnabled()) {
+                    this.configuration = this.oidcConfiguration;
+                }
+            } catch (IOException e) {
+                LOG.warn("Couldn't read OIDC configuration file", e);
+            } finally {
+                IOHelper.close(is, "oidcInputStream", LOG);
+            }
+        }
+    }
+
+    /**
+     * Similarly to Keycloak configuration, we'll try well-known configuration locations.
+     *
+     * @return config location to be used by default
+     */
+    protected String defaultOidcConfigLocation() {
+        String karafBase = System.getProperty("karaf.base");
+        if (karafBase != null) {
+            return karafBase + "/etc/hawtio-oidc.properties";
+        }
+
+        String jettyHome = System.getProperty("jetty.home");
+        if (jettyHome != null) {
+            return jettyHome + "/etc/hawtio-oidc.properties";
+        }
+
+        String tomcatHome = System.getProperty("catalina.home");
+        if (tomcatHome != null) {
+            return tomcatHome + "/conf/hawtio-oidc.properties";
+        }
+
+        String jbossHome = System.getProperty("jboss.server.config.dir");
+        if (jbossHome != null) {
+            return jbossHome + "/hawtio-oidc.properties";
+        }
+
+        String artemisHome = System.getProperty("artemis.instance.etc");
+        if (artemisHome != null) {
+            return artemisHome + "/hawtio-oidc.properties";
+        }
+
+        // Fallback to classpath inside hawtio.war
+        return "classpath:hawtio-oidc.properties";
+    }
+
+    public OidcConfiguration getOidcConfiguration() {
+        return oidcConfiguration;
+    }
+
     @Override
     public String toString() {
         return "AuthenticationConfiguration[" +
@@ -240,6 +335,7 @@ public class AuthenticationConfiguration {
             ", rolePrincipalClasses='" + rolePrincipalClasses + '\'' +
             ", configuration=" + configuration +
             ", keycloakEnabled=" + keycloakEnabled +
+            ", oidcEnabled=" + (oidcConfiguration != null && oidcConfiguration.isEnabled()) +
             ']';
     }
 }

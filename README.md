@@ -30,8 +30,8 @@ If you haven't installed [JBang](https://www.jbang.dev/) yet, first install it: 
 You can start up Hawtio on your machine using the following `jbang` command.
 
 ```console
-jbang app install --name hawtio4 hawtio@hawtio/hawtio/4.x
-hawtio4 --help
+jbang app install hawtio@hawtio/hawtio
+hawtio --help
 ```
 
 ### Running a Spring Boot app
@@ -47,7 +47,7 @@ You can attach the Hawtio console to your Spring Boot app with the following ste
    <dependency>
      <groupId>io.hawt</groupId>
      <artifactId>hawtio-springboot</artifactId>
-     <version>4.0-beta-1</version>
+     <version>4.0.0-RC1</version>
    </dependency>
    ```
 
@@ -66,7 +66,7 @@ mvn spring-boot:run
 
 Opening <http://localhost:8080/actuator/hawtio> should show the Hawtio console.
 
-See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-beta-1/examples/springboot) for a working example app.
+See [Spring Boot example](https://github.com/hawtio/hawtio/tree/hawtio-4.0.0-RC1/examples/springboot) for a working example app.
 
 ### Running a Quarkus app
 
@@ -79,7 +79,7 @@ You can attach the Hawtio console to your Quarkus app by adding `io.hawt:hawtio-
 <dependency>
   <groupId>io.hawt</groupId>
   <artifactId>hawtio-quarkus</artifactId>
-  <version>4.0-beta-1</version>
+  <version>4.0.0-RC1</version>
 </dependency>
 ```
 
@@ -91,7 +91,7 @@ mvn compile quarkus:dev
 
 Opening <http://localhost:8080/hawtio> should show the Hawtio console.
 
-See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-4.0-beta-1/examples/quarkus) for a working example app.
+See [Quarkus example](https://github.com/hawtio/hawtio/tree/hawtio-4.0.0-RC1/examples/quarkus) for a working example app.
 
 ## Contributing
 

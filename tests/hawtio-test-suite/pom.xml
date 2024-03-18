@@ -14,13 +14,28 @@
   <properties>
     <image.name>hawtio-test-suite</image.name>
     <local-app>true</local-app>
-    <logback-classic-version>1.4.12</logback-classic-version>
+    <logback-classic-version>1.5.3</logback-classic-version>
     <slf4j-log4j12-version>2.0.5</slf4j-log4j12-version>
-    <junit-platform-commons-version>1.10.1</junit-platform-commons-version>
+    <junit-platform-commons-version>1.10.2</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.10.1</gson-version>
-    <xtf.version>0.31</xtf.version>
+    <xtf.version>0.32</xtf.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcore-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient-version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -173,7 +188,7 @@
     <dependency>
       <groupId>com.github.docker-java</groupId>
       <artifactId>docker-java</artifactId>
-      <version>3.3.4</version>
+      <version>3.3.6</version>
     </dependency>
 
     <!-- Used by the generated CRD classes -->
