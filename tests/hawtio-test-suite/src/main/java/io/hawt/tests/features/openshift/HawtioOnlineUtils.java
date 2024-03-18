@@ -16,6 +16,7 @@ import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.openshift.api.model.operatorhub.lifecyclemanager.v1.PackageManifest;
 import io.fabric8.openshift.api.model.operatorhub.v1.OperatorGroupBuilder;
+import io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource;
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSourceBuilder;
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.ClusterServiceVersion;
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.SubscriptionBuilder;
@@ -27,8 +28,6 @@ import io.hawt.v1alpha1.HawtioSpec;
 public class HawtioOnlineUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioOnlineUtils.class);
-
-    private static final boolean OPERATOR_WORKAROUND = TestConfiguration.getHawtioOnlineSHA() != null;
 
     public static Deployment deployApplication(String name, String runtime, String namespace, String tag) {
         //@formatter:off
@@ -89,29 +88,34 @@ public class HawtioOnlineUtils {
     }
 
     public static void deployOperator() {
-        //@formatter:off
         final OpenShiftOperatorHubAPIGroupDSL operatorhub = OpenshiftClient.get().operatorHub();
-        operatorhub.catalogSources().createOrReplace(new CatalogSourceBuilder()
-                .editOrNewMetadata()
-                    .withName("hawtio-catalog")
-                .endMetadata()
-                .editOrNewSpec()
-                    .withImage(TestConfiguration.getIndexImage())
-                    .withSourceType("grpc")
-                .endSpec()
-            .build());
+        CatalogSource catalog = null;
+        if (TestConfiguration.getIndexImage() != null) {
+            //@formatter:off
+            operatorhub.catalogSources().createOrReplace(new CatalogSourceBuilder()
+                    .editOrNewMetadata()
+                        .withName("hawtio-catalog")
+                    .endMetadata()
+                    .editOrNewSpec()
+                        .withImage(TestConfiguration.getIndexImage())
+                        .withSourceType("grpc")
+                    .endSpec()
+                .build());
 
-        WaitUtils.waitFor(() -> operatorhub.catalogSources().withName("hawtio-catalog")
-            .get()
-            .getStatus()
-            .getConnectionState()
-            .getLastObservedState()
-            .equalsIgnoreCase("READY"),
-            "Waiting for the catalog to get ready", Duration.ofMinutes(2));
-
-        var catalog = operatorhub.catalogSources().withName("hawtio-catalog").get();
+            WaitUtils.waitFor(() -> operatorhub.catalogSources().withName("hawtio-catalog")
+                .get()
+                .getStatus()
+                .getConnectionState()
+                .getLastObservedState()
+                .equalsIgnoreCase("READY"),
+                "Waiting for the catalog to get ready", Duration.ofMinutes(2));
+            catalog = operatorhub.catalogSources().withName("hawtio-catalog").get();
+        } else {
+            catalog = operatorhub.catalogSources().inNamespace("openshift-marketplace").withName("redhat-operators").get();
+        }
+        CatalogSource finalCatalog = catalog;
         final PackageManifest packageManifest = WaitUtils.withRetry(() -> operatorhub.packageManifests()
-            .withLabel("catalog", "hawtio-catalog")
+            .withLabel("catalog", finalCatalog.getMetadata().getName())
             .list()
             .getItems()
             .stream()
@@ -139,7 +143,7 @@ public class HawtioOnlineUtils {
                     .withName(subscriptonName)
                 .endMetadata()
                 .editOrNewSpec()
-                    .withChannel("preview")
+                    .withChannel(defaultChannel)
                     .withInstallPlanApproval("Automatic")
                     .withName(subscriptonName)
                     .withSource(catalog.getMetadata().getName())
@@ -159,11 +163,15 @@ public class HawtioOnlineUtils {
                 .getStatus().getPhase().equals("Complete");
         }, "Waiting for the installplan to finish", Duration.ofMinutes(3));
 
-        if (OPERATOR_WORKAROUND) {
+        if (TestConfiguration.getHawtioOnlineSHA() != null) {
             WaitUtils.withRetry(() -> {
                 final ClusterServiceVersion csv = operatorhub.clusterServiceVersions().withName(startingCSV).get();
                 csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
                     .add(new EnvVar("IMAGE_VERSION", TestConfiguration.getHawtioOnlineSHA(), null));
+                if (TestConfiguration.getHawtioOnlineImageRepository() != null) {
+                    csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
+                        .add(new EnvVar("IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineImageRepository(), null));
+                }
                 operatorhub.clusterServiceVersions().withName(startingCSV).patch(csv);
             }, 5, Duration.ofSeconds(5));
 
@@ -175,6 +183,7 @@ public class HawtioOnlineUtils {
     }
 
     public static String deployHawtioCR(Hawtio hawtio) {
+        hawtio.getMetadata().getFinalizers().clear();
         OpenshiftClient.get().resources(Hawtio.class).createOrReplace(hawtio);
 
         WaitUtils.waitFor(() -> {
@@ -184,7 +193,6 @@ public class HawtioOnlineUtils {
                 resource.get().getStatus().getURL() != null;
         }, "Waiting for hawtio deployment to succeed", Duration.ofMinutes(2));
 
-        patchHawtioResource("e2e-hawtio", h -> h.getMetadata().getFinalizers().clear());
         return OpenshiftClient.get().resources(Hawtio.class).withName(hawtio.getMetadata().getName()).get().getStatus()
             .getURL();
     }
@@ -224,5 +232,9 @@ public class HawtioOnlineUtils {
         WaitUtils.withRetry(() -> {
             OpenshiftClient.get().resources(Hawtio.class).withName(name).patch(value);
         }, 5, Duration.ofMillis(500));
+    }
+
+    public static void deleteHawtio(Hawtio hawtio) {
+        OpenshiftClient.get().resource(hawtio).delete();
     }
 }

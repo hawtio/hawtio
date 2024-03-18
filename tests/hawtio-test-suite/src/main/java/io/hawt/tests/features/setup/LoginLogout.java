@@ -3,25 +3,24 @@ package io.hawt.tests.features.setup;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.sleep;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codeborne.selenide.Selenide;
 
+import java.time.Duration;
+
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.hooks.DeployAppHook;
 import io.hawt.tests.features.openshift.OpenshiftClient;
 import io.hawt.tests.features.pageobjects.fragments.Panel;
 import io.hawt.tests.features.pageobjects.pages.ConnectPage;
+import io.hawt.tests.features.pageobjects.pages.LoginPage;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlinePage;
-import io.hawt.tests.features.pageobjects.pages.LoginPage;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
-
-import java.time.Duration;
 
 public class LoginLogout {
     private static final Panel panel = new Panel();
@@ -79,7 +78,7 @@ public class LoginLogout {
      * Check that Hawtio page is properly and fully loaded.
      */
     public static void hawtioIsLoaded() {
-        $("img.pf-c-brand").should(exist).shouldBe(interactable);
+        $("img.pf-c-brand").should(exist, Duration.ofSeconds(20)).shouldBe(interactable);
         $("#vertical-nav-toggle").should(exist).shouldBe(interactable);
     }
 }
