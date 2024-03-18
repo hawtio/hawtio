@@ -14,7 +14,7 @@ Feature: Check whether all data is presented and displayed correctly in About mo
   @online
   Scenario Outline: Check that the titles are presented in About modal window
     Given User clicks on "About" option in Question mark drop-down menu
-    Then The "Red Hat build of Hawtio" header is presented in About modal window
+    Then The "Red Hat build of HawtIO" header is presented in About modal window
     And The "<component>" is presented in About modal window
     Then About modal window is closed
 

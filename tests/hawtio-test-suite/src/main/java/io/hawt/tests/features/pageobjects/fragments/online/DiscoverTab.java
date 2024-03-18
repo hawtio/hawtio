@@ -89,5 +89,6 @@ public class DiscoverTab {
 
     private void waitForPageLoaded() {
         $(ByUtils.byDataTestId("loading")).shouldNot(Condition.exist, Duration.ofSeconds(30));
+        $(By.className("pf-c-accordion")).should(Condition.exist, Duration.ofSeconds(30));
     }
 }

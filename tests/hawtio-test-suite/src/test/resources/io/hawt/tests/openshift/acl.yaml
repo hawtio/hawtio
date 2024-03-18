@@ -1,0 +1,477 @@
+# This file defines the roles allowed for MBean operations
+#
+# The definition of ACLs for JMX operations works as follows:
+#
+# Based on the ObjectName of the JMX MBean, a key composed with the ObjectName
+# domain, followed by the 'type' attribute optionally, can be declared, using the
+# convention <domain>.<type>.
+# For example, the 'java.lang.Threading' key for the MBean with the following
+# objectName: java.lang:type=Threading can be declared. A more generic key with
+# the domain only can be declared (e.g. java.lang). A 'default' top-level key can
+# also be declared.
+# A key can either be an unordered or ordered map, whose keys can either be
+# string or regexp, and whose values can either be string or array of strings,
+# that represent roles that are allowed to invoke the MBean member.
+#
+# The system looks for allowed roles using the following process:
+#
+# The most specific key is tried first. E.g. for the
+# above example, the java.lang.Threading key is looked up first.
+# If the most specific key does not exist, the domain-only key is looked up,
+# otherwise, the 'default' key is looked up.
+# Using the matching key, the system looks up its map value for:
+#   1. An exact match for the operation invocation, using the operation
+#      signature, and the invocation arguments, e.g.:
+#      uninstall(java.lang.String)[0]: [] # no roles can perform this operation
+#   2. A regexp match for the operation invocation, using the operation
+#      signature, and the invocation arguments, e.g.:
+#      /update\(java\.lang\.String,java\.lang\.String\)\[[1-4]?[0-9],.*\]/: admin
+#      Note that, if the value is an ordered map, the iteration order is guaranteed,
+#      and the first matching regexp key is selected;
+#   3. An exact match for the operation invocation, using the operation
+#      signature, without the invocation arguments, e.g.:
+#      delete(java.lang.String): admin
+#   4. An exact match for the operation invocation, using the operation
+#      name, e.g.:
+#      dumpStatsAsXml: admin, viewer
+# If the key matches the operation invocation, it is used and the process will not
+# look for any other keys. So the most specific key always takes precedence.
+# Its value is used to match the role that impersonates the request, against the roles
+# that are allowed to invoke the operation.
+# If the current key does not match, the less specific key is looked up
+# and matched following the steps 1 to 4 above, up until the 'default' key.
+# Otherwise, the operation invocation is denied.
+#
+# For the time being, only the viewer and admin roles are supported. Once the current
+# invocation is authenticated, these roles are inferred from the permissions the user
+# impersonating the request is granted for the pod hosting the operation being invoked.
+# A user that's granted the 'update' verb on the pod resource is bound to the 'admin' role.
+# Else, a user granted the 'get' verb on the pod resource is bound the 'viewer' role.
+# Otherwise the user is not bound any roles.
+
+# Default, generic rules, declared as an ordered map, so that the most specific keys
+# are tested first.
+default:
+  - version: admin, viewer
+  - list: admin, viewer
+  - read: admin, viewer
+  - search: admin, viewer
+  - /list.*/: admin, viewer
+  - /get.*/: admin, viewer
+  - /is.*/: admin, viewer
+  - /set.*/: admin
+  - /.*/: admin
+
+com.sun.management:
+  dumpHeap: admin, viewer
+  getVMOption: admin, viewer
+  setVMOption: admin
+
+connector:
+  stop: admin
+  start: admin
+
+hawtio.plugin:
+  /.*/: /.*/
+hawtio.ConfigAdmin:
+  configAdminUpdate: admin
+hawtio.OSGiTools:
+  getResourceURL: admin, viewer
+  getLoadClassOrigin: admin, viewer
+hawtio.QuartzFacade:
+  updateSimpleTrigger: admin
+  updateCronTrigger: admin
+hawtio.SchemaLookup:
+  getSchemaForClass: admin, viewer
+hawtio.security:
+  canInvoke: admin, viewer
+
+java.lang.Memory:
+  gc: admin
+java.lang.MemoryPool:
+  resetPeakUsage: admin
+java.lang.Threading:
+  /find.*/: admin, viewer
+  dumpAllThreads: admin, viewer
+  resetPeakThreadCount: admin
+java.util.logging:
+  getLoggerLevel: admin, viewer
+  getParentLoggerName: admin, viewer
+  setLoggerLevel: admin
+
+jolokia.Config.hawtio:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+  debugInfo: admin, viewer
+  setHistoryEntriesForAttribute: admin
+  setHistoryEntriesForOperation: admin
+  setHistoryLimitForOperation: admin
+  resetHistoryEntries: admin
+  resetDebugInfo: admin
+  setHistoryLimitForAttribute: admin
+jolokia.Discovery:
+  lookupAgents: admin, viewer
+  lookupAgentsWithTimeout: admin, viewer
+jolokia.ServerHandler.hawtio:
+  mBeanServersInfo: admin, viewer
+
+org.apache.aries.blueprint.blueprintMetadata:
+  /get.*/: admin, viewer
+org.apache.aries.blueprint.blueprintState:
+  /get.*/: admin, viewer
+
+org.apache.camel:
+  /.*/: /.*/
+org.apache.camel.components:
+  getState: admin, viewer
+  getComponentName: admin, viewer
+  getCamelId: admin, viewer
+org.apache.camel.consumers:
+  isSuspended: admin, viewer
+  getState: admin, viewer
+  getServiceType: admin, viewer
+  isSupportSuspension: admin, viewer
+  isStaticService: admin, viewer
+  getCamelId: admin, viewer
+  getRouteId: admin, viewer
+  getInflightExchanges: admin, viewer
+  getEndpointUri: admin, viewer
+  stop: admin
+  start: admin
+  suspend: admin
+  resume: admin
+org.apache.camel.context:
+  getResetTimestamp: admin, viewer
+  getExchangesTotal: admin
+  getTotalProcessingTime: admin, viewer
+  isStatisticsEnabled: admin, viewer
+  setStatisticsEnabled: admin
+  getExchangesCompleted: admin, viewer
+  getExchangesFailed: admin, viewer
+  getFailuresHandled: admin, viewer
+  getRedeliveries: admin, viewer
+  getExternalRedeliveries: admin, viewer
+  getMinProcessingTime: admin, viewer
+  getMeanProcessingTime: admin, viewer
+  getMaxProcessingTime: admin, viewer
+  getLastProcessingTime: admin, viewer
+  getDeltaProcessingTime: admin, viewer
+  getLastExchangeCompletedTimestamp: admin, viewer
+  getLastExchangeCompletedExchangeId: admin, viewer
+  getFirstExchangeCompletedTimestamp: admin, viewer
+  getFirstExchangeCompletedExchangeId: admin, viewer
+  getLastExchangeFailureTimestamp: admin, viewer
+  getLastExchangeFailureExchangeId: admin, viewer
+  getFirstExchangeFailureTimestamp: admin, viewer
+  getFirstExchangeFailureExchangeId: admin, viewer
+  getCamelId: admin, viewer
+  getTimeout: admin, viewer
+  setTimeout: admin
+  getProperties: admin, viewer
+  getState: admin, viewer
+  getUptime: admin, viewer
+  getInflightExchanges: admin, viewer
+  getTracing: admin, viewer
+  setTracing: admin
+  getLoad01: admin, viewer
+  getLoad05: admin, viewer
+  getLoad15: admin, viewer
+  getCamelVersion: admin, viewer
+  getApplicationContextClassName: admin, viewer
+#  getTotalRoutes: admin, viewer
+  getStartedRoutes: admin, viewer
+  isMessageHistory: admin, viewer
+  getTimeUnit: admin, viewer
+  setTimeUnit: admin
+  getClassResolver: admin, viewer
+  getManagementName: admin, viewer
+  getPackageScanClassResolver: admin, viewer
+  isUseMDCLogging: admin, viewer
+  isAllowUseOriginalMessage: admin, viewer
+  isUseBreadcrumb: admin, viewer
+  isShutdownNowOnTimeout: admin, viewer
+  setShutdownNowOnTimeout: admin
+  reset: admin
+  dumpStatsAsXml: admin, viewer
+  setProperty: admin
+  getProperty: admin, viewer
+  createEndpoint: admin
+  restart: admin
+  stop: []
+  start: admin
+  suspend: admin
+  resume: admin
+  sendStringBody: admin
+  requestStringBody: admin
+  dumpRoutesAsXml: admin, viewer
+  addOrUpdateRoutesFromXml: admin
+  findComponentNames: admin, viewer
+  dumpRoutesStatsAsXml: admin, viewer
+  componentParameterJsonSchema: admin, viewer
+  sendBody: admin
+  sendBodyAndHeaders: admin
+  requestBody: admin
+  requestBodyAndHeaders: admin
+  findComponents: admin, viewer
+  getComponentDocumentation: admin, viewer
+  removeEndpoints: admin
+  completeEndpointPath: admin, viewer
+org.apache.camel.endpoints:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+org.apache.camel.errorhandlers:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+org.apache.camel.eventnotifiers:
+  /set.*/: admin
+org.apache.camel.processors:
+  dumpStatsAsXml: admin, viewer
+  /get.*/: admin, viewer
+  /is.*/: admin, viewer
+  /set.*/: admin
+  reset: admin
+  stop: admin
+  start: admin
+org.apache.camel.routes:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+  reset: admin
+  /dump.*/: admin, viewer
+  remove: admin
+  shutdown: admin
+  stop: admin
+  start: admin
+  suspend: admin
+  resume: admin
+  updateRouteFromXml: admin
+org.apache.camel.services:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+  stop: admin
+  start: admin
+  suspend: admin
+  resume: admin
+  purge: admin
+  hasTypeConverter: admin, viewer
+  resetTypeConversionCounters: admin
+  listTypeConverters: admin, viewer
+org.apache.camel.threadpools:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+  purge: admin
+org.apache.camel.tracer:
+  /is.*/: admin, viewer
+  /get.*/: admin, viewer
+  /set.*/: admin
+  step: admin, viewer
+  enableDebugger: admin
+  disableDebugger: admin
+  /.*Breakpoint.*/: admin, viewer
+  resumeAll: admin, viewer
+  resetDebugCounter: admin
+  /dump.*/: admin, viewer
+  clear: admin
+  resetTraceCounter: admin
+
+org.apache.cxf.Bus:
+  shutdown: admin
+org.apache.cxf.Bus.Service.Endpoint:
+  destroy: admin
+  start: admin
+  stop: admin
+  getState: admin, viewer
+  getTransportId: admin, viewer
+  getAddress: admin, viewer
+org.apache.cxf.WorkQueueManager:
+  shutdown: admin
+
+org.apache.karaf.bundle:
+  capabilities: admin, viewer
+  diag: admin, viewer
+  getStartLevel: admin, viewer
+  install: admin
+  refresh: admin
+  resolve: admin
+  restart: admin
+  status: admin, viewer
+  /setStartLevel\(java\.lang\.String,int\)\[[1-4]?[0-9],.*\]/: admin
+  setStartLevel: admin
+  /start\(java\.lang\.String\)\[[1-4]?[0-9]\]/: admin
+  start: admin
+  /stop\(java\.lang\.String\)\[[1-4]?[0-9]\]/: admin
+  stop: admin
+  uninstall(java.lang.String)[0]: [ ] # no roles can perform this operation
+  uninstall: admin
+  /update\(java\.lang\.String\)\[[1-4]?[0-9]\]/: admin
+  /update\(java\.lang\.String,java\.lang\.String\)\[[1-4]?[0-9],.*\]/: admin
+  update: admin
+org.apache.karaf.config:
+  listProperties: admin, viewer
+  /appendProperty\(java\.lang\.String,java\.lang\.String,java\.lang\.String\)\[jmx\.acl\..*,.*,.*\]/: admin
+  /appendProperty\(java\.lang\.String,java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+,.*,.*\]/: admin
+  /appendProperty\(java\.lang\.String,java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+,.*,.*\]/: admin
+  appendProperty(java.lang.String,java.lang.String,java.lang.String): admin
+  /create\(java\.lang\.String\)\[jmx\.acl\..*\]/: admin
+  /create\(java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+\]/: admin
+  /create\(java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+\]/: admin
+  create(java.lang.String): admin
+  /delete\(java\.lang\.String\)\[jmx\.acl\..*\]/: admin
+  /delete\(java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+\]/: admin
+  /delete\(java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+\]/: admin
+  delete(java.lang.String): admin
+  /deleteProperty\(java\.lang\.String,java\.lang\.String\)\[jmx\.acl\..*,.*\]/: admin
+  /deleteProperty\(java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+,.*\]/: admin
+  /deleteProperty\(java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+,.*\]/: admin
+  deleteProperty(java.lang.String,java.lang.String): admin
+  /setProperty\(java\.lang\.String,java\.lang\.String,java\.lang\.String\)\[jmx\.acl\..*,.*,.*\]/: admin
+  /setProperty\(java\.lang\.String,java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+,.*,.*\]/: admin
+  /setProperty\(java\.lang\.String,java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+,.*,.*\]/: admin
+  setProperty(java.lang.String,java.lang.String,java.lang.String): admin
+  /update\(java\.lang\.String,java\.util\.Map\)\[jmx\.acl\..*,.*\]/: admin
+  /update\(java\.lang\.String,java\.util\.Map\)\[org\.apache\.karaf\.command\.acl\..+,.*\]/: admin
+  /update\(java\.lang\.String,java\.util\.Map\)\[org\.apache\.karaf\.service\.acl\..+,.*\]/: admin
+  update(java.lang.String,java.util.Map): admin
+org.apache.karaf.diagnostic:
+  createDump: admin, viewer
+org.apache.karaf.feature:
+  infoFeature: admin, viewer
+  removeRepository: admin
+  addRepository: admin
+  uninstallFeature: admin
+  installFeature: admin
+  refreshRepository: admin
+org.apache.karaf.instance:
+  createInstance: admin
+  destroyInstance: admin
+  startInstance: admin
+  stopInstance: admin
+  cloneInstance: admin
+  renameInstance: admin
+  changeSshPort: admin
+  changeSshHost: admin
+  ChangeRmiRegistryPort: admin
+  changeRmiServerPort: admin
+  changeJavaOpts: admin
+org.apache.karaf.log:
+  getLevel: admin, viewer
+  setLevel: admin
+org.apache.karaf.package:
+  getImports: admin, viewer
+  getExports: admin, viewer
+org.apache.karaf.service:
+  getServices: admin, viewer
+org.apache.karaf.system:
+  setProperty: admin
+  /getPropert.*/: admin, viewer
+  halt: admin
+  reboot: admin
+  rebootCleanCache: admin
+  rebootCleanAll: admin
+
+osgi.compendium.cm:
+  /createFactoryConfiguration\(java\.lang\.String\)\[jmx\.acl\..*\]/: admin
+  /createFactoryConfiguration\(java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\.\..+\]/: admin
+  /createFactoryConfiguration\(java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\.\..+\]/: admin
+  createFactoryConfiguration(java.lang.String): admin
+  /createFactoryConfigurationForLocation\(java\.lang\.String,java\.lang\.String\)\[jmx\.acl\..*,.*\]/: admin
+  /createFactoryConfigurationForLocation\(java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+,.*\]/: admin
+  /createFactoryConfigurationForLocation\(java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+,.*\]/: admin
+  createFactoryConfigurationForLocation(java.lang.String,java.lang.String): admin
+  /delete\(java\.lang\.String\)\[jmx\.acl\..*\]/: admin
+  /delete\(java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+\]/: admin
+  /delete\(java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+\]/: admin
+  delete(java.lang.String): admin
+  deleteConfigurations: admin
+  /deleteForLocation\(java\.lang\.String,java\.lang\.String\)\[jmx\.acl\..*,.*\]/: admin
+  /deleteForLocation\(java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.command\.acl\..+,.*\]/: admin
+  /deleteForLocation\(java\.lang\.String,java\.lang\.String\)\[org\.apache\.karaf\.service\.acl\..+,.*\]/: admin
+  deleteForLocation(java.lang.String,java.lang.String): admin
+  /update\(java\.lang\.String,javax\.management\.openmbean\.TabularData\)\[jmx\.acl\..*,.*\]/: admin
+  /update\(java\.lang\.String,javax\.management\.openmbean\.TabularData\)\[org\.apache\.karaf\.command\.acl\..+,.*\]/: admin
+  /update\(java\.lang\.String,javax\.management\.openmbean\.TabularData\)\[org\.apache\.karaf\.service\.acl\..+,.*\]/: admin
+  update(java.lang.String,javax.management.openmbean.TabularData): admin
+  /updateForLocation\(java\.lang\.String,java\.lang\.String,javax\.management\.openmbean\.TabularData\)\[jmx\.acl\..*,.*,.*\]/: admin
+  /updateForLocation\(java\.lang\.String,java\.lang\.String,javax\.management\.openmbean\.TabularData\)\[org\.apache\.karaf\.command\.acl\..+,.*,.*\]/: admin
+  /updateForLocation\(java\.lang\.String,java\.lang\.String,javax\.management\.openmbean\.TabularData\)\[org\.apache\.karaf\.service\.acl\..+,.*,.*\]/: admin
+  updateForLocation(java.lang.String,java.lang.String,javax.management.openmbean.TabularData): admin
+osgi.core.bundleState:
+  getRequiredBundles: admin, viewer
+  getHosts: admin, viewer
+  getLocation: admin, viewer
+  getState: admin, viewer
+  getBundle: admin, viewer
+  getVersion: admin, viewer
+  getSymbolicName: admin, viewer
+  getRegisteredServices: admin, viewer
+  getServicesInUse: admin, viewer
+  getFragments: admin, viewer
+  getLastModified: admin, viewer
+  getHeaders: admin, viewer
+  getHeader: admin, viewer
+  getStartLevel: admin, viewer
+  getExportedPackages: admin, viewer
+  getRequiringBundles: admin, viewer
+  isFragment: admin, viewer
+  isRemovalPending: admin, viewer
+  isPersistentlyStarted: admin, viewer
+  isActivationPolicyUsed: admin, viewer
+  getImportedPackages: admin, viewer
+  isRequired: admin, viewer
+  listBundles: admin, viewer
+osgi.core.framework:
+  startBundles: admin
+  getProperty: admin, viewer
+  resolve: admin
+  installBundle: admin
+  setBundleStartLevel: admin
+  startBundle: admin
+  updateBundle: admin
+  stopBundle: admin
+  stopBundle(long)[0]: [ ] # no roles can perform this operation
+  uninstallBundle: admin
+  resolveBundles: admin
+  getDependencyClosure: admin, viewer
+  refreshBundle: admin
+  refreshBundles: admin
+  installBundleFromURL: admin
+  installBundles: admin
+  installBundlesFromURL: admin
+  refreshBundleAndWait: admin
+  refreshBundlesAndWait: admin
+  resolveBundle: admin
+  restartFramework: admin
+  setBundleStartLevels: admin
+  shutdownFramework: admin
+  stopBundles: admin
+  uninstallBundles: admin
+  updateBundleFromURL: admin
+  updateBundles: admin
+  updateBundlesFromURL: admin
+osgi.core.packageState:
+  getExportingBundles: admin, viewer
+  listPackages: admin, viewer
+  getImportingBundles: admin, viewer
+  isRemovalPending: admin, viewer
+osgi.core.serviceState:
+  getProperty: admin, viewer
+  getProperties: admin, viewer
+  getService: admin, viewer
+  getBundleIdentifier: admin, viewer
+  getObjectClass: admin, viewer
+  listServices: admin, viewer
+  getUsingBundles: admin, viewer
+osgi.core.wiringState:
+  getCurrentRevisionDeclaredCapabilities: admin, viewer
+  getCurrentWiringClosure: admin, viewer
+  getRevisionsDeclaredRequirements: admin, viewer
+  getRevisionsDeclaredCapabilities: admin, viewer
+  getRevisionsWiring: admin, viewer
+  getRevisionsWiringClosure: admin, viewer
+  getCurrentRevisionDeclaredRequirements: admin, viewer
+  getCurrentWiring: admin, viewer
