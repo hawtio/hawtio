@@ -1,15 +1,14 @@
 package io.hawt.tests.features.setup;
 
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.GeckoDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import com.google.common.collect.ImmutableMap;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -30,13 +29,21 @@ public class WebDriver {
             System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "target/driver.log");
         }
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
+        // System.setProperty("chromeoptions.args", );
+        if (Configuration.browser.equals("chrome")) {
+            ChromeOptions options = new ChromeOptions();
+            options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false));
+            Configuration.browserCapabilities = options;
+        }
         Configuration.headless = TestConfiguration.browserHeadless();
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 20000;
+
     }
 
     /**
-     * Setup drivers when running in container - avoid fetching driver from Internet every run
+     * Setup drivers when running in container - avoid fetching driver from Internet
+     * every run
      */
     private static void setupDriverPaths() {
         Path optFolder = Path.of("/", "opt");
@@ -45,9 +52,10 @@ public class WebDriver {
         });
         Path seleniumFolder = optFolder.resolve("selenium");
         Arrays.stream(seleniumFolder.toFile().list()).filter(f -> f.startsWith("chromedriver")).findFirst()
-            .ifPresent(path -> {
-                System.setProperty("webdriver.chrome.driver", seleniumFolder.resolve(path).toAbsolutePath().toString());
-            });
+                .ifPresent(path -> {
+                    System.setProperty("webdriver.chrome.driver",
+                            seleniumFolder.resolve(path).toAbsolutePath().toString());
+                });
     }
 
     /**
