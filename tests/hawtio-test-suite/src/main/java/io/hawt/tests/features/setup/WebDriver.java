@@ -2,6 +2,8 @@ package io.hawt.tests.features.setup;
 
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.GeckoDriverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +31,14 @@ public class WebDriver {
             System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "target/driver.log");
         }
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
-        // System.setProperty("chromeoptions.args", );
         if (Configuration.browser.equals("chrome")) {
             ChromeOptions options = new ChromeOptions();
             options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false));
+            options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
+            Configuration.browserCapabilities = options;
+        } else {
+            FirefoxOptions options = new FirefoxOptions();
+            options.addPreference("network.proxy.allow_hijacking_localhost", false);
             Configuration.browserCapabilities = options;
         }
         Configuration.headless = TestConfiguration.browserHeadless();
