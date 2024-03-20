@@ -12,6 +12,7 @@ import java.net.URL;
 import java.time.Duration;
 
 import io.hawt.tests.features.config.TestConfiguration;
+import io.hawt.tests.features.utils.ByUtils;
 
 public class ConnectPage extends HawtioPage {
 
@@ -26,30 +27,27 @@ public class ConnectPage extends HawtioPage {
     private static final By FOOTER_BUTTON = By.cssSelector("footer button.pf-m-primary");
 
     public void addConnection(String name, URL connection) {
-
-        if ($(CONNECTION_LIST).isDisplayed()) {
-        /* I have added if-else construct due to the reason that on re-occurring error screenshots, it seemed like the test-connection already
-        existed.
-        TO-DO: task for further examination and potential refinement */
+        //Don't try to create the same connection twice
+        if ($(ByUtils.byAttribute("rowid", "connection " + name)).exists()) {
             return;
-        } else {
-            $(CONNECT_BUTTON).shouldBe(Condition.interactable).click();
-
-            $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
-            $(CONNECTION_FORM).$(By.id("connection-form-host")).setValue(connection.getHost());
-            $(CONNECTION_FORM).$(By.id("connection-form-port")).setValue(String.valueOf(connection.getPort()));
-            $(CONNECTION_FORM).$(By.id("connection-form-path")).setValue(connection.getPath());
-
-            if (!connection.getPath().endsWith("/jolokia")) {
-                $(CONNECTION_FORM).$(By.id("connection-form-path")).sendKeys("/jolokia");
-            }
-
-            if ("https".equals(connection.getProtocol())) {
-                $(CONNECTION_FORM).$(By.id("connection-form-scheme")).click();
-            }
-
-            $(MODAL).$(FOOTER_BUTTON).click();
         }
+
+        $(CONNECT_BUTTON).shouldBe(Condition.interactable).click();
+
+        $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
+        $(CONNECTION_FORM).$(By.id("connection-form-host")).setValue(connection.getHost());
+        $(CONNECTION_FORM).$(By.id("connection-form-port")).setValue(String.valueOf(connection.getPort()));
+        $(CONNECTION_FORM).$(By.id("connection-form-path")).setValue(connection.getPath());
+
+        if (!connection.getPath().endsWith("/jolokia")) {
+            $(CONNECTION_FORM).$(By.id("connection-form-path")).sendKeys("/jolokia");
+        }
+
+        if ("https".equals(connection.getProtocol())) {
+            $(CONNECTION_FORM).$(By.id("connection-form-scheme")).click();
+        }
+
+        $(MODAL).$(FOOTER_BUTTON).click();
     }
 
     public void connectTo(String name) {
