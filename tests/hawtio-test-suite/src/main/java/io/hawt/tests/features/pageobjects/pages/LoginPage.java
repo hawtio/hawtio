@@ -6,12 +6,13 @@ import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
+import org.assertj.core.api.Assertions;
+
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.ex.ElementNotFound;
 
-import java.net.URL;
-
-import io.hawt.tests.features.config.TestConfiguration;
+import java.time.Duration;
 
 /**
  * Represents a Login page.
@@ -26,11 +27,15 @@ public class LoginPage {
      * Login to hawtio as given user with given password.
      */
     public void login(String username, String password) {
-        if (WebDriverRunner.url().contains("login")) {
-            loginDiv.shouldBe(visible).should(exist);
+        try {
+            loginDiv.shouldBe(visible, Duration.ofSeconds(5)).should(exist);
             loginInput.shouldBe(editable).setValue(username);
             passwordInput.shouldBe(editable).setValue(password);
             loginButton.shouldBe(enabled).click();
+        } catch (ElementNotFound e) {
+            Assertions.assertThat(WebDriverRunner.url())
+                .withFailMessage(() -> "Failed to login on login page: " + e)
+                .doesNotContain("login");
         }
     }
 
