@@ -61,6 +61,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIUtils;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -74,6 +75,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
@@ -570,9 +572,9 @@ public class OidcConfiguration extends Configuration {
      */
     private JSONObject fetchJSON(URL url) {
         try {
-            HttpGet get = new HttpGet(url.toURI());
+            BasicHttpRequest get = new BasicHttpRequest("GET", url.toURI().toString());
             LOG.info("Fetching data: {}", get.getRequestLine());
-            try (CloseableHttpResponse res = httpClient.execute(get)) {
+            try (CloseableHttpResponse res = httpClient.execute(URIUtils.extractHost(url.toURI()), get)) {
                 if (res.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                     LOG.error("Invalid response from {}: {}", url, res.getStatusLine());
                     return null;
