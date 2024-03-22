@@ -75,9 +75,9 @@
 #   accessed directly. (example: "foo.example.com,bar.example.com")
 #
 ###
-ARG IMAGE_VERSION=11
+ARG JAVA_VERSION=17
 ARG IMAGE=eclipse-temurin
-FROM ${IMAGE}:${IMAGE_VERSION}
+FROM ${IMAGE}:${JAVA_VERSION}
 
 ENV LANGUAGE='en_US:en'
 
