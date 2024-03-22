@@ -58,7 +58,7 @@ public class AuthConfigurationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
-        if (path == null) {
+        if (path == null || path.trim().isEmpty() || "/".equals(path.trim())) {
             path = "/config";
         }
         if (path.equals("/config")) {
@@ -67,6 +67,14 @@ public class AuthConfigurationServlet extends HttpServlet {
             } else {
                 ServletHelpers.sendJSONResponse(resp, this.oidcConfiguration.toJSON());
             }
+        } else if (path.equals("/session-timeout")) {
+            // req - timestamp sent from the requesting side - if you send non-numeric, you'll get a JSON error
+            // now - timestamp now at server-side
+            // timeout - sessionTimeout in seconds from webapp session
+            String config = String.format("{\"req\":%s,\"now\":%d,\"timeout\":%d}",
+                    req.getParameter("t"), System.currentTimeMillis(),
+                    AuthSessionHelpers.getSessionTimeout(getServletContext()));
+            ServletHelpers.sendJSONResponse(resp, config);
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
