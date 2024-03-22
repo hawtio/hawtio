@@ -98,9 +98,14 @@ public class SessionExpiryFilter implements Filter {
         }
 
         String subContext = uri.getComponents()[0];
-        if (session == null || session.getMaxInactiveInterval() < 0) {
-            if (subContext.equals("refresh") && !authConfiguration.isEnabled()) {
-                LOG.debug("Authentication disabled, received refresh response, responding with ok");
+        if (session == null || session.getMaxInactiveInterval() < 0 || "auth/logout".equals(uri.getUri())) {
+            if (subContext.equals("refresh")) {
+                if (!authConfiguration.isEnabled()) {
+                    LOG.debug("Authentication disabled, received refresh response, responding with ok");
+                } else if (session == null) {
+                    // authentication performed outside of LoginServlet (no session created)
+                    LOG.debug("No session available, responding with ok");
+                }
                 writeOk(response);
             } else {
                 chain.doFilter(request, response);
