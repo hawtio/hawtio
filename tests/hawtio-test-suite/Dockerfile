@@ -1,4 +1,4 @@
-ARG JAVA_VERSION=11
+ARG JAVA_VERSION=17
 
 FROM selenium/standalone-firefox:latest as firefoxImage
 USER root
