@@ -2,7 +2,7 @@ package io.hawt.tests.features.stepdefinitions.camel;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.hawt.tests.features.pageobjects.fragments.camel.dialog.CamelAttributeDetailDialog;
+import io.hawt.tests.features.pageobjects.fragments.camel.panel.CamelAttributeDetailsPanel;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.common.CamelAttributes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.common.CamelChart;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.common.CamelOperations;
@@ -11,7 +11,7 @@ import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
 public class CommonCamelStepDefs {
     private final CamelPage camelPage = new CamelPage();
     private final CamelAttributes camelAttributes = new CamelAttributes();
-    private final CamelAttributeDetailDialog camelAttributeDetailDialog = new CamelAttributeDetailDialog();
+    private final CamelAttributeDetailsPanel camelAttributeDetailsPanel = new CamelAttributeDetailsPanel();
     private final CamelChart camelChart = new CamelChart();
     private final CamelOperations camelOperations = new CamelOperations();
     private String result;
@@ -21,14 +21,14 @@ public class CommonCamelStepDefs {
         camelPage.openTab(tab);
     }
 
-    @When("^User opens Attribute detail dialog with the name \"([^\"]*)\"$")
-    public void userOpenAttributeDetailDialogWithTheName(String attributeName) {
-        camelAttributes.openAttributeDetailDialogByAttributeName(attributeName);
+    @When("^User expands Attribute details with the name \"([^\"]*)\"$")
+    public void userExpandsAttributeDetailsWithTheName(String attributeName) {
+        camelAttributes.expandAttributeDetailsByAttributeName(attributeName);
     }
 
-    @Then("^Camel Attribute Detail Dialog has \"([^\"]*)\" key and \"([^\"]*)\" value$")
-    public void valueOfAttributeIsAttributeDetailDialogIs(String key, String value) {
-        camelAttributeDetailDialog.checkValue(key, value).closeAttributeDetailDialog();
+    @Then("^Camel Attribute details have \"([^\"]*)\" key and \"([^\"]*)\" value$")
+    public void keyAndValueOfAttributeDetailsAre(String key, String value) {
+        camelAttributeDetailsPanel.checkValue(key, value).closeAttributeDetailsPanel();
     }
 
     @When("^User executes operation with name \"([^\"]*)\"$")

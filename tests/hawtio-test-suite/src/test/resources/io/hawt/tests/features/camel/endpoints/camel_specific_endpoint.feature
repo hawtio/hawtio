@@ -16,8 +16,8 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     Given User is on "Camel" page
     And User is on Camel "mock://result" item of "endpoints" folder of "SampleCamel" context
     And User clicks on Camel "Attributes" tab
-    When User opens Attribute detail dialog with the name "CamelId"
-    Then Camel Attribute Detail Dialog has "Value" key and "SampleCamel" value
+    When User expands Attribute details with the name "CamelId"
+    Then Camel Attribute details have "Value" key and "SampleCamel" value
 
   Scenario: Check to execute operation of Specific Endpoint
     Given User is on "Camel" page

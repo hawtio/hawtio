@@ -18,11 +18,11 @@ public class CamelAttributes extends CamelPage {
     private static final Logger LOG = LoggerFactory.getLogger(CamelAttributes.class);
 
     /**
-     * Open detail dialog of specified attribute by attribute name.
+     * Expand details of specified attribute by attribute name.
      *
-     * @param attributeName of detail dialog to be open
+     * @param attributeName of details to be expanded
      */
-    public void openAttributeDetailDialogByAttributeName(String attributeName) {
+    public void expandAttributeDetailsByAttributeName(String attributeName) {
         LOG.info("Using TD for clicking!");
         table.getRowByValue(attributeName).find(By.tagName("td")).shouldBe(visible).click();
     }
