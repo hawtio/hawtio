@@ -16,8 +16,8 @@ Feature: Checking the functionality of Camel Specific Route page.
     Given User is on "Camel" page
     And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
     And User clicks on Camel "Attributes" tab
-    When User opens Attribute detail dialog with the name "RouteId"
-    Then Camel Attribute Detail Dialog has "Value" key and "simple" value
+    When User expands Attribute details with the name "RouteId"
+    Then Camel Attribute details have "Value" key and "simple" value
 
   Scenario: Check to execute operation of Specific Endpoint
     Given User is on "Camel" page
