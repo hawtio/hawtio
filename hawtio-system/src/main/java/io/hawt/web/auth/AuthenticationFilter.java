@@ -45,6 +45,13 @@ public class AuthenticationFilter implements Filter {
         LOG.trace("Applying {}", getClass().getSimpleName());
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+        // CORS preflight requests should be ignored
+        if ("OPTIONS".equals(httpRequest.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String path = httpRequest.getServletPath();
 
         LOG.debug("Handling request for path: {}", path);
