@@ -64,8 +64,8 @@ public class Main implements Callable<Integer> {
     String plugins = "plugins";
     @CommandLine.Option(names = { "--host", "-H" },
         description = "Hostname to listen to.",
-        defaultValue = "0.0.0.0")
-    String host = "0.0.0.0";
+        defaultValue = "localhost")
+    String host = "localhost";
     @CommandLine.Option(names = { "--port", "-p" },
         description = "Port number.",
         defaultValue = "8080")
