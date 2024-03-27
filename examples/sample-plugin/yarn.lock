@@ -1947,9 +1947,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@hawtio/react@npm:1.1.2"
+"@hawtio/react@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@hawtio/react@npm:1.2.0"
   dependencies:
     "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.4"
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.0"
@@ -1959,16 +1959,16 @@ __metadata:
     "@patternfly/react-core": "npm:~4.278.1"
     "@patternfly/react-table": "npm:~4.113.7"
     "@testing-library/jest-dom": "npm:^6.4.2"
-    "@testing-library/react": "npm:^14.2.1"
+    "@testing-library/react": "npm:^14.2.2"
     "@testing-library/user-event": "npm:^14.5.2"
-    "@thumbmarkjs/thumbmarkjs": "npm:^0.14.4"
+    "@thumbmarkjs/thumbmarkjs": "npm:^0.14.6"
     "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.12"
     "@types/jquery": "npm:^3.5.29"
-    "@types/node": "npm:^18.19.23"
+    "@types/node": "npm:^18.19.26"
     "@types/react": "npm:^18.2.23"
-    "@types/react-dom": "npm:^18.2.21"
+    "@types/react-dom": "npm:^18.2.22"
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
@@ -1997,7 +1997,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/b5eac62ef86edfa16c20c38fe6cbe42da340a44252ccaadcf21ee9907dac1445f433f056cb5305645566bc71323651c7b2ad8701e49b7b0d74ce1d94b4923f4a
+  checksum: 10/fbd243523c2d938f6a9f2e2416e24c3aa5b9405bdcddda6211c7c155d815ee729563e05216ca54cdad8a5bf7329db29b53142b7e1733914cd56b741b43e928a4
   languageName: node
   linkType: hard
 
@@ -3056,9 +3056,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^14.2.1":
-  version: 14.2.1
-  resolution: "@testing-library/react@npm:14.2.1"
+"@testing-library/react@npm:^14.2.2":
+  version: 14.2.2
+  resolution: "@testing-library/react@npm:14.2.2"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^9.0.0"
@@ -3066,7 +3066,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10/e02b2f32ae79665a79fc4d8ee053fd3832bfcd4753aa1dba05cdece1a9f59c72a0fae91e0a9387597dcb686d631a722729f2878e38dc95e6f23b291ad8d09b6c
+  checksum: 10/3605577fda8d5e27b8919f390f749af91494d03e7ba5ccaf6480ed1184248372c5a4e8fe1c8c3ad4c1a7b3536f37144ba4b4626900ed46dc9811312f280eee31
   languageName: node
   linkType: hard
 
@@ -3079,10 +3079,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^0.14.4":
-  version: 0.14.4
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:0.14.4"
-  checksum: 10/6515882cd025fe22ece45b52e4a49c71beb6c52af9ff25c29ec90f53f28484a9d18a89935a8f15cd07e556d4c1ff1c8ca4a3b2fdde73e11f27fb64715fcb3efa
+"@thumbmarkjs/thumbmarkjs@npm:^0.14.6":
+  version: 0.14.6
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:0.14.6"
+  checksum: 10/8702d661d8394cf9bd9b34ea0f55f1a5b90e2926841c00df6cd99b354894fe9b1b77c4bed7d16ee1d24fde197229eb8493a862230b3fc012c3cca2b10e5c8db9
   languageName: node
   linkType: hard
 
@@ -3718,12 +3718,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.23":
-  version: 18.19.24
-  resolution: "@types/node@npm:18.19.24"
+"@types/node@npm:^18.19.26":
+  version: 18.19.26
+  resolution: "@types/node@npm:18.19.26"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/75aa69309d76c6be300d7264c462952ab0d37d69c289a0fd5d27ccf06273b3a9c745317c2004f757bdbcc8f48d693a625b5925c09cac77605979ecb825066627
+  checksum: 10/d44a8313875c1c25cf09398d2b31bb7c57fc575d83ab4e9e401081ace35d9f052d47cd610139472c2da80e2bfb281a292490e4a5070b1427726b25ac01219868
   languageName: node
   linkType: hard
 
@@ -3778,7 +3778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.21":
+"@types/react-dom@npm:^18.2.22":
   version: 18.2.22
   resolution: "@types/react-dom@npm:18.2.22"
   dependencies:
@@ -8544,7 +8544,7 @@ __metadata:
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
     "@craco/craco": "npm:^7.1.0"
-    "@hawtio/react": "npm:^1.1.2"
+    "@hawtio/react": "npm:^1.2.0"
     craco-esbuild: "npm:^0.5.2"
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
