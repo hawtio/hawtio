@@ -57,7 +57,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self'; frame-src 'self'; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
@@ -73,7 +73,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' http://localhost:8180; "
-                + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
@@ -89,7 +89,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' http://localhost:8180; "
-                + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
@@ -109,7 +109,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' https://login.microsoftonline.com; "
-                + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' https://login.microsoftonline.com; frame-src 'self' https://login.microsoftonline.com; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'none'");
@@ -124,7 +124,7 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader(eq("Content-Security-Policy"), eq(
-            "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self' data:; "
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; "
                     + "img-src 'self' data:; connect-src 'self'; frame-src 'self'; "
                     + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                     + "frame-ancestors 'none'"));
@@ -140,7 +140,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self'; frame-src 'self'; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
                 + "frame-ancestors 'self'");
