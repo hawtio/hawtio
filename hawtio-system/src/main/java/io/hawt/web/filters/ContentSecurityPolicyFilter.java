@@ -55,6 +55,8 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
             frameAncestors.add("'none'");
         }
 
+        //necessary for monaco-editor to load properly:
+        styleSrc.add("'unsafe-inline'");
         // add keycloak server as safe source for connect, script, frame and prefetch
         String keycloakConfigFile = getConfigParameter(KeycloakServlet.KEYCLOAK_CLIENT_CONFIG);
         if (System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
