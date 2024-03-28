@@ -2,6 +2,8 @@
 
 This sample application demonstrates how to write a plugin for [Hawtio v3+](https://github.com/hawtio/hawtio) as a WAR file; WAR plugins are useful when deploying Hawtio and plugins to an application server such as Jetty, WildFly, and Tomcat.
 
+This example also uses [Hawtio minimal console](../../hawtio-war-minimal) instead of the default war for demonstrating purposes.
+
 ## How to run
 
 Build the project:
