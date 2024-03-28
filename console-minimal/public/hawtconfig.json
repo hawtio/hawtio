@@ -1,0 +1,21 @@
+{
+  "branding": {
+    "appName": "Hawtio Management Console",
+    "appLogoUrl": "img/hawtio-logo.svg",
+    "companyLogoUrl": "img/hawtio-logo.svg",
+    "css": "",
+    "favicon": ""
+  },
+  "login": {
+    "description": "",
+    "links": []
+  },
+  "about": {
+    "title": "Hawtio Management Console",
+    "productInfo": [],
+    "additionalInfo": "",
+    "copyright": "",
+    "imgSrc": "img/hawtio-logo.svg"
+  },
+  "disabledRoutes": []
+}
