@@ -112,6 +112,7 @@
   <modules>
     <module>bom</module>
     <module>console</module>
+    <module>console-minimal</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
     <module>examples/quarkus</module>
@@ -122,6 +123,7 @@
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>
+    <module>hawtio-war-minimal</module>
     <module>platforms/quarkus</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>

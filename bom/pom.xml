@@ -80,6 +80,11 @@
         <artifactId>hawtio-war</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-war-minimal</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

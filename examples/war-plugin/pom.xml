@@ -38,10 +38,10 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- hawtio-war is needed to ensure build order for the example -->
+    <!-- hawtio-war-minimal is needed to ensure build order for the example -->
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-war</artifactId>
+      <artifactId>hawtio-war-minimal</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
       <type>war</type>
@@ -81,7 +81,7 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>io.hawt</groupId>
-                  <artifactId>hawtio-war</artifactId>
+                  <artifactId>hawtio-war-minimal</artifactId>
                   <version>${project.version}</version>
                   <type>war</type>
                   <outputDirectory>${project.build.directory}/deploy</outputDirectory>
@@ -102,7 +102,7 @@
             <contextPath>/</contextPath>
           </webApp>
           <contextHandlers>
-            <contextHandler implementation="org.eclipse.jetty.ee10.maven.plugin.MavenWebAppContext">
+            <contextHandler implementation="org.eclipse.jetty.maven.plugin.MavenWebAppContext">
               <war>${project.build.directory}/deploy/hawtio.war</war>
               <contextPath>/hawtio</contextPath>
             </contextHandler>
