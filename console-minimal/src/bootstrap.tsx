@@ -1,4 +1,4 @@
-import { configManager, hawtio, Hawtio, Logger, registerPlugins } from '@hawtio/react'
+import { configManager, connect, hawtio, Hawtio, jmx, keycloak, Logger, oidc, rbac } from '@hawtio/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { reportWebVitals } from './reportWebVitals'
@@ -6,10 +6,14 @@ import { reportWebVitals } from './reportWebVitals'
 const hawtioVersion = '__HAWTIO_VERSION_PLACEHOLDER__'
 
 const log = Logger.get('hawtio-console')
-log.info('Hawtio console:', hawtioVersion)
+log.info('Hawtio minimal console:', hawtioVersion)
 
-// Register builtin plugins
-registerPlugins()
+// Register minimum builtin plugins
+keycloak()
+oidc()
+connect()
+rbac()
+jmx()
 
 hawtio
   // Set up plugin location
