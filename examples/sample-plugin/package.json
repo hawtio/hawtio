@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
-    "craco-esbuild": "^0.5.2",
+    "craco-esbuild": "^0.6.1",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1"
   },
