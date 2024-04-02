@@ -28,7 +28,7 @@ public class AuthenticationConfiguration {
     public static final String[] UNSECURED_PATHS = {
         "/login", "/auth/login", "/auth/logout", "/auth/config", "/auth/config/session-timeout",
         "/css", "/fonts", "/img", "/js", "/static", "/hawtconfig.json",
-        "/jolokia", "/user", "/keycloak", "/plugin"
+        "/jolokia", "/proxy", "/user", "/keycloak", "/plugin"
     };
 
     // =========================================================================
