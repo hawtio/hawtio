@@ -11,8 +11,8 @@ This assembles all Hawtio.next components for the Web console for Java.
 
 ### Install development tools
 
-* [Node.js](http://nodejs.org) >= 16
-* [Yarn v3](https://yarnpkg.com)
+* [Node.js](http://nodejs.org) >= 18
+* [Yarn v4](https://yarnpkg.com)
 
 ### Install project dependencies
 
