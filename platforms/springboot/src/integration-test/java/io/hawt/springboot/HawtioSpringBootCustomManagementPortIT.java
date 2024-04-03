@@ -17,9 +17,7 @@ public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTest
         TestProperties properties = TestProperties.builder()
             .managementBasePath("/management-context-path")
             .build();
-        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> {
-            assertHawtioEndpointPaths(context, properties, true);
-        });
+        getContextRunner().withPropertyValues(properties.getProperties()).run((context) -> assertHawtioEndpointPaths(context, properties, true));
     }
 
     @Test
