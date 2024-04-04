@@ -37,8 +37,8 @@ Feature: Checking the functionality of Camel Specific Route page.
     And User unwatch all "simple" attributes
     And User watches "MaxProcessingTime" attribute
     And User closes Edit watches mode of Camel Chart
-    Then Camel Attribute "simple MaxProcessingTime" has the same value as stored one
-    And Camel Attribute "simple UptimeMillis" is not displayed in Camel Chart
+    Then Camel Attribute "MaxProcessingTime" has the same value as stored one
+    And Camel Attribute "UptimeMillis" is not displayed in Camel Chart
 
   @quarkus
   Scenario: Check to start the debugging
