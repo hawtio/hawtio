@@ -119,8 +119,11 @@ module.exports = (_, args) => {
     },
     devServer: {
       port: 3000,
-      static: outputPath,
-      historyApiFallback: true,
+      static: path.join(__dirname, 'public'),
+      historyApiFallback: {
+        // Needed to fallback to bundled index instead of public/index.html template
+        index: publicPath,
+      },
       devMiddleware: { publicPath },
       setupMiddlewares: (middlewares, devServer) => {
         devServer.app.use(bodyParser.json())
