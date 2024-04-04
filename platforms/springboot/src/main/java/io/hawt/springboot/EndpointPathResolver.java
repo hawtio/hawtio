@@ -28,8 +28,19 @@ public class EndpointPathResolver {
 
     public String resolve(final String endpointName) {
         final Map<String, String> pathMapping = webEndpointProperties.getPathMapping();
+        // "server.servlet.context-path" and "management.server.base-path" are NOT needed here, as
+        // we do all URL operations context-relative.
+        // So whether you set (or not) context paths, these should be not used
+        // "spring.mvc.servlet.path"
+
+        Integer mgmtPort = managementServerProperties.getPort();
+        String servletPath = dispatcherServletPath.getPath();
+        if (mgmtPort != null && !mgmtPort.equals(serverProperties.getPort())) {
+            // this now defaults to "/"
+            servletPath = "/";
+        }
+
         final String basePath = webEndpointProperties.getBasePath();
-        final String servletPath = dispatcherServletPath.getPath();
         String endpointPathMapping = pathMapping.get(endpointName);
 
         if (endpointPathMapping == null) {
