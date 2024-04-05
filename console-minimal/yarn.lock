@@ -661,7 +661,7 @@ __metadata:
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.4"
-    "@hawtio/react": "npm:^1.2.0"
+    "@hawtio/react": "npm:^1.2.1"
     "@swc/core": "npm:^1.4.11"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^6.10.0"
@@ -679,9 +679,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@hawtio/react@npm:1.2.0"
+"@hawtio/react@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@hawtio/react@npm:1.2.1"
   dependencies:
     "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.4"
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.0"
@@ -698,9 +698,9 @@ __metadata:
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.12"
     "@types/jquery": "npm:^3.5.29"
-    "@types/node": "npm:^18.19.26"
+    "@types/node": "npm:^18.19.28"
     "@types/react": "npm:^18.2.23"
-    "@types/react-dom": "npm:^18.2.22"
+    "@types/react-dom": "npm:^18.2.23"
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
@@ -710,7 +710,7 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     keycloak-js: "npm:^23.0.7"
     monaco-editor: "npm:^0.47.0"
-    oauth4webapi: "npm:^2.10.3"
+    oauth4webapi: "npm:^2.10.4"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-markdown: "npm:^8.0.7"
@@ -729,7 +729,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/fbd243523c2d938f6a9f2e2416e24c3aa5b9405bdcddda6211c7c155d815ee729563e05216ca54cdad8a5bf7329db29b53142b7e1733914cd56b741b43e928a4
+  checksum: 10/2a888e22f81c23a630a85a0af754b52f80ebf7778df3cb8ce25cec8a94c1ea9791aa68031d89f0542820943a0993c3728844cb656af2914119be0ba5a81fb0b8
   languageName: node
   linkType: hard
 
@@ -2287,12 +2287,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.26":
-  version: 18.19.26
-  resolution: "@types/node@npm:18.19.26"
+"@types/node@npm:^18.19.28":
+  version: 18.19.29
+  resolution: "@types/node@npm:18.19.29"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/d44a8313875c1c25cf09398d2b31bb7c57fc575d83ab4e9e401081ace35d9f052d47cd610139472c2da80e2bfb281a292490e4a5070b1427726b25ac01219868
+  checksum: 10/9a3572b488f875ca1b545cc96980f1cb54dd05da16b2dc0cc3c3cb49ceafc3a5e417f4741c711c7bb81a67a0ddd29f546dcb077e4cb9b98a492fbaf373b1fbdc
   languageName: node
   linkType: hard
 
@@ -2326,12 +2326,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.22":
-  version: 18.2.22
-  resolution: "@types/react-dom@npm:18.2.22"
+"@types/react-dom@npm:^18.2.23":
+  version: 18.2.24
+  resolution: "@types/react-dom@npm:18.2.24"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10/310da22244c1bb65a7f213f8727bda821dd211cfb2dd62d1f9b28dd50ef1c196d59e908494bd5f25c13a3844343f3a6135f39fb830aca6f79646fa56c1b56c08
+  checksum: 10/bbd4005f2f65b7606505e9b8759b6e99e222d503602765594ea327893fb7061de8951279baef47a1932f04d94d1865daea05a32f9fcf6f9f1143dbabce5b33de
   languageName: node
   linkType: hard
 
@@ -7290,10 +7290,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^2.10.3":
-  version: 2.10.3
-  resolution: "oauth4webapi@npm:2.10.3"
-  checksum: 10/5914a7c8234084275771e2e24337becee1350042c94815bec28134e6572df5f926e47f8a31ae4a22a213203bb68585e9712ba3386b5de61516487f241fe1979b
+"oauth4webapi@npm:^2.10.4":
+  version: 2.10.4
+  resolution: "oauth4webapi@npm:2.10.4"
+  checksum: 10/49f870ddd6f0a28bba486886455c2c0e65fd06178e3f7113bfb85b44b1f82a777c23b2753a0ec8e05ddaf5a7daacad3960073d5dcc67bfec8ecdb985bdbc3257
   languageName: node
   linkType: hard
 
