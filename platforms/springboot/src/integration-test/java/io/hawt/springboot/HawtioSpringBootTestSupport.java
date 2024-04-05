@@ -75,7 +75,7 @@ public class HawtioSpringBootTestSupport {
             .expectBody()
             .consumeWith(result -> {
                 String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
-                Assertions.assertThat(body).contains("<base href=\"" + properties.getHawtioPath(isCustomManagementPortConfigured) + "/\"/>");
+                Assertions.assertThat(body).contains("<base href=\"" + properties.getHawtioPath(isCustomManagementPortConfigured) + "/\">");
             });
     }
 

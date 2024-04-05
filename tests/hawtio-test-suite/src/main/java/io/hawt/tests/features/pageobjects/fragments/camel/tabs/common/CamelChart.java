@@ -1,13 +1,13 @@
 package io.hawt.tests.features.pageobjects.fragments.camel.tabs.common;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
+import static com.codeborne.selenide.CollectionCondition.textsInAnyOrder;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
-import static com.codeborne.selenide.Selectors.withTagAndText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -70,7 +70,7 @@ public class CamelChart extends CamelPage {
      * @return camel chart
      */
     public CamelChart checkSpecificAttributeIsDisplayed(String attributeName) {
-        getTitles().findBy(text(attributeName)).shouldBe(visible);
+        getTitles().shouldHave(textsInAnyOrder(attributeName));
         return this;
     }
 
@@ -99,7 +99,7 @@ public class CamelChart extends CamelPage {
      * @return list of attributes
      */
     private ElementsCollection getTitles() {
-        return $$(byXpath("//div[@class='pf-c-card__body']/div/div[1]")).shouldHave(sizeGreaterThan(0));
+        return $$(byXpath("//div[@class='pf-c-card__header']/h3")).shouldHave(sizeGreaterThan(0));
     }
 
     /**
@@ -109,13 +109,13 @@ public class CamelChart extends CamelPage {
      * @return value of the tested attribute
      */
     private String getValue(String attribute) {
-        final SelenideElement chart = $(byXpath("//div[text()='" + attribute + "']/following-sibling::*[1]/descendant::*[local-name()='g'][1]/*[local-name()='path' and string-length(@d)!=0]"));
-        final SelenideElement chartBarValue = chart.$(byXpath("./ancestor::*[local-name()='g']/following-sibling::*[2]//*[local-name()='tspan']"));
+        final SelenideElement chart = $(byXpath("//h3[contains(text()[3], '" + attribute + "')]/parent::div/following-sibling::*[1]/descendant::*[local-name()='g'][1]/*[local-name()='path' and string-length(@d)!=0]"));
+        final SelenideElement chartBarValue = chart.$(byXpath("./ancestor::*[local-name()='g']/following-sibling::*[3]//*[local-name()='tspan']"));
 
         chart.should(exist).hover();
 
         if (chartBarValue.is(not(visible))) {
-            $(withTagAndText("div", attribute)).hover();
+            $(byXpath("//h3[contains(text()[3], '" + attribute + "')]")).hover();
             chart.should(exist).hover();
         }
 

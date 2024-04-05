@@ -1,15 +1,18 @@
 package io.hawt.tests.features.pageobjects.pages;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
-import io.hawt.tests.features.config.TestConfiguration;
-import io.hawt.tests.features.setup.LoginLogout;
+import static com.codeborne.selenide.Selenide.$;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.net.URL;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 
-import static com.codeborne.selenide.Selenide.$;
+import java.net.URL;
+import java.time.Duration;
+
+import io.hawt.tests.features.config.TestConfiguration;
+import io.hawt.tests.features.utils.ByUtils;
 
 public class ConnectPage extends HawtioPage {
 
@@ -24,12 +27,11 @@ public class ConnectPage extends HawtioPage {
     private static final By FOOTER_BUTTON = By.cssSelector("footer button.pf-m-primary");
 
     public void addConnection(String name, URL connection) {
+        //Don't try to create the same connection twice
+        if ($(ByUtils.byAttribute("rowid", "connection " + name)).exists()) {
+            return;
+        }
 
-    if ($(CONNECTION_LIST).isDisplayed()) {
-        /* I have added if-else construct due to the reason that on re-occurring error screenshots, it seemed like the test-connection already existed.
-        TO-DO: task for further examination and potential refinement */
-        return;
-    } else {
         $(CONNECT_BUTTON).shouldBe(Condition.interactable).click();
 
         $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
@@ -46,8 +48,6 @@ public class ConnectPage extends HawtioPage {
         }
 
         $(MODAL).$(FOOTER_BUTTON).click();
-
-        }
     }
 
     public void connectTo(String name) {
@@ -56,14 +56,14 @@ public class ConnectPage extends HawtioPage {
         final String username = TestConfiguration.getConnectAppUsername();
         final String password = TestConfiguration.getConnectAppPassword();
 
-        $(CONNECTION_LIST).$(connectionSelector).click();
+        $(CONNECTION_LIST).$(connectionSelector).shouldBe(Condition.interactable, Duration.ofSeconds(5))
+            .click();
 
         Selenide.Wait().until(ExpectedConditions.numberOfWindowsToBe(2));
         Selenide.switchTo().window(1);
 
         $(CONNECTION_LOGIN_FORM).$(By.id("connect-login-form-username")).setValue(username);
         $(CONNECTION_LOGIN_FORM).$(By.id("connect-login-form-password")).setValue(password);
-        $(MODAL).$(FOOTER_BUTTON).click();
-
+        $(MODAL).$(FOOTER_BUTTON).shouldBe(Condition.interactable, Duration.ofSeconds(5)).click();
     }
 }

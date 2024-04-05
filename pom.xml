@@ -52,11 +52,11 @@
     <!-- Jolokia -->
     <jolokia-version>2.0.2</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.2.10.Final-redhat-00002</quarkus-version>
-    <quarkus-extension-version>3.2.10.Final-redhat-00003</quarkus-extension-version>
+    <quarkus-version>3.2.11.Final-redhat-00001</quarkus-version>
+    <quarkus-extension-version>3.2.11.Final-redhat-00001</quarkus-extension-version>
     <!-- Spring -->
-    <spring-version>6.0.18</spring-version>
-    <spring-boot-version>3.1.8</spring-boot-version>
+    <spring-version>6.1.5</spring-version>
+    <spring-boot-version>3.2.3</spring-boot-version>
     <!-- Jetty -->
     <jetty-version>11.0.20</jetty-version>
     <!-- Keycloak -->
@@ -66,20 +66,21 @@
     <assertj-core-version>3.25.3</assertj-core-version>
     <caffeine-version>3.1.8</caffeine-version>
     <commons-codec-version>1.16.1</commons-codec-version>
-    <commons-io-version>2.15.1</commons-io-version>
-    <commons-logging-version>1.3.0</commons-logging-version>
+    <commons-io-version>2.16.0</commons-io-version>
+    <commons-logging-version>1.3.1</commons-logging-version>
     <hamcrest-version>2.2</hamcrest-version>
     <httpcore-version>4.4.16</httpcore-version>
     <httpclient-version>4.5.14</httpclient-version>
-    <jackson-version>2.16.2</jackson-version>
+    <jackson-version>2.17.0</jackson-version>
     <junit5-version>5.10.2</junit5-version>
     <log4j2-version>2.23.1</log4j2-version>
-    <mockito-core-version>5.8.0</mockito-core-version>
+    <mockito-core-version>5.11.0</mockito-core-version>
     <nimbusds-jose-version>9.37.3</nimbusds-jose-version>
     <org-json-version>20240303</org-json-version>
     <picocli-version>4.7.5</picocli-version>
     <servlet-api-version>5.0.0</servlet-api-version>
-    <slf4j-version>2.0.12</slf4j-version>
+    <!-- Pin SLF4J version until https://issues.apache.org/jira/browse/CAMEL-20598 is resolved at SLF4J -->
+    <slf4j-version>2.0.11</slf4j-version>
 
     <!-- Used for maven-frontend-plugin -->
     <node-version>v20.9.0</node-version>
@@ -93,7 +94,7 @@
     <jetty-plugin-version>11.0.19</jetty-plugin-version>
     <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
     <maven-clean-plugin-version>3.3.2</maven-clean-plugin-version>
-    <maven-compiler-plugin-version>3.12.1</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
     <maven-dependency-plugin-version>3.6.1</maven-dependency-plugin-version>
     <maven-failsafe-plugin-version>3.2.5</maven-failsafe-plugin-version>
     <maven-release-plugin-version>3.0.1</maven-release-plugin-version>
@@ -111,6 +112,7 @@
   <modules>
     <module>bom</module>
     <module>console</module>
+    <module>console-minimal</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
     <module>examples/quarkus</module>
@@ -121,6 +123,7 @@
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>
+    <module>hawtio-war-minimal</module>
     <module>platforms/quarkus</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>

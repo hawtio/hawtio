@@ -192,6 +192,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>auth-config</servlet-name>
+    <servlet-class>io.hawt.web.auth.AuthConfigurationServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>auth-config</servlet-name>
+    <url-pattern>/auth/config/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>io.hawt.web.auth.LoginServlet</servlet-class>
   </servlet>
