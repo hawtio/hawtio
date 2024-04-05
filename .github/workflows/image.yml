@@ -16,6 +16,7 @@ jobs:
   build:
     if: github.repository_owner == 'hawtio'
     strategy:
+      fail-fast: false
       matrix:
         java: ['17', '21']
     runs-on: ubuntu-20.04
