@@ -52,8 +52,8 @@
     <!-- Jolokia -->
     <jolokia-version>2.0.2</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.2.10.Final-redhat-00002</quarkus-version>
-    <quarkus-extension-version>3.2.10.Final-redhat-00003</quarkus-extension-version>
+    <quarkus-version>3.2.11.Final-redhat-00001</quarkus-version>
+    <quarkus-extension-version>3.2.11.Final-redhat-00001</quarkus-extension-version>
     <!-- Spring -->
     <spring-version>6.1.5</spring-version>
     <spring-boot-version>3.2.3</spring-boot-version>
