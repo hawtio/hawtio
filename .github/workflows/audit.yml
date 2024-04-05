@@ -1,0 +1,22 @@
+name: Audit
+
+on:
+  schedule:
+    # Run it every Sunday
+    - cron: '0 0 * * 0'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+      - name: Audit
+        run: |
+          mvn --batch-mode --no-transfer-progress install -pl :hawtio-console-assembly,:hawtio-example-sample-plugin
