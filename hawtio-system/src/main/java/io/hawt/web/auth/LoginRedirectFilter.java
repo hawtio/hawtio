@@ -75,6 +75,7 @@ public class LoginRedirectFilter implements Filter {
         LOG.debug("Check if path [{}] requires redirect", path);
         return authConfiguration.isEnabled()
             && !authConfiguration.isKeycloakEnabled()
+            && !authConfiguration.isOidcEnabled()
             && !AuthSessionHelpers.isSpringSecurityEnabled()
             && !AuthSessionHelpers.isAuthenticated(session)
             && isSecuredPath(path)
