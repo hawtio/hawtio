@@ -34,6 +34,11 @@ public class LoginRedirectFilterTest {
         assertTrue(loginRedirectFilter.isSecuredPath("/d"));
         assertTrue(loginRedirectFilter.isSecuredPath("/e/f"));
         assertTrue(loginRedirectFilter.isSecuredPath("/auth"));
+        // these paths are not "secured" from the PoV of LoginRedirectFilter - however these are protected by
+        // AuthenticationFilter
+        assertFalse(loginRedirectFilter.isSecuredPath("/jolokia"));
+        assertFalse(loginRedirectFilter.isSecuredPath("/jolokia/read/java.lang:type=Runtime/Name"));
+        assertFalse(loginRedirectFilter.isSecuredPath("/favicon.ico"));
         assertFalse(loginRedirectFilter.isSecuredPath("/auth/login"));
         assertFalse(loginRedirectFilter.isSecuredPath("/auth/logout"));
     }
