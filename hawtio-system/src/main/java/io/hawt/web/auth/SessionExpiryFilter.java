@@ -90,8 +90,7 @@ public class SessionExpiryFilter implements Filter {
         // pass along if it's the top-level context
         if (uri.getComponents().length == 0) {
             if (session != null) {
-                long now = System.currentTimeMillis();
-                updateLastAccess(session, now);
+                updateLastAccess(session, now());
             }
             chain.doFilter(request, response);
             return;
@@ -114,7 +113,7 @@ public class SessionExpiryFilter implements Filter {
         }
 
         int maxInactiveInterval = session.getMaxInactiveInterval();
-        long now = System.currentTimeMillis();
+        long now = now();
         if (session.getAttribute(ATTRIBUTE_LAST_ACCESS) != null) {
             long lastAccess = (long) session.getAttribute(ATTRIBUTE_LAST_ACCESS);
             long remainder = (now - lastAccess) / 1000;
@@ -147,4 +146,10 @@ public class SessionExpiryFilter implements Filter {
     public void destroy() {
         // noop
     }
+
+    protected long now() {
+        // easier testing...
+        return System.currentTimeMillis();
+    }
+
 }
