@@ -35,7 +35,7 @@ jobs:
       - name: Build images
         run: |
           mvn ${MVN_ARGS} install -Dquarkus.container-image.build=true -pl examples/quarkus
-          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -Ddocker.buildArg.JAVA_VERSION=${{ matrix.java }} -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
+          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
       - name: Display images
         run: |
           docker images
