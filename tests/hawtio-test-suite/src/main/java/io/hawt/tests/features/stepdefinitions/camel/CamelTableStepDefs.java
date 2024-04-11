@@ -23,6 +23,11 @@ public class CamelTableStepDefs {
         table.checkKeyAndValuePairs(key, value);
     }
 
+    @Then("^Attributes table is sorted \"([^\"]*)\" by \"([^\"]*)\"$")
+    public void theTableIsSortedOrderOptionByHeaderName(String desiredOrder, String headerName) {
+        table.sortAttributes(desiredOrder, headerName);
+    }
+
     @When("^User selects \"([^\"]*)\" item in Camel table")
     public void userSelectItemInCamelTable(String item) {
         camelPage.selectContext(item);

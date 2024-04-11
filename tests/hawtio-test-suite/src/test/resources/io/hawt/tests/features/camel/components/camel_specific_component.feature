@@ -12,6 +12,17 @@ Feature: Checking the functionality of a Camel Specific Component page.
       | Attribute | ComponentName | mock        |
       | Value     | CamelId       | SampleCamel |
 
+  Scenario Outline: Check the Camel attributes are sorted correctly
+    Given User is on "Camel" page
+    And User is on Camel "mock" item of "components" folder of "SampleCamel" context
+    When User clicks on Camel "Attributes" tab
+    Then Attributes table is sorted "<desiredOrder>" by "<headerName>"
+
+    Examples: Order options and Header names
+      | desiredOrder | headerName |
+      | ascending    | Attribute  |
+      | descending   | Attribute  |
+
   Scenario: Check specific endpoint attribute's detail information
     Given User is on "Camel" page
     And User is on Camel "mock" item of "components" folder of "SampleCamel" context
