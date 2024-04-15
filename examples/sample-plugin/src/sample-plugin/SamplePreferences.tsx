@@ -1,4 +1,5 @@
 import { CardBody, Text, TextContent } from '@patternfly/react-core'
+import React from 'react'
 
 export const SamplePreferences: React.FunctionComponent = () => {
   return (
