@@ -10,7 +10,7 @@
     "replace-version": "replace __HAWTIO_VERSION_PLACEHOLDER__"
   },
   "dependencies": {
-    "@hawtio/react": "^1.2.1",
+    "@hawtio/react": "^1.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
