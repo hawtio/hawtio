@@ -26,6 +26,31 @@ public class EndpointPathResolver {
         this.dispatcherServletPath = dispatcherServletPath;
     }
 
+    /**
+     * <p>Converts Spring actuator endpoint's name/id (See: <a href="https://docs.spring.io/spring-boot/docs/3.2.4/reference/html/actuator.html#actuator.endpoints">Endpoints</a>)
+     * (standard endpoints: {@code health}, {@code info}, ..., Hawtio endpoints: {@code hawtio}, {@code jolokia}) into
+     * an <em>absolute path</em> (starting with {@code /}) within Spring Boot context path. Spring Boot configuration
+     * is taken into account ({@code spring.mvc.servlet.path} and {@code management.endpoints.web.base-path}).
+     * Context path (configured with {@code server.servlet.context-path} or {@code management.server.base-path}) is
+     * not part of returned path, as all resolved paths are relative to the context.</p>
+     *
+     * <p>Spring Boot may run two separate web containers:<ul>
+     *     <li>Main server (with port configured using {@code server.port} property)</li>
+     *     <li>Management server (with port configured using {@code management.server.port} property)</li>
+     * </ul>
+     * If there's no distinct {@code management.server.port} value, there's only one server.</p>
+     *
+     * <p>Both servers may have customized <em>context path</em>:<ul>
+     *     <li>Main server - with {@code server.servlet.context-path} property</li>
+     *     <li>Management server - with {@code management.server.base-path} property</li>
+     * </ul>
+     * Additionally, Management server can use {@code management.endpoints.web.base-path} property to change default
+     * {@code /actuator} prefix. And finally, when there's no separate Management server, management endpoints use
+     * additional prefix configured with {@code spring.mvc.servlet.path} property.</p>
+     *
+     * @param endpointName
+     * @return
+     */
     public String resolve(final String endpointName) {
         final Map<String, String> pathMapping = webEndpointProperties.getPathMapping();
         // "server.servlet.context-path" and "management.server.base-path" are NOT needed here, as

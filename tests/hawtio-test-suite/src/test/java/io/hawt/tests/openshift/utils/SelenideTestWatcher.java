@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import io.hawt.tests.utils.rp.Attachments;
+import io.hawt.tests.features.utils.Attachments;
 
 public class SelenideTestWatcher implements TestWatcher {
 

@@ -55,6 +55,9 @@ import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PA
 @ConditionalOnBean(HawtioEndpoint.class)
 public class HawtioManagementConfiguration {
 
+    // a path within Spring server or management server that's the "base" of hawtio actuator.
+    // By default it should be "/actuator/hawtio", but may be affected by application.properties settings
+    // (for example management.endpoints.web.base-path which defaults to "/actuator")
     private final String hawtioPath;
 
     public HawtioManagementConfiguration(final EndpointPathResolver pathResolver) {

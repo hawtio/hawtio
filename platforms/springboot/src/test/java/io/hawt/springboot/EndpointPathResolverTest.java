@@ -56,7 +56,8 @@ public class EndpointPathResolverTest {
     public void defaultConfiguration() {
         assertEquals("/actuator/x", resolver.resolve("x"));
         assertEquals("/actuator/hawtio", resolver.resolve("hawtio"));
-        assertEquals("/actuator/hawtio/jmx", resolver.resolve("hawtio/jmx"));
+        assertEquals("/actuator/hawtio/jmx", resolver.resolve("hawtio///jmx"));
+        assertEquals("/actuator", resolver.resolve("//"));
         assertEquals("/actuator", resolver.resolve(""));
     }
 
@@ -105,6 +106,19 @@ public class EndpointPathResolverTest {
     }
 
     @Test
+    public void customManagementContextAndDispatcherServletPathButSamePortAndCustomActuatorBase() {
+        serverProperties.getServlet().setContextPath("/ctx");
+        managementServerProperties.setBasePath("/mctx");
+        webEndpointProperties.setBasePath("/custom-actuator/endpoints");
+        when(dispatcherServletPath.getPath()).thenReturn("/ds");
+
+        assertEquals("/ds/custom-actuator/endpoints/x", resolver.resolve("x"));
+        assertEquals("/ds/custom-actuator/endpoints/hawtio", resolver.resolve("hawtio"));
+        assertEquals("/ds/custom-actuator/endpoints/hawtio/jmx", resolver.resolve("hawtio/jmx"));
+        assertEquals("/ds/custom-actuator/endpoints", resolver.resolve(""));
+    }
+
+    @Test
     public void customManagementContextWithDifferentPort() {
         serverProperties.getServlet().setContextPath("/ctx");
         managementServerProperties.setPort(10001);
@@ -122,6 +136,9 @@ public class EndpointPathResolverTest {
         managementServerProperties.setPort(10001);
         managementServerProperties.setBasePath("/mctx");
         webEndpointProperties.setBasePath("/custom-actuator/endpoints");
+
+        // this doesn't matter when there's separate management server
+        when(dispatcherServletPath.getPath()).thenReturn("/ds");
 
         assertEquals("/custom-actuator/endpoints/x", resolver.resolve("x"));
         assertEquals("/custom-actuator/endpoints/hawtio", resolver.resolve("hawtio"));

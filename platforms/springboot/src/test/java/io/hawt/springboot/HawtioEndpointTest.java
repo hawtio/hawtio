@@ -26,6 +26,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.util.pattern.PathPattern;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -107,8 +108,11 @@ public class HawtioEndpointTest {
         PathMappedEndpoint pme = mock(PathMappedEndpoint.class);
         when(pme.getRootPath()).thenReturn("hawtio");
 
+        RequestMappingInfo.BuilderConfiguration options = new RequestMappingInfo.BuilderConfiguration();
+        options.setPatternParser(new PathPatternParser());
         RequestMappingInfo rmi = RequestMappingInfo
                 .paths("", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|static|\\.).)*$}/**")
+                .options(options)
                 .build();
 
         EndpointMapping ep = new EndpointMapping("/actuator");

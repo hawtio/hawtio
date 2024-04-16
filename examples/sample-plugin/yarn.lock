@@ -637,28 +637,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@hawtio/react@npm:1.2.1"
+"@hawtio/react@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@hawtio/react@npm:1.2.2"
   dependencies:
     "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.4"
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.0"
-    "@module-federation/utilities": "npm:^3.0.5"
+    "@module-federation/utilities": "npm:^3.0.7"
     "@patternfly/react-charts": "npm:~6.94.21"
     "@patternfly/react-code-editor": "npm:~4.82.122"
     "@patternfly/react-core": "npm:~4.278.1"
     "@patternfly/react-table": "npm:~4.113.7"
     "@testing-library/jest-dom": "npm:^6.4.2"
-    "@testing-library/react": "npm:^14.2.2"
+    "@testing-library/react": "npm:^14.3.0"
     "@testing-library/user-event": "npm:^14.5.2"
     "@thumbmarkjs/thumbmarkjs": "npm:^0.14.6"
     "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.12"
     "@types/jquery": "npm:^3.5.29"
-    "@types/node": "npm:^18.19.28"
+    "@types/node": "npm:^18.19.30"
     "@types/react": "npm:^18.2.23"
-    "@types/react-dom": "npm:^18.2.23"
+    "@types/react-dom": "npm:^18.2.24"
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
@@ -675,7 +675,7 @@ __metadata:
     react-monaco-editor: "npm:^0.55.0"
     react-router-dom: "npm:^6.22.3"
     react-split: "npm:^2.0.14"
-    reactflow: "npm:^11.10.4"
+    reactflow: "npm:^11.11.0"
     superstruct: "npm:^1.0.4"
     typescript: "npm:^5.3.3"
     xml-formatter: "npm:^3.6.2"
@@ -687,7 +687,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/2a888e22f81c23a630a85a0af754b52f80ebf7778df3cb8ce25cec8a94c1ea9791aa68031d89f0542820943a0993c3728844cb656af2914119be0ba5a81fb0b8
+  checksum: 10/89944e33cb761cc3b1d627b0977e47be925bec57b0cd41639e8fa8888342cfb768ee71c22add83fa48bab3ac0abfc74d63e617527709bf54e8c0d7c14271aa5e
   languageName: node
   linkType: hard
 
@@ -1108,9 +1108,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.0.5":
-  version: 3.0.5
-  resolution: "@module-federation/utilities@npm:3.0.5"
+"@module-federation/sdk@npm:0.1.4":
+  version: 0.1.4
+  resolution: "@module-federation/sdk@npm:0.1.4"
+  checksum: 10/2b644dfbb80e36a3e8d71ce657bfd56ae57d3f82a2a7f304898925fa8e635a3d129729ff86e40ebe933b8dc0bd23468e7e13e3eb39edf923257f27d4de778b14
+  languageName: node
+  linkType: hard
+
+"@module-federation/utilities@npm:^3.0.7":
+  version: 3.0.9
+  resolution: "@module-federation/utilities@npm:3.0.9"
+  dependencies:
+    "@module-federation/sdk": "npm:0.1.4"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -1122,7 +1131,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/fd54fe1ba28106ae9089c4d95e7ec6cb7bb4f2a8f06f7e08083eb727c7f696b13965d57a93a303158517843d6417ca520adcc05b4ffd1224707d1dd60e252ecc
+  checksum: 10/deddd72eb13d8b6b6457ef5a518f175754f47f7e2897993d7ed49f90a3fd0beb6a9c3add14e282abc7649ac507f306ae507e0cff6510202616fa8ddd1b658acb
   languageName: node
   linkType: hard
 
@@ -1288,37 +1297,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reactflow/background@npm:11.3.9":
-  version: 11.3.9
-  resolution: "@reactflow/background@npm:11.3.9"
+"@reactflow/background@npm:11.3.11":
+  version: 11.3.11
+  resolution: "@reactflow/background@npm:11.3.11"
   dependencies:
-    "@reactflow/core": "npm:11.10.4"
+    "@reactflow/core": "npm:11.11.1"
     classcat: "npm:^5.0.3"
     zustand: "npm:^4.4.1"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/d397abfa6a261986193f8ac8793916bbd65bf04e048d9ca141d9fbf77d1675e488a978907227a9d5f3b22b880b7f63defbf2ecf3d8aeab5207eb38055390f674
+  checksum: 10/63a42149a3182eab0b886c41e30eb365caf5560595c33d0e40084961c4dda4ab483e341ded2431ca98ffd9d512b44738dff1fa826e959671faf4b78fe41208e9
   languageName: node
   linkType: hard
 
-"@reactflow/controls@npm:11.2.9":
-  version: 11.2.9
-  resolution: "@reactflow/controls@npm:11.2.9"
+"@reactflow/controls@npm:11.2.11":
+  version: 11.2.11
+  resolution: "@reactflow/controls@npm:11.2.11"
   dependencies:
-    "@reactflow/core": "npm:11.10.4"
+    "@reactflow/core": "npm:11.11.1"
     classcat: "npm:^5.0.3"
     zustand: "npm:^4.4.1"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/3583bd6b42b1261470f9f291106ec1154faa6a912a43d7dd1b2af304401223a70f49d490b540f0f12aac3861e68c1f176078aa73dabe545daa7ca6fafc5863d9
+  checksum: 10/72507840ac5a570b9f8c6e6a99a79910cbe40fcadeb82a31058835d5304a8ba58642b8c263317f342f4be61563d09cae6c9a3522ae708ff4512a87de138cbfdc
   languageName: node
   linkType: hard
 
-"@reactflow/core@npm:11.10.4":
-  version: 11.10.4
-  resolution: "@reactflow/core@npm:11.10.4"
+"@reactflow/core@npm:11.11.1":
+  version: 11.11.1
+  resolution: "@reactflow/core@npm:11.11.1"
   dependencies:
     "@types/d3": "npm:^7.4.0"
     "@types/d3-drag": "npm:^3.0.1"
@@ -1332,15 +1341,15 @@ __metadata:
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/5e5300bd70283be42b60e0d5ad3b267baad9472cc86ea937c4cf417d8517ca71e8b20371f2fd7fe6727f3e28730106fd1279a04df59d016224c82ad028df523e
+  checksum: 10/fde2d9e03b0247f63ac7199bf238b55ce38870ea662a03fc6da61ede43655b8be516b2b91f84aa6d357431bd633302affc9b4e5659046040d512b33cb2f96494
   languageName: node
   linkType: hard
 
-"@reactflow/minimap@npm:11.7.9":
-  version: 11.7.9
-  resolution: "@reactflow/minimap@npm:11.7.9"
+"@reactflow/minimap@npm:11.7.11":
+  version: 11.7.11
+  resolution: "@reactflow/minimap@npm:11.7.11"
   dependencies:
-    "@reactflow/core": "npm:11.10.4"
+    "@reactflow/core": "npm:11.11.1"
     "@types/d3-selection": "npm:^3.0.3"
     "@types/d3-zoom": "npm:^3.0.1"
     classcat: "npm:^5.0.3"
@@ -1350,15 +1359,15 @@ __metadata:
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/7a0fd0fc7353a6e5d320b2fa014a70295ab2e0fba62801fdaceae3664dae8406c777fcd9d4a4c5b760d136d1714654bec042e3e0dce8013f430ac38b1e74cd46
+  checksum: 10/cf9fe60ef2cc9f0ffdd77309fbdb10de5fc2d0899ef2cf4b85501d34a614a5b08e0bf8f7b0ad0d5cbba222de453c049a347a7796fca0172dd58e80fc38b2a5f6
   languageName: node
   linkType: hard
 
-"@reactflow/node-resizer@npm:2.2.9":
-  version: 2.2.9
-  resolution: "@reactflow/node-resizer@npm:2.2.9"
+"@reactflow/node-resizer@npm:2.2.11":
+  version: 2.2.11
+  resolution: "@reactflow/node-resizer@npm:2.2.11"
   dependencies:
-    "@reactflow/core": "npm:11.10.4"
+    "@reactflow/core": "npm:11.11.1"
     classcat: "npm:^5.0.4"
     d3-drag: "npm:^3.0.0"
     d3-selection: "npm:^3.0.0"
@@ -1366,21 +1375,21 @@ __metadata:
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/d892aa477189991472d8e932475fabd6c5646b1d648ff4820cd98aa4b6fbd017a6933394bc46ad5094278cfc4250c196297dfb4994530ef829ce3c3db2193db4
+  checksum: 10/3f8e408f0aa5cddb8375969f44bfd0ec30673b98d133f614a5fcb71f621438a726924b5244fb8a5ed77c869b7dc5409f9b9a41e3d22f1383e55bcbdde997a36e
   languageName: node
   linkType: hard
 
-"@reactflow/node-toolbar@npm:1.3.9":
-  version: 1.3.9
-  resolution: "@reactflow/node-toolbar@npm:1.3.9"
+"@reactflow/node-toolbar@npm:1.3.11":
+  version: 1.3.11
+  resolution: "@reactflow/node-toolbar@npm:1.3.11"
   dependencies:
-    "@reactflow/core": "npm:11.10.4"
+    "@reactflow/core": "npm:11.11.1"
     classcat: "npm:^5.0.3"
     zustand: "npm:^4.4.1"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/70ba3171d2742e3574701e46285bd428e9bd3dd5f8a40d821b62a637b815f576096e2135d0102eed20a81c3e1bcb2eebdd987d7d4c89b8f06377c941c45bde38
+  checksum: 10/cd163954fb8a86dc426f1d1b58cd1c07b67e869bb97776379b1fac44cf03818339b56b4bced7bb5299c66bf469381edce6b583b5e5042dbbd8488cc667415cf8
   languageName: node
   linkType: hard
 
@@ -1611,9 +1620,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^14.2.2":
-  version: 14.2.2
-  resolution: "@testing-library/react@npm:14.2.2"
+"@testing-library/react@npm:^14.3.0":
+  version: 14.3.1
+  resolution: "@testing-library/react@npm:14.3.1"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^9.0.0"
@@ -1621,7 +1630,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 10/3605577fda8d5e27b8919f390f749af91494d03e7ba5ccaf6480ed1184248372c5a4e8fe1c8c3ad4c1a7b3536f37144ba4b4626900ed46dc9811312f280eee31
+  checksum: 10/83359dcdf9eaf067839f34604e1a181cbc14fc09f3a07672403700fcc6a900c4b8054ad1114fc24b4b9f89d84e2a09e1b7c9afce2306b1d4b4c9e30eb1cb12de
   languageName: node
   linkType: hard
 
@@ -2245,12 +2254,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.28":
-  version: 18.19.29
-  resolution: "@types/node@npm:18.19.29"
+"@types/node@npm:^18.19.30":
+  version: 18.19.31
+  resolution: "@types/node@npm:18.19.31"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/9a3572b488f875ca1b545cc96980f1cb54dd05da16b2dc0cc3c3cb49ceafc3a5e417f4741c711c7bb81a67a0ddd29f546dcb077e4cb9b98a492fbaf373b1fbdc
+  checksum: 10/654194d4f3cc5867e5525a39647773a12c0c7175972bc4d288cdc74991fc969be2a9689267a3dc1cc5c5c7617e8f7c4769ac4829525726cd3e2f60eb238c1ff4
   languageName: node
   linkType: hard
 
@@ -2284,12 +2293,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.23":
-  version: 18.2.24
-  resolution: "@types/react-dom@npm:18.2.24"
+"@types/react-dom@npm:^18.2.24":
+  version: 18.2.25
+  resolution: "@types/react-dom@npm:18.2.25"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10/bbd4005f2f65b7606505e9b8759b6e99e222d503602765594ea327893fb7061de8951279baef47a1932f04d94d1865daea05a32f9fcf6f9f1143dbabce5b33de
+  checksum: 10/0e45856a2fdbf09e74632b132b3af773c6b18fc2ab0bd04595c9f2bcc0bb04d5e732ac8156d145b712dedab7484a8fe9dce5cf720a5437b5d26099c7060c7ba4
   languageName: node
   linkType: hard
 
@@ -4891,7 +4900,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.2.1"
+    "@hawtio/react": "npm:^1.2.2"
     "@swc/core": "npm:^1.4.11"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^6.10.0"
@@ -6935,10 +6944,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minipass@npm:^4.0.0":
-  version: 4.2.5
-  resolution: "minipass@npm:4.2.5"
-  checksum: 10/0b0bf5910acc856f8fedbf5ac2567cc80dfdea99916f949c336c2ad52340a73b0bf48773a8a90b8ae2c79a415d9444f6e3a99915847577b1a5277f1235098056
+"minipass@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "minipass@npm:5.0.0"
+  checksum: 10/61682162d29f45d3152b78b08bab7fb32ca10899bc5991ffe98afc18c9e9543bd1e3be94f8b8373ba6262497db63607079dc242ea62e43e7b2270837b7347c93
   languageName: node
   linkType: hard
 
@@ -7821,20 +7830,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reactflow@npm:^11.10.4":
-  version: 11.10.4
-  resolution: "reactflow@npm:11.10.4"
+"reactflow@npm:^11.11.0":
+  version: 11.11.1
+  resolution: "reactflow@npm:11.11.1"
   dependencies:
-    "@reactflow/background": "npm:11.3.9"
-    "@reactflow/controls": "npm:11.2.9"
-    "@reactflow/core": "npm:11.10.4"
-    "@reactflow/minimap": "npm:11.7.9"
-    "@reactflow/node-resizer": "npm:2.2.9"
-    "@reactflow/node-toolbar": "npm:1.3.9"
+    "@reactflow/background": "npm:11.3.11"
+    "@reactflow/controls": "npm:11.2.11"
+    "@reactflow/core": "npm:11.11.1"
+    "@reactflow/minimap": "npm:11.7.11"
+    "@reactflow/node-resizer": "npm:2.2.11"
+    "@reactflow/node-toolbar": "npm:1.3.11"
   peerDependencies:
     react: ">=17"
     react-dom: ">=17"
-  checksum: 10/b465afc922a30111f32750536a4528f625884967cc188da898ab635893c238c41ec3ae6461a903ce3e0dbcb13e22bd2d88c6b4283687c3df9abad7d3fa2726a6
+  checksum: 10/10d02cbc3bf6988a457cbc7a8ea2f425ca55b4cada18ef982678c45be7ce76435c6e1702d8b6b1a07999fa52f1a1cc512c6014a4199f9735f91efa8f3b5ba5d2
   languageName: node
   linkType: hard
 
@@ -8735,16 +8744,16 @@ __metadata:
   linkType: hard
 
 "tar@npm:^6.1.11, tar@npm:^6.1.2":
-  version: 6.1.13
-  resolution: "tar@npm:6.1.13"
+  version: 6.2.1
+  resolution: "tar@npm:6.2.1"
   dependencies:
     chownr: "npm:^2.0.0"
     fs-minipass: "npm:^2.0.0"
-    minipass: "npm:^4.0.0"
+    minipass: "npm:^5.0.0"
     minizlib: "npm:^2.1.1"
     mkdirp: "npm:^1.0.3"
     yallist: "npm:^4.0.0"
-  checksum: 10/add2c3c6d0d71192186ec118d265b92d94be5cd57a0b8fdf0d29ee46dc846574925a5fc57170eefffd78201eda4c45d7604070b5a4b0648e4d6e1d65918b5a82
+  checksum: 10/bfbfbb2861888077fc1130b84029cdc2721efb93d1d1fb80f22a7ac3a98ec6f8972f29e564103bbebf5e97be67ebc356d37fa48dbc4960600a1eb7230fbd1ea0
   languageName: node
   linkType: hard
 
@@ -8912,11 +8921,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
   version: 5.4.2
-  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=d69c25"
+  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=5adc0c"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/ef4fc2994cc0219dc9ada94c92106ba8d44cbfd7a0328ed6f8d730311caf66e114cdfa07fbc6f369bfc0fc182d9493851b3bf1644c06fc5818690b19ee960d72
+  checksum: 10/f5f9a4133c2670761f0166eae5b3bafbc4a3fc24f0f42a93c9c893d9e9d6e66ea066969c5e7483fa66b4ae0e99125592553f3b92fd3599484de8be13b0615176
   languageName: node
   linkType: hard
 

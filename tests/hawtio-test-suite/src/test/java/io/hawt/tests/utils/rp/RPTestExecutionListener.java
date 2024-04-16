@@ -7,6 +7,8 @@ import org.junit.platform.launcher.TestIdentifier;
 
 import com.google.auto.service.AutoService;
 
+import io.hawt.tests.features.utils.Attachments;
+
 @AutoService(TestExecutionListener.class)
 public class RPTestExecutionListener implements TestExecutionListener {
 
