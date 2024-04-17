@@ -43,6 +43,10 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         final String path = endpointPath.resolve("hawtio");
 
         if (request.getRequestURI().equals(path)) {
+            String query = request.getQueryString();
+            if (query != null && !query.isEmpty()) {
+                return "redirect:" + path + "/index.html?" + query;
+            }
             return "redirect:" + path + "/index.html";
         }
 

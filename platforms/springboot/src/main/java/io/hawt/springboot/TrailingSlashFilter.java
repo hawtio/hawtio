@@ -35,6 +35,11 @@ public class TrailingSlashFilter implements Filter {
             return;
         }
 
-        redirector.doRedirect(httpRequest, httpResponse, "/index.html");
+        String query = httpRequest.getQueryString();
+        if (query != null && !query.isEmpty()) {
+            redirector.doRedirect(httpRequest, httpResponse, "/index.html?" + query);
+        } else {
+            redirector.doRedirect(httpRequest, httpResponse, "/index.html");
+        }
     }
 }
