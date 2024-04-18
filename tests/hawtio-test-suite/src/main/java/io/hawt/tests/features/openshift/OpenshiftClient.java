@@ -31,7 +31,7 @@ public class OpenshiftClient extends OpenShift {
         if (TestConfiguration.getOpenshiftUrl() != null) {
             configBuilder = new OpenShiftConfigBuilder()
                 .withMasterUrl(TestConfiguration.getOpenshiftUrl())
-                .withUsername(TestConfiguration.getOpenshiftNamespace())
+                .withUsername(TestConfiguration.getOpenshiftUsername())
                 .withPassword(TestConfiguration.getOpenshiftPassword());
         } else if (TestConfiguration.openshiftKubeconfig() != null) {
             try {
