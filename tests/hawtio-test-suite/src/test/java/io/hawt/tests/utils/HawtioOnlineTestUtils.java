@@ -1,5 +1,6 @@
 package io.hawt.tests.utils;
 
+import org.junit.Assume;
 import org.junit.function.ThrowingRunnable;
 import org.junit.platform.commons.util.ExceptionUtils;
 
@@ -47,7 +48,7 @@ public class HawtioOnlineTestUtils {
     }
 
     public static void withPatchDeployment(Consumer<Deployment> action, ThrowingRunnable test) {
-
+        Assume.assumeTrue("App deployment exists",getAppDeployment() != null);
         AtomicReference<Deployment> prevDeployment = new AtomicReference<>();
 
         try {
