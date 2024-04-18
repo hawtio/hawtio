@@ -63,6 +63,16 @@ public class HawtioPage {
     }
 
     /**
+     * Click on button with a given type.
+     *
+     * @param type on the given button
+     */
+    public HawtioPage clickButtonByType(String type) {
+        $(byXpath("//button[@type='" + type + "']")).shouldBe(enabled).click();
+        return this;
+    }
+
+    /**
      * Check an alert message of a successful action.
      *
      * @return this
@@ -95,7 +105,7 @@ public class HawtioPage {
      * @param tab to be opened.
      */
     public void openTab(String tab) {
-        final SelenideElement tabElement = $(byXpath("//a[text()='" + tab + "']"));
+        final SelenideElement tabElement = $(byXpath("//button[text()='" + tab + "']"));
         final SelenideElement scrollRightButton = $(byAttribute("aria-label", "Scroll right"));
         final String currentCamelTreeNode = $(byXpath("//h1[contains(@class, 'title')]")).shouldBe(visible).getText();
 

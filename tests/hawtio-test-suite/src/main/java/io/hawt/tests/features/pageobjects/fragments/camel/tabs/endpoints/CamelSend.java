@@ -51,6 +51,6 @@ public class CamelSend extends CamelPage {
      * Send the message.
      */
     public void sendMessage() {
-        clickButton("Send");
+        clickButtonByType("submit");
     }
 }
