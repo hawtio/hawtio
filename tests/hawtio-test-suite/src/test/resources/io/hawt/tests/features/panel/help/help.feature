@@ -22,10 +22,13 @@ Feature:  Checking the functionality of Help page.
       | tab           |
       | Home          |
       | Preferences   |
-      | Connect       |
       | JMX           |
       | Camel         |
 
     @notHawtioNext # - plugins are not present in hawtio-next CI runs
     Examples:
       | Sample Plugin |
+
+    @notOnline
+    Examples:
+      | Connect |

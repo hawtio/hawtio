@@ -92,6 +92,6 @@ public class PodEntry {
     }
 
     public void connect() {
-        $(root).$(By.className("pod-item-connect-button")).click();
+        $(root).$(By.cssSelector(".pod-item-connect-button > button")).click();
     }
 }

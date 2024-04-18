@@ -1,19 +1,29 @@
 package io.hawt.tests.features.openshift;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
+import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.client.dsl.Resource;
+import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import io.fabric8.openshift.api.model.operatorhub.lifecyclemanager.v1.PackageManifest;
 import io.fabric8.openshift.api.model.operatorhub.v1.OperatorGroupBuilder;
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource;
@@ -29,8 +39,15 @@ public class HawtioOnlineUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioOnlineUtils.class);
 
+    private static final ResourceDefinitionContext INTEGRATION_PLATFORM_CRD = new ResourceDefinitionContext.Builder()
+        .withGroup("camel.apache.org")
+        .withVersion("v1")
+        .withKind("IntegrationPlatform")
+        .withPlural("integrationplatforms")
+        .withNamespaced(true)
+        .build();
+
     public static Deployment deployApplication(String name, String runtime, String namespace, String tag) {
-        //@formatter:off
         List<EnvVar> envVars = new LinkedList<>();
 
         switch (runtime.toLowerCase()) {
@@ -42,8 +59,21 @@ public class HawtioOnlineUtils {
                 envVars.add(new EnvVar("AB_JOLOKIA_AUTH_OPENSHIFT", "cn=hawtio-online.hawtio.svc", null));
                 envVars.add(new EnvVar("AB_JOLOKIA_OPTS", "caCert=/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt", null));
                 break;
+
+            case "camelk":
+                deployCamelKOperator();
+                try {
+                    final String source =
+                        IOUtils.toString(HawtioOnlineUtils.class.getResource("/io/hawt/tests/openshift/camelk-e2e-integration.groovy"),
+                            StandardCharsets.UTF_8);
+                    deployCamelKIntegration("e2e-integration", source, "groovy");
+                } catch (IOException e) {
+                    Assertions.fail("Failed to deploy a Camel K integration", e);
+                }
+                return null;
         }
 
+        //@formatter:off
         final String imageName = "example-camel-" + runtime.toLowerCase();
         final DeploymentBuilder deploymentBuilder = new DeploymentBuilder()
             .editOrNewMetadata()
@@ -87,6 +117,141 @@ public class HawtioOnlineUtils {
         return deployment;
     }
 
+    public static void deployCamelKOperator() {
+        final CatalogSource redhatCatalog =
+            OpenshiftClient.get().operatorHub().catalogSources().inNamespace("openshift-marketplace").withName(TestConfiguration.getCamelKCatalog()).get();
+        createSubscription(redhatCatalog, "red-hat-camel-k");
+
+        WaitUtils.waitFor(() -> {
+            final GenericKubernetesResource ip =
+                OpenshiftClient.get().genericKubernetesResources(INTEGRATION_PLATFORM_CRD).withName("camel-k").get();
+            if (ip == null) {
+                return false;
+            }
+
+            return ip.get("status", "phase").equals("Ready");
+        }, "Waiting for Integration Platform to get ready", Duration.ofMinutes(5));
+    }
+
+    public static HasMetadata deployCamelKIntegration(String integrationSource) {
+        var integration = (GenericKubernetesResource) OpenshiftClient.get().resource(integrationSource).create();
+        LOG.info("Waiting for the Camel K integration to be ready");
+        OpenshiftClient.get().resource(integration).waitUntilCondition(resource -> {
+            String status = resource.get("status", "phase");
+            return status != null && status.equalsIgnoreCase("Running");
+        }, 10, TimeUnit.MINUTES);
+
+        return integration;
+    }
+
+    public static HasMetadata deployCamelKIntegration(String name, String source, String language) {
+        var integration = Map.of(
+            "kind", "Integration",
+            "apiVersion", "camel.apache.org/v1",
+            "metadata", Map.of(
+                "name", name,
+                "namespace", OpenshiftClient.get().getNamespace(),
+                "labels", Map.of(
+                    "app", "e2e-app"
+                )
+            ),
+            "spec", Map.of(
+                "traits", Map.of(
+                    "builder", Map.of(
+                        "configuration", Map.of(
+                            "properties", List.of("quarkus.camel.debug.enabled = true")
+                        )
+                    ),
+                    "jolokia", Map.of(
+                        "enabled", true,
+                        "discoveryEnabled", true
+                    ),
+                    "owner", Map.of(
+                        "enabled", true,
+                        "targetLabels", List.of("app")
+                    ),
+                    "camel", Map.of(
+                        "properties", List.of(
+                            "camel.context.name = SampleCamel",
+                            "quarkus.camel.debug.enabled = true",
+                            "camel.main.tracing = true",
+                            "camel.main.backlogTracing = true",
+                            "camel.main.useBreadcrumb = true"
+                        )
+                    )
+                ),
+                "sources", List.of(
+                    Map.of(
+                        "content", source,
+                        "language", language,
+                        "name", "source." + language
+                    )
+                ),
+                "dependencies", List.of(
+                    "camel:timer",
+                    "camel:debug"
+                )
+            )
+        );
+
+        return deployCamelKIntegration(new Yaml().dump(integration));
+    }
+
+    public static String createSubscription(final CatalogSource catalog, String packageManifestName) {
+        final OpenShiftOperatorHubAPIGroupDSL operatorhub = OpenshiftClient.get().operatorHub();
+        final PackageManifest packageManifest = WaitUtils.withRetry(() -> operatorhub.packageManifests()
+                .withLabel("catalog", catalog.getMetadata().getName())
+                .list()
+                .getItems()
+                .stream()
+                //Sometimes there's a conflict with community-operators, which is why it has to be filtered this way
+                .filter(manifest -> manifest.getMetadata().getName().toLowerCase().endsWith(packageManifestName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Could not find hawtio-operator package manifest installed by the catalog")), 2,
+            Duration.ofSeconds(30));
+
+        final String defaultChannel = packageManifest.getStatus().getDefaultChannel();
+        final String startingCSV = packageManifest.getStatus().getChannels().stream()
+            .filter(channel -> channel.getName().equals(defaultChannel)).findFirst().get().getCurrentCSV();
+
+        operatorhub.operatorGroups().createOrReplace(new OperatorGroupBuilder()
+            .editOrNewMetadata()
+            .withName("hawtio-operator-og")
+            .endMetadata()
+            .editOrNewSpec()
+            .addToTargetNamespaces(TestConfiguration.getOpenshiftNamespace())
+            .endSpec()
+            .build());
+
+        final String subscriptionName = packageManifest.getMetadata().getName();
+        operatorhub.subscriptions().createOrReplace(new SubscriptionBuilder()
+            .editOrNewMetadata()
+            .withName(subscriptionName)
+            .endMetadata()
+            .editOrNewSpec()
+            .withChannel(defaultChannel)
+            .withInstallPlanApproval("Automatic")
+            .withName(subscriptionName)
+            .withSource(catalog.getMetadata().getName())
+            .withSourceNamespace(catalog.getMetadata().getNamespace())
+            .withStartingCSV(startingCSV)
+            .endSpec()
+            .build());
+
+        //@formatter:on
+        WaitUtils.waitFor(() -> {
+            var ip = operatorhub.subscriptions().withName(subscriptionName).get().getStatus().getInstallPlanRef();
+            if (ip == null) {
+                return false;
+            }
+
+            return operatorhub.installPlans().withName(ip.getName()).get()
+                .getStatus().getPhase().equals("Complete");
+        }, "Waiting for the installplan to finish", Duration.ofMinutes(3));
+
+        return startingCSV;
+    }
+
     public static void deployOperator() {
         final OpenShiftOperatorHubAPIGroupDSL operatorhub = OpenshiftClient.get().operatorHub();
         CatalogSource catalog = null;
@@ -113,55 +278,7 @@ public class HawtioOnlineUtils {
         } else {
             catalog = operatorhub.catalogSources().inNamespace("openshift-marketplace").withName("redhat-operators").get();
         }
-        CatalogSource finalCatalog = catalog;
-        final PackageManifest packageManifest = WaitUtils.withRetry(() -> operatorhub.packageManifests()
-            .withLabel("catalog", finalCatalog.getMetadata().getName())
-            .list()
-            .getItems()
-            .stream()
-            //Sometimes there's a conflict with community-operators, which is why it has to be filtered this way
-            .filter(manifest -> manifest.getMetadata().getName().toLowerCase().endsWith("hawtio-operator"))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Could not find hawtio-operator package manifest installed by the catalog")), 2, Duration.ofSeconds(30));
-
-        final String defaultChannel = packageManifest.getStatus().getDefaultChannel();
-        final String startingCSV = packageManifest.getStatus().getChannels().stream()
-            .filter(channel -> channel.getName().equals(defaultChannel)).findFirst().get().getCurrentCSV();
-
-        operatorhub.operatorGroups().createOrReplace(new OperatorGroupBuilder()
-                .editOrNewMetadata()
-                    .withName("hawtio-operator-og")
-                .endMetadata()
-                .editOrNewSpec()
-                    .addToTargetNamespaces(TestConfiguration.getOpenshiftNamespace())
-                .endSpec()
-            .build());
-
-        final String subscriptonName = packageManifest.getMetadata().getName();
-        operatorhub.subscriptions().createOrReplace(new SubscriptionBuilder()
-                .editOrNewMetadata()
-                    .withName(subscriptonName)
-                .endMetadata()
-                .editOrNewSpec()
-                    .withChannel(defaultChannel)
-                    .withInstallPlanApproval("Automatic")
-                    .withName(subscriptonName)
-                    .withSource(catalog.getMetadata().getName())
-                    .withSourceNamespace(catalog.getMetadata().getNamespace())
-                    .withStartingCSV(startingCSV)
-                .endSpec()
-            .build());
-
-        //@formatter:on
-        WaitUtils.waitFor(() -> {
-            var ip = operatorhub.subscriptions().withName(subscriptonName).get().getStatus().getInstallPlanRef();
-            if (ip == null) {
-                return false;
-            }
-
-            return operatorhub.installPlans().withName(ip.getName()).get()
-                .getStatus().getPhase().equals("Complete");
-        }, "Waiting for the installplan to finish", Duration.ofMinutes(3));
+        final String startingCSV = createSubscription(catalog, "hawtio-operator");
 
         if (TestConfiguration.getHawtioOnlineSHA() != null) {
             WaitUtils.withRetry(() -> {

@@ -220,6 +220,14 @@
       </properties>
     </profile>
     <profile>
+      <id>e2e-camelk</id>
+      <properties>
+        <test-runtime>camelk</test-runtime>
+        <skipTests>false</skipTests>
+        <local-app>false</local-app>
+      </properties>
+    </profile>
+    <profile>
       <id>hawtio-container</id>
       <activation>
         <property>
