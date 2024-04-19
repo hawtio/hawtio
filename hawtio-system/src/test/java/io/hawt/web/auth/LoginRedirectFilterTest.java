@@ -46,7 +46,7 @@ public class LoginRedirectFilterTest {
     @Test
     public void customizedUnsecuredPaths() throws Exception {
         String[] unsecuredPaths = { "/hawtio/auth", "/hawtio/secret/content" };
-        loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
+        loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths, "/");
         when(filterConfig.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(ConfigManager.CONFIG_MANAGER)).thenReturn(new ConfigManager());
         loginRedirectFilter.init(filterConfig);

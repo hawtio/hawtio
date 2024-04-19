@@ -3,9 +3,12 @@ package io.hawt.web.auth;
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collections;
 
 import javax.security.auth.Subject;
+import javax.security.auth.login.AppConfigurationEntry;
 
+import io.hawt.util.Strings;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -34,10 +37,13 @@ public class AuthenticationFilter implements Filter {
     protected int timeout;
     protected AuthenticationConfiguration authConfiguration;
 
+    private int pathIndex;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
         timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
+        this.pathIndex = Strings.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override
@@ -60,6 +66,15 @@ public class AuthenticationFilter implements Filter {
             LOG.debug("No authentication needed for path: {}", path);
             chain.doFilter(request, response);
             return;
+        }
+
+        boolean proxyMode = false;
+        RelativeRequestUri uri = new RelativeRequestUri(httpRequest, pathIndex);
+        if (uri.getComponents().length > 0 && "proxy".equals(uri.getComponents()[0])) {
+            // https://github.com/hawtio/hawtio/issues/3178
+            // /proxy/* requests are now authenticated by this filter, but we have to do it differently, because
+            // "Authorization" header carries credentials for target Jolokia agent
+            proxyMode = !uri.getUri().equals("proxy/enabled");
         }
 
         HttpSession session = httpRequest.getSession(false);

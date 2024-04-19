@@ -2,7 +2,6 @@ package io.hawt.web.auth;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,11 +24,53 @@ public class AuthenticationConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
 
     public static final String LOGIN_URL = "/login";
-    public static final String[] UNSECURED_PATHS = {
-        "/login", "/auth/login", "/auth/logout", "/auth/config", "/auth/config/session-timeout",
-        "/css", "/fonts", "/img", "/js", "/static", "/hawtconfig.json",
-        "/jolokia", "/user", "/keycloak", "/plugin", "/favicon.ico"
+
+    // these paths shouldn't be redirected to /login, because either they're for static resources we don't have to
+    // protect (like site building resources - css, js, html) or they're related to authentication itself
+    // finally, /jolokia and /proxy should not be redirected, because these are accessed via xhr/fetch and should
+    // simply return 403 if needed
+    // all these paths are passed to request.getServletPath().startsWith(), so it depends on servlet mapping (ll
+    // relative to context path, so ignoring "/hawtio" or "/actuator/hawtio"):
+    //  - for prefix mapping, like "/jolokia/*", for request like "/jolokia/read/xxx", servlet path is "/jolokia"
+    //  - for extension mapping, like "*.info", for request like "/x/y/z.info", servlet path is ... "/x/y/z.info"
+    //  - for default mapping, "/", for request like "/css/defaults.css", servlet path is "/css/defaults.css"
+
+    // static resources paths
+    private static final String[] UNSECURED_RESOURCE_PATHS = {
+            "/index.html", "/favicon.ico", "/hawtconfig.json",
+            "/css", "/fonts", "/img", "/js", "/static"
     };
+    // paths related to authentication process
+    // "/login" path is actually a client-side router path, but Hawtio sometimes redirects (thus forcing _server_
+    // request) to this path for unified authentication experience
+    // "/auth/*", "/user", "/keycloak" paths are actual servlet mappings
+    private static final String[] UNSECURED_AUTHENTICATION_PATHS = {
+            "/login",
+            "/auth/login", "/auth/logout", "/auth/config",
+            "/user", "/keycloak"
+    };
+    // paths for configuration of the client (@hawtio/react) part
+    private static final String[] UNSECURED_META_PATHS = {
+            "/plugin"
+    };
+    // API paths. these may be confusing:
+    //  - should NOT be redirected to /login, but
+    //  - should be protected otherwise (e.g., AuthenticationFilter)
+    private static final String[] UNSECURED_SERVLET_PATHS = {
+            "/jolokia", "/proxy"
+    };
+
+    /** Paths that shouldn't be redirected to {@code /login}. */
+    public static final String[] UNSECURED_PATHS;
+
+    static {
+        ArrayList<String> l = new ArrayList<>();
+        l.addAll(Arrays.asList(UNSECURED_RESOURCE_PATHS));
+        l.addAll(Arrays.asList(UNSECURED_AUTHENTICATION_PATHS));
+        l.addAll(Arrays.asList(UNSECURED_META_PATHS));
+        l.addAll(Arrays.asList(UNSECURED_SERVLET_PATHS));
+        UNSECURED_PATHS = l.toArray(String[]::new);
+    }
 
     // =========================================================================
     // Configuration properties
@@ -205,7 +246,7 @@ public class AuthenticationConfiguration {
                 AuthenticationContainerDiscovery discovery = clazz.getDeclaredConstructor().newInstance();
                 discoveries.add(discovery);
             } catch (Exception e) {
-                LOG.warn("Couldn't instantiate discovery " + discoveryClass, e);
+                LOG.warn("Couldn't instantiate discovery {}", discoveryClass, e);
             }
         }
         return discoveries;

@@ -5,18 +5,22 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static io.hawt.web.auth.SessionExpiryFilter.SERVLET_PATH;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class StringsTest {
@@ -225,4 +229,28 @@ public class StringsTest {
         }
     }
 
+    public static class HawtioPathIndexTest {
+
+        public static Stream<Arguments> params() {
+            return Stream.of(
+                    // [ SERVLET_PATH attribute, full request URI, expected Hawtio path position ]
+                    arguments(null, "/jolokia", 0),
+                    arguments(null, "/jolokia/version", 0),
+                    arguments("", "/jolokia", 0),
+                    arguments("", "/jolokia/version", 0),
+                    arguments("/x", "/x/jolokia", 1),
+                    arguments("/mgmt/actuator/hawtio", "/mgmt/actuator/hawtio/jolokia", 3)
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource("params")
+        public void test(String servletPathAttribute, String uri, int pathIndex) {
+            ServletContext ctx = mock(ServletContext.class);
+            if (servletPathAttribute != null) {
+                when(ctx.getAttribute(SERVLET_PATH)).thenReturn(servletPathAttribute);
+            }
+            assertThat(Strings.hawtioPathIndex(ctx), equalTo(pathIndex));
+        }
+    }
 }

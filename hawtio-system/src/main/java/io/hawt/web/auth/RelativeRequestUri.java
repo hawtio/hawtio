@@ -67,6 +67,8 @@ public class RelativeRequestUri {
         if (start < requestUri.length() && requestUri.charAt(start) == '/') {
             start++;
         }
+        // when context path is "/hawtio" and full URI is "/hawtio/jolokia/version",
+        // "start" now points to "j"
 
         if (pathIndex != 0) {
             int c = 0;

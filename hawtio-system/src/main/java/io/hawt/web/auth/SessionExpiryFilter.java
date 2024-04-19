@@ -49,12 +49,7 @@ public class SessionExpiryFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
 
-        String servletPath = (String) filterConfig.getServletContext().getAttribute(SERVLET_PATH);
-        if (servletPath == null) {
-            this.pathIndex = 0; // assume hawtio is served from root
-        } else {
-            this.pathIndex = Strings.webContextPath(servletPath).replaceAll("[^/]+", "").length();
-        }
+        this.pathIndex = Strings.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override

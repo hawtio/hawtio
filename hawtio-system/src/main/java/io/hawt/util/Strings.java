@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import io.hawt.web.auth.SessionExpiryFilter;
+import jakarta.servlet.ServletContext;
+
 /**
  * String utility.
  */
@@ -86,7 +89,7 @@ public class Strings {
     }
 
     /**
-     * Simple, recursively-safe property placeholder resolver. Only system properties are used (for now). De-facto
+     * Simple, recursively-safe property placeholder resolver. De-facto
      * standard {@code ${...}} syntax is used. Unresolvable properties are not replaced and separators pass to
      * resulting value.
      *
@@ -154,6 +157,37 @@ public class Strings {
             result.append(v);
         }
         return to;
+    }
+
+    /**
+     * Return a number of web path segments that need to be skipped to reach <em>hawtio path</em>. In JakartaEE
+     * environment (WAR) everything after context path is "hawtio path", so {@code 0} is returned. In Spring Boot
+     * we may have to skip some segments (like {@code /actuator/hawtio}).
+     *
+     * @param servletContext
+     * @return
+     */
+    public static int hawtioPathIndex(ServletContext servletContext) {
+        String servletPath = (String) servletContext.getAttribute(SessionExpiryFilter.SERVLET_PATH);
+        if (servletPath == null) {
+            // this attribute is set only in non JakartaEE environments, so here we are in standard WAR
+            // deployment. Just return "0", which means full path without initial context path
+            return 0;
+        } else {
+            // when SessionExpiryFilter.SERVLET_PATH is set, it contains prefix which should be skipped and which
+            // is not standard JakartaEE path components (context path, servlet path, path info).
+            // for Spring Boot we have to skip dispatcher servlet path, management endpoints base ("/actuator")
+            // and management endpoint mapping
+            String cleanPath = Strings.webContextPath(servletPath);
+            int pathIndex = 0;
+            // for "/actuator/hawtio", we have to return "2", so count slashes
+            for (char c : cleanPath.toCharArray()) {
+                if (c == '/') {
+                    pathIndex++;
+                }
+            }
+            return pathIndex;
+        }
     }
 
 }

@@ -103,7 +103,7 @@ public final class AuthSessionHelpers {
             LOG.debug("Spring Security enabled");
             return true;
         } catch (ClassNotFoundException e) {
-            LOG.debug("Spring Security not found");
+            LOG.trace("Spring Security not found");
             return false;
         }
     }
