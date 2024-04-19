@@ -98,11 +98,9 @@ public class LoginRedirectFilter implements Filter {
         if (!authConfiguration.isEnabled()
                 || authConfiguration.isKeycloakEnabled() || authConfiguration.isOidcEnabled()
                 || AuthSessionHelpers.isSpringSecurityEnabled()) {
-            // if the URL is /login (client-side router URL), we have to redirect to "/", so user doesn't see
-            // login page blinking
-            // also we should not get index.html page with HTTP 404 rendered (because of web.xml's
-            // <error-code>404</error-code> + <location>/index.html</location>)
             if ("/login".equals(hawtioPath)) {
+                // if the URL is /login (client-side router URL), we have to redirect to "/", so user doesn't see
+                // login page blinking
                 redirector.doRedirect(httpRequest, httpResponse, "/");
             } else {
                 chain.doFilter(request, response);
@@ -111,12 +109,24 @@ public class LoginRedirectFilter implements Filter {
         }
         // 2) skip redirect, when already authenticated
         if (AuthSessionHelpers.isAuthenticated(session)) {
-            chain.doFilter(request, response);
+            if ("/login".equals(hawtioPath)) {
+                // authenticated user should be redirected to "/"
+                redirector.doRedirect(httpRequest, httpResponse, "/");
+            } else {
+                chain.doFilter(request, response);
+            }
             return;
         }
         // 3) skip redirect, when accessing unsecured or specially-secured paths
         if (!isSecuredPath(path)) {
-            chain.doFilter(request, response);
+            if ("/login".equals(hawtioPath)) {
+                // however if "/login" path is used (by explicit browser refresh) and user is not authenticated
+                // we should forward to /index.html, so user doesn't get it with HTTP 404 (because of web.xml's
+                // <error-code>404</error-code> + <location>/index.html</location>)
+                redirector.doForward(httpRequest, httpResponse, "/index.html");
+            } else {
+                chain.doFilter(request, response);
+            }
             return;
         }
 
