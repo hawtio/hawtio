@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
-import io.hawt.web.auth.LoginRedirectFilter;
+import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
 import io.hawt.web.auth.Redirector;
@@ -137,7 +137,7 @@ public class HawtioManagementConfiguration {
      * and need to be explicitly configured for handling them. This Spring Boot
      * specific filter used to redirect {@code /actuator/hawtio/} requests to {@code /actuator/hawtio/index.html},
      * but now it used for consistency with WAR deployments - to redirect {@code /actuator/hawtio} to
-     * {@code /actuator/hawtio/}. Then the request is being processed by {@link LoginRedirectFilter}.
+     * {@code /actuator/hawtio/}. Then the request is being processed by {@link ClientRouteRedirectFilter}.
      */
     @Bean
     @Order(0)
@@ -250,15 +250,24 @@ public class HawtioManagementConfiguration {
         return filter;
     }
 
+    /**
+     * This filter was called {@code LoginRedirectFilter}, but now it also handles redirection/forwarding for
+     * client-side routes (React Router), so we no longer need this special RegExp mapped
+     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioEndpoint}.
+     *
+     * @param redirector
+     * @param pathResolver
+     * @return
+     */
     @Bean
     @Order(12)
-    public FilterRegistrationBean<LoginRedirectFilter> loginRedirectFilter(final Redirector redirector,
+    public FilterRegistrationBean<ClientRouteRedirectFilter> clientRouteRedirectFilter(final Redirector redirector,
             EndpointPathResolver pathResolver) {
         final String[] unsecuredPaths = prependContextPath(AuthenticationConfiguration.UNSECURED_PATHS);
-        final FilterRegistrationBean<LoginRedirectFilter> filter = new FilterRegistrationBean<>();
-        final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths, pathResolver.resolveUrlMapping("hawtio") + "/");
-        loginRedirectFilter.setRedirector(redirector);
-        filter.setFilter(loginRedirectFilter);
+        final FilterRegistrationBean<ClientRouteRedirectFilter> filter = new FilterRegistrationBean<>();
+        final ClientRouteRedirectFilter clientRouteRedirectFilter = new ClientRouteRedirectFilter(unsecuredPaths, pathResolver.resolveUrlMapping("hawtio"));
+        clientRouteRedirectFilter.setRedirector(redirector);
+        filter.setFilter(clientRouteRedirectFilter);
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
     }

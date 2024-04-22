@@ -29,15 +29,16 @@ public class AuthenticationConfiguration {
     // protect (like site building resources - css, js, html) or they're related to authentication itself
     // finally, /jolokia and /proxy should not be redirected, because these are accessed via xhr/fetch and should
     // simply return 403 if needed
-    // all these paths are passed to request.getServletPath().startsWith(), so it depends on servlet mapping (ll
-    // relative to context path, so ignoring "/hawtio" or "/actuator/hawtio"):
+    // all these paths are passed to request.getServletPath().startsWith(), so it depends on servlet mapping
+    // (relative to context path, so ignoring "/hawtio" for WAR or value from "management.server.base-path" property):
     //  - for prefix mapping, like "/jolokia/*", for request like "/jolokia/read/xxx", servlet path is "/jolokia"
     //  - for extension mapping, like "*.info", for request like "/x/y/z.info", servlet path is ... "/x/y/z.info"
     //  - for default mapping, "/", for request like "/css/defaults.css", servlet path is "/css/defaults.css"
 
-    // static resources paths
+    // static resources paths, which should always be reachable
     private static final String[] UNSECURED_RESOURCE_PATHS = {
             "/index.html", "/favicon.ico", "/hawtconfig.json",
+            "/robots.txt", "/json.worker.js", "/editor.worker.js",
             "/css", "/fonts", "/img", "/js", "/static"
     };
     // paths related to authentication process
@@ -60,7 +61,9 @@ public class AuthenticationConfiguration {
             "/jolokia", "/proxy"
     };
 
-    /** Paths that shouldn't be redirected to {@code /login}. */
+    /**
+     * Paths that shouldn't be redirected to {@code /login} when user is not authenticated.
+     */
     public static final String[] UNSECURED_PATHS;
 
     static {
@@ -294,6 +297,21 @@ public class AuthenticationConfiguration {
 
     public boolean isOidcEnabled() {
         return oidcConfiguration != null && oidcConfiguration.isEnabled();
+    }
+
+    public static boolean isSpringSecurityEnabled() {
+        try {
+            Class.forName("org.springframework.security.core.SpringSecurityCoreVersion");
+            LOG.trace("Spring Security enabled");
+            return true;
+        } catch (ClassNotFoundException e) {
+            LOG.trace("Spring Security not found");
+            return false;
+        }
+    }
+
+    public boolean isExternalAuthenticationEnabled() {
+        return isKeycloakEnabled() || isOidcEnabled() || isSpringSecurityEnabled();
     }
 
     /**

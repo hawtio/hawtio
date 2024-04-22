@@ -18,7 +18,7 @@ import io.hawt.quarkus.filters.HawtioQuarkusPathFilter;
 import io.hawt.quarkus.servlets.HawtioQuakusLoginServlet;
 import io.hawt.quarkus.servlets.HawtioQuakusLogoutServlet;
 import io.hawt.web.auth.AuthenticationFilter;
-import io.hawt.web.auth.LoginRedirectFilter;
+import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
 import io.hawt.web.filters.BaseTagHrefFilter;
@@ -82,7 +82,7 @@ public class HawtioProcessor {
     private static final Map<String, String> WEB_XML_OVERRIDES = Map.of(
         LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName(),
         LogoutServlet.class.getName(), HawtioQuakusLogoutServlet.class.getName(),
-        LoginRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName(),
+        ClientRouteRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName(),
         AuthenticationFilter.class.getName(), HawtioQuarkusAuthenticationFilter.class.getName()
     );
 

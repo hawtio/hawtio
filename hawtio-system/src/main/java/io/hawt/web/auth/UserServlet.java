@@ -51,7 +51,7 @@ public class UserServlet extends HttpServlet {
         }
 
         // For Spring Security
-        if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+        if (AuthenticationConfiguration.isSpringSecurityEnabled()) {
             return request.getRemoteUser();
         }
 

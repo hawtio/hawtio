@@ -14,7 +14,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
 /**
- * Spring Boot endpoint to expose Hawtio.
+ * <p>Spring Boot endpoint to expose Hawtio. It is more tightly integrated with Spring MVC than
+ * {@link org.springframework.boot.actuate.endpoint.annotation.Endpoint} and methods annotated with
+ * {@link RequestMapping} are invoked by {@link org.springframework.web.servlet.DispatcherServlet} through
+ * {@link org.springframework.web.servlet.HandlerAdapter}.</p>
+ *
+ * <p>The implication is that {@link RequestMapping} methods are called after DispatcherServlet and after
+ * all mapped Hawtio filters.</p>
  */
 @ControllerEndpoint(id = "hawtio")
 public class HawtioEndpoint implements WebMvcConfigurer {

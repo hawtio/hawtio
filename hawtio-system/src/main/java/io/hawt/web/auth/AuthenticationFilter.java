@@ -82,7 +82,7 @@ public class AuthenticationFilter implements Filter {
             Subject subject = (Subject) session.getAttribute("subject");
 
             // For Spring Security
-            if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+            if (AuthenticationConfiguration.isSpringSecurityEnabled()) {
                 if (subject == null && httpRequest.getRemoteUser() != null) {
                     AuthSessionHelpers.setup(
                         session, new Subject(), httpRequest.getRemoteUser(), timeout);
