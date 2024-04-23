@@ -21,8 +21,10 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.assertj.AssertableWebApplicationContext;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.test.util.TestSocketUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.netty.http.client.HttpClient;
 
 
 public class HawtioSpringBootTestSupport {
@@ -69,7 +71,7 @@ public class HawtioSpringBootTestSupport {
     }
 
     public void testHawtioEndpoint(AssertableWebApplicationContext context, TestProperties properties, boolean isCustomManagementPortConfigured) {
-        getTestClient(context)
+        getTestClient(context, true)
             .get().uri(properties.getHawtioPath(isCustomManagementPortConfigured)).exchange()
             .expectStatus().isOk()
             .expectBody()
@@ -105,11 +107,20 @@ public class HawtioSpringBootTestSupport {
     }
 
     protected WebTestClient getTestClient(AssertableWebApplicationContext context) {
+        return getTestClient(context, false);
+    }
+
+    protected WebTestClient getTestClient(AssertableWebApplicationContext context, boolean followRedirects) {
         Integer port = context.getEnvironment().getProperty("management.server.port", Integer.class);
         if (port == null) {
             port = context.getSourceApplicationContext(AnnotationConfigServletWebServerApplicationContext.class).getWebServer().getPort();
         }
-        return WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
+        WebTestClient.Builder builder = WebTestClient.bindToServer().baseUrl("http://localhost:" + port);
+        if (followRedirects) {
+            builder.clientConnector(new ReactorClientHttpConnector(HttpClient.create().followRedirect(true)));
+        }
+
+        return builder.build();
     }
 
     protected static class TestProperties {

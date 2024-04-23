@@ -265,7 +265,7 @@ public class HawtioManagementConfiguration {
             EndpointPathResolver pathResolver) {
         final String[] unsecuredPaths = prependContextPath(AuthenticationConfiguration.UNSECURED_PATHS);
         final FilterRegistrationBean<ClientRouteRedirectFilter> filter = new FilterRegistrationBean<>();
-        final ClientRouteRedirectFilter clientRouteRedirectFilter = new ClientRouteRedirectFilter(unsecuredPaths, pathResolver.resolveUrlMapping("hawtio"));
+        final ClientRouteRedirectFilter clientRouteRedirectFilter = new ClientRouteRedirectFilter(unsecuredPaths, pathResolver.resolve("hawtio"));
         clientRouteRedirectFilter.setRedirector(redirector);
         filter.setFilter(clientRouteRedirectFilter);
         filter.addUrlPatterns(hawtioPath + "/*");

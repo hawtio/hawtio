@@ -11,7 +11,7 @@ import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.Redirector;
 import io.quarkus.arc.Arc;
 
-public class HawtioQuarkusLoginRedirectFilter extends ClientRouteRedirectFilter {
+public class HawtioQuarkusClientRouteRedirectFilter extends ClientRouteRedirectFilter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

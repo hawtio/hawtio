@@ -62,7 +62,7 @@ public class HawtioSpringBootEndpointIT extends HawtioSpringBootTestCommon {
             client.get().uri(properties.getJolokiaPath(false)).exchange()
                 .expectStatus().isForbidden();
 
-            client.get().uri(properties.getHawtioPath(false)).exchange()
+            client.get().uri(properties.getHawtioPath(false) + "/").exchange()
                 .expectStatus().isFound()
                 .expectHeader().valueMatches("Location", loginRedirectUrlRegex);
 

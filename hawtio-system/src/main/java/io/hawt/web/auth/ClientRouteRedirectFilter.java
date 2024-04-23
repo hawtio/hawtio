@@ -20,6 +20,8 @@ import io.hawt.system.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
+
 /**
  * <p>A filter that handles client-side routing URLs and redirects to login page depending on authentication state.
  * There are two kinds of URLs handled:<ul>
@@ -57,6 +59,9 @@ public class ClientRouteRedirectFilter implements Filter {
     // and may be anything on Spring Boot with "server.servlet.context-path" or
     // "management.server.base-path" properties
     private String baseFullPath;
+    // only the context path - /hawtio for hawtio.war and server.servlet.context-path or management.server.base-path
+    // on Spring Boot
+    private String contextPath;
 
     private Redirector redirector = new Redirector();
 
@@ -79,7 +84,13 @@ public class ClientRouteRedirectFilter implements Filter {
         if (unsecured != null) {
             unsecuredPaths = (String[]) unsecured;
         }
-        baseFullPath = Strings.webContextPath(filterConfig.getServletContext().getContextPath(), basePath);
+        contextPath = filterConfig.getServletContext().getContextPath();
+        baseFullPath = Strings.webContextPath(contextPath, basePath);
+        String appContextPath = filterConfig.getInitParameter(PARAM_APPLICATION_CONTEXT_PATH);
+        if (appContextPath != null && !appContextPath.isEmpty()) {
+            // Quarkus doesn't have any context path, but we still need to have /hawtio base
+            baseFullPath = Strings.cleanPath(appContextPath);
+        }
     }
 
     @Override
@@ -92,20 +103,18 @@ public class ClientRouteRedirectFilter implements Filter {
 
         // TOCHECK: we may consider using this filter only for GET requests
 
-        // req.getServletPath() should be for example "/jolokia" or "/index.html" or "/jmx" for WAR,
-        // but for Spring Boot it includes path within DispatcherServlet, for example "/actuator/hawtio/jolokia"
-        // that's why this.unsecuredPaths is processed with proper prefixes.
-        // this doesn't include context path (like /hawtio for WAR)
-        //
-        // for WAR, with welcome files configuration, "/" is already reflected as "/index.html" servlet path
-        // in Tomcat. In Jetty it is still "/"
-        String path = httpRequest.getServletPath();
-
         // this is full path, which includes context path and path info
         String requestURI = Strings.cleanPath(httpRequest.getRequestURI());
         // this is a path without context path and should be everything after "/hawtio" (or "/actuator/hawtio")
         String hawtioPath = requestURI.length() < baseFullPath.length() ? ""
                 : requestURI.substring(baseFullPath.length());
+        // this is a path after context path:
+        //  - everything after /hawtio for hawtio.war
+        //  - everything after /actuator/hawtio for default Spring Boot config. but also handles cases with custom
+        //    management base and/or mapping and if same port is used for main and management server, then dispatcher
+        //    servlet's base path is also handled (and this is the case why we CAN'T use req.getServletPath())
+        String path = requestURI.length() < contextPath.length() ? ""
+                : requestURI.substring(contextPath.length());
 
         boolean loginPage = hawtioPath.startsWith("/login");
 
