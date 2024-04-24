@@ -7,11 +7,11 @@ import jakarta.servlet.ServletException;
 
 import io.hawt.quarkus.HawtioConfig;
 import io.hawt.web.auth.AuthenticationConfiguration;
-import io.hawt.web.auth.LoginRedirectFilter;
+import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.Redirector;
 import io.quarkus.arc.Arc;
 
-public class HawtioQuarkusLoginRedirectFilter extends LoginRedirectFilter {
+public class HawtioQuarkusClientRouteRedirectFilter extends ClientRouteRedirectFilter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

@@ -14,6 +14,10 @@ import io.hawt.web.auth.Redirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Filter that simulates <em>Root context access</em> from WAR deployments. I.e., {@code /actuator/hawtio}
+ * is redirected to {@code /actuator/hawtio/}.
+ */
 public class TrailingSlashFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrailingSlashFilter.class);
@@ -30,16 +34,12 @@ public class TrailingSlashFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        if (!httpRequest.getRequestURI().endsWith("/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String query = httpRequest.getQueryString();
         if (query != null && !query.isEmpty()) {
-            redirector.doRedirect(httpRequest, httpResponse, "/index.html?" + query);
+            redirector.doRedirect(httpRequest, httpResponse, "/?" + query);
         } else {
-            redirector.doRedirect(httpRequest, httpResponse, "/index.html");
+            redirector.doRedirect(httpRequest, httpResponse, "/");
         }
     }
 }

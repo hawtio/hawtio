@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
-import io.hawt.web.auth.LoginRedirectFilter;
+import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
 import io.hawt.web.auth.Redirector;
@@ -33,6 +33,7 @@ import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.proxy.ProxyServlet;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jolokia.support.spring.actuator.JolokiaEndpoint;
 import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,10 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.AbstractUrlViewController;
 
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
@@ -57,7 +61,7 @@ public class HawtioManagementConfiguration {
 
     // a path within Spring server or management server that's the "base" of hawtio actuator.
     // By default it should be "/actuator/hawtio", but may be affected by application.properties settings
-    // (for example management.endpoints.web.base-path which defaults to "/actuator")
+    // (for example management.endpoints.web.base-path which defaults to "/actuator", but can be customized)
     private final String hawtioPath;
 
     public HawtioManagementConfiguration(final EndpointPathResolver pathResolver) {
@@ -72,6 +76,19 @@ public class HawtioManagementConfiguration {
     @Bean
     public ConfigManager hawtioConfigManager(final HawtioProperties hawtioProperties) {
         return new ConfigManager(hawtioProperties.get()::get);
+    }
+
+    @Bean
+    public SimpleUrlHandlerMapping hawtioWelcomeFiles(final EndpointPathResolver pathResolver) {
+        AbstractController abstractController = new AbstractController() {
+            @Override
+            protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+                return new ModelAndView("forward:" + pathResolver.resolve("hawtio") + "/index.html");
+            }
+        };
+        // https://github.com/hawtio/hawtio/issues/3382
+        // order=10 to handle "/actuator/hawtio/" URL as forward to "/actuator/hawtio/index.html" for consistency
+        return new SimpleUrlHandlerMapping(Map.of(pathResolver.resolve("hawtio") + "/", abstractController), 10);
     }
 
     @Bean
@@ -113,20 +130,26 @@ public class HawtioManagementConfiguration {
     // Filters
     // -------------------------------------------------------------------------
 
+    // use @Order annotation to ensure filter mapping as in web.xml. method invocation order _may_ be JVM dependent
+
     /**
      * Since Spring Boot 3.0, paths with trailing slash are not automatically processed
      * and need to be explicitly configured for handling them. This Spring Boot
-     * specific filter redirects requests for hawtio/ to hawtio/index.html.
+     * specific filter used to redirect {@code /actuator/hawtio/} requests to {@code /actuator/hawtio/index.html},
+     * but now it used for consistency with WAR deployments - to redirect {@code /actuator/hawtio} to
+     * {@code /actuator/hawtio/}. Then the request is being processed by {@link ClientRouteRedirectFilter}.
      */
     @Bean
+    @Order(0)
     public FilterRegistrationBean<TrailingSlashFilter> trailingSlashFilter(final Redirector redirector) {
         final FilterRegistrationBean<TrailingSlashFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new TrailingSlashFilter(redirector));
-        filter.addUrlPatterns(hawtioPath + "/");
+        filter.addUrlPatterns(hawtioPath);
         return filter;
     }
 
     @Bean
+    @Order(1)
     public FilterRegistrationBean<SessionExpiryFilter> sessionExpiryFilter() {
         final FilterRegistrationBean<SessionExpiryFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new SessionExpiryFilter());
@@ -135,6 +158,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(2)
     public FilterRegistrationBean<CacheHeadersFilter> cacheFilter() {
         final FilterRegistrationBean<CacheHeadersFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new CacheHeadersFilter());
@@ -143,6 +167,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(3)
     public FilterRegistrationBean<CORSFilter> hawtioCorsFilter() {
         final FilterRegistrationBean<CORSFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new CORSFilter());
@@ -151,6 +176,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(4)
     public FilterRegistrationBean<XFrameOptionsFilter> xframeOptionsFilter() {
         final FilterRegistrationBean<XFrameOptionsFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XFrameOptionsFilter());
@@ -159,6 +185,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(5)
     public FilterRegistrationBean<XXSSProtectionFilter> xxssProtectionFilter() {
         final FilterRegistrationBean<XXSSProtectionFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XXSSProtectionFilter());
@@ -167,6 +194,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(6)
     public FilterRegistrationBean<XContentTypeOptionsFilter> xContentTypeOptionsFilter() {
         final FilterRegistrationBean<XContentTypeOptionsFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XContentTypeOptionsFilter());
@@ -175,6 +203,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(7)
     public FilterRegistrationBean<ContentSecurityPolicyFilter> contentSecurityPolicyFilter() {
         final FilterRegistrationBean<ContentSecurityPolicyFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new ContentSecurityPolicyFilter());
@@ -183,6 +212,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(8)
     public FilterRegistrationBean<StrictTransportSecurityFilter> strictTransportSecurityFilter() {
         final FilterRegistrationBean<StrictTransportSecurityFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new StrictTransportSecurityFilter());
@@ -191,6 +221,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(9)
     public FilterRegistrationBean<PublicKeyPinningFilter> publicKeyPinningFilter() {
         final FilterRegistrationBean<PublicKeyPinningFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new PublicKeyPinningFilter());
@@ -199,6 +230,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(10)
     public FilterRegistrationBean<ReferrerPolicyFilter> referrerPolicyFilter() {
         final FilterRegistrationBean<ReferrerPolicyFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new ReferrerPolicyFilter());
@@ -207,6 +239,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(11)
     @ConditionalOnBean(JolokiaEndpoint.class)
     @ConditionalOnExposedEndpoint(name = "jolokia")
     public FilterRegistrationBean<AuthenticationFilter> authenticationFilter(final EndpointPathResolver pathResolver) {
@@ -217,18 +250,30 @@ public class HawtioManagementConfiguration {
         return filter;
     }
 
+    /**
+     * This filter was called {@code LoginRedirectFilter}, but now it also handles redirection/forwarding for
+     * client-side routes (React Router), so we no longer need this special RegExp mapped
+     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioEndpoint}.
+     *
+     * @param redirector
+     * @param pathResolver
+     * @return
+     */
     @Bean
-    public FilterRegistrationBean<LoginRedirectFilter> loginRedirectFilter(final Redirector redirector) {
+    @Order(12)
+    public FilterRegistrationBean<ClientRouteRedirectFilter> clientRouteRedirectFilter(final Redirector redirector,
+            EndpointPathResolver pathResolver) {
         final String[] unsecuredPaths = prependContextPath(AuthenticationConfiguration.UNSECURED_PATHS);
-        final FilterRegistrationBean<LoginRedirectFilter> filter = new FilterRegistrationBean<>();
-        final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
-        loginRedirectFilter.setRedirector(redirector);
-        filter.setFilter(loginRedirectFilter);
+        final FilterRegistrationBean<ClientRouteRedirectFilter> filter = new FilterRegistrationBean<>();
+        final ClientRouteRedirectFilter clientRouteRedirectFilter = new ClientRouteRedirectFilter(unsecuredPaths, pathResolver.resolve("hawtio"));
+        clientRouteRedirectFilter.setRedirector(redirector);
+        filter.setFilter(clientRouteRedirectFilter);
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
     }
 
     @Bean
+    @Order(13)
     public FilterRegistrationBean<BaseTagHrefFilter> baseTagHrefFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<BaseTagHrefFilter> filter = new FilterRegistrationBean<>();
         final BaseTagHrefFilter baseTagHrefFilter = new BaseTagHrefFilter();
@@ -241,6 +286,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
+    @Order(14)
     public FilterRegistrationBean<FlightRecordingDownloadFacade> flightRecorderDownloadFacade(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<FlightRecordingDownloadFacade> filter = new FilterRegistrationBean<>();
         filter.setFilter(new FlightRecordingDownloadFacade());

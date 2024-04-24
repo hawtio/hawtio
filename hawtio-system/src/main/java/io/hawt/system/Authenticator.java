@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * Authenticator supports the following authentication methods:
  * <ul>
  * <li>a set of user name and password</li>
+ * <li>oidc (bearer) access token</li>
  * <li>client certificates</li>
  * </ul>
  */

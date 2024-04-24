@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LoginRedirectFilterTest {
+public class ClientRouteRedirectFilterTest {
 
-    private LoginRedirectFilter loginRedirectFilter;
+    private ClientRouteRedirectFilter clientRouteRedirectFilter;
     private FilterConfig filterConfig;
     private ServletContext servletContext;
 
@@ -27,32 +27,32 @@ public class LoginRedirectFilterTest {
 
     @Test
     public void shouldTestSecuredPaths() throws Exception {
-        loginRedirectFilter = new LoginRedirectFilter();
+        clientRouteRedirectFilter = new ClientRouteRedirectFilter();
         when(filterConfig.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(ConfigManager.CONFIG_MANAGER)).thenReturn(new ConfigManager());
-        loginRedirectFilter.init(filterConfig);
-        assertTrue(loginRedirectFilter.isSecuredPath("/d"));
-        assertTrue(loginRedirectFilter.isSecuredPath("/e/f"));
-        assertTrue(loginRedirectFilter.isSecuredPath("/auth"));
+        clientRouteRedirectFilter.init(filterConfig);
+        assertTrue(clientRouteRedirectFilter.isSecuredPath("/d"));
+        assertTrue(clientRouteRedirectFilter.isSecuredPath("/e/f"));
+        assertTrue(clientRouteRedirectFilter.isSecuredPath("/auth"));
         // these paths are not "secured" from the PoV of LoginRedirectFilter - however these are protected by
         // AuthenticationFilter
-        assertFalse(loginRedirectFilter.isSecuredPath("/jolokia"));
-        assertFalse(loginRedirectFilter.isSecuredPath("/jolokia/read/java.lang:type=Runtime/Name"));
-        assertFalse(loginRedirectFilter.isSecuredPath("/favicon.ico"));
-        assertFalse(loginRedirectFilter.isSecuredPath("/auth/login"));
-        assertFalse(loginRedirectFilter.isSecuredPath("/auth/logout"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/jolokia"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/jolokia/read/java.lang:type=Runtime/Name"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/favicon.ico"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/auth/login"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/auth/logout"));
     }
 
     @Test
     public void customizedUnsecuredPaths() throws Exception {
         String[] unsecuredPaths = { "/hawtio/auth", "/hawtio/secret/content" };
-        loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
+        clientRouteRedirectFilter = new ClientRouteRedirectFilter(unsecuredPaths, "/");
         when(filterConfig.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(ConfigManager.CONFIG_MANAGER)).thenReturn(new ConfigManager());
-        loginRedirectFilter.init(filterConfig);
-        assertTrue(loginRedirectFilter.isSecuredPath("/d"));
-        assertTrue(loginRedirectFilter.isSecuredPath("/e/f"));
-        assertFalse(loginRedirectFilter.isSecuredPath("/hawtio/auth/login"));
-        assertFalse(loginRedirectFilter.isSecuredPath("/hawtio/secret/content/secure"));
+        clientRouteRedirectFilter.init(filterConfig);
+        assertTrue(clientRouteRedirectFilter.isSecuredPath("/d"));
+        assertTrue(clientRouteRedirectFilter.isSecuredPath("/e/f"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/hawtio/auth/login"));
+        assertFalse(clientRouteRedirectFilter.isSecuredPath("/hawtio/secret/content/secure"));
     }
 }
