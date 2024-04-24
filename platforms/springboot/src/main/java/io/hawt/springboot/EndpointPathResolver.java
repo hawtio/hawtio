@@ -2,7 +2,7 @@ package io.hawt.springboot;
 
 import java.util.Map;
 
-import io.hawt.util.WebHelper;
+import io.hawt.web.ServletHelpers;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -71,7 +71,7 @@ public class EndpointPathResolver {
             endpointPathMapping = endpointName;
         }
 
-        final String webContextPath = WebHelper.webContextPath(servletPath, basePath, endpointPathMapping);
+        final String webContextPath = ServletHelpers.webContextPath(servletPath, basePath, endpointPathMapping);
         return webContextPath.isEmpty() ? "/" : webContextPath;
     }
 
@@ -83,7 +83,7 @@ public class EndpointPathResolver {
             endpointPath = endpointPath.replace(servletPath, "");
         }
 
-        return WebHelper.webContextPath(endpointPath, mappings);
+        return ServletHelpers.webContextPath(endpointPath, mappings);
     }
 
     public String resolveContextPath() {
@@ -97,6 +97,6 @@ public class EndpointPathResolver {
             contextPath = managementServerProperties.getBasePath();
         }
 
-        return WebHelper.webContextPath(contextPath);
+        return ServletHelpers.webContextPath(contextPath);
     }
 }

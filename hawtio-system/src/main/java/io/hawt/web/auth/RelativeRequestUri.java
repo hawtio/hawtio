@@ -2,7 +2,7 @@ package io.hawt.web.auth;
 
 import java.util.regex.Pattern;
 
-import io.hawt.util.WebHelper;
+import io.hawt.web.ServletHelpers;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -61,7 +61,7 @@ public class RelativeRequestUri {
             throw new IllegalArgumentException("pathIndex is negative");
         }
 
-        final String requestUri = WebHelper.webContextPath(request.getRequestURI());
+        final String requestUri = ServletHelpers.webContextPath(request.getRequestURI());
         int start = request.getContextPath().length();
         if (start < requestUri.length() && requestUri.charAt(start) == '/') {
             start++;

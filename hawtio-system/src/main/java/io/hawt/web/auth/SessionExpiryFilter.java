@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import io.hawt.util.WebHelper;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -49,7 +48,7 @@ public class SessionExpiryFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
 
-        this.pathIndex = WebHelper.hawtioPathIndex(filterConfig.getServletContext());
+        this.pathIndex = ServletHelpers.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override

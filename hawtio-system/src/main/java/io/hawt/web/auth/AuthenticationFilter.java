@@ -6,7 +6,6 @@ import java.security.PrivilegedExceptionAction;
 
 import javax.security.auth.Subject;
 
-import io.hawt.util.WebHelper;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -41,7 +40,7 @@ public class AuthenticationFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
         timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
-        this.pathIndex = WebHelper.hawtioPathIndex(filterConfig.getServletContext());
+        this.pathIndex = ServletHelpers.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override

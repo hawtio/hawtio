@@ -3,7 +3,7 @@ package io.hawt.web.auth;
 import java.io.IOException;
 import java.util.Arrays;
 
-import io.hawt.util.WebHelper;
+import io.hawt.web.ServletHelpers;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -82,7 +82,7 @@ public class ClientRouteRedirectFilter implements Filter {
 
     public ClientRouteRedirectFilter(String[] unsecuredPaths, String hawtioBase) {
         this.unsecuredPaths = unsecuredPaths;
-        this.basePath = WebHelper.cleanPath(hawtioBase);
+        this.basePath = ServletHelpers.cleanPath(hawtioBase);
     }
 
     @Override
@@ -96,11 +96,11 @@ public class ClientRouteRedirectFilter implements Filter {
             unsecuredPaths = (String[]) unsecured;
         }
         contextPath = filterConfig.getServletContext().getContextPath();
-        baseFullPath = WebHelper.webContextPath(contextPath, basePath);
+        baseFullPath = ServletHelpers.webContextPath(contextPath, basePath);
         String appContextPath = filterConfig.getInitParameter(PARAM_APPLICATION_CONTEXT_PATH);
         if (appContextPath != null && !appContextPath.isEmpty()) {
             // Quarkus doesn't have any context path, but we still need to have /hawtio base
-            baseFullPath = WebHelper.cleanPath(appContextPath);
+            baseFullPath = ServletHelpers.cleanPath(appContextPath);
         }
     }
 
@@ -115,7 +115,7 @@ public class ClientRouteRedirectFilter implements Filter {
         // TOCHECK: we may consider using this filter only for GET requests
 
         // this is full path, which includes context path and path info
-        String requestURI = WebHelper.cleanPath(httpRequest.getRequestURI());
+        String requestURI = ServletHelpers.cleanPath(httpRequest.getRequestURI());
         // this is a path without context path and should be everything after "/hawtio" (or "/actuator/hawtio")
         String hawtioPath = requestURI.length() < baseFullPath.length() ? ""
                 : requestURI.substring(baseFullPath.length());

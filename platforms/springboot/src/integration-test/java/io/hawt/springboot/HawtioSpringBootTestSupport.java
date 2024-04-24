@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import io.hawt.util.WebHelper;
+import io.hawt.web.ServletHelpers;
 import org.assertj.core.api.Assertions;
 import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
@@ -186,11 +186,11 @@ public class HawtioSpringBootTestSupport {
 
 
             if (jolokiaPath != null) {
-                this.jolokiaPath = WebHelper.webContextPath(jolokiaPath);
+                this.jolokiaPath = ServletHelpers.webContextPath(jolokiaPath);
             }
 
             if (hawtioPath != null) {
-                this.hawtioPath = WebHelper.webContextPath(hawtioPath);
+                this.hawtioPath = ServletHelpers.webContextPath(hawtioPath);
             }
         }
 
@@ -199,20 +199,20 @@ public class HawtioSpringBootTestSupport {
         }
 
         public String getHawtioPath(boolean isManagementPortConfigured) {
-            return WebHelper.webContextPath(getBasePath(isManagementPortConfigured), hawtioPath);
+            return ServletHelpers.webContextPath(getBasePath(isManagementPortConfigured), hawtioPath);
         }
 
 
         public String getJolokiaPath(boolean isManagementPortConfigured) {
-            return WebHelper.webContextPath(getBasePath(isManagementPortConfigured), jolokiaPath);
+            return ServletHelpers.webContextPath(getBasePath(isManagementPortConfigured), jolokiaPath);
         }
 
         public String getHawtioJolokiaPath(boolean isManagementPortConfigured) {
-            return WebHelper.webContextPath(getHawtioPath(isManagementPortConfigured), "jolokia");
+            return ServletHelpers.webContextPath(getHawtioPath(isManagementPortConfigured), "jolokia");
         }
 
         public String getHawtioPluginPath(boolean isManagementPortConfigured) {
-            return WebHelper.webContextPath(getHawtioPath(isManagementPortConfigured), "plugin");
+            return ServletHelpers.webContextPath(getHawtioPath(isManagementPortConfigured), "plugin");
         }
 
         public String[] getProperties() {
@@ -221,9 +221,9 @@ public class HawtioSpringBootTestSupport {
 
         private String getBasePath(boolean customPortConfigured) {
             if (customPortConfigured) {
-                return WebHelper.webContextPath(managementBasePath, managementWebBasePath);
+                return ServletHelpers.webContextPath(managementBasePath, managementWebBasePath);
             }
-            return WebHelper.webContextPath(contextPath, servletPath, managementWebBasePath);
+            return ServletHelpers.webContextPath(contextPath, servletPath, managementWebBasePath);
         }
 
         private void addProperty(String name, String value) {
