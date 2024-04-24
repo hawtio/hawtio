@@ -36,7 +36,7 @@ public class LogoutServlet extends HttpServlet {
         addHeaders(response);
 
         request.logout();
-        if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+        if (AuthenticationConfiguration.isSpringSecurityEnabled()) {
             AuthSessionHelpers.clear(request, authConfiguration, false);
             redirector.doRedirect(request, response, "/");
         } else {

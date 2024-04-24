@@ -13,12 +13,11 @@ import io.hawt.quarkus.HawtioProducers;
 import io.hawt.quarkus.HawtioRecorder;
 import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
 import io.hawt.quarkus.filters.HawtioQuarkusAuthenticationFilter;
-import io.hawt.quarkus.filters.HawtioQuarkusLoginRedirectFilter;
-import io.hawt.quarkus.filters.HawtioQuarkusPathFilter;
+import io.hawt.quarkus.filters.HawtioQuarkusClientRouteRedirectFilter;
 import io.hawt.quarkus.servlets.HawtioQuakusLoginServlet;
 import io.hawt.quarkus.servlets.HawtioQuakusLogoutServlet;
 import io.hawt.web.auth.AuthenticationFilter;
-import io.hawt.web.auth.LoginRedirectFilter;
+import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
 import io.hawt.web.filters.BaseTagHrefFilter;
@@ -82,7 +81,7 @@ public class HawtioProcessor {
     private static final Map<String, String> WEB_XML_OVERRIDES = Map.of(
         LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName(),
         LogoutServlet.class.getName(), HawtioQuakusLogoutServlet.class.getName(),
-        LoginRedirectFilter.class.getName(), HawtioQuarkusLoginRedirectFilter.class.getName(),
+        ClientRouteRedirectFilter.class.getName(), HawtioQuarkusClientRouteRedirectFilter.class.getName(),
         AuthenticationFilter.class.getName(), HawtioQuarkusAuthenticationFilter.class.getName()
     );
 
@@ -149,12 +148,14 @@ public class HawtioProcessor {
         // Hawtio filters
         if (webMetaData.getFilters() != null) {
             for (FilterMetaData filterMetaData : webMetaData.getFilters()) {
-                if (DISALLOWED_FILTERS.contains(filterMetaData.getFilterClass())) {
+                String filterClass = filterMetaData.getFilterClass();
+                if (DISALLOWED_FILTERS.contains(filterClass)) {
                     continue;
                 }
 
-                FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterMetaData.getFilterClass()));
-                if (filterMetaData.getFilterClass().equals(BaseTagHrefFilter.class.getName())) {
+                FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterClass));
+                if (filterClass.equals(BaseTagHrefFilter.class.getName())
+                        || filterClass.equals(ClientRouteRedirectFilter.class.getName())) {
                     builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
                 }
 
@@ -175,13 +176,7 @@ public class HawtioProcessor {
             }
         }
 
-        // Quarkus path filter
-        // This filter must be placed at the end of filter chain
-        FilterBuildItem pathHandler = FilterBuildItem.builder("PathFilter", HawtioQuarkusPathFilter.class.getName())
-            .addFilterUrlMapping(DEFAULT_CONTEXT_PATH + "/*", jakarta.servlet.DispatcherType.REQUEST)
-            .build();
-        filter.produce(pathHandler);
-
+        // Quarkus path filter - no longer needed when we have io.hawt.web.auth.ClientRouteRedirectFilter
     }
 
     private void registerListeners(WebMetaData webMetaData, BuildProducer<ListenerBuildItem> listener) {

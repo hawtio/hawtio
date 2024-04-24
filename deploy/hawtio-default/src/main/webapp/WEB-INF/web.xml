@@ -108,7 +108,7 @@
 
   <filter>
     <filter-name>LoginRedirectFilter</filter-name>
-    <filter-class>io.hawt.web.auth.LoginRedirectFilter</filter-class>
+    <filter-class>io.hawt.web.auth.ClientRouteRedirectFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>LoginRedirectFilter</filter-name>
