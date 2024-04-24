@@ -34,10 +34,13 @@ public class AuthenticationFilter implements Filter {
     protected int timeout;
     protected AuthenticationConfiguration authConfiguration;
 
+    private int pathIndex;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
         timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
+        this.pathIndex = ServletHelpers.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override
@@ -62,12 +65,21 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
+        boolean proxyMode = false;
+        RelativeRequestUri uri = new RelativeRequestUri(httpRequest, pathIndex);
+        if (uri.getComponents().length > 0 && "proxy".equals(uri.getComponents()[0])) {
+            // https://github.com/hawtio/hawtio/issues/3178
+            // /proxy/* requests are now authenticated by this filter, but we have to do it differently, because
+            // "Authorization" header carries credentials for target Jolokia agent
+            proxyMode = !uri.getUri().equals("proxy/enabled");
+        }
+
         HttpSession session = httpRequest.getSession(false);
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
 
             // For Spring Security
-            if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+            if (AuthenticationConfiguration.isSpringSecurityEnabled()) {
                 if (subject == null && httpRequest.getRemoteUser() != null) {
                     AuthSessionHelpers.setup(
                         session, new Subject(), httpRequest.getRemoteUser(), timeout);
