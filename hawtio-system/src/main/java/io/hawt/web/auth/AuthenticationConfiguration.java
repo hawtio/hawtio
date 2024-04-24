@@ -35,29 +35,41 @@ public class AuthenticationConfiguration {
     //  - for extension mapping, like "*.info", for request like "/x/y/z.info", servlet path is ... "/x/y/z.info"
     //  - for default mapping, "/", for request like "/css/defaults.css", servlet path is "/css/defaults.css"
 
-    // static resources paths, which should always be reachable
-    private static final String[] UNSECURED_RESOURCE_PATHS = {
+    /**
+     * Static resources paths, which should be always reachable.
+     */
+    public static final String[] UNSECURED_RESOURCE_PATHS = {
             "/index.html", "/favicon.ico", "/hawtconfig.json",
             "/robots.txt", "/json.worker.js", "/editor.worker.js",
             "/css", "/fonts", "/img", "/js", "/static"
     };
-    // paths related to authentication process
-    // "/login" path is actually a client-side router path, but Hawtio sometimes redirects (thus forcing _server_
-    // request) to this path for unified authentication experience
-    // "/auth/*", "/user", "/keycloak" paths are actual servlet mappings
-    private static final String[] UNSECURED_AUTHENTICATION_PATHS = {
+
+    /**
+     * Paths related to authentication process.
+     * {@code /login} path is actually a client-side router path, but Hawtio sometimes redirects (thus forcing
+     * <em>server</em> request) to this path for unified authentication experience.
+     * {@code /auth/*}, {@code user}, {@code /keycloak} paths are actual servlet mappings.
+     */
+    public static final String[] UNSECURED_AUTHENTICATION_PATHS = {
             "/login",
             "/auth/login", "/auth/logout", "/auth/config",
             "/user", "/keycloak"
     };
-    // paths for configuration of the client (@hawtio/react) part
-    private static final String[] UNSECURED_META_PATHS = {
+
+    /**
+     * Paths for configuration of the client (@hawtio/react) part.
+     */
+    public static final String[] UNSECURED_META_PATHS = {
             "/plugin"
     };
-    // API paths. these may be confusing:
-    //  - should NOT be redirected to /login, but
-    //  - should be protected otherwise (e.g., AuthenticationFilter)
-    private static final String[] UNSECURED_SERVLET_PATHS = {
+
+    /**
+     * API paths. These may be confusing:<ul>
+     *   <li>should NOT be redirected to /login, but</li>
+     *   <li>should be protected otherwise (e.g., AuthenticationFilter)</li>
+     * </ul>
+     */
+    public static final String[] UNSECURED_SERVLET_PATHS = {
             "/jolokia", "/proxy"
     };
 

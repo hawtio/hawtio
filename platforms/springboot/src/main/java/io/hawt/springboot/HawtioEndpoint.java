@@ -2,16 +2,12 @@ package io.hawt.springboot;
 
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponents;
 
 /**
  * <p>Spring Boot endpoint to expose Hawtio. It is more tightly integrated with Spring MVC than
@@ -36,31 +32,8 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         this.plugins = plugins;
     }
 
-    /**
-     * Forwards all React router route URLs to index.html.
-     * Ignores jolokia paths and paths for other Hawtio resources.
-     *
-     * @return The Spring Web forward directive for the Hawtio index.html resource.
-     */
-    @RequestMapping(
-        value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|static|\\.).)*$}/**"},
-        produces = MediaType.TEXT_HTML_VALUE)
-    public String forwardHawtioRequestToIndexHtml(HttpServletRequest request) {
-        final String path = endpointPath.resolve("hawtio");
-
-        if (request.getRequestURI().equals(path)) {
-            String query = request.getQueryString();
-            if (query != null && !query.isEmpty()) {
-                return "redirect:" + path + "/index.html?" + query;
-            }
-            return "redirect:" + path + "/index.html";
-        }
-
-        final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(path)
-            .path("/index.html")
-            .build();
-        return "forward:" + uriComponents.getPath();
-    }
+    // forwardHawtioRequestToIndexHtml() with "{path:^(?:(?!\bjolokia\b|auth|css|fonts|img|js|user|static|\.).)*$}/**"
+    // mapping is no longer needed - everything is handled by ClientRouteRedirectFilter
 
     @RequestMapping("/plugin")
     @ResponseBody
@@ -88,4 +61,3 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         // @formatter:on
     }
 }
-

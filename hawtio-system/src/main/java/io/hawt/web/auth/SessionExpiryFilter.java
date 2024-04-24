@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import io.hawt.util.WebHelper;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -14,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class SessionExpiryFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
 
-        this.pathIndex = Strings.hawtioPathIndex(filterConfig.getServletContext());
+        this.pathIndex = WebHelper.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override

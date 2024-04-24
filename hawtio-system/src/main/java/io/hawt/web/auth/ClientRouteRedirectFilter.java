@@ -3,7 +3,7 @@ package io.hawt.web.auth;
 import java.io.IOException;
 import java.util.Arrays;
 
-import io.hawt.util.Strings;
+import io.hawt.util.WebHelper;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -50,17 +50,28 @@ public class ClientRouteRedirectFilter implements Filter {
     private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
-    // paths which are either unsecured or are secured in different way (like AuthenticationFilter)
+    /**
+     * Paths which are either unsecured or are secured in different way (like AuthenticationFilter)
+     */
     private String[] unsecuredPaths;
-    // base path for hawtio. Should be "/" for hawtio.war
-    // and e.g., "/actuator/hawtio" for Spring Boot (configurable)
+
+    /**
+     * Base path for hawtio. Should be "/" for hawtio.war
+     * and e.g., "/actuator/hawtio" for Spring Boot (configurable)
+     */
     private final String basePath;
-    // base path including context path, which is "/hawtio" for hawtio.war (or "/console" for console.war)
-    // and may be anything on Spring Boot with "server.servlet.context-path" or
-    // "management.server.base-path" properties
+
+    /**
+     * Base path including context path, which is "/hawtio" for hawtio.war (or "/console" for console.war)
+     * and may be anything on Spring Boot with "server.servlet.context-path" or
+     * "management.server.base-path" properties
+     */
     private String baseFullPath;
-    // only the context path - /hawtio for hawtio.war and server.servlet.context-path or management.server.base-path
-    // on Spring Boot
+
+    /**
+     * Only the context path - /hawtio for hawtio.war and value from
+     * server.servlet.context-path or management.server.base-path properties on Spring Boot.
+     */
     private String contextPath;
 
     private Redirector redirector = new Redirector();
@@ -71,7 +82,7 @@ public class ClientRouteRedirectFilter implements Filter {
 
     public ClientRouteRedirectFilter(String[] unsecuredPaths, String hawtioBase) {
         this.unsecuredPaths = unsecuredPaths;
-        this.basePath = Strings.cleanPath(hawtioBase);
+        this.basePath = WebHelper.cleanPath(hawtioBase);
     }
 
     @Override
@@ -85,11 +96,11 @@ public class ClientRouteRedirectFilter implements Filter {
             unsecuredPaths = (String[]) unsecured;
         }
         contextPath = filterConfig.getServletContext().getContextPath();
-        baseFullPath = Strings.webContextPath(contextPath, basePath);
+        baseFullPath = WebHelper.webContextPath(contextPath, basePath);
         String appContextPath = filterConfig.getInitParameter(PARAM_APPLICATION_CONTEXT_PATH);
         if (appContextPath != null && !appContextPath.isEmpty()) {
             // Quarkus doesn't have any context path, but we still need to have /hawtio base
-            baseFullPath = Strings.cleanPath(appContextPath);
+            baseFullPath = WebHelper.cleanPath(appContextPath);
         }
     }
 
@@ -104,7 +115,7 @@ public class ClientRouteRedirectFilter implements Filter {
         // TOCHECK: we may consider using this filter only for GET requests
 
         // this is full path, which includes context path and path info
-        String requestURI = Strings.cleanPath(httpRequest.getRequestURI());
+        String requestURI = WebHelper.cleanPath(httpRequest.getRequestURI());
         // this is a path without context path and should be everything after "/hawtio" (or "/actuator/hawtio")
         String hawtioPath = requestURI.length() < baseFullPath.length() ? ""
                 : requestURI.substring(baseFullPath.length());
@@ -133,7 +144,7 @@ public class ClientRouteRedirectFilter implements Filter {
         }
 
         // "/login" is similar to URLs like "/connect/remote" or "/jmx", because it's client-side router URL
-        // but it shold be handled differently
+        // but it should be handled differently
         // "/" (and even "") are also treated as client-side routes, because there's no path among
         // io.hawt.web.auth.AuthenticationConfiguration.UNSECURED_PATHS that "/" startsWith()
 
@@ -172,8 +183,8 @@ public class ClientRouteRedirectFilter implements Filter {
         }
 
         // try pre-emptive authentication, so when user sees index.html page (Hawtio client), jolokia requests
-        // will already be authenticate.
-        // TOCHECK: be carefull with Jolokia/Proxy requests
+        // will already be authenticated.
+        // TOCHECK: be careful with Jolokia/Proxy requests
         boolean preemptiveAuth = tryAuthenticateRequest(httpRequest, session);
 
         // 4) at this stage we have to redirect to /login if authentication failed
