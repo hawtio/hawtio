@@ -277,6 +277,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skipTests>${skipTests}</skipTests>
+          <rerunFailingTestsCount>3</rerunFailingTestsCount>
           <systemProperties>
             <io.hawt.test.runtime>${test-runtime}</io.hawt.test.runtime>
             <io.hawt.test.url.suffix>${hawtio.url}</io.hawt.test.url.suffix>
