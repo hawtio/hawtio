@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
-    "@hawtio/backend-middleware": "^1.0.4",
+    "@hawtio/backend-middleware": "^1.0.5",
     "craco-esbuild": "^0.6.1",
     "monaco-editor-webpack-plugin": "^7.1.0",
     "os-browserify": "^0.3.0",
