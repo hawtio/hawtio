@@ -7,6 +7,8 @@ import org.junit.platform.launcher.TestIdentifier;
 
 import com.google.auto.service.AutoService;
 
+import java.util.Stack;
+
 import io.hawt.tests.features.utils.Attachments;
 
 @AutoService(TestExecutionListener.class)
@@ -16,8 +18,20 @@ public class RPTestExecutionListener implements TestExecutionListener {
         return name.replace("()", "").replace("(", "{").replace(")", "}");
     }
 
+    private Stack<String> scenarioParts = new Stack<>();
+
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
+        if (testIdentifier.getUniqueId().contains("engine:cucumber")) {
+            scenarioParts.push(testIdentifier.getDisplayName());
+            if (scenarioParts.size() == 2) {
+                Attachments.startTestClass(testIdentifier.getDisplayName());
+            }
+            if (testIdentifier.isTest()) {
+                Attachments.startTestCase(String.join(" - ", scenarioParts.subList(2, scenarioParts.size())));
+            }
+            return;
+        }
         if (testIdentifier.isTest()) {
             Attachments.startTestCase(transformReportingName(testIdentifier.getLegacyReportingName()));
         } else {
@@ -32,6 +46,9 @@ public class RPTestExecutionListener implements TestExecutionListener {
     @Override
     public void executionFinished(TestIdentifier testIdentifier,
         TestExecutionResult testExecutionResult) {
+        if (testIdentifier.getUniqueId().contains("engine:cucumber")) {
+            scenarioParts.pop();
+        }
         if (testIdentifier.isTest()) {
             Attachments.endTestCase(testExecutionResult.getThrowable().isPresent());
         } else {
