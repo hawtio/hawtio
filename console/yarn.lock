@@ -630,15 +630,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/backend-middleware@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@hawtio/backend-middleware@npm:1.0.4"
+"@hawtio/backend-middleware@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@hawtio/backend-middleware@npm:1.0.5"
   dependencies:
     "@bitauth/libauth": "npm:^1.17.1"
+    "@types/express": "npm:^4.17.14"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.12.7"
     axios: "npm:^1.0.0"
     express: "npm:^4.18.1"
     js-logger: "npm:^1.6.1"
-  checksum: 10/abdb7e55cba7c88e4779765544d394373f7c3010746a277619b20dc9f82537ce246af6a814154b9558fc5cdd14d764357ec423af75cb56becf7847a2d976377c
+  checksum: 10/32a81eb4cb0c4e194d69fef1e35e8975a51e5409ed66df8470a1368016bafcdb307a65b964042d61c94a07a37efd37cd0212a4008380d7a456c5fc83f4868303
   languageName: node
   linkType: hard
 
@@ -660,7 +663,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
-    "@hawtio/backend-middleware": "npm:^1.0.4"
+    "@hawtio/backend-middleware": "npm:^1.0.5"
     "@hawtio/react": "npm:^1.2.3"
     "@swc/core": "npm:^1.4.17"
     copy-webpack-plugin: "npm:^12.0.2"
@@ -2119,7 +2122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:^4.17.21":
+"@types/express@npm:*, @types/express@npm:^4.17.14, @types/express@npm:^4.17.21":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -2298,6 +2301,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10/654194d4f3cc5867e5525a39647773a12c0c7175972bc4d288cdc74991fc969be2a9689267a3dc1cc5c5c7617e8f7c4769ac4829525726cd3e2f60eb238c1ff4
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.12.7":
+  version: 20.12.8
+  resolution: "@types/node@npm:20.12.8"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10/1feab4c8cb08588eea10811ed4d02485a5cde47fdf92e7b3193fc9f8ee39ea556f6e3124dc6d5378354466ed5f7e5fbe5e20f625908de40ea37560368a50f72c
   languageName: node
   linkType: hard
 
