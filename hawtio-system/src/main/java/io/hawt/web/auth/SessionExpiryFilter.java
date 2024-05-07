@@ -70,7 +70,7 @@ public class SessionExpiryFilter implements Filter {
     }
 
     private void writeOk(HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/plain;charset=UTF-8");
         try (OutputStream out = response.getOutputStream()) {
             out.write("ok".getBytes());
             out.flush();
