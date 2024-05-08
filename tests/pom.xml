@@ -15,7 +15,6 @@
   <packaging>pom</packaging>
 
   <properties>
-    <camel-version>4.0.0.redhat-00045</camel-version>
     <http5-version>5.2.3</http5-version>
     <slf4j-version>2.0.9</slf4j-version>
     <selenium-version>4.12.1</selenium-version>
