@@ -15,10 +15,6 @@
   <name>${project.artifactId}</name>
   <description>Hawtio :: Sample Spring Boot 3.x process</description>
 
-  <properties>
-    <camel-version>4.5.0</camel-version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
