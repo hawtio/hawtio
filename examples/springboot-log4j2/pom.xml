@@ -16,10 +16,6 @@
   <name>${project.artifactId}</name>
   <description>Hawtio :: Sample Spring Boot 3.x process with Log4J2</description>
 
-  <properties>
-    <camel-version>4.0.0.redhat-00045</camel-version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
