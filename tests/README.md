@@ -2,18 +2,11 @@
 
 ## Introduction
 
-E2E UI tests
-
 ### Test tools and frameworks
 
 - Selenium 4.x
 - Selenide 6.x
 - Cucumber 7.x
-
-### Runtime Support
-
-- Spring Boot 3.x
-- Quarkus 3.x
 
 ### Test scenarios cover the following areas
 
@@ -41,27 +34,29 @@ First of all, it's needed to build the project.
 mvn install -DskipTests
 ```
 
-### Spring Boot 3.x E2E tests
+### Spring Boot E2E tests
 
 ```console
 mvn install -Pe2e,e2e-springboot -am -pl :hawtio-test-suite -Dlocal-app=true
 ```
 
-### Quarkus 3.x E2E tests
+### Quarkus E2E tests
 
 ```console
 mvn install -Pe2e,e2e-quarkus -am -pl :hawtio-test-suite -Dlocal-app=true
 ```
 
+### Camel K E2E tests
+You need to provide an Openshift environment, either you need to be logged in to a cluster already or supply proper arguments you can find in the `io.hawt.tests.features.config.TestConfiguration` class.
+```console
+mvn install -Pe2e,e2e-camelk -am -pl :hawtio-test-suite -Dio.hawt.test.use.openshift=true
+```
+
 ### Additional Command Options
 
 - `-Dtest=` - defines the type of test set to be run.
-  - Spring Boot 3.x
-    - `SpringBootAllTest`
-    - `SpringBootSmokeTest`
-  - Quarkus 3.x
-    - `QuarkusAllTest`
-    - `QuarkusSmokeTest`
+  - `CucumberTest` executes the Cucumber teststsuite
+  - `<class name>` executes any other JUnit test
 
 #### Modes of execution
 
@@ -84,7 +79,7 @@ Build e2e containers with the following command: `mvn install -DskipTests -Pe2e 
 
 Resulting images are named hawtio-test-suite:<JAVA_VERSION>, hawtio-<quarkus|springboot>-app:<JAVA_VERSION>
 
-Default JAVA_VERSION is 11.
+Default JAVA_VERSION is 17.
 
 #### Running the containerized testsuite
 
