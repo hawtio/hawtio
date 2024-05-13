@@ -20,6 +20,10 @@ public class ConnectPage extends HawtioPage {
     private static final By MODAL = By.cssSelector(".pf-c-modal-box");
     private static final By CONNECTION_FORM = By.id("connection-form");
 
+    private static final By CONNECTION_SCHEME = By.id("connection-form-scheme");
+
+    private static final By CONNECTION_SCHEME_TOGGLE = By.cssSelector("span.pf-c-switch__toggle");
+
     private static final By CONNECTION_LIST = By.id("connection-list");
 
     private static final By CONNECTION_LOGIN_FORM = By.id("connect-login-form");
@@ -27,6 +31,8 @@ public class ConnectPage extends HawtioPage {
     private static final By FOOTER_BUTTON = By.cssSelector("footer button.pf-m-primary");
 
     public void addConnection(String name, URL connection) {
+        final String connectionSchemeHttps = "connection-form-scheme-on";
+
         //Don't try to create the same connection twice
         try {
             $(ByUtils.byAttribute("rowid", "connection " + name)).shouldNot(Condition.exist, Duration.ofSeconds(10));
@@ -37,6 +43,12 @@ public class ConnectPage extends HawtioPage {
         $(CONNECT_BUTTON).shouldBe(Condition.interactable).click();
 
         $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
+
+        // If Scheme is HTTPS, switch to HTTP
+        if (connectionSchemeHttps.equals($(CONNECTION_SCHEME).getAttribute("aria-labelledby"))) {
+            $(CONNECTION_SCHEME_TOGGLE).click();
+        }
+
         $(CONNECTION_FORM).$(By.id("connection-form-host")).setValue(connection.getHost());
         $(CONNECTION_FORM).$(By.id("connection-form-port")).setValue(String.valueOf(connection.getPort()));
         $(CONNECTION_FORM).$(By.id("connection-form-path")).setValue(connection.getPath());
