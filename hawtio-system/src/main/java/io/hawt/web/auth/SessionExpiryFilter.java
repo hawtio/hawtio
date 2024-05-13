@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +48,7 @@ public class SessionExpiryFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
 
-        String servletPath = (String) filterConfig.getServletContext().getAttribute(SERVLET_PATH);
-        if (servletPath == null) {
-            this.pathIndex = 0; // assume hawtio is served from root
-        } else {
-            this.pathIndex = Strings.webContextPath(servletPath).replaceAll("[^/]+", "").length();
-        }
+        this.pathIndex = ServletHelpers.hawtioPathIndex(filterConfig.getServletContext());
     }
 
     @Override

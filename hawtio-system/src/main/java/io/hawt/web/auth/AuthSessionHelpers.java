@@ -97,15 +97,4 @@ public final class AuthSessionHelpers {
         return session != null && session.getAttribute("subject") != null;
     }
 
-    public static boolean isSpringSecurityEnabled() {
-        try {
-            Class.forName("org.springframework.security.core.SpringSecurityCoreVersion");
-            LOG.debug("Spring Security enabled");
-            return true;
-        } catch (ClassNotFoundException e) {
-            LOG.debug("Spring Security not found");
-            return false;
-        }
-    }
-
 }

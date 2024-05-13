@@ -1,9 +1,8 @@
 package io.hawt.springboot;
 
-import io.hawt.util.Strings;
-
 import java.util.Map;
 
+import io.hawt.web.ServletHelpers;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -32,7 +31,7 @@ public class EndpointPathResolver {
      * an <em>absolute path</em> (starting with {@code /}) within Spring Boot context path. Spring Boot configuration
      * is taken into account ({@code spring.mvc.servlet.path} and {@code management.endpoints.web.base-path}).
      * Context path (configured with {@code server.servlet.context-path} or {@code management.server.base-path}) is
-     * not part of returned path, as all resolved paths are relative to the context.</p>
+     * not a part of the returned path, as all resolved paths are relative to the context.</p>
      *
      * <p>Spring Boot may run two separate web containers:<ul>
      *     <li>Main server (with port configured using {@code server.port} property)</li>
@@ -72,7 +71,7 @@ public class EndpointPathResolver {
             endpointPathMapping = endpointName;
         }
 
-        final String webContextPath = Strings.webContextPath(servletPath, basePath, endpointPathMapping);
+        final String webContextPath = ServletHelpers.webContextPath(servletPath, basePath, endpointPathMapping);
         return webContextPath.isEmpty() ? "/" : webContextPath;
     }
 
@@ -84,7 +83,7 @@ public class EndpointPathResolver {
             endpointPath = endpointPath.replace(servletPath, "");
         }
 
-        return Strings.webContextPath(endpointPath, mappings);
+        return ServletHelpers.webContextPath(endpointPath, mappings);
     }
 
     public String resolveContextPath() {
@@ -98,6 +97,6 @@ public class EndpointPathResolver {
             contextPath = managementServerProperties.getBasePath();
         }
 
-        return Strings.webContextPath(contextPath);
+        return ServletHelpers.webContextPath(contextPath);
     }
 }
