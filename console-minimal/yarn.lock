@@ -661,7 +661,7 @@ __metadata:
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.4"
-    "@hawtio/react": "npm:^1.2.4"
+    "@hawtio/react": "npm:^1.2.5"
     "@swc/core": "npm:^1.4.11"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^6.10.0"
@@ -679,9 +679,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.2.4":
-  version: 1.2.4
-  resolution: "@hawtio/react@npm:1.2.4"
+"@hawtio/react@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "@hawtio/react@npm:1.2.5"
   dependencies:
     "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.4"
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.0"
@@ -704,7 +704,7 @@ __metadata:
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
-    jolokia.js: "npm:^2.0.0"
+    jolokia.js: "npm:^2.0.1"
     jquery: "npm:^3.7.1"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
@@ -729,7 +729,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/b05e5a65b7e2cee590e776b9ac0590502254966063472234c98dba8008a07afbdd0c146aa01131d599879aade55477ed423369a5b385a34bfc4b1b525c485ec1
+  checksum: 10/99adeaa01653c743bf51672c64f087639d9d791eb027e618ce53751f3a09ee6e12c1bd262faeee49ad209f9133c733536dd53802832f0ba4a4809f236a43b13f
   languageName: node
   linkType: hard
 
@@ -6287,9 +6287,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "jolokia.js@npm:2.0.0"
+"jolokia.js@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "jolokia.js@npm:2.0.1"
   dependencies:
     jquery: "npm:^3.7.1"
   peerDependencies:
@@ -6300,7 +6300,7 @@ __metadata:
       optional: true
     jsdom:
       optional: true
-  checksum: 10/d530e54ce076804d233d4294dec10098defd1307d1973b42e673006070fb2a7e8ff6c8e181467a5fceb2149c2426e38acca9a33312124ecf76235c564734dd3c
+  checksum: 10/2286502549a51a0df6e6151d4d117ccdc4cd5c26965121ac58a954de64ff43437083c05aa1b1769581d7840d07c67f0f27152e77355d27e30fac4a6e13f89903
   languageName: node
   linkType: hard
 
