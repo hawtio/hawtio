@@ -1,5 +1,7 @@
 package io.hawt.example.spring.boot;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +13,8 @@ import org.eclipse.jetty.jaas.spi.AbstractLoginModule;
 import org.eclipse.jetty.security.PropertyUserStore;
 import org.eclipse.jetty.security.RolePrincipal;
 import org.eclipse.jetty.security.UserPrincipal;
+import org.eclipse.jetty.util.resource.EmptyResource;
+import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +44,19 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
     private void setupPropertyUserStore(final Map<String, ?> options) {
         parseConfig(options);
         if (PROPERTY_USERSTORES.get(filename) == null) {
-            final PropertyUserStore propertyUserStore = new PropertyUserStore();
-            propertyUserStore.setConfig(filename);
+            final PropertyUserStore propertyUserStore = new PropertyUserStore() {
+                @Override
+                public Resource getConfigResource() {
+                    try {
+                        return Resource.newResource(filename);
+                    } catch (IOException e) {
+                        LOG.warn("Problem loading resource {}", filename, e);
+                        return EmptyResource.INSTANCE;
+                    }
+                }
+            };
+            String name = filename.contains("/") ? filename.substring(filename.lastIndexOf('/') + 1) : filename;
+            propertyUserStore.setConfigPath(Path.of(name));
             propertyUserStore.setHotReload(hotReload);
 
             final PropertyUserStore prev = PROPERTY_USERSTORES.putIfAbsent(filename, propertyUserStore);
