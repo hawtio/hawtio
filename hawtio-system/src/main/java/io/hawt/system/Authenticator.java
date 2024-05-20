@@ -189,7 +189,7 @@ public class Authenticator {
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
-            LOG.warn("Login failed due to: {}", e.getMessage());
+            LOG.warn("Login failed due to: {}", e.getMessage() != null ? e.getMessage() : e.getClass().getName());
             LOG.debug("Failed stacktrace:", e);
         }
 
