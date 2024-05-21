@@ -104,6 +104,7 @@
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/jolokia/*</url-pattern>
+    <url-pattern>/proxy/*</url-pattern>
   </filter-mapping>
 
   <filter>
@@ -244,11 +245,6 @@
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
-
-  <error-page>
-    <error-code>404</error-code>
-    <location>/index.html</location>
-  </error-page>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

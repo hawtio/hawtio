@@ -104,14 +104,15 @@
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/jolokia/*</url-pattern>
+    <url-pattern>/proxy/*</url-pattern>
   </filter-mapping>
 
   <filter>
-    <filter-name>LoginRedirectFilter</filter-name>
+    <filter-name>ClientRouteRedirectFilter</filter-name>
     <filter-class>io.hawt.web.auth.ClientRouteRedirectFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>LoginRedirectFilter</filter-name>
+    <filter-name>ClientRouteRedirectFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -244,11 +245,6 @@
   <listener>
     <listener-class>io.hawt.HawtioDefaultContextListener</listener-class>
   </listener>
-
-  <error-page>
-    <error-code>404</error-code>
-    <location>/index.html</location>
-  </error-page>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

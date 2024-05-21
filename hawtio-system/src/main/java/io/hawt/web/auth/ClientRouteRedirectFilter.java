@@ -138,6 +138,8 @@ public class ClientRouteRedirectFilter implements Filter {
         LOG.debug("Check if path [{}] requires redirect", path);
 
         // 0) whatever the configuration, accessing css, index.html, fonts, ..., should be handled normally
+        //    this is also true for some special URLs like /jolokia/* or /proxy/* which are processed by
+        //    next filters (like AuthenticationFilter)
         if (!loginPage && !isSecuredPath(path)) {
             chain.doFilter(request, response);
             return;
@@ -176,7 +178,7 @@ public class ClientRouteRedirectFilter implements Filter {
             return;
         }
 
-        // 3) not authenticated access to /login - forward to /index.html to get the login page
+        // 3) not authenticated access to /login - forward to /index.html to get the login page displayed by React
         if (loginPage) {
             redirector.doForward(httpRequest, httpResponse, "/index.html");
             return;
@@ -184,7 +186,9 @@ public class ClientRouteRedirectFilter implements Filter {
 
         // try pre-emptive authentication, so when user sees index.html page (Hawtio client), jolokia requests
         // will already be authenticated.
-        // TOCHECK: be careful with Jolokia/Proxy requests
+        // authentication attempt will be made only for "secure" paths which are paths like /hawtio/jmx.
+        //  - /hawtio/jolokia/*, /hawtio/proxy/* are handled and authenticated by AuthenticationFilter in case #0
+        //  - /hawtio/css/*, /hawtio/index.html, ... are not authenticated and are handled in case #0
         boolean preemptiveAuth = tryAuthenticateRequest(httpRequest, session);
 
         // 4) at this stage we have to redirect to /login if authentication failed
@@ -195,12 +199,13 @@ public class ClientRouteRedirectFilter implements Filter {
             return;
         }
 
-        // 5) we're authenticated pre-emptively - so the same situation as #2.b
+        // 5) we're authenticated pre-emptively - so the same situation as #2.b. This is a case when authenticated
+        //    user simply refreshes a page like http://localhost:8080/hawtio/jmx
         redirector.doForward(httpRequest, httpResponse, "/index.html");
     }
 
     /**
-     * Preemptive authentication with side effects (storing subject and used within forcibly created session)
+     * Preemptive authentication with side effects (storing subject and username within forcibly created session)
      *
      * @param request
      * @param session

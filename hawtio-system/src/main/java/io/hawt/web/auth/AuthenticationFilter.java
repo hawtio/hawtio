@@ -6,6 +6,7 @@ import java.security.PrivilegedExceptionAction;
 
 import javax.security.auth.Subject;
 
+import io.hawt.web.ForbiddenReason;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -48,6 +49,7 @@ public class AuthenticationFilter implements Filter {
         LOG.trace("Applying {}", getClass().getSimpleName());
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         // CORS preflight requests should be ignored
         if ("OPTIONS".equals(httpRequest.getMethod())) {
@@ -59,32 +61,50 @@ public class AuthenticationFilter implements Filter {
 
         LOG.debug("Handling request for path: {}", path);
 
-        if (authConfiguration.getRealm() == null || authConfiguration.getRealm().isEmpty() || !authConfiguration.isEnabled()) {
+        if (!authConfiguration.isEnabled() || authConfiguration.getRealm() == null || authConfiguration.getRealm().isEmpty()) {
             LOG.debug("No authentication needed for path: {}", path);
             chain.doFilter(request, response);
             return;
         }
 
-        boolean proxyMode = false;
-        RelativeRequestUri uri = new RelativeRequestUri(httpRequest, pathIndex);
-        if (uri.getComponents().length > 0 && "proxy".equals(uri.getComponents()[0])) {
-            // https://github.com/hawtio/hawtio/issues/3178
-            // /proxy/* requests are now authenticated by this filter, but we have to do it differently, because
-            // "Authorization" header carries credentials for target Jolokia agent
-            proxyMode = !uri.getUri().equals("proxy/enabled");
+        ProxyRequestType proxyMode = isProxyMode(httpRequest);
+
+        if (proxyMode == ProxyRequestType.PROXY_ENABLED) {
+            chain.doFilter(request, response);
+            return;
         }
 
         HttpSession session = httpRequest.getSession(false);
+
+        if (proxyMode == ProxyRequestType.PROXY && session == null) {
+            // we reject proxy requests without session, because Authorization header is targeted at remote Jolokia
+            ServletHelpers.doForbidden(httpResponse, ForbiddenReason.SESSION_EXPIRED);
+            return;
+        }
+
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
 
             // For Spring Security
+            // TODO: https://github.com/hawtio/hawtio/issues/3395
             if (AuthenticationConfiguration.isSpringSecurityEnabled()) {
                 if (subject == null && httpRequest.getRemoteUser() != null) {
                     AuthSessionHelpers.setup(
                         session, new Subject(), httpRequest.getRemoteUser(), timeout);
                 }
                 chain.doFilter(request, response);
+                return;
+            }
+
+            // When user is authenticated in Hawtio (has session) and uses /proxy, we can't match
+            // current subject/name (from session) with Authorization header as this one is for remote Jolokia
+            // we only require a subject to be present in session
+            if (proxyMode == ProxyRequestType.PROXY) {
+                if (subject != null) {
+                    chain.doFilter(request, response);
+                } else {
+                    ServletHelpers.doForbidden(httpResponse);
+                }
                 return;
             }
 
@@ -98,13 +118,13 @@ public class AuthenticationFilter implements Filter {
 
         LOG.debug("Doing authentication and authorization for path: {}", path);
 
+        // JAAS authentication
         AuthenticateResult result = new Authenticator(httpRequest, authConfiguration).authenticate(
             subject -> executeAs(request, response, chain, subject));
 
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
         switch (result.getType()) {
         case AUTHORIZED:
-            // request was executed using the authenticated subject, nothing more to do
+            // request was already executed using the authenticated subject in executeAs(), nothing more to do
             break;
         case NOT_AUTHORIZED:
             ServletHelpers.doForbidden(httpResponse);
@@ -124,6 +144,18 @@ public class AuthenticationFilter implements Filter {
         }
     }
 
+    protected ProxyRequestType isProxyMode(HttpServletRequest httpRequest) {
+        ProxyRequestType proxyMode = ProxyRequestType.NOT_PROXY;
+        RelativeRequestUri uri = new RelativeRequestUri(httpRequest, pathIndex);
+        if (uri.getComponents().length > 0 && "proxy".equals(uri.getComponents()[0])) {
+            // https://github.com/hawtio/hawtio/issues/3178
+            // /proxy/* requests are now authenticated by this filter, but we have to do it differently, because
+            // "Authorization" header carries credentials for target Jolokia agent
+            proxyMode = uri.getUri().equals("proxy/enabled") ? ProxyRequestType.PROXY_ENABLED : ProxyRequestType.PROXY;
+        }
+        return proxyMode;
+    }
+
     private static void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {
         try {
             Subject.doAs(subject, (PrivilegedExceptionAction<Object>) () -> {
@@ -138,5 +170,9 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void destroy() {
         LOG.info("Destroying hawtio authentication filter");
+    }
+
+    protected enum ProxyRequestType {
+        PROXY, PROXY_ENABLED, NOT_PROXY
     }
 }
