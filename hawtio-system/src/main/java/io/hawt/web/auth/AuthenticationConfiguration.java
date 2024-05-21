@@ -25,7 +25,7 @@ public class AuthenticationConfiguration {
 
     public static final String LOGIN_URL = "/login";
 
-    // these paths shouldn't be redirected to /login, because either they're for static resources we don't have to
+    // the below paths shouldn't be redirected to /login, because either they're for static resources we don't have to
     // protect (like site building resources - css, js, html) or they're related to authentication itself
     // finally, /jolokia and /proxy should not be redirected, because these are accessed via xhr/fetch and should
     // simply return 403 if needed
@@ -48,7 +48,7 @@ public class AuthenticationConfiguration {
      * Paths related to authentication process.
      * {@code /login} path is actually a client-side router path, but Hawtio sometimes redirects (thus forcing
      * <em>server</em> request) to this path for unified authentication experience.
-     * {@code /auth/*}, {@code user}, {@code /keycloak} paths are actual servlet mappings.
+     * {@code /auth/*}, {@code /user}, {@code /keycloak} paths are actual servlet mappings.
      */
     public static final String[] UNSECURED_AUTHENTICATION_PATHS = {
             "/login",

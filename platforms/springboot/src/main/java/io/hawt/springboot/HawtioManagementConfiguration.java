@@ -238,14 +238,45 @@ public class HawtioManagementConfiguration {
         return filter;
     }
 
+    // note on io.hawt.web.auth.AuthenticationFilter
+    // /actuator/hawtio/jolokia/* requests are forwarded to /actuator/jolokia/* using
+    // io.hawt.springboot.HawtioManagementConfiguration.JolokiaForwardingController which returns
+    // "forward:/actuator/jolokia" view name handled by DispatcherServlet. Such request (with original URI
+    // /actuator/hawtio/jolokia/*) is already handled by all the above Hawtio filters, so there's NO NEED
+    // to map "/hawtio/jolokia/*" pattern to AuthenticationFilter, because filters will be invoked by the forward
+    //
+    // when using /actuator/jolokia/* request, we invoke Jolokia Actuator endpoint directly and NO Hawtio filters
+    // will be invoked (which is fine), but we need AuthenticationFilter being mapped to "/actuator/jolokia/*"
+
+    /**
+     * {@link AuthenticationFilter} handling direct Jolokia Actuator endpoint requests ({@code /actuator/jolokia/*}).
+     * @param pathResolver
+     * @return
+     */
     @Bean
     @Order(11)
     @ConditionalOnBean(JolokiaEndpoint.class)
     @ConditionalOnExposedEndpoint(name = "jolokia")
-    public FilterRegistrationBean<AuthenticationFilter> authenticationFilter(final EndpointPathResolver pathResolver) {
+    public FilterRegistrationBean<AuthenticationFilter> jolokiaAuthenticationFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new AuthenticationFilter());
         filter.addUrlPatterns(pathResolver.resolveUrlMapping("jolokia", "*"));
+        filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
+        return filter;
+    }
+
+    /**
+     * {@link AuthenticationFilter} handling proxy requests ({@code /actuator/hawtio/proxy/*}). No need to declare
+     * {@code /actuator/hawtio/jolokia/*} mapping here, as it'd be a duplication of {@link #jolokiaAuthenticationFilter}
+     * mapping.
+     * @return
+     */
+    @Bean
+    @Order(11)
+    public FilterRegistrationBean<AuthenticationFilter> hawtioProxyAuthenticationFilter() {
+        final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new AuthenticationFilter());
+        filter.addUrlPatterns(hawtioPath + "/proxy/*");
         filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
         return filter;
     }

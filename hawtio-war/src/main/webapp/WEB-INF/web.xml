@@ -104,6 +104,7 @@
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/jolokia/*</url-pattern>
+    <url-pattern>/proxy/*</url-pattern>
   </filter-mapping>
 
   <filter>
