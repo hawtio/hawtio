@@ -1,6 +1,9 @@
 package io.hawt.example.spring.boot;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Properties;
 import java.util.function.Supplier;
 
 import jakarta.servlet.FilterChain;
@@ -10,8 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -43,6 +51,35 @@ public class SecurityConfig {
             )
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(ResourceLoader loader) {
+        Resource users = loader.getResource("classpath:/users.properties");
+        try (InputStream is = users.getInputStream()) {
+            Properties properties = new Properties();
+            properties.load(is);
+            InMemoryUserDetailsManager db = new InMemoryUserDetailsManager();
+            for (String userName : properties.stringPropertyNames()) {
+                String credentials = properties.getProperty(userName);
+                String[] credentialsData = credentials.split("\\s*,\\s*");
+                if (credentialsData.length == 0) {
+                    continue;
+                }
+                User.UserBuilder builder = User.withUsername(userName);
+                builder.password(credentialsData[0].startsWith("{")
+                        ? credentialsData[0] : "{noop}" + credentialsData[0]);
+                if (credentialsData.length > 1) {
+                    builder.roles(Arrays.copyOfRange(credentialsData, 1, credentialsData.length));
+                }
+                db.createUser(builder.build());
+            }
+            return db;
+        } catch (IOException e) {
+            return new InMemoryUserDetailsManager(User.builder()
+                    .username("hawtio").password("hawtio")
+                    .roles("admin", "viewer").build());
+        }
     }
 
     static class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {

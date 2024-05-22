@@ -215,7 +215,7 @@ public class OidcConfigurationTest {
         props.setProperty("oidc.rolesPath", "resource_access.${client_id}.roles");
         props.setProperty("roleMapping.Hawtio.Admin", "admin");
         OidcConfiguration cfg = new OidcConfiguration(props);
-        cfg.setRolePrincipalClasses("io.hawt.web.auth.oidc.OidcConfigurationTest$MyPrincipal");
+        cfg.setRolePrincipalClass(MyPrincipal.class);
         assertNotNull(cfg.getProviderURL());
         assertSame(MyPrincipal.class, cfg.getRoleClass());
 

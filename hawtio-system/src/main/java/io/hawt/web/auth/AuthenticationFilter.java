@@ -10,6 +10,7 @@ import io.hawt.web.ForbiddenReason;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -32,16 +33,23 @@ public class AuthenticationFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-    protected int timeout;
     protected AuthenticationConfiguration authConfiguration;
 
+    /** Session timeout */
+    protected int timeout;
+
+    /**
+     * Number of path segments to skip to get <em>Hawtio path</em> (e.g., skip 2 segments for
+     * {@code /actuator/hawtio}).
+     */
     private int pathIndex;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
-        timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
-        this.pathIndex = ServletHelpers.hawtioPathIndex(filterConfig.getServletContext());
+        ServletContext servletContext = filterConfig.getServletContext();
+        authConfiguration = AuthenticationConfiguration.getConfiguration(servletContext);
+        timeout = AuthSessionHelpers.getSessionTimeout(servletContext);
+        pathIndex = ServletHelpers.hawtioPathIndex(servletContext);
     }
 
     @Override
@@ -85,16 +93,8 @@ public class AuthenticationFilter implements Filter {
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
 
-            // For Spring Security
-            // TODO: https://github.com/hawtio/hawtio/issues/3395
-            if (AuthenticationConfiguration.isSpringSecurityEnabled()) {
-                if (subject == null && httpRequest.getRemoteUser() != null) {
-                    AuthSessionHelpers.setup(
-                        session, new Subject(), httpRequest.getRemoteUser(), timeout);
-                }
-                chain.doFilter(request, response);
-                return;
-            }
+            // No special Spring Security handling here, because we now use proper JAAS configuration
+            // and Spring Security Authentication will be translated to JAAS Subject + Principals
 
             // When user is authenticated in Hawtio (has session) and uses /proxy, we can't match
             // current subject/name (from session) with Authorization header as this one is for remote Jolokia
@@ -163,7 +163,7 @@ public class AuthenticationFilter implements Filter {
                 return null;
             });
         } catch (PrivilegedActionException e) {
-            LOG.info("Failed to invoke action " + ((HttpServletRequest) request).getPathInfo() + " due to:", e);
+            LOG.info("Failed to invoke action {} due to:", ((HttpServletRequest) request).getPathInfo(), e);
         }
     }
 

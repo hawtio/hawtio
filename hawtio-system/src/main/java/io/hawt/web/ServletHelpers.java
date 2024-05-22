@@ -131,8 +131,7 @@ public class ServletHelpers {
             }
             return new URL(path).openStream();
         } catch (Exception e) {
-            LOG.warn("Couldn't find file on location: {}", path);
-            LOG.debug("Couldn't find file", e);
+            LOG.debug("Couldn't find file: {}", path);
             return null;
         }
     }
