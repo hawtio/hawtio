@@ -56,6 +56,7 @@ public class Authenticator {
     private String username;
     private String password;
     private X509Certificate[] certificates;
+    private Principal requestPrincipal;
 
     /**
      * Explicit username/password authenticator when authenticating users from login page.
@@ -83,6 +84,9 @@ public class Authenticator {
         if (certificates != null) {
             this.certificates = (X509Certificate[]) certificates;
         }
+
+        // existing auth - can be configured by Spring Security
+        this.requestPrincipal = request.getUserPrincipal();
     }
 
     /**
@@ -124,7 +128,8 @@ public class Authenticator {
     }
 
     public boolean hasNoCredentials() {
-        return (!isUsernamePasswordSet() || username.equals("public")) && certificates == null;
+        return (!isUsernamePasswordSet() || username.equals("public")) && certificates == null
+                && requestPrincipal == null;
     }
 
     public static void logout(AuthenticationConfiguration authConfiguration, Subject subject) {

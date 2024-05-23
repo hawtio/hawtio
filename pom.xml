@@ -306,6 +306,7 @@
         <module>examples/springboot-plugin</module>
         <module>examples/springboot-security</module>
         <module>platforms/springboot</module>
+        <module>platforms/springboot-security</module>
       </modules>
     </profile>
 

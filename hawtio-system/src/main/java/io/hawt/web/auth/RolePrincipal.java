@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.hawt.web.auth.oidc;
+package io.hawt.web.auth;
 
 import java.security.Principal;
 
+/**
+ * Simple principal to hold a role name of authenticated user (JAAS {@link javax.security.auth.Subject}).
+ */
 public class RolePrincipal implements Principal {
 
     private final String roleName;
