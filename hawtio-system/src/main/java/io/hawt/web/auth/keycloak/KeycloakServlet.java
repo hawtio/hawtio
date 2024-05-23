@@ -63,12 +63,11 @@ public class KeycloakServlet extends HttpServlet {
             keycloakConfigFile = defaultKeycloakConfigLocation();
         }
 
-        LOG.info("Will load keycloak config from location: {}", keycloakConfigFile);
+        LOG.info("Looking for Keycloak configuration file in: {}", keycloakConfigFile);
 
         InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
-        if (is == null) {
-            LOG.warn("Keycloak client configuration not found!");
-        } else {
+        if (is != null) {
+            LOG.info("Reading Keycloak client configuration.");
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 String keycloakConfig = IOHelper.readFully(reader);

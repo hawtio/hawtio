@@ -2,6 +2,8 @@ package io.hawt.web.auth;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -179,6 +181,7 @@ public class AuthenticationConfiguration {
     private final String realm;
     private final String roles;
     private String rolePrincipalClasses;
+    private Class<? extends Principal> defaultRolePrincipalClass;
     private final boolean noCredentials401;
     private final boolean keycloakEnabled;
     private Configuration configuration;
@@ -187,6 +190,12 @@ public class AuthenticationConfiguration {
     // OidcConfiguration implements javax.security.auth.login.Configuration, but let's keep it separate from
     // this.configuration field
     private OidcConfiguration oidcConfiguration;
+
+    /**
+     * Flag indicating that Spring Security is not only available, but proper {@code SecurityFilterChain} was
+     * configured in web application context.
+     */
+    private boolean springSecurityEnabled = false;
 
     private AuthenticationConfiguration(ServletContext servletContext) {
         ConfigManager config = (ConfigManager) servletContext.getAttribute(ConfigManager.CONFIG_MANAGER);
@@ -210,6 +219,7 @@ public class AuthenticationConfiguration {
         this.roles = config.get(ROLES).orElse(DEFAULT_KARAF_ROLES);
         String defaultRolePrincipalClasses = isKaraf() ? DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES : "";
         this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES).orElse(defaultRolePrincipalClasses);
+        this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass(this.rolePrincipalClasses);
         this.noCredentials401 = config.getBoolean(NO_CREDENTIALS_401, false);
         this.keycloakEnabled = this.enabled && config.getBoolean(KEYCLOAK_ENABLED, false);
 
@@ -295,6 +305,10 @@ public class AuthenticationConfiguration {
         this.rolePrincipalClasses = rolePrincipalClasses;
     }
 
+    public Class<? extends Principal> getDefaultRolePrincipalClass() {
+        return defaultRolePrincipalClass;
+    }
+
     public Configuration getConfiguration() {
         return configuration;
     }
@@ -311,15 +325,12 @@ public class AuthenticationConfiguration {
         return oidcConfiguration != null && oidcConfiguration.isEnabled();
     }
 
-    public static boolean isSpringSecurityEnabled() {
-        try {
-            Class.forName("org.springframework.security.core.SpringSecurityCoreVersion");
-            LOG.trace("Spring Security enabled");
-            return true;
-        } catch (ClassNotFoundException e) {
-            LOG.trace("Spring Security not found");
-            return false;
-        }
+    public void setSpringSecurityEnabled(boolean springSecurityEnabled) {
+        this.springSecurityEnabled = springSecurityEnabled;
+    }
+
+    public boolean isSpringSecurityEnabled() {
+        return springSecurityEnabled;
     }
 
     public boolean isExternalAuthenticationEnabled() {
@@ -342,14 +353,16 @@ public class AuthenticationConfiguration {
             oidcConfigFile = defaultOidcConfigLocation();
         }
 
+        LOG.info("Looking for OIDC configuration file in: {}", oidcConfigFile);
+
         InputStream is = ServletHelpers.loadFile(oidcConfigFile);
         if (is != null) {
-            LOG.info("Will load OIDC config from location: {}", oidcConfigFile);
+            LOG.info("Reading OIDC configuration.");
             Properties props = new Properties();
             try {
                 props.load(is);
                 this.oidcConfiguration = new OidcConfiguration(props);
-                this.oidcConfiguration.setRolePrincipalClasses(this.rolePrincipalClasses);
+                this.oidcConfiguration.setRolePrincipalClass(defaultRolePrincipalClass);
                 if (this.oidcConfiguration.isEnabled()) {
                     this.configuration = this.oidcConfiguration;
                 }
@@ -398,6 +411,59 @@ public class AuthenticationConfiguration {
 
     public OidcConfiguration getOidcConfiguration() {
         return oidcConfiguration;
+    }
+
+    /**
+     * Parses Hawtio configuration option for role principal classes (comma-separated list of class names)
+     * and returns first that's available and has proper (1-arg String) constructor.
+     *
+     * @param rolePrincipalClasses
+     * @return
+     */
+    private Class<? extends Principal> determineDefaultRolePrincipalClass(String rolePrincipalClasses) {
+        if (rolePrincipalClasses == null || rolePrincipalClasses.isBlank()) {
+            return null;
+        } else {
+            String[] roleClasses = rolePrincipalClasses.split("\\s*,\\s*");
+            Class<? extends Principal> roleClass = null;
+
+            // let's load first available class - needs 1-arg String constructor
+            for (String classCandidate : roleClasses) {
+                Class<? extends Principal> clz = tryLoadClass(classCandidate, Principal.class);
+                if (clz != null) {
+                    try {
+                        Constructor<?> ctr = clz.getConstructor(String.class);
+                        roleClass = clz;
+                    } catch (NoSuchMethodException e) {
+                        LOG.warn("Can't use role principal class {}: {}", classCandidate, e.getMessage());
+                    }
+                }
+            }
+
+            return roleClass;
+        }
+    }
+
+    private <T> Class<T> tryLoadClass(String roleClass, Class<T> clazz) {
+        try {
+            Class<?> cls = getClass().getClassLoader().loadClass(roleClass);
+            if (clazz.isAssignableFrom(cls)) {
+                return clazz;
+            } else {
+                LOG.warn("Class {} doesn't implement {}", cls, clazz);
+            }
+        } catch (ClassNotFoundException ignored) {
+        }
+        try {
+            Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(roleClass);
+            if (clazz.isAssignableFrom(cls)) {
+                return clazz;
+            } else {
+                LOG.warn("Class {} doesn't implement {}", cls, clazz);
+            }
+        } catch (ClassNotFoundException ignored) {
+        }
+        return null;
     }
 
     @Override

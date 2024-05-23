@@ -2,6 +2,7 @@ package io.hawt;
 
 import java.util.Objects;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
@@ -60,14 +61,13 @@ public class HawtioContextListener implements ServletContextListener {
         }
         servletContextEvent.getServletContext().setAttribute(ConfigManager.CONFIG_MANAGER, configManager);
 
-        // configure OIDC here, because it's needed later both in CSP filter and AuthConfigurationServlet
         AuthenticationConfiguration authConfig
                 = AuthenticationConfiguration.getConfiguration(servletContextEvent.getServletContext());
         if (!authConfig.isEnabled()) {
             return;
         }
 
-        authConfig.configureOidc();
+        configureAuthenticationProviders(servletContextEvent.getServletContext(), authConfig);
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
@@ -82,6 +82,18 @@ public class HawtioContextListener implements ServletContextListener {
         } catch (Exception e) {
             throw createServletException(e);
         }
+    }
+
+    /**
+     * Extension method that configures authentication providers. hawtio-springboot may configure
+     * Spring Security if needed. This method is not called if authentication is disabled in Hawtio.
+     *
+     * @param servletContext
+     * @param authConfig
+     */
+    protected void configureAuthenticationProviders(ServletContext servletContext, AuthenticationConfiguration authConfig) {
+        // configure OIDC here, because it's needed later both in CSP filter and AuthConfigurationServlet
+        authConfig.configureOidc();
     }
 
     protected RuntimeException createServletException(Exception e) {
