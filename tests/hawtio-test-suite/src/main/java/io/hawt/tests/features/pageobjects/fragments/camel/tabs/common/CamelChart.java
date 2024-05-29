@@ -58,7 +58,7 @@ public class CamelChart extends CamelPage {
      * @param attribute to be watched
      */
     public void watch(String attribute) {
-        $(byXpath("//div[contains(@class, 'pf-m-chosen')]//span[@class='pf-c-dual-list-selector__item-toggle-icon']")).shouldBe(enabled).click();
+        $(byXpath("//div[contains(@class, 'pf-m-chosen')]//span[@class='pf-v5-c-dual-list-selector__item-toggle-icon']")).shouldBe(enabled).click();
         $(byXpath("//span[text()='" + attribute + "']/preceding-sibling::span/input")).shouldBe(enabled).click();
         $(byXpath("//button[@aria-label='Remove selected']")).shouldBe(enabled).click();
     }
@@ -99,7 +99,7 @@ public class CamelChart extends CamelPage {
      * @return list of attributes
      */
     private ElementsCollection getTitles() {
-        return $$(byXpath("//div[@class='pf-c-card__header']/h3")).shouldHave(sizeGreaterThan(0));
+        return $$(byXpath("//div[@class='pf-v5-c-card__header-main']/h3")).shouldHave(sizeGreaterThan(0));
     }
 
     /**
@@ -109,7 +109,7 @@ public class CamelChart extends CamelPage {
      * @return value of the tested attribute
      */
     private String getValue(String attribute) {
-        final SelenideElement chart = $(byXpath("//h3[contains(text()[3], '" + attribute + "')]/parent::div/following-sibling::*[1]/descendant::*[local-name()='g'][1]/*[local-name()='path' and string-length(@d)!=0]"));
+        final SelenideElement chart = $(byXpath("//h3[contains(text()[3], '" + attribute + "')]/ancestor::div[2]/following-sibling::*[1]/descendant::*[local-name()='g'][1]/*[local-name()='path' and string-length(@d)!=0]"));
         final SelenideElement chartBarValue = chart.$(byXpath("./ancestor::*[local-name()='g']/following-sibling::*[3]//*[local-name()='tspan']"));
 
         chart.should(exist).hover();
