@@ -18,7 +18,7 @@ import java.time.Duration;
  * Represents a Login page.
  */
 public class LoginPage {
-    private final static SelenideElement loginDiv = $("div.pf-c-login");
+    private final static SelenideElement loginDiv = $("div.pf-v5-c-login");
     private final static SelenideElement loginInput = $("#pf-login-username-id");
     private final static SelenideElement passwordInput = $("#pf-login-password-id");
     private final static SelenideElement loginButton = $("button[type='submit']");

@@ -68,7 +68,7 @@ public class HawtioPage {
      * @return this
      */
     public HawtioPage successfulAlertMessage() {
-        $(byXpath("//div[contains(@class, 'pf-c-alert pf-m-success')]")).shouldBe(interactable);
+        $(byXpath("//div[contains(@class, 'pf-v5-c-alert pf-m-success')]")).shouldBe(interactable);
         return this;
     }
 
@@ -78,7 +78,7 @@ public class HawtioPage {
      * @return this
      */
     public HawtioPage unsuccessfulAlertMessage() {
-        $(byXpath("//div[contains(@class, 'pf-c-alert pf-m-danger')]")).shouldBe(interactable);
+        $(byXpath("//div[contains(@class, 'pf-v5-c-alert pf-m-danger')]")).shouldBe(interactable);
         return this;
     }
 
@@ -86,7 +86,7 @@ public class HawtioPage {
      * Close an alert message.
      */
     public void closeAlertMessage() {
-        $(byXpath("//div[contains(@class, 'pf-c-alert')]//button[contains(@aria-label, 'Close')]")).shouldBe(enabled).click();
+        $(byXpath("//div[contains(@class, 'pf-v5-c-alert')]//button[contains(@aria-label, 'Close')]")).shouldBe(enabled).click();
     }
 
     /**
