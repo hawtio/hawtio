@@ -13,7 +13,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@swc/core": "^1.4.17",
+    "@swc/core": "^1.5.22",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.1",
     "html-webpack-plugin": "^5.6.0",
