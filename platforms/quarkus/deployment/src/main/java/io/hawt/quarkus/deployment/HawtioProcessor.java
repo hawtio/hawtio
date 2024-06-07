@@ -31,6 +31,7 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
+import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeBuild;
 import io.quarkus.devui.spi.page.CardPageBuildItem;
 import io.quarkus.devui.spi.page.Page;
@@ -243,6 +244,11 @@ public class HawtioProcessor {
             .route(HawtioConfig.DEFAULT_PLUGIN_PATH)
             .handler(recorder.pluginHandler(config.pluginConfigs))
             .build();
+    }
+
+    @BuildStep
+    UberJarMergedResourceBuildItem mergeJolokiaServicesDefault() {
+        return new UberJarMergedResourceBuildItem("META-INF/jolokia/services-default");
     }
 
     @BuildStep(onlyIf = NativeBuild.class)
