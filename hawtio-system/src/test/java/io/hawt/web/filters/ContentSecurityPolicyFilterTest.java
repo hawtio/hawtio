@@ -57,10 +57,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
                 + "connect-src 'self'; frame-src 'self'; "
-                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
-                + "frame-ancestors 'none'");
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
+                + "frame-ancestors 'none'; "
+                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
     }
 
     @Test
@@ -73,10 +75,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' http://localhost:8180; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
-                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
-                + "frame-ancestors 'none'");
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
+                + "frame-ancestors 'none'; "
+                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
     }
 
     @Test
@@ -89,10 +93,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' http://localhost:8180; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
-                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
-                + "frame-ancestors 'none'");
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
+                + "frame-ancestors 'none'; "
+                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
     }
 
     @Test
@@ -101,7 +107,7 @@ public class ContentSecurityPolicyFilterTest {
         AuthenticationConfiguration authConfig = AuthenticationConfiguration.getConfiguration(servletContext);
         when(servletContext.getAttribute(AuthenticationConfiguration.AUTHENTICATION_CONFIGURATION)).thenReturn(authConfig);
         when(configManager.get(AuthenticationConfiguration.OIDC_CLIENT_CONFIG))
-                .thenReturn(Optional.ofNullable(oidcConfigFile));
+            .thenReturn(Optional.ofNullable(oidcConfigFile));
         authConfig.configureOidc();
         contentSecurityPolicyFilter.init(filterConfig);
         // when
@@ -109,10 +115,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' https://login.microsoftonline.com; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
                 + "connect-src 'self' https://login.microsoftonline.com; frame-src 'self' https://login.microsoftonline.com; "
-                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
-                + "frame-ancestors 'none'");
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
+                + "frame-ancestors 'none'; "
+                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
     }
 
     @Test
@@ -124,10 +132,13 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader(eq("Content-Security-Policy"), eq(
-            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; "
-                    + "img-src 'self' data:; connect-src 'self'; frame-src 'self'; "
-                    + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
-                    + "frame-ancestors 'none'"));
+            "default-src 'self'; script-src 'self'; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "img-src 'self' data:; connect-src 'self'; frame-src 'self'; "
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
+                + "frame-ancestors 'none'; "
+                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/"));
     }
 
     @Test
@@ -140,9 +151,11 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
                 + "connect-src 'self'; frame-src 'self'; "
-                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self'; "
-                + "frame-ancestors 'self'");
+                + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
+                + "frame-ancestors 'self'; "
+                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
     }
 }
