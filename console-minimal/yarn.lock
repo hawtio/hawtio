@@ -630,15 +630,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/backend-middleware@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@hawtio/backend-middleware@npm:1.0.4"
+"@hawtio/backend-middleware@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@hawtio/backend-middleware@npm:1.0.5"
   dependencies:
     "@bitauth/libauth": "npm:^1.17.1"
+    "@types/express": "npm:^4.17.14"
+    "@types/jest": "npm:^29.5.12"
+    "@types/node": "npm:^20.12.7"
     axios: "npm:^1.0.0"
     express: "npm:^4.18.1"
     js-logger: "npm:^1.6.1"
-  checksum: 10/abdb7e55cba7c88e4779765544d394373f7c3010746a277619b20dc9f82537ce246af6a814154b9558fc5cdd14d764357ec423af75cb56becf7847a2d976377c
+  checksum: 10/32a81eb4cb0c4e194d69fef1e35e8975a51e5409ed66df8470a1368016bafcdb307a65b964042d61c94a07a37efd37cd0212a4008380d7a456c5fc83f4868303
   languageName: node
   linkType: hard
 
@@ -660,18 +663,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
-    "@hawtio/backend-middleware": "npm:^1.0.4"
+    "@hawtio/backend-middleware": "npm:^1.0.5"
     "@hawtio/react": "npm:^1.3.0-dev.0"
-    "@swc/core": "npm:^1.4.11"
+    "@swc/core": "npm:^1.4.17"
     copy-webpack-plugin: "npm:^12.0.2"
-    css-loader: "npm:^6.10.0"
+    css-loader: "npm:^7.1.1"
     html-webpack-plugin: "npm:^5.6.0"
     jest: "npm:^29.7.0"
     monaco-editor-webpack-plugin: "npm:^7.1.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     replace: "npm:^1.2.2"
-    style-loader: "npm:^3.3.4"
+    style-loader: "npm:^4.0.0"
     swc-loader: "npm:^0.2.6"
     webpack: "npm:^5.91.0"
     webpack-cli: "npm:^5.1.4"
@@ -1505,94 +1508,94 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-darwin-arm64@npm:1.4.11"
+"@swc/core-darwin-arm64@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-darwin-arm64@npm:1.5.25"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-darwin-x64@npm:1.4.11"
+"@swc/core-darwin-x64@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-darwin-x64@npm:1.5.25"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.4.11"
+"@swc/core-linux-arm-gnueabihf@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.5.25"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.4.11"
+"@swc/core-linux-arm64-gnu@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.5.25"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-linux-arm64-musl@npm:1.4.11"
+"@swc/core-linux-arm64-musl@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-linux-arm64-musl@npm:1.5.25"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-linux-x64-gnu@npm:1.4.11"
+"@swc/core-linux-x64-gnu@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-linux-x64-gnu@npm:1.5.25"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-linux-x64-musl@npm:1.4.11"
+"@swc/core-linux-x64-musl@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-linux-x64-musl@npm:1.5.25"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.4.11"
+"@swc/core-win32-arm64-msvc@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.5.25"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.4.11"
+"@swc/core-win32-ia32-msvc@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.5.25"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core-win32-x64-msvc@npm:1.4.11"
+"@swc/core-win32-x64-msvc@npm:1.5.25":
+  version: 1.5.25
+  resolution: "@swc/core-win32-x64-msvc@npm:1.5.25"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.4.11":
-  version: 1.4.11
-  resolution: "@swc/core@npm:1.4.11"
+"@swc/core@npm:^1.4.17":
+  version: 1.5.25
+  resolution: "@swc/core@npm:1.5.25"
   dependencies:
-    "@swc/core-darwin-arm64": "npm:1.4.11"
-    "@swc/core-darwin-x64": "npm:1.4.11"
-    "@swc/core-linux-arm-gnueabihf": "npm:1.4.11"
-    "@swc/core-linux-arm64-gnu": "npm:1.4.11"
-    "@swc/core-linux-arm64-musl": "npm:1.4.11"
-    "@swc/core-linux-x64-gnu": "npm:1.4.11"
-    "@swc/core-linux-x64-musl": "npm:1.4.11"
-    "@swc/core-win32-arm64-msvc": "npm:1.4.11"
-    "@swc/core-win32-ia32-msvc": "npm:1.4.11"
-    "@swc/core-win32-x64-msvc": "npm:1.4.11"
-    "@swc/counter": "npm:^0.1.2"
-    "@swc/types": "npm:^0.1.5"
+    "@swc/core-darwin-arm64": "npm:1.5.25"
+    "@swc/core-darwin-x64": "npm:1.5.25"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.5.25"
+    "@swc/core-linux-arm64-gnu": "npm:1.5.25"
+    "@swc/core-linux-arm64-musl": "npm:1.5.25"
+    "@swc/core-linux-x64-gnu": "npm:1.5.25"
+    "@swc/core-linux-x64-musl": "npm:1.5.25"
+    "@swc/core-win32-arm64-msvc": "npm:1.5.25"
+    "@swc/core-win32-ia32-msvc": "npm:1.5.25"
+    "@swc/core-win32-x64-msvc": "npm:1.5.25"
+    "@swc/counter": "npm:^0.1.3"
+    "@swc/types": "npm:^0.1.7"
   peerDependencies:
-    "@swc/helpers": ^0.5.0
+    "@swc/helpers": "*"
   dependenciesMeta:
     "@swc/core-darwin-arm64":
       optional: true
@@ -1617,23 +1620,23 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: 10/c2b6ccfd00b126b4d7a5d571c9acf81e926f25bba051d2cd618065720c3c27d16c141c698df8dc1676eb44f4f5af6cc293b3c1bc9eb0749897ea5b1826c340ea
+  checksum: 10/1ad878fe015d01c34ff20d8aee15b1cfb5cd66f9e8744e4be69e09628ade3c1108aa00c693da4eed6cc6ef08d686f6cab48a088ee61e933662eb8dd7b79d2e44
   languageName: node
   linkType: hard
 
-"@swc/counter@npm:^0.1.2, @swc/counter@npm:^0.1.3":
+"@swc/counter@npm:^0.1.3":
   version: 0.1.3
   resolution: "@swc/counter@npm:0.1.3"
   checksum: 10/df8f9cfba9904d3d60f511664c70d23bb323b3a0803ec9890f60133954173047ba9bdeabce28cd70ba89ccd3fd6c71c7b0bd58be85f611e1ffbe5d5c18616598
   languageName: node
   linkType: hard
 
-"@swc/types@npm:^0.1.5":
-  version: 0.1.6
-  resolution: "@swc/types@npm:0.1.6"
+"@swc/types@npm:^0.1.7":
+  version: 0.1.7
+  resolution: "@swc/types@npm:0.1.7"
   dependencies:
     "@swc/counter": "npm:^0.1.3"
-  checksum: 10/b42fbca6f1ad56d1909fa6114b62107418a665730bb9b4d8bd8fa1c86921f8758a73959928342638fb57490b5d618a46881045fa9f094763a00f939944835d36
+  checksum: 10/ed66c26b36972a74f852c1781fadc75946578abfeeea58f110684833b5d1e70f28a77ddb82fd5bf3cf3c4dad0e1b6a1c924d7e2cc7a99f9b16ed16fe266bba25
   languageName: node
   linkType: hard
 
@@ -2165,7 +2168,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:^4.17.21":
+"@types/express@npm:^4.17.14, @types/express@npm:^4.17.21":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -2330,6 +2333,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10/e5816356e3bcf1af272587d6a95c172199532a86bdb379e4d314a10605463908b36316af51ff6d3c19d9f1965e14a6f62c6a5cbab876aafffe71e1211512084a
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.12.7":
+  version: 20.14.2
+  resolution: "@types/node@npm:20.14.2"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10/c38e47b190fa0a8bdfde24b036dddcf9401551f2fb170a90ff33625c7d6f218907e81c74e0fa6e394804a32623c24c60c50e249badc951007830f0d02c48ee0f
   languageName: node
   linkType: hard
 
@@ -3715,27 +3727,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^6.10.0":
-  version: 6.10.0
-  resolution: "css-loader@npm:6.10.0"
+"css-loader@npm:^7.1.1":
+  version: 7.1.2
+  resolution: "css-loader@npm:7.1.2"
   dependencies:
     icss-utils: "npm:^5.1.0"
     postcss: "npm:^8.4.33"
-    postcss-modules-extract-imports: "npm:^3.0.0"
-    postcss-modules-local-by-default: "npm:^4.0.4"
-    postcss-modules-scope: "npm:^3.1.1"
+    postcss-modules-extract-imports: "npm:^3.1.0"
+    postcss-modules-local-by-default: "npm:^4.0.5"
+    postcss-modules-scope: "npm:^3.2.0"
     postcss-modules-values: "npm:^4.0.0"
     postcss-value-parser: "npm:^4.2.0"
     semver: "npm:^7.5.4"
   peerDependencies:
     "@rspack/core": 0.x || 1.x
-    webpack: ^5.0.0
+    webpack: ^5.27.0
   peerDependenciesMeta:
     "@rspack/core":
       optional: true
     webpack:
       optional: true
-  checksum: 10/1abd52e24a72a4c54762330bab2e0e816778db5bc711a8fc1b1ee99470a1728f2aa9b54b9ebbf2278a1730d68b76303094cc855f9119b2ffc0424fe57fea3bc6
+  checksum: 10/ddde22fb103888320f60a1414a6a04638d2e9760a532a52d03c45e6e2830b32dd76c734aeef426f78dd95b2d15f77eeec3854ac53061aff02569732dc6e6801c
   languageName: node
   linkType: hard
 
@@ -7605,36 +7617,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-modules-extract-imports@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "postcss-modules-extract-imports@npm:3.0.0"
+"postcss-modules-extract-imports@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "postcss-modules-extract-imports@npm:3.1.0"
   peerDependencies:
     postcss: ^8.1.0
-  checksum: 10/8d68bb735cef4d43f9cdc1053581e6c1c864860b77fcfb670372b39c5feeee018dc5ddb2be4b07fef9bcd601edded4262418bbaeaf1bd4af744446300cebe358
+  checksum: 10/00bfd3aff045fc13ded8e3bbfd8dfc73eff9a9708db1b2a132266aef6544c8d2aee7a5d7e021885f6f9bbd5565a9a9ab52990316e21ad9468a2534f87df8e849
   languageName: node
   linkType: hard
 
-"postcss-modules-local-by-default@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "postcss-modules-local-by-default@npm:4.0.4"
+"postcss-modules-local-by-default@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "postcss-modules-local-by-default@npm:4.0.5"
   dependencies:
     icss-utils: "npm:^5.0.0"
     postcss-selector-parser: "npm:^6.0.2"
     postcss-value-parser: "npm:^4.1.0"
   peerDependencies:
     postcss: ^8.1.0
-  checksum: 10/45790af417b2ed6ed26e9922724cf3502569995833a2489abcfc2bb44166096762825cc02f6132cc6a2fb235165e76b859f9d90e8a057bc188a1b2c17f2d7af0
+  checksum: 10/b08b01aa7f3d1a80bb1a5508ba3a208578fdd2fb6e54e5613fac244a4e014aa7ca639a614859fec93b399e5a6f86938f7690ca60f7e57c4e35b75621d3c07734
   languageName: node
   linkType: hard
 
-"postcss-modules-scope@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "postcss-modules-scope@npm:3.1.1"
+"postcss-modules-scope@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "postcss-modules-scope@npm:3.2.0"
   dependencies:
     postcss-selector-parser: "npm:^6.0.4"
   peerDependencies:
     postcss: ^8.1.0
-  checksum: 10/ca035969eba62cf126864b10d7722e49c0d4f050cbd4618b6e9714d81b879cf4c53a5682501e00f9622e8f4ea6d7d7d53af295ae935fa833e0cc0bda416a287b
+  checksum: 10/17c293ad13355ba456498aa5815ddb7a4a736f7b781d89b294e1602a53b8d0e336131175f82460e290a0d672642f9039540042edc361d9000b682c44e766925b
   languageName: node
   linkType: hard
 
@@ -7847,18 +7859,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.2.0":
-  version: 18.2.0
-  resolution: "react-dom@npm:18.2.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.0"
-  peerDependencies:
-    react: ^18.2.0
-  checksum: 10/ca5e7762ec8c17a472a3605b6f111895c9f87ac7d43a610ab7024f68cd833d08eda0625ce02ec7178cc1f3c957cf0b9273cdc17aa2cd02da87544331c43b1d21
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
@@ -7993,6 +7993,15 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10/b9214a9bd79e99d08de55f8bef2b7fc8c39630be97c4e29d7be173d14a9a10670b5325e94485f74cd8bff4966ef3c78ee53c79a7b0b9b70cba20aa8973acc694
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.3.1":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10/261137d3f3993eaa2368a83110466fc0e558bc2c7f7ae7ca52d94f03aac945f45146bd85e5f481044db1758a1dbb57879e2fcdd33924e2dde1bdc550ce73f7bf
   languageName: node
   linkType: hard
 
@@ -8305,15 +8314,6 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10/7eaf7a0cf37cc27b42fb3ef6a9b1df6e93a1c6d98c6c6702b02fe262d5fcbd89db63320793b99b21cb5348097d0a53de81bd5f4e8b86e20cc9412e3f1cfb4e83
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.23.0":
-  version: 0.23.0
-  resolution: "scheduler@npm:0.23.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10/0c4557aa37bafca44ff21dc0ea7c92e2dbcb298bc62eae92b29a39b029134f02fb23917d6ebc8b1fa536b4184934314c20d8864d156a9f6357f3398aaf7bfda8
   languageName: node
   linkType: hard
 
@@ -8841,12 +8841,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-loader@npm:^3.3.4":
-  version: 3.3.4
-  resolution: "style-loader@npm:3.3.4"
+"style-loader@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "style-loader@npm:4.0.0"
   peerDependencies:
-    webpack: ^5.0.0
-  checksum: 10/2dd2a77d4fc689e1f73836ed7653830cb4e628af0b2979dcf6f31524c72bf44fca4bac8aebe62df95a5f9be19bea18f952a2cfcaaeff32c524c4402226d9c58f
+    webpack: ^5.27.0
+  checksum: 10/93f25b7e70cfca9d1d8427170384262b59a5b0e84e7191a5a26636a77799caeed46d9a3e45ee7b9afa0f69176e3b98d5a6c5e81593ff1fd0946f1c5682fd2a68
   languageName: node
   linkType: hard
 
