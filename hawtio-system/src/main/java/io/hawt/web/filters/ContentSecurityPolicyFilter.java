@@ -57,20 +57,20 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
             frameAncestors.add("'none'");
         }
 
-        //necessary for monaco-editor to load properly:
+        // necessary for monaco-editor to load properly:
+        String monacoEditorSrc = "https://cdn.jsdelivr.net/npm/monaco-editor@*/min/";
         styleSrc.add("'unsafe-inline'");
         styleSrcElem.add("'unsafe-inline'");
         workerSrc.add("blob:");
-        styleSrcElem.add("https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
-        fontSrc.add("https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
-        scriptSrcElem.add("https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
+        styleSrcElem.add(monacoEditorSrc);
+        fontSrc.add(monacoEditorSrc);
+        scriptSrcElem.add(monacoEditorSrc);
         // add keycloak server as safe source for connect, script, frame and prefetch
         String keycloakConfigFile = getConfigParameter(KeycloakServlet.KEYCLOAK_CLIENT_CONFIG);
         if (System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
             keycloakConfigFile = System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG);
         }
 
-        boolean addedKeycloakUrl = false;
         if (Strings.isNotBlank(keycloakConfigFile)) {
             LOG.debug("Reading Keycloak config file from {}", keycloakConfigFile);
             try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
