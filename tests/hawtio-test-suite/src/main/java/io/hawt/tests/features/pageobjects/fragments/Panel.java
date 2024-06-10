@@ -2,7 +2,7 @@ package io.hawt.tests.features.pageobjects.fragments;
 
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.not;
-import static com.codeborne.selenide.Selectors.byLinkText;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
@@ -45,8 +45,8 @@ public class Panel {
      * Open desired menu item from the drop-down menu under the question mark.
      */
     public void openMenuItemUnderQuestionMarkDropDownMenu(String option) {
-        this.openDropDownMenu("#hawtio-header-toolbar [id^=pf-dropdown-toggle-id-]");
-        $(byLinkText(option)).shouldBe(interactable).click();
+        this.openDropDownMenu(".pf-v5-c-toolbar__group:nth-of-type(2)");
+        $(byText(option)).shouldBe(interactable).click();
     }
 
     /**
