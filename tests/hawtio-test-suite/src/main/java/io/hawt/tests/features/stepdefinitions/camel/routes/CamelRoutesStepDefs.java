@@ -4,6 +4,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelDebug;
+import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelProperties;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRouteDiagram;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoutes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelSource;
@@ -14,6 +15,7 @@ public class CamelRoutesStepDefs {
     private final CamelRoutes camelRoutes = new CamelRoutes();
     private final CamelRouteDiagram camelRouteDiagram = new CamelRouteDiagram();
     private final CamelSource camelSource = new CamelSource();
+    private final CamelProperties camelProperties = new CamelProperties();
 
     @When("^User clicks on Delete button in dropdown in routes table$")
     public void userClicksOnDeleteButtonRoutesTable() {
@@ -35,6 +37,11 @@ public class CamelRoutesStepDefs {
     @Then("^Route source code is presented$")
     public void routeSourceCodeIsPresented() {
         camelSource.routeSourceCodeIsPresented();
+    }
+
+    @Then("^Default quartz properties of \"([^\"]*)\" are Auto Startup: \"([^\"]*)\", Log Mask: \"([^\"]*)\", Delayer: \"([^\"]*)\"$")
+    public void defaultQuartzPropertiesOfRouteAreAutoStartupLogMaskDelayer(String route, String autoStartup, String logMask, String delayer) {
+        camelProperties.checkDefaultQuartzProperties(route, autoStartup, logMask, delayer);
     }
 
     @When("^User adds breakpoint on \"([^\"]*)\" node$")

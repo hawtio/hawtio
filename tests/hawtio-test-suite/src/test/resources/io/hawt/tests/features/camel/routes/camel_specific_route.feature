@@ -95,3 +95,9 @@ Feature: Checking the functionality of Camel Specific Route page.
     And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
     When User clicks on Camel "Source" tab
     Then Route source code is presented
+
+  Scenario: Check Camel Properties tab is not empty
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Properties" tab
+    Then Default quartz properties of "simple" are Auto Startup: "true", Log Mask: "false", Delayer: "advanced"
