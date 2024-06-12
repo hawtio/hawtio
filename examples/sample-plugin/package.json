@@ -8,7 +8,7 @@
     "test": "craco test"
   },
   "dependencies": {
-    "@hawtio/react": "^1.0.3",
+    "@hawtio/react": "~1.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "^5.0.1"
@@ -18,6 +18,22 @@
     "craco-esbuild": "^0.6.1",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1"
+  },
+  "resolutions": {
+    "victory-area": "36.8.6",
+    "victory-bar": "36.8.6",
+    "victory-brush-container": "36.8.6",
+    "victory-core": "36.8.6",
+    "victory-cursor-container": "36.8.6",
+    "victory-create-container": "36.8.6",
+    "victory-legend": "36.8.6",
+    "victory-line": "36.8.6",
+    "victory-pie": "36.8.6",
+    "victory-scatter": "36.8.6",
+    "victory-selection-container": "36.8.6",
+    "victory-shared-events": "36.8.6",
+    "victory-voronoi-container": "36.8.6",
+    "victory-zoom-container": "36.8.6"
   },
   "eslintConfig": {
     "extends": [
