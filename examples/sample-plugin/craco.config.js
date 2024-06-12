@@ -53,7 +53,10 @@ module.exports = {
       }
 
       // For suppressing sourcemap warnings from dependencies
-      webpackConfig.ignoreWarnings = [/Failed to parse source map/]
+      webpackConfig.ignoreWarnings = [
+        /Failed to parse source map/,
+        /Critical dependency: the request of a dependency is an expression/,
+      ]
 
       // MiniCssExtractPlugin - Ignore order as otherwise conflicting order warning is raised
       const miniCssExtractPlugin = webpackConfig.plugins.find(p => p.constructor.name === 'MiniCssExtractPlugin')
