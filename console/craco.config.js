@@ -49,7 +49,10 @@ module.exports = {
       webpackConfig.output.publicPath = 'auto'
 
       // For suppressing sourcemap warnings coming from some dependencies
-      webpackConfig.ignoreWarnings = [/Failed to parse source map/]
+      webpackConfig.ignoreWarnings = [
+        /Failed to parse source map/,
+        /Critical dependency: the request of a dependency is an expression/,
+      ]
 
       webpackConfig.resolve = {
         ...webpackConfig.resolve,
