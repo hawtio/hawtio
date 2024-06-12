@@ -60,7 +60,7 @@
     <spring-boot-version>3.2.5</spring-boot-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
-    <camel-version>4.4.0.redhat-00014</camel-version>
+    <camel-spring-boot-version>4.4.0.redhat-00014</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty-version>11.0.20</jetty-version>
     <!-- Keycloak -->
