@@ -42,8 +42,8 @@ public class CamelSend extends CamelPage {
      * @param messageType whether plaintext, xml or json
      */
     public void setMessageType(String messageType) {
-        $(byAttribute("aria-label", "Options menu")).shouldBe(enabled).click();
-        $(byTagAndText("button", messageType)).shouldBe(visible).click();
+        $(byAttribute("aria-label", "options-menu")).shouldBe(enabled).click();
+        $(byTagAndText("span", messageType)).parent().shouldBe(visible).click();
         clickButton("Format");
     }
 
