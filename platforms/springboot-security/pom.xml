@@ -53,6 +53,16 @@
           <testRelease>17</testRelease>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <doclint>none</doclint>
+          <source>17</source>
+          <release>17</release>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

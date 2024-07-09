@@ -146,6 +146,16 @@
           <testRelease>17</testRelease>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <doclint>none</doclint>
+          <source>17</source>
+          <release>17</release>
+        </configuration>
+      </plugin>
       <!--
         Repackage static content from war into a jar, placing static content under /hawtio-static
         Do not use /static so that it will not be exposed automatically by Spring Boot
