@@ -108,7 +108,6 @@ public class ProxyServlet extends HttpServlet {
     protected ProxyAllowlist allowlist;
 
     protected CloseableHttpClient proxyClient;
-    private CookieStore cookieStore;
 
     @Override
     public String getServletInfo() {
@@ -137,9 +136,8 @@ public class ProxyServlet extends HttpServlet {
             this.doForwardIP = Boolean.parseBoolean(doForwardIPString);
         }
 
-        cookieStore = new BasicCookieStore();
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
-            .setDefaultCookieStore(cookieStore)
+            .disableCookieManagement()
             .useSystemProperties();
 
         if (System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS) != null) {
@@ -240,20 +238,6 @@ public class ProxyServlet extends HttpServlet {
         if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
             String encodedCreds = Base64.encodeBase64String((username + ":" + password).getBytes());
             proxyRequest.setHeader("Authorization", "Basic " + encodedCreds);
-        }
-
-        Header proxyAuthHeader = proxyRequest.getFirstHeader("Authorization");
-        if (proxyAuthHeader != null) {
-            String proxyAuth = proxyAuthHeader.getValue();
-            // if remote jolokia credentials have changed, we have to clear session cookies in http-client
-            HttpSession session = servletRequest.getSession();
-            if (session != null) {
-                String previousProxyCredentials = (String) session.getAttribute("proxy-credentials");
-                if (previousProxyCredentials != null && !previousProxyCredentials.equals(proxyAuth)) {
-                    cookieStore.clear();
-                }
-                session.setAttribute("proxy-credentials", proxyAuth);
-            }
         }
 
         setXForwardedForHeader(servletRequest, proxyRequest);
@@ -363,7 +347,7 @@ public class ProxyServlet extends HttpServlet {
 
     /**
      * These are the "hop-by-hop" headers that should not be copied.
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
+     * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html">rfc2616, section 13</a>
      * I use an HttpClient HeaderGroup class instead of Set<String> because this
      * approach does case-insensitive lookup faster.
      */
@@ -433,7 +417,24 @@ public class ProxyServlet extends HttpServlet {
         for (Header header : proxyResponse.getAllHeaders()) {
             if (hopByHopHeaders.containsHeader(header.getName()))
                 continue;
-            servletResponse.addHeader(header.getName(), header.getValue());
+            if (header.getName().equalsIgnoreCase(HttpHeaders.WWW_AUTHENTICATE)) {
+                // for browser purposes we want to avoid using browser native popup for entering credentials
+                // and storing them in browser's password manager. The best way to do it is to ensure that
+                // 'WWW-Authenticate: Basic realm="xx"' is never sent. "Basic" is the trigger for native dialog,
+                // so we'll replace:
+                //     WWW-Authenticate: Basic realm="xx"
+                // with:
+                //     WWW-Authenticate: Hawtio original-scheme="Basic" realm="xx"
+                // and won't touch any other schemes
+                String value = header.getValue();
+                if (value.toLowerCase().startsWith("basic ")) {
+                    value = "Hawtio original-scheme=\"Basic\" " + value.substring(6);
+                }
+                servletResponse.addHeader(header.getName(), value);
+            } else {
+                // just copy
+                servletResponse.addHeader(header.getName(), header.getValue());
+            }
         }
     }
 

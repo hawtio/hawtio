@@ -70,6 +70,10 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot-security</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -109,7 +113,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.7.1</version>
         <executions>
           <execution>
             <id>copy</id>

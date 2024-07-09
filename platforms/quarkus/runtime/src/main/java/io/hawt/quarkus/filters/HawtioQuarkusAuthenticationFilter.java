@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.security.auth.Subject;
 
+import io.hawt.web.ForbiddenReason;
+import io.quarkus.arc.InstanceHandle;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -31,12 +33,21 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusAuthenticationFilter.class);
 
+    private InstanceHandle<HawtioQuarkusAuthenticator> handle;
     private HawtioQuarkusAuthenticator authenticator;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        authenticator = Arc.container().instance(HawtioQuarkusAuthenticator.class).get();
+        handle = Arc.container().instance(HawtioQuarkusAuthenticator.class);
+        authenticator = handle.get();
         super.init(filterConfig);
+    }
+
+    @Override
+    public void destroy() {
+        if (handle != null) {
+            handle.close();
+        }
     }
 
     @Override
@@ -44,19 +55,56 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
         LOG.trace("Applying {}", getClass().getSimpleName());
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        // CORS preflight requests should be ignored
+        if ("OPTIONS".equals(httpRequest.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String path = httpRequest.getServletPath();
 
         LOG.debug("Handling request for path: {}", path);
 
+        // from here the flow differs from the base class (no JAAS)
+
+        // TODO: is isKeycloakEnabled() valid here?
         if (!authConfiguration.isEnabled() || authConfiguration.isKeycloakEnabled()) {
             LOG.debug("No authentication needed for path: {}", path);
             chain.doFilter(request, response);
             return;
         }
 
+        ProxyRequestType proxyMode = isProxyMode(httpRequest);
+
+        if (proxyMode == ProxyRequestType.PROXY_ENABLED) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         HttpSession session = httpRequest.getSession(false);
+
+        if (proxyMode == ProxyRequestType.PROXY && session == null) {
+            // we reject proxy requests without session, because Authorization header is targeted at remote Jolokia
+            ServletHelpers.doForbidden(httpResponse, ForbiddenReason.SESSION_EXPIRED);
+            return;
+        }
+
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
+
+            // When user is authenticated in Hawtio (has session) and uses /proxy, we can't match
+            // current subject/name (from session) with Authorization header as this one is for remote Jolokia
+            // we only require a subject to be present in session
+            if (proxyMode == ProxyRequestType.PROXY) {
+                if (subject != null) {
+                    chain.doFilter(request, response);
+                } else {
+                    ServletHelpers.doForbidden(httpResponse);
+                }
+                return;
+            }
 
             // Connecting from another Hawtio may have a different user authentication, so
             // let's check if the session user is the same as in the authorization header here
@@ -68,6 +116,7 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
 
         LOG.debug("Doing authentication and authorization for path: {}", path);
 
+        // Quarkus authentication
         AtomicReference<String> username = new AtomicReference<>();
         AtomicReference<String> password = new AtomicReference<>();
         Authenticator.extractAuthHeader(httpRequest, (u, p) -> {
@@ -76,7 +125,6 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
         });
         AuthenticateResult result = authenticator.authenticate(authConfiguration, username.get(), password.get());
 
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
         switch (result.getType()) {
         case AUTHORIZED:
             chain.doFilter(request, response);

@@ -47,6 +47,8 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         List<String> scriptSrc = new ArrayList<>(List.of("'self'"));
         List<String> styleSrc = new ArrayList<>(List.of("'self'"));
         List<String> workerSrc = new ArrayList<>(List.of("'self'"));
+        List<String> scriptSrcElem = new ArrayList<>(List.of("'self'"));
+        List<String> styleSrcElem = new ArrayList<>(List.of("'self'"));
 
         List<String> frameAncestors = new ArrayList<>();
         if (isXFrameSameOriginAllowed()) {
@@ -55,15 +57,20 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
             frameAncestors.add("'none'");
         }
 
-        //necessary for monaco-editor to load properly:
+        // necessary for monaco-editor to load properly:
+        String monacoEditorSrc = "https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/";
         styleSrc.add("'unsafe-inline'");
+        styleSrcElem.add("'unsafe-inline'");
+        workerSrc.add("blob:");
+        styleSrcElem.add(monacoEditorSrc);
+        fontSrc.add(monacoEditorSrc);
+        scriptSrcElem.add(monacoEditorSrc);
         // add keycloak server as safe source for connect, script, frame and prefetch
         String keycloakConfigFile = getConfigParameter(KeycloakServlet.KEYCLOAK_CLIENT_CONFIG);
         if (System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
             keycloakConfigFile = System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG);
         }
 
-        boolean addedKeycloakUrl = false;
         if (Strings.isNotBlank(keycloakConfigFile)) {
             LOG.debug("Reading Keycloak config file from {}", keycloakConfigFile);
             try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
@@ -86,14 +93,14 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
         // add OIDC provider as safe source for connect, script, frame and prefetch
         AuthenticationConfiguration authConfig
-                = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
+            = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
         if (authConfig.isEnabled() && authConfig.getOidcConfiguration() != null
-                && authConfig.getOidcConfiguration().isEnabled()) {
+            && authConfig.getOidcConfiguration().isEnabled()) {
             OidcConfiguration oidcConfiguration = authConfig.getOidcConfiguration();
             URL url = oidcConfiguration.getProviderURL();
             if (url != null) {
                 String oidcSrc = String.format("%s://%s%s", url.getProtocol(),
-                        url.getHost(), (url.getPort() > 0 ? ":" + url.getPort() : ""));
+                    url.getHost(), (url.getPort() > 0 ? ":" + url.getPort() : ""));
                 connectSrc.add(oidcSrc);
                 frameSrc.add(oidcSrc);
                 scriptSrc.add(oidcSrc);
@@ -113,6 +120,8 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         addPolicy(builder, "object-src", objectSrc);
         addPolicy(builder, "worker-src", workerSrc);
         addPolicy(builder, "frame-ancestors", frameAncestors);
+        addPolicy(builder, "script-src-elem", scriptSrcElem);
+        addPolicy(builder, "style-src-elem", styleSrcElem);
 
         policy = builder.toString().trim();
         policy = policy.substring(0, policy.length() - 1);

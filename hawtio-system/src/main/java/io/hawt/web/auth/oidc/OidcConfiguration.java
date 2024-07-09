@@ -17,7 +17,6 @@ package io.hawt.web.auth.oidc;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -53,6 +52,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.proc.JWKSecurityContext;
 import io.hawt.util.Strings;
+import io.hawt.web.auth.RolePrincipal;
 import io.hawt.web.auth.oidc.token.ValidAccessToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -60,7 +60,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.Registry;
@@ -152,8 +151,7 @@ public class OidcConfiguration extends Configuration {
     private volatile long lastCheck = 0L;
 
     private CloseableHttpClient httpClient;
-    private String[] rolePrincipalClasses;
-    private Class<?> roleClass;
+    private Class<? extends Principal> roleClass;
 
     private String rolesPathConfig;
     private String[] rolesPath;
@@ -655,56 +653,10 @@ public class OidcConfiguration extends Configuration {
      * Configure roles available for OIDC. This is not part of the configuration file, as HawtIO takes the roles
      * from {@code hawtio.roles} property which defaults to {@code admin,manager,viewer}
      *
-     * @param rolePrincipalClasses
+     * @param rolePrincipalClass
      */
-    public void setRolePrincipalClasses(String rolePrincipalClasses) {
-        if (rolePrincipalClasses == null || rolePrincipalClasses.isBlank()) {
-            this.rolePrincipalClasses = new String[0];
-            this.roleClass = RolePrincipal.class;
-        } else {
-            this.rolePrincipalClasses = rolePrincipalClasses.split("\\s*,\\s*");
-            Class<?> roleClass = null;
-
-            // let's load first available class - needs 1-arg String constructor
-            for (String classCandidate : this.rolePrincipalClasses) {
-                Class<?> clz = tryLoadClass(classCandidate);
-                if (clz != null) {
-                    try {
-                        Constructor<?> ctr = clz.getConstructor(String.class);
-                        if (Principal.class.isAssignableFrom(clz)) {
-                            roleClass = clz;
-                            break;
-                        } else {
-                            LOG.warn("Role class doesn't implement java.security.Principal");
-                        }
-                    } catch (NoSuchMethodException e) {
-                        LOG.warn("Can't role principal class {}: {}", classCandidate, e.getMessage());
-                    }
-                }
-            }
-
-            if (roleClass == null) {
-                roleClass = RolePrincipal.class;
-            }
-
-            this.roleClass = roleClass;
-        }
-    }
-
-    private Class<?> tryLoadClass(String roleClass) {
-        try {
-            return getClass().getClassLoader().loadClass(roleClass);
-        } catch (ClassNotFoundException ignored) {
-        }
-        try {
-            return Thread.currentThread().getContextClassLoader().loadClass(roleClass);
-        } catch (ClassNotFoundException ignored) {
-        }
-        return null;
-    }
-
-    public String[] getRolePrincipalClasses() {
-        return rolePrincipalClasses;
+    public void setRolePrincipalClass(Class<? extends Principal> rolePrincipalClass) {
+        this.roleClass = rolePrincipalClass == null ? RolePrincipal.class : rolePrincipalClass;
     }
 
     /**
