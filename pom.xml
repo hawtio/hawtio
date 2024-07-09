@@ -57,7 +57,7 @@
     <spring-version>6.1.10</spring-version>
     <spring-boot-version>3.3.1</spring-boot-version>
     <!-- Camel -->
-    <camel-version>4.6.0</camel-version>
+    <camel-spring-boot-version>4.6.0</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty-version>11.0.20</jetty-version>
     <!-- Keycloak -->
