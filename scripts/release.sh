@@ -14,7 +14,7 @@ RELEASE_VERSION=$1
 SNAPSHOT_VERSION=$2
 M2_SETTINGS=${3:-$HOME/.m2/settings.xml}
 
-MAVEN_RELEASE_PLUGIN_VERSION=3.0.1
+MAVEN_RELEASE_PLUGIN_VERSION=3.1.0
 NEXUS_STAGING_PLUGIN_VERSION=1.6.13
 
 echo ============================================================================
