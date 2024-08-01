@@ -13,7 +13,7 @@
   <description>Hawtio :: hawtio-embedded</description>
 
   <properties>
-    <picocli-version>4.7.5</picocli-version>
+    <picocli-version>4.7.6</picocli-version>
   </properties>
 
   <dependencies>
