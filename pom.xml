@@ -73,7 +73,7 @@
     <guava-version>33.2.1-jre</guava-version>
     <hamcrest-version>3.0</hamcrest-version>
     <httpclient-version>4.5.14</httpclient-version>
-    <jackson-version>2.17.1</jackson-version>
+    <jackson-version>2.17.2</jackson-version>
     <jackson-version-range>[2.8,3)</jackson-version-range>
     <jetty-version>10.0.22</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
