@@ -28,10 +28,10 @@ public class DeploymentEntry {
     }
 
     public void toggleExpand() {
-        $(root).$(By.className("pf-c-accordion__toggle")).click();
+        $(root).$(By.className("pf-v5-c-accordion__toggle")).click();
     }
 
     public List<PodEntry> getPods() {
-        return $(root).sibling(0).$(By.className("pf-c-list")).$$(By.cssSelector("li.pf-c-list__item")).asFixedIterable().stream().map(PodEntry::new).collect(Collectors.toList());
+        return $(root).sibling(0).$(By.className("pf-v5-c-list")).$$(By.cssSelector("li.pf-v5-c-list__item")).asFixedIterable().stream().map(PodEntry::new).collect(Collectors.toList());
     }
 }
