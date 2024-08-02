@@ -119,7 +119,8 @@ public class HawtioOnlineUtils {
 
     public static void deployCamelKOperator() {
         final CatalogSource redhatCatalog =
-            OpenshiftClient.get().operatorHub().catalogSources().inNamespace("openshift-marketplace").withName(TestConfiguration.getCamelKCatalog()).get();
+            OpenshiftClient.get().operatorHub().catalogSources().inNamespace("openshift-marketplace").withName(TestConfiguration.getCamelKCatalog())
+                .get();
         createSubscription(redhatCatalog, "red-hat-camel-k");
 
         WaitUtils.waitFor(() -> {
@@ -280,20 +281,23 @@ public class HawtioOnlineUtils {
         }
         final String startingCSV = createSubscription(catalog, "hawtio-operator");
 
-        if (TestConfiguration.getHawtioOnlineSHA() != null) {
+        if (TestConfiguration.getHawtioOnlineGatewayImageRepository() != null || TestConfiguration.getHawtioOnlineImageRepository() != null) {
             WaitUtils.withRetry(() -> {
                 final ClusterServiceVersion csv = operatorhub.clusterServiceVersions().withName(startingCSV).get();
-                csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
-                    .add(new EnvVar("IMAGE_VERSION", TestConfiguration.getHawtioOnlineSHA(), null));
                 if (TestConfiguration.getHawtioOnlineImageRepository() != null) {
                     csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
                         .add(new EnvVar("IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineImageRepository(), null));
+                }
+                if (TestConfiguration.getHawtioOnlineGatewayImageRepository() != null) {
+
+                    csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
+                        .add(new EnvVar("GATEWAY_IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineGatewayImageRepository(), null));
                 }
                 operatorhub.clusterServiceVersions().withName(startingCSV).patch(csv);
             }, 5, Duration.ofSeconds(5));
 
             WaitUtils.waitFor(() -> OpenshiftClient.get().pods().withLabel("name", "hawtio-operator").list().getItems().stream().anyMatch(pod ->
-                    pod.getSpec().getContainers().get(0).getEnv().stream().anyMatch(envVar -> envVar.getName().equalsIgnoreCase("IMAGE_VERSION")) &&
+                    pod.getSpec().getContainers().stream().anyMatch(container -> container.getEnv().stream().anyMatch(envVar -> envVar.getName().equalsIgnoreCase("IMAGE_REPOSITORY") || envVar.getName().equalsIgnoreCase("GATEWAY_IMAGE_REPOSITORY"))) &&
                         pod.getStatus().getPhase().equalsIgnoreCase("Running")),
                 "Waiting for the CSV patch to get applied to the operator pod", Duration.ofMinutes(2));
         }

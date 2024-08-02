@@ -120,7 +120,7 @@ public class HawtioPage {
     }
 
     public SelenideElement getLogo() {
-        return $(HEADER_SELECTOR).$(By.className("pf-c-brand"));
+        return $(HEADER_SELECTOR).$(By.className("pf-v5-c-brand"));
     }
 
     public String getAppName() {

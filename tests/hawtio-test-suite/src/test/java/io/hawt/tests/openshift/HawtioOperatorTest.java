@@ -332,7 +332,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                 sa.fail("Couldn't get contents of nginx config", e);
             }
             Awaitility.waitAtMost(Duration.ofSeconds(10)).untilAsserted(() -> {
-                assertThat(pod.getLog()).contains("kube-probe");
+                assertThat(pod.inContainer(pod.get().getStatus().getContainerStatuses().stream().filter(c -> !c.getName().contains("gateway")).findAny().get().getName()).getLog()).contains("kube-probe");
             });
         }, false);
     }
@@ -345,7 +345,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             .endMetadata()
             .addToData("ACL.yaml", IOUtils.toString(getClass().getResource("/io/hawt/tests/openshift/acl.yaml"), StandardCharsets.UTF_8))
             .build()
-        ).create();
+        ).serverSideApply();
         runTest(spec -> {
             var rbac = new Rbac();
             rbac.setConfigMap("rbac-test");

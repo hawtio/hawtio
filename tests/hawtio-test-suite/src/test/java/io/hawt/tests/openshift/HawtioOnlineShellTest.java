@@ -50,6 +50,7 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
                 Selenide.switchTo().window(0);
             }
             if (!WebDriverRunner.url().startsWith(DeployAppHook.getBaseURL())) {
+                Selenide.refresh();
                 Selenide.open(DeployAppHook.getBaseURL(), HawtioOnlineLoginPage.class)
                     .login(TestConfiguration.getOpenshiftUsername(), TestConfiguration.getOpenshiftPassword());
             }

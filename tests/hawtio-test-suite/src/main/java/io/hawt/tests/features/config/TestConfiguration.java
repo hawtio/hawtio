@@ -2,7 +2,6 @@ package io.hawt.tests.features.config;
 
 import org.junit.Assume;
 
-import org.assertj.core.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
@@ -46,6 +45,8 @@ public class TestConfiguration {
     public static final String OPENSHIFT_NAMESPACE = "io.hawt.test.openshift.namespace";
     public static final String OPENSHIFT_KUBECONFIG = "io.hawt.test.openshift.kubeconfig";
     public static final String OPENSHIFT_NAMESPACE_DELETE = "io.hawt.test.openshift.namespace.delete";
+    public static final String HAWTIO_ONLINE_IMAGE_REPOSITORY = "io.hawt.test.online.image.repository";
+    public static final String HAWTIO_ONLINE_GATEWAY_IMAGE_REPOSITORY = "io.hawt.test.online.gateway.image.repository";
     public static final String OPENSHIFT_INDEX_IMAGE = "io.hawt.test.openshift.index.image";
 
     public static final String CAMEL_K_CATALOG = "io.hawt.test.camelk.catalog";
@@ -128,12 +129,12 @@ public class TestConfiguration {
         return null;
     }
 
-    public static String getHawtioOnlineSHA() {
-        return getProperty("io.hawt.test.online.sha");
+    public static String getHawtioOnlineImageRepository() {
+        return getProperty(HAWTIO_ONLINE_IMAGE_REPOSITORY);
     }
 
-    public static String getHawtioOnlineImageRepository() {
-        return getProperty("io.hawt.test.online.image.repository");
+    public static String getHawtioOnlineGatewayImageRepository() {
+        return getProperty(HAWTIO_ONLINE_GATEWAY_IMAGE_REPOSITORY);
     }
 
     public static String getConnectAppUsername() {
