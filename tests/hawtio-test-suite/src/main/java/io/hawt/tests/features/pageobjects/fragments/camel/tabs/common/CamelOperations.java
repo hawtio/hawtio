@@ -61,7 +61,7 @@ public class CamelOperations extends CamelPage {
     public void checkOperation(String method, WebElementCondition condition) {
         final SelenideElement operation = $(operation(method));
         if (condition == Condition.disabled) {
-            operation.$(By.cssSelector(".pf-c-data-list__item-content svg")).should(Condition.exist);
+            operation.$(By.cssSelector(".pf-v5-c-data-list__item-content svg")).should(Condition.exist);
         }
         operation.$(EXPAND_BUTTON).click();
 

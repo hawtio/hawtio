@@ -27,10 +27,11 @@ public class DiscoverTab {
     private static final By SEARCH_DROPDOWN_BUTTON = By.cssSelector("button[aria-label=\"Options menu\"]");
 
     public static final boolean REPLICA_SET_WORKAROUND = true;
+    public static final String ACCORDION = "pf-v5-c-accordion";
 
     public void connectTo(String name) {
         waitForPageLoaded();
-        new PodEntry($(ByUtils.byText("a", name)).ancestor("li")).connect();
+        new PodEntry($(ByUtils.byText("button", name)).ancestor("li")).connect();
         Selenide.switchTo().window(1);
     }
 
@@ -60,7 +61,7 @@ public class DiscoverTab {
 
     public Map<String, DeploymentEntry> getDeployments() {
         waitForPageLoaded();
-        return $(By.className("pf-c-accordion")).$$(By.tagName("dt")).asFixedIterable().stream().map(DeploymentEntry::new)
+        return $(By.className(ACCORDION)).$$(By.tagName("dt")).asFixedIterable().stream().map(DeploymentEntry::new)
             .collect(Collectors.toMap(DeploymentEntry::getName, d -> d));
     }
 
@@ -89,6 +90,6 @@ public class DiscoverTab {
 
     private void waitForPageLoaded() {
         $(ByUtils.byDataTestId("loading")).shouldNot(Condition.exist, Duration.ofSeconds(30));
-        $(By.className("pf-c-accordion")).should(Condition.exist, Duration.ofSeconds(30));
+        $(By.className(ACCORDION)).should(Condition.exist, Duration.ofSeconds(30));
     }
 }
