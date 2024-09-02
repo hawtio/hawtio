@@ -75,7 +75,7 @@
     <jackson-version>2.17.2</jackson-version>
     <junit5-version>5.10.3</junit5-version>
     <log4j2-version>2.23.1</log4j2-version>
-    <mockito-core-version>5.12.0</mockito-core-version>
+    <mockito-core-version>5.13.0</mockito-core-version>
     <nimbusds-jose-version>9.40</nimbusds-jose-version>
     <org-json-version>20240303</org-json-version>
     <picocli-version>4.7.6</picocli-version>
