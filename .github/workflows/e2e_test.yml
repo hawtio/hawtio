@@ -59,7 +59,7 @@ jobs:
           cp $REPORT_DIR/cucumber-reports/* results/$REPORT_DIR/
           ls $REPORT_DIR/cucumber-reports/
       - name: Archive test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: 'test-results-${{ matrix.runtime }}-java-${{ matrix.java }}-${{ matrix.browser }}'
@@ -68,13 +68,6 @@ jobs:
             ${{ env.REPORT_DIR }}/*.log
             ${{ env.REPORT_DIR }}/cucumber-reports/*
 
-      - name: Archive failed test reports
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: 'test-results'
-          path: |
-            results/**/*
   build:
     runs-on: ubuntu-20.04
     strategy:
@@ -124,9 +117,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Download Test Results
-        uses: actions/download-artifact@v3
+      - name: Archive failed test reports
+        uses: actions/upload-artifact/merge@v4
+        if: always()
         with:
+          name: 'test-results'
+          pattern: test-results-*
+          separate-directories: true
+      - name: Download Test Results
+        uses: actions/download-artifact@v4
+        with: 
           name: 'test-results'
           path: 'test-results'
       - name: Publish Test Results

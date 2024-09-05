@@ -8,9 +8,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 echo "| NAME | TESTS | PASSED ✅ | SKIPPED 💤 | FAILED ❌ | ERRORS 🚫 | TIME 🕖 |"
 echo "| --- | --- | --- | --- | --- | --- | --- |"
 for i in "$1"/*; do 
-    if [ -f "$i/Cucumber.xml" ]; then
+    if [ -f "$i"/cucumber-reports/Cucumber.xml ]; then
         name=$(basename "$i")
         echo -n "| $name | "
-        xmlstarlet tr "$SCRIPT_DIR"/pr_results_template.xsl "$i"/Cucumber.xml | xargs
+        xmlstarlet tr "$SCRIPT_DIR"/pr_results_template.xsl "$i"/cucumber-reports/Cucumber.xml | xargs
     fi
 done
