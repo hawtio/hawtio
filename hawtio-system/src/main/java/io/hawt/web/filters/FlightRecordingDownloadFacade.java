@@ -24,10 +24,10 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.jolokia.json.JSONArray;
+import org.jolokia.json.JSONObject;
+import org.jolokia.json.parser.JSONParser;
+import org.jolokia.json.parser.ParseException;
 
 /**
  * I emulate a non-existing operation  jdk.management.jfr:type=FlightRecorder/downloadRecording(long)
