@@ -513,7 +513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.12.5":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -645,17 +645,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_0@npm:@hawtio/camel-model@~4.0.5":
-  version: 4.0.5
-  resolution: "@hawtio/camel-model@npm:4.0.5"
-  checksum: 10/840067de757419c71350755e7996636698315e5b8c455cca4ec3279c50e7e85fca81a6281160e6f17aee0eaf818ae7d96dd4db48e6b89ea6a3f29a8976d14e76
+"@hawtio/camel-model-v4_0@npm:@hawtio/camel-model@~4.0.6":
+  version: 4.0.6
+  resolution: "@hawtio/camel-model@npm:4.0.6"
+  checksum: 10/7d59d4e2773b46c0d32fe5f5320455f254cca5f1e4125bfe4ec5eaac3043c389d9848bf90005e93b84f1d67a88269973c4ee4679b6f5395373daf790722ce01c
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_4@npm:@hawtio/camel-model@~4.4.2":
-  version: 4.4.2
-  resolution: "@hawtio/camel-model@npm:4.4.2"
-  checksum: 10/266790a608e40735dcb64e338594976f9ea63eaa696f2047d27e3e217fc965b117eae45ad7bd4f513483cd99b9fa75706c5edf208c92fb963098b151cd68cc57
+"@hawtio/camel-model-v4_4@npm:@hawtio/camel-model@~4.4.3":
+  version: 4.4.3
+  resolution: "@hawtio/camel-model@npm:4.4.3"
+  checksum: 10/60bb20f1f94cf7d29e16f34e70e5e8dbe89e547b28f3fd2293780b4667f8b49af5e0cbba285123e0f58a65565d880ba43f7921ac226e1a3918a4dfc975115cdf
   languageName: node
   linkType: hard
 
@@ -664,7 +664,7 @@ __metadata:
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.5"
-    "@hawtio/react": "npm:^1.3.0"
+    "@hawtio/react": "npm:^1.4.0"
     "@swc/core": "npm:^1.7.22"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
@@ -682,47 +682,48 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@hawtio/react@npm:1.3.0"
+"@hawtio/react@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@hawtio/react@npm:1.4.0"
   dependencies:
-    "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.5"
-    "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.2"
-    "@module-federation/utilities": "npm:^3.0.32"
+    "@hawtio/camel-model-v4_0": "npm:@hawtio/camel-model@~4.0.6"
+    "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.3"
+    "@jolokia.js/simple": "npm:^2.1.7"
+    "@module-federation/utilities": "npm:^3.1.7"
     "@patternfly/react-charts": "npm:~7.3.0"
     "@patternfly/react-code-editor": "npm:~5.3.3"
     "@patternfly/react-core": "npm:~5.3.3"
     "@patternfly/react-table": "npm:~5.3.3"
-    "@testing-library/dom": "npm:^10.3.1"
-    "@testing-library/jest-dom": "npm:^6.4.6"
-    "@testing-library/react": "npm:^16.0.0"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.5.0"
+    "@testing-library/react": "npm:^16.0.1"
     "@testing-library/user-event": "npm:^14.5.2"
     "@thumbmarkjs/thumbmarkjs": "npm:^0.14.8"
     "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.12"
     "@types/jquery": "npm:^3.5.30"
-    "@types/node": "npm:^18.19.39"
-    "@types/react": "npm:^18.3.3"
+    "@types/node": "npm:^22.5.4"
+    "@types/react": "npm:^18.3.5"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
-    jolokia.js: "npm:^2.0.3"
+    jolokia.js: "npm:^2.1.7"
     jquery: "npm:^3.7.1"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
     keycloak-js: "npm:^23.0.7"
-    monaco-editor: "npm:^0.50.0"
-    oauth4webapi: "npm:^2.11.1"
+    monaco-editor: "npm:^0.51.0"
+    oauth4webapi: "npm:^2.12.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-markdown: "npm:^8.0.7"
-    react-monaco-editor: "npm:^0.55.0"
-    react-router-dom: "npm:^6.24.1"
+    react-monaco-editor: "npm:^0.56.1"
+    react-router-dom: "npm:^6.26.2"
     react-split: "npm:^2.0.14"
     reactflow: "npm:^11.11.4"
-    superstruct: "npm:^1.0.4"
+    superstruct: "npm:^2.0.2"
     typescript: "npm:^5.4.5"
     xml-formatter: "npm:^3.6.3"
   peerDependencies:
@@ -733,7 +734,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/f6f0513010c05a601fd2952682932d7046458519e7249a06588455e4f4a691b5ef4a1573ab22214e2fa8aa4d28745c40abef80b67e0fb1c3f0eefe113d19bdc5
+  checksum: 10/188cf99b05945ecec5b795679248e5d29e8f6a5ebfafbde74a692d911585b7085b84ad18d45130c57afa208fdd6d9641871ec2dedb38d7c612bd122b46963a88
   languageName: node
   linkType: hard
 
@@ -1033,6 +1034,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jolokia.js/simple@npm:^2.1.7":
+  version: 2.1.7
+  resolution: "@jolokia.js/simple@npm:2.1.7"
+  dependencies:
+    jolokia.js: "npm:^2.1.7"
+  checksum: 10/26bc017c64df1600325f5185c39d48f600d0f3e43c5bed9e79c738c9f248eba03c9bf8a68303d7aee9bfcb9f34d44cafba705f4c5ebdd74adfdda238b29826f3
+  languageName: node
+  linkType: hard
+
 "@jridgewell/gen-mapping@npm:^0.1.0":
   version: 0.1.1
   resolution: "@jridgewell/gen-mapping@npm:0.1.1"
@@ -1154,18 +1164,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/sdk@npm:0.2.5":
-  version: 0.2.5
-  resolution: "@module-federation/sdk@npm:0.2.5"
-  checksum: 10/830645b9c53dacad39f30df0960e32c397c892de3c5b23f54b16c91810599ee48c692c986231b3f8d253d5ed81dc3d686fff9f781ce7a5f73cfa6eda40165746
+"@module-federation/sdk@npm:0.6.3":
+  version: 0.6.3
+  resolution: "@module-federation/sdk@npm:0.6.3"
+  checksum: 10/6ee5d2d00af3ac6cb39b38cfbd9ad607a390a80259968ccfc78f29c8713b30315c81415340752253c5eb5e6a939c60a043106d9978aead410617826e51444f17
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.0.32":
-  version: 3.0.32
-  resolution: "@module-federation/utilities@npm:3.0.32"
+"@module-federation/utilities@npm:^3.1.7":
+  version: 3.1.9
+  resolution: "@module-federation/utilities@npm:3.1.9"
   dependencies:
-    "@module-federation/sdk": "npm:0.2.5"
+    "@module-federation/sdk": "npm:0.6.3"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -1177,7 +1187,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/0fcb9d49458bc3edd3394c52a84d377f296cf9df8cd86caf78bcd6e31b043db6fab8233a4cac01c750c5c17b99318ba0e24dddae3da3a04edf0b7341cb08a8d0
+  checksum: 10/83045d91d4bb9328f387f85f11a86db8195fe4bc7d3be80737781ba613a66dc1136696da0eb79819f18d76160d9cefdf6b9af726db9bf726785d545d880d7224
   languageName: node
   linkType: hard
 
@@ -1463,10 +1473,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.17.1":
-  version: 1.17.1
-  resolution: "@remix-run/router@npm:1.17.1"
-  checksum: 10/5efc598626cd81688ac26e0abd08204b980831ead8cd2c4b8a27e0c169ee4777fc609fa289c093b93efc3a1e335304698c6961276c2309348444ec7209836c83
+"@remix-run/router@npm:1.19.2":
+  version: 1.19.2
+  resolution: "@remix-run/router@npm:1.19.2"
+  checksum: 10/31b62b66ea68bd62018189047de7b262700113438f62407df019f81a9856a08a705b2b77454be9293518e2f5f3bbf3f8b858ac19f48cb7d89f8ab56b7b630c19
   languageName: node
   linkType: hard
 
@@ -1641,9 +1651,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.3.1":
-  version: 10.3.1
-  resolution: "@testing-library/dom@npm:10.3.1"
+"@testing-library/dom@npm:^10.4.0":
+  version: 10.4.0
+  resolution: "@testing-library/dom@npm:10.4.0"
   dependencies:
     "@babel/code-frame": "npm:^7.10.4"
     "@babel/runtime": "npm:^7.12.5"
@@ -1653,46 +1663,28 @@ __metadata:
     dom-accessibility-api: "npm:^0.5.9"
     lz-string: "npm:^1.5.0"
     pretty-format: "npm:^27.0.2"
-  checksum: 10/a78646e775d31b33669274e8baa9c27e6e9ea944131dcdf8d2ac2df7199516d5a9fe483e5ec49c85580399fc2f9efad395876e984b9a4ae520903dec47c773c0
+  checksum: 10/05825ee9a15b88cbdae12c137db7111c34069ed3c7a1bd03b6696cb1b37b29f6f2d2de581ebf03033e7df1ab7ebf08399310293f440a4845d95c02c0a9ecc899
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.4.6":
-  version: 6.4.6
-  resolution: "@testing-library/jest-dom@npm:6.4.6"
+"@testing-library/jest-dom@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@testing-library/jest-dom@npm:6.5.0"
   dependencies:
     "@adobe/css-tools": "npm:^4.4.0"
-    "@babel/runtime": "npm:^7.9.2"
     aria-query: "npm:^5.0.0"
     chalk: "npm:^3.0.0"
     css.escape: "npm:^1.5.1"
     dom-accessibility-api: "npm:^0.6.3"
     lodash: "npm:^4.17.21"
     redent: "npm:^3.0.0"
-  peerDependencies:
-    "@jest/globals": ">= 28"
-    "@types/bun": "*"
-    "@types/jest": ">= 28"
-    jest: ">= 28"
-    vitest: ">= 0.32"
-  peerDependenciesMeta:
-    "@jest/globals":
-      optional: true
-    "@types/bun":
-      optional: true
-    "@types/jest":
-      optional: true
-    jest:
-      optional: true
-    vitest:
-      optional: true
-  checksum: 10/94fad29d740ff2c34967c644e2481a472aa8eeb1f11cdec5d4f81f14b2576660387551264c0fa718c15bfc61dd342f7621d888fe3e4ba1b7f830fe65bdd37bc8
+  checksum: 10/3d2080888af5fd7306f57448beb5a23f55d965e265b5e53394fffc112dfb0678d616a5274ff0200c46c7618f293520f86fc8562eecd8bdbc0dbb3294d63ec431
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.0.0":
-  version: 16.0.0
-  resolution: "@testing-library/react@npm:16.0.0"
+"@testing-library/react@npm:^16.0.1":
+  version: 16.0.1
+  resolution: "@testing-library/react@npm:16.0.1"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
   peerDependencies:
@@ -1706,7 +1698,7 @@ __metadata:
       optional: true
     "@types/react-dom":
       optional: true
-  checksum: 10/b32894be94e31276138decfa6bcea69dfebc0c37cf91499ff6c878f41eb1154a43a7df6eb1e72e7bede78468af6cb67ca59e4acd3206b41f3ecdae2c6efdf67e
+  checksum: 10/904b48881cf5bd208e25899e168f5c99c78ed6d77389544838d9d861a038d2c5c5385863ee9a367436770cbf7d21c5e05a991b9e24a33806e9ac985df2448185
   languageName: node
   linkType: hard
 
@@ -2306,21 +2298,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.39":
-  version: 18.19.39
-  resolution: "@types/node@npm:18.19.39"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10/d2fe84adf087a4184217b666f675e99678060d15f84882a4a1c3e49c3dca521a7e99a201a3c073c2b60b00419f1f4c3b357d8f7397f65e400dc3b77b0145a1da
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:^20.12.7":
   version: 20.12.8
   resolution: "@types/node@npm:20.12.8"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10/1feab4c8cb08588eea10811ed4d02485a5cde47fdf92e7b3193fc9f8ee39ea556f6e3124dc6d5378354466ed5f7e5fbe5e20f625908de40ea37560368a50f72c
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.5.4":
+  version: 22.5.4
+  resolution: "@types/node@npm:22.5.4"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10/d46e0abf437b36bdf89011287aa43873d68ea6f2521a11b5c9a033056fd0d07af36daf51439010e8d41c62c55d0b00e9b5e09ed00bb2617723f73f28a873903a
   languageName: node
   linkType: hard
 
@@ -2386,13 +2378,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.3.3":
-  version: 18.3.3
-  resolution: "@types/react@npm:18.3.3"
+"@types/react@npm:^18.3.5":
+  version: 18.3.5
+  resolution: "@types/react@npm:18.3.5"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10/68e203b7f1f91d6cf21f33fc7af9d6d228035a26c83f514981e54aa3da695d0ec6af10c277c6336de1dd76c4adbe9563f3a21f80c4462000f41e5f370b46e96c
+  checksum: 10/ba0477c5ad4a762157c6262a199af6ccf9e24576877a26a7f516d5a9ba35374a6ac7f8686a10e5e8030513214f02bcb66e8363e43905afb7cd313deaf673de05
   languageName: node
   linkType: hard
 
@@ -6310,20 +6302,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "jolokia.js@npm:2.0.3"
-  dependencies:
-    jquery: "npm:^3.7.1"
-  peerDependencies:
-    cubism: ^1.6.0
-    jsdom: ^22.1.0
-  peerDependenciesMeta:
-    cubism:
-      optional: true
-    jsdom:
-      optional: true
-  checksum: 10/0410a7563b5a2fb2b947309ff0fe863bd5df4ec4acf52e8184df8f92765b707a89398ad94aac138965911abf7639821ced8c4116b8a9fbf9e3f8c60fca1a9982
+"jolokia.js@npm:^2.1.7":
+  version: 2.1.7
+  resolution: "jolokia.js@npm:2.1.7"
+  checksum: 10/7e10e0b842c96853ea2815d46cc7cea278470d259d8660711fbfda58c3a730764790ee28dd9ad346ebcb8324bd500f109408675f19d8c0a75578703522956d91
   languageName: node
   linkType: hard
 
@@ -7148,10 +7130,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.50.0":
-  version: 0.50.0
-  resolution: "monaco-editor@npm:0.50.0"
-  checksum: 10/594f2a3812147c1ef41c4dba444c649c32af95c3eb09529049bb7a2cb38e1747facbae0a459a07140e77cf9d73df41f034399804f9123f9cfff45394321a3983
+"monaco-editor@npm:^0.51.0":
+  version: 0.51.0
+  resolution: "monaco-editor@npm:0.51.0"
+  checksum: 10/2d4f076e35edb32add51b9b7a0ff5a7a81bf946cdeda9983ab6b24c2e5b84f537d5a5c781925d7ee8c898e890212b379d3c96139a965ad1004e6dd3d890163fa
   languageName: node
   linkType: hard
 
@@ -7331,10 +7313,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^2.11.1":
-  version: 2.11.1
-  resolution: "oauth4webapi@npm:2.11.1"
-  checksum: 10/94a3f9dfff0399aff4d9e5e006f813063bcb71211bd07cac119afa5a69d7b5426fe2a19ccb7643e2a2dd1f9512c50e3f2b875275f943877da2dea2112c23e83e
+"oauth4webapi@npm:^2.12.2":
+  version: 2.13.0
+  resolution: "oauth4webapi@npm:2.13.0"
+  checksum: 10/22bea0eb75ad76053807685c89e65022bbe45b4253facf3d02bb4f53980275b1f064a3732ede16c4d4cf91f5c5b2d6d6ee877fccde846eac711569e7308a7146
   languageName: node
   linkType: hard
 
@@ -7930,40 +7912,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-monaco-editor@npm:^0.55.0":
-  version: 0.55.0
-  resolution: "react-monaco-editor@npm:0.55.0"
+"react-monaco-editor@npm:^0.56.1":
+  version: 0.56.1
+  resolution: "react-monaco-editor@npm:0.56.1"
   dependencies:
     prop-types: "npm:^15.8.1"
   peerDependencies:
     "@types/react": ">=16 <= 18"
-    monaco-editor: ^0.44.0
+    monaco-editor: ^0.50.0
     react: ">=16 <= 18"
-  checksum: 10/3c4ee8cf43c5df02e24a0f8d761923b60bdd35a60946274c22024b66beb66dc3dc4ae2052ee16e83048436be7f8ca91d0aee86010095fb195e5acbb1a2aad828
+  checksum: 10/b2f8ae126c13198200bc5d4e7130e1732a91bbb96e79d634d3820317b919e7b3c4c0c0e8dee72fb4f889b3eeada009b94e5f830103d3b743088ed9e43c9ccf17
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.24.1":
-  version: 6.24.1
-  resolution: "react-router-dom@npm:6.24.1"
+"react-router-dom@npm:^6.26.2":
+  version: 6.26.2
+  resolution: "react-router-dom@npm:6.26.2"
   dependencies:
-    "@remix-run/router": "npm:1.17.1"
-    react-router: "npm:6.24.1"
+    "@remix-run/router": "npm:1.19.2"
+    react-router: "npm:6.26.2"
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 10/98eeeec3d36695b3d6d8000d8373ba3cefa9afc49ee44f646f3b721e8b47a80f5ce3737ad1f752cccf19caf01e370918750a4bc86a06a99e491731b454d5ec55
+  checksum: 10/4eee37839bd1a660807c090b4d272e4aa9b95d8a9a932cdcdf7c5b10735f39b6db73bad79b08a3012386a7e225ff6bf60435e2741fb7c68e137ac5a6295d4308
   languageName: node
   linkType: hard
 
-"react-router@npm:6.24.1":
-  version: 6.24.1
-  resolution: "react-router@npm:6.24.1"
+"react-router@npm:6.26.2":
+  version: 6.26.2
+  resolution: "react-router@npm:6.26.2"
   dependencies:
-    "@remix-run/router": "npm:1.17.1"
+    "@remix-run/router": "npm:1.19.2"
   peerDependencies:
     react: ">=16.8"
-  checksum: 10/18ac968171dee286a2f067dc8568faf73c759f833e88e09f1b34ff6e9376d1fd5eade8697a86be83093225956b256b398d935ce2f681c1bf711fb3c058c19839
+  checksum: 10/496e855b53e61066c1791e354f5d79eab56a128d9722fdc6486c3ecd3b3a0bf9968e927028f429893b157f3cc10fc09e890a055847723ee242663e7995fedc9d
   languageName: node
   linkType: hard
 
@@ -8821,10 +8803,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"superstruct@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "superstruct@npm:1.0.4"
-  checksum: 10/9b3fd70a08c5ad3ea78b5c6b7ab90d31dde71af10448208d296c3d29ba2e55dfd817dfef75957163ee032163d04c4b2e0cb2fddff30313516aa60f748c1a48da
+"superstruct@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "superstruct@npm:2.0.2"
+  checksum: 10/10e1944a9da4baee187fbaa6c5d97d7af266b55786dfe50bce67f0f1e7d93f1a5a42dd51e245a2e16404f8336d07c21c67f1c1fbc4ad0a252d3d2601d6c926da
   languageName: node
   linkType: hard
 
@@ -9076,6 +9058,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10/0097779d94bc0fd26f0418b3a05472410408877279141ded2bd449167be1aed7ea5b76f756562cb3586a07f251b90799bab22d9019ceba49c037c76445f7cddd
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.19.2":
+  version: 6.19.8
+  resolution: "undici-types@npm:6.19.8"
+  checksum: 10/cf0b48ed4fc99baf56584afa91aaffa5010c268b8842f62e02f752df209e3dea138b372a60a963b3b2576ed932f32329ce7ddb9cb5f27a6c83040d8cd74b7a70
   languageName: node
   linkType: hard
 
