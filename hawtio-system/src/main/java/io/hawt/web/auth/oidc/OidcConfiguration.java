@@ -80,9 +80,9 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.jolokia.json.JSONArray;
+import org.jolokia.json.parser.JSONParser;
+import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -438,7 +438,7 @@ public class OidcConfiguration extends Configuration {
                 LOG.error("Problem getting OpenID Connect configuration. OpenID/OAuth2 authentication disabled.");
                 json = new JSONObject(); // empty config
             } else {
-                String jwksURI = openidConfiguration.getString("jwks_uri");
+                String jwksURI = (String) openidConfiguration.get("jwks_uri");
                 if (jwksURI == null) {
                     LOG.error("No JWKS endpoint available - it is not possible to validate JWT access tokens. OpenID/OAuth2 authentication disabled.");
                     json = new JSONObject(); // empty config
@@ -502,12 +502,12 @@ public class OidcConfiguration extends Configuration {
         publicKeys.clear();
         List<JWK> contextKeys = new ArrayList<>();
         try {
-            JSONArray keys = config.getJSONArray("keys");
+            JSONArray keys = (JSONArray) config.get("keys");
             if (keys != null) {
-                for (int k = 0; k < keys.length(); k++) {
-                    JSONObject key = keys.getJSONObject(k);
-                    String type = key.has("kty") ? key.getString("kty") : null;
-                    String kid = key.has("kid") ? key.getString("kid") : null;
+                for (int k = 0; k < keys.size(); k++) {
+                    JSONObject key = (JSONObject) keys.get(k);
+                    String type = key.containsKey("kty") ? (String) key.get("kty") : null;
+                    String kid = key.containsKey("kid") ? key.get("kid").toString() : null;
                     if (type == null || kid == null) {
                         LOG.warn("Invalid key definition: {}", key.toString());
                         continue;
@@ -515,14 +515,14 @@ public class OidcConfiguration extends Configuration {
                     if ("RSA".equals(type)) {
                         // manually
                         // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.3
-                        String n = key.has("n") ? key.getString("n") : null;
-                        String e = key.has("e") ? key.getString("e") : null;
+                        String n = key.containsKey("n") ? (String) key.get("n") : null;
+                        String e = key.containsKey("e") ? (String) key.get("e") : null;
                         if (n == null || e == null) {
                             LOG.warn("Invalid RSA key definition: {}", key.toString());
                             continue;
                         }
                         try {
-                            JWK jwk = JWK.parse(key.toMap());
+                            JWK jwk = JWK.parse(key);
                             if (jwk.getKeyUse() == KeyUse.SIGNATURE) {
                                 cacheRSAKey(key);
                                 contextKeys.add(jwk);
@@ -533,19 +533,19 @@ public class OidcConfiguration extends Configuration {
                     } else if ("EC".equals(type)) {
                         // using Nimbusds
                         // https://www.rfc-editor.org/rfc/rfc7518.html#section-6.2
-                        String crv = key.has("crv") ? key.getString("crv") : null; // P-256, P-384 or P-521
+                        String crv = key.containsKey("crv") ? (String) key.get("crv") : null; // P-256, P-384 or P-521
                         if (crv == null || !supportedECCurves.contains(crv)) {
                             LOG.warn("Unsupported \"crv\" parameter for EC key: {}", crv);
                             continue;
                         }
-                        String x = key.has("x") ? key.getString("x") : null;
-                        String y = key.has("y") ? key.getString("y") : null;
+                        String x = key.containsKey("x") ? (String) key.get("x") : null;
+                        String y = key.containsKey("y") ? (String) key.get("y") : null;
                         if (x == null || y == null) {
                             LOG.warn("Invalid EC key definition: {}", key.toString());
                             continue;
                         }
                         try {
-                            JWK jwk = JWK.parse(key.toMap());
+                            JWK jwk = JWK.parse(key);
                             if (jwk.getKeyUse() == KeyUse.SIGNATURE) {
                                 cacheECKey(key, jwk.toECKey().toECPublicKey());
                                 contextKeys.add(jwk);
@@ -558,7 +558,7 @@ public class OidcConfiguration extends Configuration {
             }
 
             this.jwkContext = new JWKSecurityContext(contextKeys);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             LOG.error("Problem caching public keys: {}", e.getMessage());
         }
     }
@@ -583,7 +583,7 @@ public class OidcConfiguration extends Configuration {
                     if (!ct.getMimeType().equals(ContentType.APPLICATION_JSON.getMimeType())) {
                         LOG.warn("Expected {}, got {}", ContentType.APPLICATION_JSON, ct);
                     } else {
-                        return new JSONObject(EntityUtils.toString(entity,
+                        return (JSONObject) new JSONParser().parse(EntityUtils.toString(entity,
                                 ct.getCharset() == null ? Charset.defaultCharset() : ct.getCharset()));
                     }
                 }
@@ -592,16 +592,16 @@ public class OidcConfiguration extends Configuration {
         } catch (URISyntaxException e) {
             LOG.error("Problem with URI {}", url, e);
             return null;
-        } catch (IOException e) {
+        } catch (IOException | org.jolokia.json.parser.ParseException e) {
             LOG.error("Problem connecting to {}", url, e);
             return null;
         }
     }
 
     private void cacheRSAKey(JSONObject key) {
-        String kid = key.getString("kid");
-        String nv = key.getString("n");
-        String ev = key.getString("e");
+        String kid = (String) key.get("kid");
+        String nv = (String) key.get("n");
+        String ev = (String) key.get("e");
 
         BigInteger n = new BigInteger(1, Base64.getUrlDecoder().decode(nv));
         BigInteger e = new BigInteger(1, Base64.getUrlDecoder().decode(ev));
@@ -617,7 +617,7 @@ public class OidcConfiguration extends Configuration {
     }
 
     private void cacheECKey(JSONObject key, PublicKey publicKey) {
-        String kid = key.getString("kid");
+        String kid = (String) key.get("kid");
         this.publicKeys.put(kid, publicKey);
     }
 

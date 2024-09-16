@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
+import org.jolokia.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,7 +32,7 @@ public class ServletHelpersTest {
 
     @Test
     public void readObject() throws Exception {
-        String data = "{ string: 'text', number: 2, boolean: true }";
+        String data = "{ \"string\": \"text\", \"number\": 2, \"boolean\": true }";
         JSONObject json = ServletHelpers.readObject(
             new BufferedReader(new InputStreamReader(new ByteArrayInputStream(data.getBytes()))));
         assertThat(json.get("string"), equalTo("text"));

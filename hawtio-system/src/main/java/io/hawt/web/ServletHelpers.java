@@ -13,9 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
 import io.hawt.util.IOHelper;
+import org.jolokia.json.parser.JSONParser;
+import org.jolokia.json.parser.ParseException;
 import org.jolokia.server.core.service.serializer.SerializeOptions;
 import org.jolokia.service.serializer.JolokiaSerializer;
-import org.json.JSONObject;
+import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +88,11 @@ public class ServletHelpers {
 
     public static JSONObject readObject(BufferedReader reader) throws IOException {
         String data = IOHelper.readFully(reader);
-        return new JSONObject(data);
+        try {
+            return (JSONObject) new JSONParser().parse(data);
+        } catch (ParseException e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
     public static void writeEmpty(PrintWriter out) {
