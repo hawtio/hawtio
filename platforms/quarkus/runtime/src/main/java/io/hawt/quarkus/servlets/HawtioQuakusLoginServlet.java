@@ -14,7 +14,7 @@ import io.hawt.web.auth.AuthSessionHelpers;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.Redirector;
 import io.quarkus.arc.Arc;
-import org.json.JSONObject;
+import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

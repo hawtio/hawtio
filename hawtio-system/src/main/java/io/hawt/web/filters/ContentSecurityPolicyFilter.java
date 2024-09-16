@@ -19,7 +19,7 @@ import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.auth.oidc.OidcConfiguration;
-import org.json.JSONObject;
+import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

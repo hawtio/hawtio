@@ -84,8 +84,9 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.jolokia.json.JSONArray;
+import org.jolokia.json.JSONObject;
+import org.jolokia.json.parser.JSONParser;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -148,15 +149,15 @@ public class OidcConfigurationTest {
     }
 
     @Test
-    public void keysFromJWKS() throws IOException, ParseException, JOSEException {
-        JSONObject keys = new JSONObject(Files.readString(Paths.get("src/test/resources/keys.json")));
-        JSONArray array = keys.getJSONArray("keys");
-        JSONObject key1 = array.getJSONObject(0);
-        JWK jwk1 = JWK.parse(key1.toMap());
-        JSONObject key2 = array.getJSONObject(1);
-        JWK jwk2 = JWK.parse(key2.toMap());
-        JSONObject key3 = array.getJSONObject(2);
-        JWK jwk3 = JWK.parse(key3.toMap());
+    public void keysFromJWKS() throws IOException, ParseException, JOSEException, org.jolokia.json.parser.ParseException {
+        JSONObject keys = (JSONObject) new JSONParser().parse(Files.readString(Paths.get("src/test/resources/keys.json")));
+        JSONArray array = (JSONArray) keys.get("keys");
+        JSONObject key1 = (JSONObject) array.get(0);
+        JWK jwk1 = JWK.parse(key1);
+        JSONObject key2 = (JSONObject) array.get(1);
+        JWK jwk2 = JWK.parse(key2);
+        JSONObject key3 = (JSONObject) array.get(2);
+        JWK jwk3 = JWK.parse(key3);
 
         assertEquals(KeyType.RSA, jwk1.getKeyType());
         assertEquals(KeyUse.ENCRYPTION, jwk1.getKeyUse());
@@ -199,11 +200,11 @@ public class OidcConfigurationTest {
         props.setProperty("redirect_uri", "http://localhost:8080");
         props.setProperty("oidc.rolesPath", "resource_access.${client_id}.roles");
         OidcConfiguration cfg = new OidcConfiguration(props);
-        JSONObject json = new JSONObject(cfg.toJSON());
+        JSONObject json = (JSONObject) new JSONParser().parse(cfg.toJSON());
 
-        assertEquals("http://localhost:8180", json.getString("provider"));
-        assertEquals("fragment", json.getString("response_mode"));
-        assertEquals("openid email", json.getString("scope"));
+        assertEquals("http://localhost:8180", json.get("provider"));
+        assertEquals("fragment", json.get("response_mode"));
+        assertEquals("openid email", json.get("scope"));
     }
 
     @Test
@@ -236,7 +237,7 @@ public class OidcConfigurationTest {
         JSONObject keysDefinition = new JSONObject();
         JSONObject key = new JSONObject();
         JSONArray keysArray = new JSONArray(1);
-        keysArray.put(0, key);
+        keysArray.add(0, key);
         keysDefinition.put("keys", keysArray);
         key.put("kid", "key1");
         key.put("kty", KeyType.RSA.toString());
