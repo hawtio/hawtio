@@ -178,6 +178,9 @@ public class OidcLoginModule implements LoginModule {
             oidcConfiguration.refreshPublicKeysIfNeeded();
             // context built on available signature public keys
             JWKSecurityContext jwkContext = oidcConfiguration.getJwkContext();
+            if (jwkContext == null) {
+                return null;
+            }
             DefaultJWTProcessor<JWKSecurityContext> processor = new DefaultJWTProcessor<>();
             processor.setJWSKeySelector(new KidKeySelector());
             DefaultJWTClaimsVerifier<JWKSecurityContext> claimsVerifier = new DefaultJWTClaimsVerifier<>(null, null, Set.of("sub"));
