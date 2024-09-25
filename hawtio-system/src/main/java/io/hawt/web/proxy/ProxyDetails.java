@@ -40,7 +40,7 @@ public class ProxyDetails implements ProxyAddress {
         Authenticator.extractAuthHeader(httpServletRequest, (user, pass) -> {
             userName = user;
             password = pass;
-        });
+        }, true);
 
         // let's add the query parameters
         Enumeration<?> iter = httpServletRequest.getParameterNames();

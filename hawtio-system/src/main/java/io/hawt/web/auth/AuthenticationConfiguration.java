@@ -444,11 +444,12 @@ public class AuthenticationConfiguration {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <T> Class<T> tryLoadClass(String roleClass, Class<T> clazz) {
         try {
             Class<?> cls = getClass().getClassLoader().loadClass(roleClass);
             if (clazz.isAssignableFrom(cls)) {
-                return clazz;
+                return (Class<T>) cls;
             } else {
                 LOG.warn("Class {} doesn't implement {}", cls, clazz);
             }
