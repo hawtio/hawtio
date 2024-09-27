@@ -166,7 +166,7 @@ public class AuthenticationFilter implements Filter {
                 return null;
             });
         } catch (PrivilegedActionException e) {
-            LOG.info("Failed to invoke action {} due to:", ((HttpServletRequest) request).getPathInfo(), e);
+            LOG.info("Failed to handle {} due to:", ((HttpServletRequest) request).getRequestURI(), e.getCause());
         }
     }
 
