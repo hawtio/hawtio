@@ -18,7 +18,9 @@ package io.hawt.springboot.security;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.spi.LoginModule;
@@ -65,7 +67,8 @@ public class HawtioSpringSecurityLoginModule implements LoginModule {
         // see org.springframework.security.core.userdetails.User.UserBuilder.roles()
         // where "role" is something like "admin", "viewer", ..., while
         // "authority" is a role name prefixed with "ROLE_"
-        for (Principal principal : this.subject.getPrincipals()) {
+        Set<Principal> principals = new LinkedHashSet<>(this.subject.getPrincipals());
+        for (Principal principal : principals) {
             if (principal instanceof Authentication auth) {
                 for (GrantedAuthority ga : auth.getAuthorities()) {
                     String role = ga.getAuthority();
