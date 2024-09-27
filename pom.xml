@@ -55,7 +55,7 @@
     <quarkus-version>3.12.1</quarkus-version>
     <!-- Spring -->
     <spring-version>6.1.13</spring-version>
-    <spring-boot-version>3.3.3</spring-boot-version>
+    <spring-boot-version>3.3.4</spring-boot-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.7.0</camel-spring-boot-version>
     <!-- Jetty -->
