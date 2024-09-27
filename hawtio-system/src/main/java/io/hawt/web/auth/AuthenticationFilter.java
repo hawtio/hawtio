@@ -103,7 +103,7 @@ public class AuthenticationFilter implements Filter {
             // current subject/name (from session) with Authorization header as this one is for remote Jolokia
             // we only require a subject to be present in session
             if (proxyMode == ProxyRequestType.PROXY) {
-                if (subject != null) {
+                if (subject != null || ((HttpServletRequest) request).getUserPrincipal() != null) {
                     chain.doFilter(request, response);
                 } else {
                     ServletHelpers.doForbidden(httpResponse);
