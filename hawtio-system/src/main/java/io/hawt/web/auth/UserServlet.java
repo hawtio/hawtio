@@ -45,14 +45,14 @@ public class UserServlet extends HttpServlet {
     }
 
     protected String getUsername(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            return null;
-        }
-
         // For Spring Security
         if (authConfiguration.isSpringSecurityEnabled()) {
             return request.getRemoteUser();
+        }
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
         }
 
         return (String) session.getAttribute("user");
