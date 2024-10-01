@@ -665,7 +665,7 @@ __metadata:
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.5"
     "@hawtio/react": "npm:^1.4.0"
-    "@swc/core": "npm:^1.7.22"
+    "@swc/core": "npm:^1.7.26"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.0"
@@ -1498,90 +1498,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-darwin-arm64@npm:1.7.22"
+"@swc/core-darwin-arm64@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-darwin-arm64@npm:1.7.28"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-darwin-x64@npm:1.7.22"
+"@swc/core-darwin-x64@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-darwin-x64@npm:1.7.28"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.7.22"
+"@swc/core-linux-arm-gnueabihf@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.7.28"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.7.22"
+"@swc/core-linux-arm64-gnu@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.7.28"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-linux-arm64-musl@npm:1.7.22"
+"@swc/core-linux-arm64-musl@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-linux-arm64-musl@npm:1.7.28"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-linux-x64-gnu@npm:1.7.22"
+"@swc/core-linux-x64-gnu@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-linux-x64-gnu@npm:1.7.28"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-linux-x64-musl@npm:1.7.22"
+"@swc/core-linux-x64-musl@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-linux-x64-musl@npm:1.7.28"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.7.22"
+"@swc/core-win32-arm64-msvc@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.7.28"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.7.22"
+"@swc/core-win32-ia32-msvc@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.7.28"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core-win32-x64-msvc@npm:1.7.22"
+"@swc/core-win32-x64-msvc@npm:1.7.28":
+  version: 1.7.28
+  resolution: "@swc/core-win32-x64-msvc@npm:1.7.28"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.7.22":
-  version: 1.7.22
-  resolution: "@swc/core@npm:1.7.22"
+"@swc/core@npm:^1.7.26":
+  version: 1.7.28
+  resolution: "@swc/core@npm:1.7.28"
   dependencies:
-    "@swc/core-darwin-arm64": "npm:1.7.22"
-    "@swc/core-darwin-x64": "npm:1.7.22"
-    "@swc/core-linux-arm-gnueabihf": "npm:1.7.22"
-    "@swc/core-linux-arm64-gnu": "npm:1.7.22"
-    "@swc/core-linux-arm64-musl": "npm:1.7.22"
-    "@swc/core-linux-x64-gnu": "npm:1.7.22"
-    "@swc/core-linux-x64-musl": "npm:1.7.22"
-    "@swc/core-win32-arm64-msvc": "npm:1.7.22"
-    "@swc/core-win32-ia32-msvc": "npm:1.7.22"
-    "@swc/core-win32-x64-msvc": "npm:1.7.22"
+    "@swc/core-darwin-arm64": "npm:1.7.28"
+    "@swc/core-darwin-x64": "npm:1.7.28"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.7.28"
+    "@swc/core-linux-arm64-gnu": "npm:1.7.28"
+    "@swc/core-linux-arm64-musl": "npm:1.7.28"
+    "@swc/core-linux-x64-gnu": "npm:1.7.28"
+    "@swc/core-linux-x64-musl": "npm:1.7.28"
+    "@swc/core-win32-arm64-msvc": "npm:1.7.28"
+    "@swc/core-win32-ia32-msvc": "npm:1.7.28"
+    "@swc/core-win32-x64-msvc": "npm:1.7.28"
     "@swc/counter": "npm:^0.1.3"
     "@swc/types": "npm:^0.1.12"
   peerDependencies:
@@ -1610,7 +1610,7 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: 10/9b1a1323fa67e12edb933fa8f526f90bf59ed3a44fa2322cbc7888d57d8cbd1f31c06cf4c794b9236d9dbda26c05793ea3a5f6d2d059442c465e86f56317d97e
+  checksum: 10/a477e79387ecc8b68c2bdbbdc88cc61f27a02c5d00f0d77134f9e2de166786a4ee9f7388d6ffd44fc01bfef5311a15cc3132052bab72fb43246dc42705fedb60
   languageName: node
   linkType: hard
 
