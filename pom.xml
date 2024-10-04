@@ -73,7 +73,7 @@
     <httpcore-version>4.4.16</httpcore-version>
     <httpclient-version>4.5.14</httpclient-version>
     <jackson-version>2.18.0</jackson-version>
-    <junit5-version>5.10.3</junit5-version>
+    <junit5-version>5.11.1</junit5-version>
     <log4j2-version>2.24.1</log4j2-version>
     <mockito-core-version>5.13.0</mockito-core-version>
     <nimbusds-jose-version>9.41.2</nimbusds-jose-version>
