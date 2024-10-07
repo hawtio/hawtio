@@ -50,7 +50,7 @@
 
     <!-- Versions for major components -->
     <!-- Jolokia -->
-    <jolokia-version>2.0.3</jolokia-version>
+    <jolokia-version>2.1.1</jolokia-version>
     <!-- Quarkus -->
     <quarkus-version>3.8.4.SP1-redhat-00001</quarkus-version>
     <quarkus-extension-version>3.8.4.redhat-00002</quarkus-extension-version>
@@ -67,20 +67,19 @@
     <keycloak-version>23.0.1</keycloak-version>
 
     <!-- Other dependencies -->
-    <assertj-core-version>3.26.0</assertj-core-version>
+    <assertj-core-version>3.26.3</assertj-core-version>
     <caffeine-version>3.1.8</caffeine-version>
-    <commons-codec-version>1.17.0</commons-codec-version>
+    <commons-codec-version>1.17.1</commons-codec-version>
     <commons-io-version>2.16.1</commons-io-version>
-    <commons-logging-version>1.3.2</commons-logging-version>
-    <hamcrest-version>2.2</hamcrest-version>
+    <commons-logging-version>1.3.4</commons-logging-version>
+    <hamcrest-version>3.0</hamcrest-version>
     <httpcore-version>4.4.16</httpcore-version>
     <httpclient-version>4.5.14</httpclient-version>
-    <jackson-version>2.17.1</jackson-version>
+    <jackson-version>2.18.0</jackson-version>
     <junit5-version>5.10.3</junit5-version>
-    <log4j2-version>2.23.1</log4j2-version>
-    <mockito-core-version>5.12.0</mockito-core-version>
-    <nimbusds-jose-version>9.40</nimbusds-jose-version>
-    <org-json-version>20240303</org-json-version>
+    <log4j2-version>2.24.1</log4j2-version>
+    <mockito-core-version>5.13.0</mockito-core-version>
+    <nimbusds-jose-version>9.41.2</nimbusds-jose-version>
     <picocli-version>4.7.6</picocli-version>
     <servlet-api-version>5.0.0</servlet-api-version>
     <!-- Pin SLF4J version until https://issues.apache.org/jira/browse/CAMEL-20598 is resolved at SLF4J -->
@@ -92,18 +91,18 @@
 
     <!-- Maven plugins -->
     <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
-    <docker-plugin-version>0.44.0</docker-plugin-version>
-    <exec-maven-plugin-version>3.3.0</exec-maven-plugin-version>
-    <frontend-maven-plugin-version>1.15.0</frontend-maven-plugin-version>
+    <docker-plugin-version>0.45.1</docker-plugin-version>
+    <exec-maven-plugin-version>3.4.1</exec-maven-plugin-version>
+    <frontend-maven-plugin-version>1.15.1</frontend-maven-plugin-version>
     <jetty-plugin-version>11.0.19</jetty-plugin-version>
     <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
     <maven-clean-plugin-version>3.4.0</maven-clean-plugin-version>
     <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
-    <maven-dependency-plugin-version>3.7.1</maven-dependency-plugin-version>
-    <maven-failsafe-plugin-version>3.3.0</maven-failsafe-plugin-version>
-    <maven-release-plugin-version>3.1.0</maven-release-plugin-version>
+    <maven-dependency-plugin-version>3.8.0</maven-dependency-plugin-version>
+    <maven-failsafe-plugin-version>3.5.0</maven-failsafe-plugin-version>
+    <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-    <maven-surefire-plugin-version>3.3.0</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>3.5.0</maven-surefire-plugin-version>
     <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
 
     <!-- Overrides jboss-parent properties as otherwise releasing starts to fail since jboss-parent 43. -->

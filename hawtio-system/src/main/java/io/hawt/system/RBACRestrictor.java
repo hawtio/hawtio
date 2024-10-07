@@ -126,4 +126,10 @@ public class RBACRestrictor implements Restrictor {
         return allowed;
     }
 
+    @Override
+    public boolean isObjectNameHidden(ObjectName name) {
+        boolean hidden = delegate.isObjectNameHidden(name);
+        LOG.trace("isObjectNameHidden(name = {}) = {}", name, hidden);
+        return hidden;
+    }
 }

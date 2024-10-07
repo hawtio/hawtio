@@ -85,9 +85,12 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
 
         if (proxyMode == ProxyRequestType.PROXY && session == null) {
-            // we reject proxy requests without session, because Authorization header is targeted at remote Jolokia
-            ServletHelpers.doForbidden(httpResponse, ForbiddenReason.SESSION_EXPIRED);
-            return;
+            if (!authConfiguration.isExternalAuthenticationEnabled()) {
+                // simple - we need a session, we don't have one
+                // we reject proxy requests without session, because Authorization header is targeted at remote Jolokia
+                ServletHelpers.doForbidden(httpResponse, ForbiddenReason.SESSION_EXPIRED);
+                return;
+            }
         }
 
         if (session != null) {
@@ -100,7 +103,7 @@ public class AuthenticationFilter implements Filter {
             // current subject/name (from session) with Authorization header as this one is for remote Jolokia
             // we only require a subject to be present in session
             if (proxyMode == ProxyRequestType.PROXY) {
-                if (subject != null) {
+                if (subject != null || ((HttpServletRequest) request).getUserPrincipal() != null) {
                     chain.doFilter(request, response);
                 } else {
                     ServletHelpers.doForbidden(httpResponse);
@@ -163,7 +166,7 @@ public class AuthenticationFilter implements Filter {
                 return null;
             });
         } catch (PrivilegedActionException e) {
-            LOG.info("Failed to invoke action {} due to:", ((HttpServletRequest) request).getPathInfo(), e);
+            LOG.info("Failed to handle {} due to:", ((HttpServletRequest) request).getRequestURI(), e.getCause());
         }
     }
 

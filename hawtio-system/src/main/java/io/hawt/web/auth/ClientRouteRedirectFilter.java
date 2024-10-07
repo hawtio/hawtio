@@ -189,13 +189,22 @@ public class ClientRouteRedirectFilter implements Filter {
         // authentication attempt will be made only for "secure" paths which are paths like /hawtio/jmx.
         //  - /hawtio/jolokia/*, /hawtio/proxy/* are handled and authenticated by AuthenticationFilter in case #0
         //  - /hawtio/css/*, /hawtio/index.html, ... are not authenticated and are handled in case #0
-        boolean preemptiveAuth = tryAuthenticateRequest(httpRequest, session);
+        AuthenticateResult.Type preemptiveAuthResult = tryAuthenticateRequest(httpRequest, session);
 
         // 4) at this stage we have to redirect to /login if authentication failed
-        if (!preemptiveAuth) {
+        if (preemptiveAuthResult != AuthenticateResult.Type.AUTHORIZED) {
             // redirect to login page - no other option. Actually later we're forwarded to /index.html
             // but user sees /login in URL, so it's good
-            redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
+
+            if (preemptiveAuthResult != AuthenticateResult.Type.NOT_AUTHORIZED) {
+                // this is usually normal - user browses to Hawtio for the first time
+                redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
+            } else {
+                // NOT_AUTHORIZED means there WAS an authentication attempt (for example with certificat login)
+                // so we have to tell client-side login page that there was some kind of failure
+                // (without providing too many details)
+                redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL + "#noauth");
+            }
             return;
         }
 
@@ -211,7 +220,7 @@ public class ClientRouteRedirectFilter implements Filter {
      * @param session
      * @return
      */
-    boolean tryAuthenticateRequest(HttpServletRequest request, HttpSession session) {
+    AuthenticateResult.Type tryAuthenticateRequest(HttpServletRequest request, HttpSession session) {
         AuthenticateResult result = new Authenticator(request, authConfiguration).authenticate(
             subject -> {
                 String username = AuthHelpers.getUsername(subject);
@@ -220,7 +229,7 @@ public class ClientRouteRedirectFilter implements Filter {
                     request.getSession(true), subject, username, timeout);
             });
 
-        return result.is(AuthenticateResult.Type.AUTHORIZED);
+        return result.getType();
     }
 
     /**

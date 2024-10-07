@@ -24,6 +24,12 @@
 
     <!-- Jolokia -->
     <dependency>
+      <!-- Used to read hawtconfig.json file -->
+      <groupId>org.jolokia</groupId>
+      <artifactId>jolokia-json</artifactId>
+      <version>${jolokia-version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-server-core</artifactId>
       <version>${jolokia-version}</version>
@@ -102,13 +108,6 @@
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
       <version>${caffeine-version}</version>
-    </dependency>
-
-    <!-- Used to read hawtconfig.json file -->
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>${org-json-version}</version>
     </dependency>
 
     <!-- testing -->

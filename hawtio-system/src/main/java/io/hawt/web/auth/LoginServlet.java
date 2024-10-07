@@ -17,7 +17,7 @@ import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
 import io.hawt.web.ServletHelpers;
-import org.json.JSONObject;
+import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

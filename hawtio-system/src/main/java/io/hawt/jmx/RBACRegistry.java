@@ -18,6 +18,7 @@ package io.hawt.jmx;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -132,9 +133,9 @@ public class RBACRegistry implements RBACRegistryMBean {
             return null;
         }
 
-        Stack<String> pathStack = EscapeUtil.extractElementsFromPath(path);
+        Deque<String> pathStack = EscapeUtil.extractElementsFromPath(path);
         String domain = pathStack.pop();
-        if (pathStack.empty()) {
+        if (pathStack.isEmpty()) {
             return new ObjectName(domain + ":*");
         }
         String props = pathStack.pop();

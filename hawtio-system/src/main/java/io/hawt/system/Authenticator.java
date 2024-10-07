@@ -43,6 +43,7 @@ public class Authenticator {
     private static final Logger LOG = LoggerFactory.getLogger(Authenticator.class);
 
     public static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String X_J_HEADER_AUTHORIZATION = "X-Jolokia-Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
     public static final String AUTHENTICATION_SCHEME_BEARER = "Bearer";
     public static final String ATTRIBUTE_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
@@ -94,7 +95,22 @@ public class Authenticator {
      * Callback is invoked only when Authorization header is present.
      */
     public static void extractAuthHeader(HttpServletRequest request, BiConsumer<String, String> callback) {
-        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+        extractAuthHeader(request, callback, false);
+    }
+
+    /**
+     * Extracts username/password from Authorization header.
+     * Callback is invoked only when Authorization header is present.
+     */
+    public static void extractAuthHeader(HttpServletRequest request, BiConsumer<String, String> callback,
+            boolean checkExtraHeaders) {
+        String authHeader = null;
+        if (checkExtraHeaders) {
+            authHeader = request.getHeader(X_J_HEADER_AUTHORIZATION);
+        }
+        if (Strings.isBlank(authHeader)) {
+            authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+        }
         if (Strings.isBlank(authHeader)) {
             return;
         }

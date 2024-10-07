@@ -86,9 +86,12 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
         HttpSession session = httpRequest.getSession(false);
 
         if (proxyMode == ProxyRequestType.PROXY && session == null) {
-            // we reject proxy requests without session, because Authorization header is targeted at remote Jolokia
-            ServletHelpers.doForbidden(httpResponse, ForbiddenReason.SESSION_EXPIRED);
-            return;
+            if (!authConfiguration.isExternalAuthenticationEnabled()) {
+                // simple - we need a session, we don't have one
+                // we reject proxy requests without session, because Authorization header is targeted at remote Jolokia
+                ServletHelpers.doForbidden(httpResponse, ForbiddenReason.SESSION_EXPIRED);
+                return;
+            }
         }
 
         if (session != null) {
