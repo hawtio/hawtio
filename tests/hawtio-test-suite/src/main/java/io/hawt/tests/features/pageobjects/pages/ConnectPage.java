@@ -64,7 +64,7 @@ public class ConnectPage extends HawtioPage {
         $(MODAL).$(FOOTER_BUTTON).click();
     }
 
-    public void connectTo(String name) {
+    public void connectToAndLogin(String name) {
         final By connectionSelector = By.cssSelector("div[rowid=\"connection " + name + "\"]");
 
         final String username = TestConfiguration.getConnectAppUsername();
@@ -82,4 +82,23 @@ public class ConnectPage extends HawtioPage {
         $(CONNECTION_LOGIN_FORM).$(By.id("connect-login-form-password")).setValue(password);
         $(MODAL).$(FOOTER_BUTTON).shouldBe(Condition.interactable, Duration.ofSeconds(5)).click();
     }
+
+    public static void login(String username, String password) {
+        $(CONNECTION_LOGIN_FORM).$(By.id("connect-login-form-username")).setValue(username);
+        $(CONNECTION_LOGIN_FORM).$(By.id("connect-login-form-password")).setValue(password);
+        $(MODAL).$(FOOTER_BUTTON).shouldBe(Condition.interactable, Duration.ofSeconds(5)).click();
+    }
+
+    public void connectTo(String name) {
+
+        final By connectionSelector = By.cssSelector("div[rowid=\"connection " + name + "\"]");
+        WaitUtils.withRetry(() -> {
+            $(CONNECTION_LIST).$(connectionSelector).shouldBe(Condition.interactable, Duration.ofSeconds(5))
+                .click();
+
+            Selenide.Wait().until(ExpectedConditions.numberOfWindowsToBe(2));
+            Selenide.switchTo().window(1);
+        }, 5, Duration.ofSeconds(5));
+    }
+
 }

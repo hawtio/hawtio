@@ -1,16 +1,7 @@
 package io.hawt.tests.features.setup;
 
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.interactable;
-import static com.codeborne.selenide.Selenide.$;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.codeborne.selenide.Selenide;
-
-import java.time.Duration;
-
+import com.codeborne.selenide.WebDriverRunner;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.hooks.DeployAppHook;
 import io.hawt.tests.features.openshift.OpenshiftClient;
@@ -21,6 +12,14 @@ import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlinePage;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+
+import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Selenide.$;
 
 public class LoginLogout {
     private static final Panel panel = new Panel();
@@ -44,10 +43,15 @@ public class LoginLogout {
             Selenide.open(DeployAppHook.getBaseURL(), HawtioOnlineLoginPage.class)
                 .login(TestConfiguration.getOpenshiftUsername(), TestConfiguration.getOpenshiftPassword());
         } else {
-            Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/connect", LoginPage.class).login(username, password);
+            if (WebDriverRunner.hasWebDriverStarted() && WebDriverRunner.url().contains("/connect/login")) {
+                ConnectPage.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
+            } else {
+                Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/connect", LoginPage.class).login(username, password);
+            }
         }
 
-        if (TestConfiguration.getConnectUrl() != null) {
+        if (TestConfiguration.getConnectUrl() != null && WebDriverRunner.url().contains("/connect/")) {
+            LOG.info("Connect page URL: " + WebDriverRunner.url());
             var connectPage = new ConnectPage();
             connectPage.addConnection(connectionName, TestConfiguration.getConnectUrl());
             connectPage.connectTo(connectionName);
