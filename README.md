@@ -21,7 +21,7 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 - [Running a Quarkus app](#running-a-quarkus-app)
 - [Deploying on OpenShift](https://github.com/hawtio/hawtio-online)
 
-For more details and other containers, see [Get Started Guide](https://hawt.io/docs/get-started/).
+For more details and other containers, see [Get Started Guide](https://hawt.io/docs/get-started.html).
 
 ### Running from CLI (JBang)
 
