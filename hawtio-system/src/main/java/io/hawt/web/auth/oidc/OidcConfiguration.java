@@ -374,7 +374,7 @@ public class OidcConfiguration extends Configuration {
         if (proxy != null) {
             URI uri = URI.create(proxy);
             String scheme = uri.getScheme();
-            String host = uri.getScheme();
+            String host = uri.getHost();
             int port = uri.getPort();
             if (port <= 0) {
                 if (scheme.equals("http")) {
