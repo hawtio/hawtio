@@ -664,12 +664,13 @@ __metadata:
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.5"
-    "@hawtio/react": "npm:^1.6.0"
+    "@hawtio/react": "npm:^1.6.1"
     "@swc/core": "npm:^1.7.26"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.0"
     jest: "npm:^29.7.0"
+    monaco-editor: "npm:^0.52.0"
     monaco-editor-webpack-plugin: "npm:^7.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -682,14 +683,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "@hawtio/react@npm:1.6.0"
+"@hawtio/react@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "@hawtio/react@npm:1.6.1"
   dependencies:
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.3"
     "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.0"
     "@jolokia.js/simple": "npm:^2.1.7"
     "@module-federation/utilities": "npm:^3.1.16"
+    "@monaco-editor/react": "npm:^4.6.0"
     "@patternfly/react-charts": "npm:~7.3.0"
     "@patternfly/react-code-editor": "npm:~5.3.3"
     "@patternfly/react-core": "npm:~5.3.3"
@@ -734,7 +736,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/639a22bdf37bf42d3e1ba25509913c0174d3c26b8655764c09f70157d590c0391fd70913825e658824d062ea3966ccd04242e98e3be39e2503567fe1505f6246
+  checksum: 10/407ce18c9394c173ea3eefd946d4b54fd5938140f7b6e0969266b48aa0c5ef098c2a40ba78209ebdb9bdbf457d6adfaf808456258683955fcda521df85266c53
   languageName: node
   linkType: hard
 
