@@ -670,6 +670,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.0"
     jest: "npm:^29.7.0"
+    monaco-editor: "npm:^0.52.0"
     monaco-editor-webpack-plugin: "npm:^7.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
