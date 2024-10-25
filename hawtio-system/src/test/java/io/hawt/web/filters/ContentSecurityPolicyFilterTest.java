@@ -57,12 +57,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self'; frame-src 'self'; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
-                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
-                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
+                + "script-src-elem 'self'; "
+                + "style-src-elem 'self' 'unsafe-inline'");
     }
 
     @Test
@@ -75,12 +75,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' http://localhost:8180; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
-                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
-                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
+                + "script-src-elem 'self'; "
+                + "style-src-elem 'self' 'unsafe-inline'");
     }
 
     @Test
@@ -93,12 +93,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' http://localhost:8180; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
-                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
-                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
+                + "script-src-elem 'self'; "
+                + "style-src-elem 'self' 'unsafe-inline'");
     }
 
     @Test
@@ -115,12 +115,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self' https://login.microsoftonline.com; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self' https://login.microsoftonline.com; frame-src 'self' https://login.microsoftonline.com; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
-                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
-                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
+                + "script-src-elem 'self'; "
+                + "style-src-elem 'self' 'unsafe-inline'");
     }
 
     @Test
@@ -133,12 +133,12 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader(eq("Content-Security-Policy"), eq(
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; "
                 + "img-src 'self' data:; connect-src 'self'; frame-src 'self'; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
-                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
-                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/"));
+                + "script-src-elem 'self'; "
+                + "style-src-elem 'self' 'unsafe-inline'"));
     }
 
     @Test
@@ -151,11 +151,11 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; "
-                + "style-src 'self' 'unsafe-inline'; font-src 'self' data: https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; img-src 'self' data:; "
+                + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                 + "connect-src 'self'; frame-src 'self'; "
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'self'; "
-                + "script-src-elem 'self' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/; "
-                + "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/");
+                + "script-src-elem 'self'; "
+                + "style-src-elem 'self' 'unsafe-inline'");
     }
 }
