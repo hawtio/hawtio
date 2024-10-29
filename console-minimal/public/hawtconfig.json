@@ -1,9 +1,10 @@
 {
   "branding": {
-    "appName": "Hawtio Management Console",
-    "appLogoUrl": "img/hawtio-logo.svg",
-    "companyLogoUrl": "img/hawtio-logo.svg",
-    "css": "",
+    "appName": "Red Hat build of Hawtio",
+    "showAppName": true,
+    "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
+    "companyLogoUrl": "img/Logo-RedHat-A-Reverse-RGB.png",
+    "css": "branding-redhat.css",
     "favicon": ""
   },
   "login": {
@@ -11,11 +12,12 @@
     "links": []
   },
   "about": {
-    "title": "Hawtio Management Console",
+    "title": "Red Hat build of Hawtio",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "",
-    "imgSrc": "img/hawtio-logo.svg"
+    "copyright": "© Hawtio project & Red Hat",
+    "imgSrc": "img/Logo-RedHat-A-Reverse-RGB.png",
+    "backgroundImgSrc": "img/background-inverted.svg"
   },
   "disabledRoutes": []
 }
