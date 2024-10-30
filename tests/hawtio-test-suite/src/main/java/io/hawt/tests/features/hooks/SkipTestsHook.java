@@ -1,10 +1,11 @@
 package io.hawt.tests.features.hooks;
 
-import org.junit.jupiter.api.Assumptions;
-
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.hawt.tests.features.config.TestConfiguration;
+import io.hawt.tests.features.setup.LoginLogout;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
+import org.junit.jupiter.api.Assumptions;
 
 public class SkipTestsHook {
 
@@ -32,5 +33,11 @@ public class SkipTestsHook {
     public void skipTestsNotOnOnline() {
         Assumptions.assumeTrue(TestConfiguration.getAppDeploymentMethod() instanceof OpenshiftDeployment);
     }
+
+    @After("@throttling")
+    public void afterThrottling() {
+        LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
+    }
+
 
 }
