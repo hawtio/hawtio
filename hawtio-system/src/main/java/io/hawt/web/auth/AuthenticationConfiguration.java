@@ -212,9 +212,6 @@ public class AuthenticationConfiguration {
         }
 
         this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
-        boolean throttled = config.getBoolean(AUTHENTICATION_THROTTLED, true);
-        LOG.info("Authentication throttling is {}", throttled ? "enabled" : "disabled");
-        this.throttler = throttled ? Optional.of(new AuthenticationThrottler()) : Optional.empty();
         this.realm = config.get(REALM).orElse(DEFAULT_REALM);
         this.roles = config.get(ROLES).orElse(DEFAULT_KARAF_ROLES);
         String defaultRolePrincipalClasses = isKaraf() ? DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES : "";
@@ -222,6 +219,14 @@ public class AuthenticationConfiguration {
         this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass(this.rolePrincipalClasses);
         this.noCredentials401 = config.getBoolean(NO_CREDENTIALS_401, false);
         this.keycloakEnabled = this.enabled && config.getBoolean(KEYCLOAK_ENABLED, false);
+
+        boolean throttled = config.getBoolean(AUTHENTICATION_THROTTLED, true);
+        // Throttling should be disabled when Keycloak is used
+        if (this.keycloakEnabled) {
+            throttled = false;
+        }
+        LOG.info("Authentication throttling is {}", throttled ? "enabled" : "disabled");
+        this.throttler = throttled ? Optional.of(new AuthenticationThrottler()) : Optional.empty();
 
         if (this.enabled) {
             String authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES).orElse(TOMCAT_AUTH_CONTAINER_DISCOVERY);
@@ -282,6 +287,10 @@ public class AuthenticationConfiguration {
     }
 
     public Optional<AuthenticationThrottler> getThrottler() {
+        // Throttling should be disabled when OIDC is used
+        if (isOidcEnabled()) {
+            return Optional.empty();
+        }
         return throttler;
     }
 
