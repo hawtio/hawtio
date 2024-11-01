@@ -155,7 +155,7 @@ jobs:
           private_key: ${{ secrets.HAWTIO_CI_PRIVATE_KEY }}
       - name: Comment PR with summary
         if: github.event_name == 'pull_request_target'
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@v3
         with:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           filePath: summary.md
