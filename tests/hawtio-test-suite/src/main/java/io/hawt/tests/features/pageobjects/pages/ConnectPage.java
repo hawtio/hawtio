@@ -13,6 +13,7 @@ import java.net.URL;
 import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.Wait;
 
 public class ConnectPage extends HawtioPage {
 
@@ -34,34 +35,36 @@ public class ConnectPage extends HawtioPage {
         final String connectionSchemeHttps = "connection-form-scheme-on";
 
         //Don't try to create the same connection twice
-        try {
-            $(ByUtils.byAttribute("rowid", "connection " + name)).shouldNot(Condition.exist, Duration.ofSeconds(10));
-        } catch (ConditionNotMetError e) {
-            return;
-        }
+//        try {
+//            $(ByUtils.byAttribute("rowid", "connection " + name)).shouldNot(Condition.exist, Duration.ofSeconds(10));
+//        } catch (ConditionNotMetError e) {
+//            return;
+//        }
+        if ($(ByUtils.byAttribute("rowid", "connection " + name)).exists()){
+            connectToAndLogin(name);
+        } else {
+            $(CONNECT_BUTTON).shouldBe(Condition.interactable).click();
 
-        $(CONNECT_BUTTON).shouldBe(Condition.interactable).click();
+            $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
 
-        $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
+            // If Scheme is HTTPS, switch to HTTP
+            if (connectionSchemeHttps.equals($(CONNECTION_SCHEME).getAttribute("aria-labelledby"))) {
+                $(CONNECTION_SCHEME_TOGGLE).click();
+            }
 
-        // If Scheme is HTTPS, switch to HTTP
-        if (connectionSchemeHttps.equals($(CONNECTION_SCHEME).getAttribute("aria-labelledby"))) {
-            $(CONNECTION_SCHEME_TOGGLE).click();
-        }
+            $(CONNECTION_FORM).$(By.id("connection-form-host")).setValue(connection.getHost());
+            $(CONNECTION_FORM).$(By.id("connection-form-port")).setValue(String.valueOf(connection.getPort()));
+            $(CONNECTION_FORM).$(By.id("connection-form-path")).setValue(connection.getPath());
 
-        $(CONNECTION_FORM).$(By.id("connection-form-host")).setValue(connection.getHost());
-        $(CONNECTION_FORM).$(By.id("connection-form-port")).setValue(String.valueOf(connection.getPort()));
-        $(CONNECTION_FORM).$(By.id("connection-form-path")).setValue(connection.getPath());
+            if (!connection.getPath().endsWith("/jolokia")) {
+                $(CONNECTION_FORM).$(By.id("connection-form-path")).sendKeys("/jolokia");
+            }
 
-        if (!connection.getPath().endsWith("/jolokia")) {
-            $(CONNECTION_FORM).$(By.id("connection-form-path")).sendKeys("/jolokia");
-        }
+            if ("https".equals(connection.getProtocol())) {
+                $(CONNECTION_FORM).$(By.id("connection-form-scheme")).click();
+            }
 
-        if ("https".equals(connection.getProtocol())) {
-            $(CONNECTION_FORM).$(By.id("connection-form-scheme")).click();
-        }
-
-        $(MODAL).$(FOOTER_BUTTON).click();
+            $(MODAL).$(FOOTER_BUTTON).click();}
     }
 
     public void connectToAndLogin(String name) {
