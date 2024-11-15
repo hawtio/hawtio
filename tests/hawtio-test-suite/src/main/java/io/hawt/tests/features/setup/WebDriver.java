@@ -33,7 +33,7 @@ public class WebDriver {
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
         if (Configuration.browser.equals("chrome")) {
             ChromeOptions options = new ChromeOptions();
-            options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false));
+            options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false, "profile.password_manager_leak_detection", false));
             options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
             Configuration.browserCapabilities = options;
         } else {

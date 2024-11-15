@@ -2,8 +2,6 @@ package io.hawt.tests.features.pageobjects.pages.openshift;
 
 import static com.codeborne.selenide.Selenide.$;
 
-import org.junit.Assert;
-
 import org.assertj.core.api.Assertions;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
@@ -26,7 +24,7 @@ public class HawtioOnlineLoginPage {
     public void login(String username, String password) {
         WaitUtils.waitForPageLoad();
 
-        final By appUnavailableSelector = ByUtils.byText("h1", "Application is not available");
+        final By appUnavailableSelector = ByUtils.byExactText("h1", "Application is not available");
         if ($(appUnavailableSelector).exists()) {
             LOG.info("Application is not available, let's wait and reload :)");
             WaitUtils.wait(Duration.ofSeconds(10));
