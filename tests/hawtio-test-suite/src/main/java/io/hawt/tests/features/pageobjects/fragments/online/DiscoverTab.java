@@ -9,6 +9,7 @@ import org.openqa.selenium.Keys;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -25,13 +26,14 @@ public class DiscoverTab {
 
     private static final By SEARCH_INPUT = By.cssSelector("#search-filter-input input[type=\"text\"]");
     private static final By SEARCH_DROPDOWN_BUTTON = By.cssSelector("button[aria-label=\"Options menu\"]");
+    private static final By DISCOVER_TABS = By.className("pf-v5-c-tabs__list");
 
     public static final boolean REPLICA_SET_WORKAROUND = true;
-    public static final String ACCORDION = "pf-v5-c-accordion";
+    public static final By ACTIVE_DEPLOYMENT_LIST = By.cssSelector(".pf-v5-c-tab-content:not([hidden])");
 
     public void connectTo(String name) {
         waitForPageLoaded();
-        new PodEntry($(ByUtils.byText("button", name)).ancestor("li")).connect();
+        new PodEntry($(ByUtils.byExactText(name)).ancestor("li")).connect();
         Selenide.switchTo().window(1);
     }
 
@@ -51,7 +53,7 @@ public class DiscoverTab {
             return;
         }
         $(SEARCH_DROPDOWN_BUTTON).click();
-        $(By.id("select-filter-type")).$(ByUtils.byText("button", StringUtils.capitalize(type))).click();
+        $(By.id("select-filter-type")).$(ByUtils.byExactText("button", StringUtils.capitalize(type))).click();
     }
 
     public void searchByNamespace(String namespace) {
@@ -61,7 +63,7 @@ public class DiscoverTab {
 
     public Map<String, DeploymentEntry> getDeployments() {
         waitForPageLoaded();
-        return $(By.className(ACCORDION)).$$(By.tagName("dt")).asFixedIterable().stream().map(DeploymentEntry::new)
+        return $(ACTIVE_DEPLOYMENT_LIST).$$(By.tagName("dt")).asFixedIterable().stream().map(DeploymentEntry::new)
             .collect(Collectors.toMap(DeploymentEntry::getName, d -> d));
     }
 
@@ -70,7 +72,16 @@ public class DiscoverTab {
         return getDeployments().values().stream().map(DeploymentEntry::getPods).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
+    public void selectNamespace(String namespace) {
+        final SelenideElement namespaceTab = $(DISCOVER_TABS).$(ByUtils.byPartialText(namespace));
+        namespaceTab.should(Condition.exist, Duration.ofMinutes(1));
+        if (namespaceTab.is(Condition.interactable)) {
+            namespaceTab.click();
+        }
+    }
+
     public DeploymentEntry assertContainsDeployment(String name, String namespace) {
+        selectNamespace(namespace);
         final Map<String, DeploymentEntry> deployments = getDeployments();
         if (REPLICA_SET_WORKAROUND) {
             final List<DeploymentEntry> matchingEntries = deployments.entrySet().stream()
@@ -90,6 +101,6 @@ public class DiscoverTab {
 
     private void waitForPageLoaded() {
         $(ByUtils.byDataTestId("loading")).shouldNot(Condition.exist, Duration.ofSeconds(30));
-        $(By.className(ACCORDION)).should(Condition.exist, Duration.ofSeconds(30));
+        $(ACTIVE_DEPLOYMENT_LIST).should(Condition.exist, Duration.ofSeconds(30));
     }
 }
