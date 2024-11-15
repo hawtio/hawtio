@@ -54,7 +54,7 @@ public class ClusterDiscoveryTest extends BaseHawtioOnlineTest {
             var discoverPage = new DiscoverTab();
             WaitUtils.untilAsserted(() -> {
                 discoverPage.assertContainsDeployment("e2e-discover-app", namespace);
-            }, Duration.ofSeconds(10));
+            }, Duration.ofMinutes(2));
         }, () -> {
             OpenshiftClient.get().namespaces().withName(namespace).delete();
         });

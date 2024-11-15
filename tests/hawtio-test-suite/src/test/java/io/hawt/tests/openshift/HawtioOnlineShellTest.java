@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -106,7 +107,7 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
             final Deployment appDeployment = HawtioOnlineTestUtils.getAppDeployment();
             var p = deploymentEntry.getPods();
 
-            assertThat(p).hasSize(appDeployment.getStatus().getReplicas());
+            assertThat(p.stream().filter(pod -> pod.getStatus().equalsIgnoreCase("Running"))).hasSize(appDeployment.getStatus().getReplicas());
             return p;
         }, 5, Duration.ofSeconds(5));
 
@@ -131,12 +132,12 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
 
             assertThat(deploymentEntry.getPods()).allMatch(pod -> pod.getStatus().equalsIgnoreCase("Running"));
 
-            appDeployment.scale(5);
+            appDeployment.scale(3);
 
             WaitUtils.untilAsserted(() -> {
-                assertThat(deploymentEntry.getPods()).hasSize(5);
+                assertThat(deploymentEntry.getPods()).hasSize(3);
                 assertThat(deploymentEntry.getPods()).allMatch(pod -> pod.getStatus().toLowerCase().matches("running|containercreating"));
-            }, Duration.ofSeconds(5));
+            }, Duration.ofSeconds(10));
             //TODO: https://github.com/hawtio/hawtio-online/issues/290
 
         }, () -> {

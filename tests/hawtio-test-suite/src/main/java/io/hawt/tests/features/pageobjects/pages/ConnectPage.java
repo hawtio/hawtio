@@ -3,6 +3,8 @@ package io.hawt.tests.features.pageobjects.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.ex.ConditionNotMetError;
+import com.codeborne.selenide.ex.UIAssertionError;
+
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.features.utils.ByUtils;
@@ -36,7 +38,7 @@ public class ConnectPage extends HawtioPage {
         //Don't try to create the same connection twice
         try {
             $(ByUtils.byAttribute("rowid", "connection " + name)).shouldNot(Condition.exist, Duration.ofSeconds(10));
-        } catch (ConditionNotMetError e) {
+        } catch (UIAssertionError e) {
             return;
         }
 

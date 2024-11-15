@@ -4,15 +4,25 @@ import org.openqa.selenium.By;
 
 import com.codeborne.selenide.selector.ByTagAndText;
 import com.codeborne.selenide.selector.ByText;
+import com.codeborne.selenide.selector.WithTagAndText;
+import com.codeborne.selenide.selector.WithText;
 
 public class ByUtils {
 
-    public static By byText(String text) {
+    public static By byExactText(String text) {
         return new ByText(text);
     }
 
-    public static By byText(String tag, String text) {
+    public static By byExactText(String tag, String text) {
         return new ByTagAndText(tag, text);
+    }
+
+    public static By byPartialText(String tag, String text) {
+        return new WithTagAndText(tag,text);
+    }
+
+    public static By byPartialText(String text) {
+        return new WithText(text);
     }
 
     public static By byLabel(String text) {

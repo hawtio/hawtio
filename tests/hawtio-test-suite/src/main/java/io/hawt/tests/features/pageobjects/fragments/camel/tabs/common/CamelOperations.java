@@ -20,7 +20,7 @@ import io.hawt.tests.features.utils.ByUtils;
 public class CamelOperations extends CamelPage {
 
     private static final By EXPAND_BUTTON = ByUtils.byAttribute("button", "aria-label", "Details");
-    private static final By EXECUTE_BUTTON = ByUtils.byText("button", "Execute");
+    private static final By EXECUTE_BUTTON = ByUtils.byExactText("button", "Execute");
     /**
      * Open some method window and execute it.
      *
