@@ -630,20 +630,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_8@npm:@hawtio/camel-model@~4.8.0":
-  version: 4.8.0
-  resolution: "@hawtio/camel-model@npm:4.8.0"
-  checksum: 10/be8957b13ce4ac66ce60a59590edfb23b40f7ad9b38754655d1f6f8c23dd803b7c9e5bad0cce89bc771a2f7fff33477c97140d78b86e9b29213e475d2be26ae8
+"@hawtio/camel-model-v4_8@npm:@hawtio/camel-model@~4.8.1":
+  version: 4.8.1
+  resolution: "@hawtio/camel-model@npm:4.8.1"
+  checksum: 10/4dda02799eb9b39dac9a7d1ccdaf594fcbbb656fcfcb8e1fb692cff2b77471acf0207633206a811eb3400c51a3ffd76652bc03336e8b5538426fd5b810924a33
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.6.1":
-  version: 1.6.1
-  resolution: "@hawtio/react@npm:1.6.1"
+"@hawtio/react@npm:^1.6.2":
+  version: 1.6.2
+  resolution: "@hawtio/react@npm:1.6.2"
   dependencies:
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.3"
-    "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.0"
-    "@jolokia.js/simple": "npm:^2.1.7"
+    "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.1"
+    "@jolokia.js/simple": "npm:^2.1.8"
     "@module-federation/utilities": "npm:^3.1.16"
     "@monaco-editor/react": "npm:^4.6.0"
     "@patternfly/react-charts": "npm:~7.3.0"
@@ -665,7 +665,7 @@ __metadata:
     "@types/react-router-dom": "npm:^5.3.3"
     dagre: "npm:^0.8.5"
     eventemitter3: "npm:^5.0.1"
-    jolokia.js: "npm:^2.1.7"
+    jolokia.js: "npm:^2.1.8"
     jquery: "npm:^3.7.1"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
@@ -690,7 +690,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/407ce18c9394c173ea3eefd946d4b54fd5938140f7b6e0969266b48aa0c5ef098c2a40ba78209ebdb9bdbf457d6adfaf808456258683955fcda521df85266c53
+  checksum: 10/21c5455cbdaf5ccb27c4219b3deb0882ebae8d841d1eb48341ad62c287d0488ac06cdb4bc9c62ab8e874d5f33f7f93debae1cc6825051130ad9aa380a8d92413
   languageName: node
   linkType: hard
 
@@ -976,12 +976,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jolokia.js/simple@npm:^2.1.7":
-  version: 2.1.7
-  resolution: "@jolokia.js/simple@npm:2.1.7"
+"@jolokia.js/simple@npm:^2.1.8":
+  version: 2.1.8
+  resolution: "@jolokia.js/simple@npm:2.1.8"
   dependencies:
-    jolokia.js: "npm:^2.1.7"
-  checksum: 10/26bc017c64df1600325f5185c39d48f600d0f3e43c5bed9e79c738c9f248eba03c9bf8a68303d7aee9bfcb9f34d44cafba705f4c5ebdd74adfdda238b29826f3
+    jolokia.js: "npm:^2.1.8"
+  checksum: 10/b60f874c93c55444998702e2948c7b5821cdecce8e12d93506260ca5787bb6d7fad81542cbf509cd9112360b6c31839bab970669b77df57d48459b1aa434ace3
   languageName: node
   linkType: hard
 
@@ -4962,7 +4962,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.6.1"
+    "@hawtio/react": "npm:^1.6.2"
     "@swc/core": "npm:^1.7.42"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
@@ -6221,10 +6221,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:^2.1.7":
-  version: 2.1.7
-  resolution: "jolokia.js@npm:2.1.7"
-  checksum: 10/7e10e0b842c96853ea2815d46cc7cea278470d259d8660711fbfda58c3a730764790ee28dd9ad346ebcb8324bd500f109408675f19d8c0a75578703522956d91
+"jolokia.js@npm:^2.1.8":
+  version: 2.1.8
+  resolution: "jolokia.js@npm:2.1.8"
+  checksum: 10/4dd3db2954abbaf875a3630591257056c866a201df5f3bab36148eee9e2e1520061c3b14d6873f3f0af71b2938323ecaa9540a9e37c3d952711bee077b99aca5
   languageName: node
   linkType: hard
 
