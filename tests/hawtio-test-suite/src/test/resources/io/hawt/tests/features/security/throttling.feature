@@ -1,4 +1,4 @@
-@throttling
+@throttling @notOnline
 Feature: Account Lockout (Throttling)
 
   Scenario: User account gets locked out after multiple failed login attempts
