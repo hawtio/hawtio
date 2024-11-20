@@ -7,6 +7,9 @@ import io.hawt.tests.features.setup.LoginLogout;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 import org.junit.jupiter.api.Assumptions;
 
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
+
 public class SkipTestsHook {
 
     @Before("@notHawtioNext")
@@ -36,6 +39,10 @@ public class SkipTestsHook {
 
     @After("@throttling")
     public void afterThrottling() {
+        while (WebDriverRunner.getWebDriver().getWindowHandles().size() != 1) {
+            Selenide.closeWindow();
+            Selenide.switchTo().window(0);
+        }
         LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
     }
 
