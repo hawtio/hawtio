@@ -54,7 +54,7 @@ public class LoginLogout {
             LOG.info("Connect page URL: " + WebDriverRunner.url());
             var connectPage = new ConnectPage();
             connectPage.addConnection(connectionName, TestConfiguration.getConnectUrl());
-            connectPage.connectTo(connectionName);
+            connectPage.connectToAndLogin(connectionName);
         } else if (deploymentMethod instanceof OpenshiftDeployment) {
             final String name = OpenshiftClient.get().pods().withLabel("app", "e2e-app").list().getItems().get(0).getMetadata().getName();
             new HawtioOnlinePage().getDiscoverTab().connectTo(name);
