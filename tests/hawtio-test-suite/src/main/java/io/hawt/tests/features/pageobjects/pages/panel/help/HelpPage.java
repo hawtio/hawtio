@@ -5,13 +5,16 @@ import static com.codeborne.selenide.Condition.empty;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static io.hawt.tests.features.utils.ByUtils.byAttribute;
-import static io.hawt.tests.features.utils.ByUtils.byText;
+
+import org.openqa.selenium.By;
+
 import io.hawt.tests.features.pageobjects.pages.HawtioPage;
+import io.hawt.tests.features.utils.ByUtils;
 
 public class HelpPage extends HawtioPage {
     public void switchTab(String tab) {
-        $(byAttribute("nav", "aria-label", "Nav")).$(byText("a", tab)).shouldBe(interactable).click();
+        $(By.cssSelector("main nav.pf-v5-c-nav")).$(ByUtils.byExactText(tab)).shouldBe(interactable).click();
+        $("div .pf-v5-c-content h2").shouldNotBe(empty);
     }
 
     public void checkContent() {
