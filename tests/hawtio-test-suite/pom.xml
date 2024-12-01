@@ -19,7 +19,7 @@
     <junit-platform-commons-version>1.10.3</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.11.0</gson-version>
-    <xtf.version>0.34</xtf.version>
+    <xtf.version>0.35</xtf.version>
   </properties>
 
   <dependencyManagement>
