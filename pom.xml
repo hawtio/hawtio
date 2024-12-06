@@ -63,8 +63,6 @@
     <camel-spring-boot-version>4.8.0.redhat-00022</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty-version>11.0.24</jetty-version>
-    <!-- Keycloak -->
-    <keycloak-version>23.0.1</keycloak-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.26.3</assertj-core-version>
