@@ -664,7 +664,7 @@ __metadata:
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.6"
-    "@hawtio/react": "npm:^1.6.2"
+    "@hawtio/react": "npm:^1.6.3"
     "@swc/core": "npm:^1.9.3"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
@@ -683,9 +683,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "@hawtio/react@npm:1.6.2"
+"@hawtio/react@npm:^1.6.3":
+  version: 1.6.3
+  resolution: "@hawtio/react@npm:1.6.3"
   dependencies:
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.3"
     "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.1"
@@ -715,7 +715,7 @@ __metadata:
     jquery: "npm:^3.7.1"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
-    keycloak-js: "npm:^23.0.7"
+    keycloak-js: "npm:^26.0.6"
     monaco-editor: "npm:^0.52.0"
     oauth4webapi: "npm:^2.17.0"
     react: "npm:^18.3.1"
@@ -736,7 +736,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/21c5455cbdaf5ccb27c4219b3deb0882ebae8d841d1eb48341ad62c287d0488ac06cdb4bc9c62ab8e874d5f33f7f93debae1cc6825051130ad9aa380a8d92413
+  checksum: 10/6bf2e4844c91f6a98c82d7a99a16266db8b7b870410e555651bccbb05471acecc4d8887f10097a7d86dbe41497c412b708ac117a3506d802d01a4b59ae172a59
   languageName: node
   linkType: hard
 
@@ -3103,13 +3103,6 @@ __metadata:
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
   checksum: 10/9706c088a283058a8a99e0bf91b0a2f75497f185980d9ffa8b304de1d9e58ebda7c72c07ebf01dadedaac5b2907b2c6f566f660d62bd336c3468e960403b9d65
-  languageName: node
-  linkType: hard
-
-"base64-js@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "base64-js@npm:1.5.1"
-  checksum: 10/669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
   languageName: node
   linkType: hard
 
@@ -6458,13 +6451,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-sha256@npm:^0.10.1":
-  version: 0.10.1
-  resolution: "js-sha256@npm:0.10.1"
-  checksum: 10/6bae235dd458744e573876cc0875e21ea18a84e3aec4ba82d0efdb28537366e225304d93072789883500ca995fcc7c4500528c66d02da88cc5d6ab4554ce2b8c
-  languageName: node
-  linkType: hard
-
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -6537,14 +6523,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keycloak-js@npm:^23.0.7":
-  version: 23.0.7
-  resolution: "keycloak-js@npm:23.0.7"
-  dependencies:
-    base64-js: "npm:^1.5.1"
-    js-sha256: "npm:^0.10.1"
-    jwt-decode: "npm:^4.0.0"
-  checksum: 10/61c127a9ac4954d1d0f7f1eee2348043322e21ec956f1ac7819bced39ce1360470cbbb5bd6f81ac1ee59a6fecc1cc5c2667f4e4f249c9c9b86a747a3654efb97
+"keycloak-js@npm:^26.0.6":
+  version: 26.0.7
+  resolution: "keycloak-js@npm:26.0.7"
+  checksum: 10/794528358cdb03a28bff99e8cd7019eac5a2c10eb0ab900d1e31baf64f655a538e878350b44cdeadddec210341348d856aa310aee2fd89eed48b3b8a22e87692
   languageName: node
   linkType: hard
 
