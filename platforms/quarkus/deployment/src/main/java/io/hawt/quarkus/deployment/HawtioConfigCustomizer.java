@@ -16,7 +16,7 @@ public class HawtioConfigCustomizer implements SmallRyeConfigBuilderCustomizer {
     public void configBuilder(SmallRyeConfigBuilder builder) {
         Map<String, String> props = Map.of(
             // If proactive authentication is enabled, Quarkus security always intercepts
-            // unauthenticated requests before they reach HawtioQuarkusAutneticator,
+            // unauthenticated requests before they reach HawtioQuarkusAuthenticator,
             // and thus authentication throttling doesn't take effect.
             "quarkus.http.auth.proactive", "false"
         );
