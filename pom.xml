@@ -54,7 +54,7 @@
     <!-- Quarkus -->
     <quarkus-version>3.15.2</quarkus-version>
     <!-- Spring -->
-    <spring-version>6.1.13</spring-version>
+    <spring-version>6.2.1</spring-version>
     <spring-boot-version>3.3.6</spring-boot-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.8.1</camel-spring-boot-version>
