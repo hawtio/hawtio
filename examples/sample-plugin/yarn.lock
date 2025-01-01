@@ -3608,10 +3608,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:0.6.0":
-  version: 0.6.0
-  resolution: "cookie@npm:0.6.0"
-  checksum: 10/c1f8f2ea7d443b9331680598b0ae4e6af18a618c37606d1bbdc75bec8361cce09fe93e727059a673f2ba24467131a9fb5a4eec76bb1b149c1b3e1ccb268dc583
+"cookie@npm:0.7.1":
+  version: 0.7.1
+  resolution: "cookie@npm:0.7.1"
+  checksum: 10/aec6a6aa0781761bf55d60447d6be08861d381136a0fe94aa084fddd4f0300faa2b064df490c6798adfa1ebaef9e0af9b08a189c823e0811b8b313b3d9a03380
   languageName: node
   linkType: hard
 
@@ -4483,16 +4483,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^4.19.2":
-  version: 4.21.0
-  resolution: "express@npm:4.21.0"
+"express@npm:^4.21.2":
+  version: 4.21.2
+  resolution: "express@npm:4.21.2"
   dependencies:
     accepts: "npm:~1.3.8"
     array-flatten: "npm:1.1.1"
     body-parser: "npm:1.20.3"
     content-disposition: "npm:0.5.4"
     content-type: "npm:~1.0.4"
-    cookie: "npm:0.6.0"
+    cookie: "npm:0.7.1"
     cookie-signature: "npm:1.0.6"
     debug: "npm:2.6.9"
     depd: "npm:2.0.0"
@@ -4506,7 +4506,7 @@ __metadata:
     methods: "npm:~1.1.2"
     on-finished: "npm:2.4.1"
     parseurl: "npm:~1.3.3"
-    path-to-regexp: "npm:0.1.10"
+    path-to-regexp: "npm:0.1.12"
     proxy-addr: "npm:~2.0.7"
     qs: "npm:6.13.0"
     range-parser: "npm:~1.2.1"
@@ -4518,7 +4518,7 @@ __metadata:
     type-is: "npm:~1.6.18"
     utils-merge: "npm:1.0.1"
     vary: "npm:~1.1.2"
-  checksum: 10/3b1ee5bc5b1bd996f688702519cebc9b63a24e506965f6e1773268238cfa2c24ffdb38cc3fcb4fde66f77de1c0bebd9ee058dad06bb9c6f084b525f3c09164d3
+  checksum: 10/34571c442fc8c9f2c4b442d2faa10ea1175cf8559237fc6a278f5ce6254a8ffdbeb9a15d99f77c1a9f2926ab183e3b7ba560e3261f1ad4149799e3412ab66bd1
   languageName: node
   linkType: hard
 
@@ -5032,7 +5032,7 @@ __metadata:
     swc-loader: "npm:^0.2.6"
     webpack: "npm:^5.96.1"
     webpack-cli: "npm:^5.1.4"
-    webpack-dev-server: "npm:^5.1.0"
+    webpack-dev-server: "npm:^5.2.0"
   languageName: unknown
   linkType: soft
 
@@ -5063,13 +5063,6 @@ __metadata:
     readable-stream: "npm:^2.0.1"
     wbuf: "npm:^1.1.0"
   checksum: 10/6910e4b9d943a78fd8e84ac42729fdab9bd406789d6204ad160af9dc5aa4750fc01f208249bf7116c11dc0678207a387b4ade24e4b628b95385b251ceeeb719c
-  languageName: node
-  linkType: hard
-
-"html-entities@npm:^2.4.0":
-  version: 2.5.2
-  resolution: "html-entities@npm:2.5.2"
-  checksum: 10/4ec12ebdf2d5ba8192c68e1aef3c1e4a4f36b29246a0a88464fe278a54517d0196d3489af46a3145c7ecacb4fc5fd50497be19eb713b810acab3f0efcf36fdc2
   languageName: node
   linkType: hard
 
@@ -5187,7 +5180,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-middleware@npm:^2.0.3":
+"http-proxy-middleware@npm:^2.0.7":
   version: 2.0.7
   resolution: "http-proxy-middleware@npm:2.0.7"
   dependencies:
@@ -7461,10 +7454,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:0.1.10":
-  version: 0.1.10
-  resolution: "path-to-regexp@npm:0.1.10"
-  checksum: 10/894e31f1b20e592732a87db61fff5b95c892a3fe430f9ab18455ebe69ee88ef86f8eb49912e261f9926fc53da9f93b46521523e33aefd9cb0a7b0d85d7096006
+"path-to-regexp@npm:0.1.12":
+  version: 0.1.12
+  resolution: "path-to-regexp@npm:0.1.12"
+  checksum: 10/2e30f6a0144679c1f95c98e166b96e6acd1e72be9417830fefc8de7ac1992147eb9a4c7acaa59119fb1b3c34eec393b2129ef27e24b2054a3906fc4fb0d1398e
   languageName: node
   linkType: hard
 
@@ -9634,9 +9627,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "webpack-dev-server@npm:5.1.0"
+"webpack-dev-server@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "webpack-dev-server@npm:5.2.0"
   dependencies:
     "@types/bonjour": "npm:^3.5.13"
     "@types/connect-history-api-fallback": "npm:^1.5.4"
@@ -9651,10 +9644,9 @@ __metadata:
     colorette: "npm:^2.0.10"
     compression: "npm:^1.7.4"
     connect-history-api-fallback: "npm:^2.0.0"
-    express: "npm:^4.19.2"
+    express: "npm:^4.21.2"
     graceful-fs: "npm:^4.2.6"
-    html-entities: "npm:^2.4.0"
-    http-proxy-middleware: "npm:^2.0.3"
+    http-proxy-middleware: "npm:^2.0.7"
     ipaddr.js: "npm:^2.1.0"
     launch-editor: "npm:^2.6.1"
     open: "npm:^10.0.3"
@@ -9675,7 +9667,7 @@ __metadata:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: 10/f23255681cc5e2c2709b23ca7b2185aeed83b1c9912657d4512eda8685625a46d7a103a92446494a55fe2afdfab936f9bd4f037d20b52f7fdfff303e7e7199c7
+  checksum: 10/f93ca46b037e547a9db157db72ef98ab177659ad13a6e63302d87bd77b32e524dd7133f1ad18f5a51ec68712911c59be8d4e06aa7bcbe6f56a9e9ce3774cf7f6
   languageName: node
   linkType: hard
 
