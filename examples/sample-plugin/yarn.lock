@@ -637,28 +637,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "@hawtio/react@npm:1.7.0"
+"@hawtio/react@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@hawtio/react@npm:1.8.0"
   dependencies:
     "@hawtio/camel-model-v4_4": "npm:@hawtio/camel-model@~4.4.3"
     "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.1"
     "@jolokia.js/simple": "npm:^2.1.8"
-    "@module-federation/utilities": "npm:^3.1.35"
+    "@module-federation/utilities": "npm:^3.1.38"
     "@monaco-editor/react": "npm:^4.6.0"
     "@patternfly/react-charts": "npm:~7.4.7"
     "@patternfly/react-code-editor": "npm:~6.1.0"
-    "@patternfly/react-core": "npm:~5.4.11"
+    "@patternfly/react-core": "npm:~5.4.12"
     "@patternfly/react-table": "npm:~5.3.4"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:~16.0.1"
+    "@testing-library/react": "npm:~16.1.0"
     "@testing-library/user-event": "npm:^14.5.2"
     "@thumbmarkjs/thumbmarkjs": "npm:^0.16.1"
     "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.14"
-    "@types/node": "npm:^22.10.1"
+    "@types/node": "npm:^22.10.2"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18.3.1"
     "@types/react-router-dom": "npm:^5.3.3"
@@ -688,7 +688,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/563bd920b75509e0aea8dc6ec3262e39fb0eed9c29bea60757b93144a8fc13ac46ed2d4a75c778fef318d980accdf985ee5ed5fec859a8e9b5138255f653988a
+  checksum: 10/2f3a78be3540dbd14cdb6c2436490886ed977fd85845a9dff0f98f64ce466d5c5bc8f87892791cd77a47a2448658ee6b83298e521d57f8379dc7dc0c97a47933
   languageName: node
   linkType: hard
 
@@ -1104,20 +1104,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/sdk@npm:0.8.5":
-  version: 0.8.5
-  resolution: "@module-federation/sdk@npm:0.8.5"
+"@module-federation/sdk@npm:0.8.8":
+  version: 0.8.8
+  resolution: "@module-federation/sdk@npm:0.8.8"
   dependencies:
-    isomorphic-rslog: "npm:0.0.6"
-  checksum: 10/a5e0687d61be3c4a4832ab72bb66d5883ef3e9d1472fe425be5df48cf621ff1e48ca0e3298660bdcbded24b535b0066c6d9aa4a0fa7637051a5c47ee69ccc52c
+    isomorphic-rslog: "npm:0.0.7"
+  checksum: 10/a5a0174d4cafba0219353762dcb0b4622c1c5a8aa5c63a82f6adb349dbe3cd0b348b058123051793628e473f4814113cbdfbe066ceda82031c525d3f08b87cbf
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.1.35":
-  version: 3.1.36
-  resolution: "@module-federation/utilities@npm:3.1.36"
+"@module-federation/utilities@npm:^3.1.38":
+  version: 3.1.39
+  resolution: "@module-federation/utilities@npm:3.1.39"
   dependencies:
-    "@module-federation/sdk": "npm:0.8.5"
+    "@module-federation/sdk": "npm:0.8.8"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -1129,7 +1129,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/08e5d38d258271741b8b2e2bdadb84f619612f8274c727c2a74520f7b5fa78ca5e73da3523b67d8223b54971fbc12f99315e9075ff9401aa54f8059c175983d6
+  checksum: 10/c2dd009b4417c93e3ac6c0079d1ced0f54ec464b7665654c4e05552e7ff1019d963cd9089154a7225ee8ba5325fe6d5ece0cba9aedf7055a4e42a93a6f4f525b
   languageName: node
   linkType: hard
 
@@ -1254,7 +1254,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-core@npm:^5.3.4, @patternfly/react-core@npm:~5.4.11":
+"@patternfly/react-core@npm:^5.3.4, @patternfly/react-core@npm:~5.4.12":
   version: 5.4.12
   resolution: "@patternfly/react-core@npm:5.4.12"
   dependencies:
@@ -1682,23 +1682,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:~16.0.1":
-  version: 16.0.1
-  resolution: "@testing-library/react@npm:16.0.1"
+"@testing-library/react@npm:~16.1.0":
+  version: 16.1.0
+  resolution: "@testing-library/react@npm:16.1.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
   peerDependencies:
     "@testing-library/dom": ^10.0.0
-    "@types/react": ^18.0.0
-    "@types/react-dom": ^18.0.0
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    "@types/react": ^18.0.0 || ^19.0.0
+    "@types/react-dom": ^18.0.0 || ^19.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
     "@types/react-dom":
       optional: true
-  checksum: 10/904b48881cf5bd208e25899e168f5c99c78ed6d77389544838d9d861a038d2c5c5385863ee9a367436770cbf7d21c5e05a991b9e24a33806e9ac985df2448185
+  checksum: 10/2a20e0dbfadbc93d45a84e82281ed47deed54a6a5fc1461a523172d7fbc0481e8502cf98a2080f38aba94290b3d745671a1c9e320e6f76ad6afcca67c580b963
   languageName: node
   linkType: hard
 
@@ -2313,12 +2313,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.10.1":
-  version: 22.10.2
-  resolution: "@types/node@npm:22.10.2"
+"@types/node@npm:^22.10.2":
+  version: 22.10.5
+  resolution: "@types/node@npm:22.10.5"
   dependencies:
     undici-types: "npm:~6.20.0"
-  checksum: 10/451adfefed4add58b069407173e616220fd4aaa3307cdde1bb701aa053b65b54ced8483db2f870dcedec7a58cb3b06101fbc19d85852716672ec1fd3660947fa
+  checksum: 10/a5366961ffa9921e8f15435bc18ea9f8b7a7bb6b3d92dd5e93ebcd25e8af65708872bd8e6fee274b4655bab9ca80fbff9f0e42b5b53857790f13cf68cf4cbbfc
   languageName: node
   linkType: hard
 
@@ -5020,7 +5020,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.7.0"
+    "@hawtio/react": "npm:^1.8.0"
     "@swc/core": "npm:^1.10.4"
     copy-webpack-plugin: "npm:^12.0.2"
     css-loader: "npm:^7.1.2"
@@ -5695,10 +5695,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isomorphic-rslog@npm:0.0.6":
-  version: 0.0.6
-  resolution: "isomorphic-rslog@npm:0.0.6"
-  checksum: 10/3845525005054dde6876e844a2a499eb715628e57d7389ff6a5dac21a482e643b8e0e3abfbb0e6ed7613720e321d17befade4b42e1c2d62fbb76103a530c9c8f
+"isomorphic-rslog@npm:0.0.7":
+  version: 0.0.7
+  resolution: "isomorphic-rslog@npm:0.0.7"
+  checksum: 10/cb6f03a64bdbb3972c22429a4fcdff25505ceca2bf09ca2cebc1c8086b2580f67d4dd04daba79d7dd642af099deea1eb884667ddf183bd3192b67faaf86438cc
   languageName: node
   linkType: hard
 
