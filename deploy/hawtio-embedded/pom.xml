@@ -41,6 +41,13 @@
       <version>${picocli-version}</version>
     </dependency>
 
+    <!-- Hawtio Connect plugin -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-connect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
