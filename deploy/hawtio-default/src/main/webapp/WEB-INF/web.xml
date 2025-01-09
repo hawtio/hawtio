@@ -237,6 +237,15 @@
     <url-pattern>/plugin/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>preset-connections</servlet-name>
+    <servlet-class>io.hawt.connect.PresetConnectionsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>preset-connections</servlet-name>
+    <url-pattern>/preset-connections</url-pattern>
+  </servlet-mapping>
+
   <mime-mapping>
     <extension>woff</extension>
     <mime-type>application/font-woff</mime-type>
