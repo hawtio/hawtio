@@ -62,7 +62,8 @@ public class AuthenticationConfiguration {
      * Paths for configuration of the client (@hawtio/react) part.
      */
     public static final String[] UNSECURED_META_PATHS = {
-            "/plugin"
+            "/plugin",
+            "/preset-connections"
     };
 
     /**

@@ -53,6 +53,11 @@
       <artifactId>hawtio-local-jvm-mbean</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-connect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <!-- Log plugin -->
     <dependency>
       <groupId>io.hawt</groupId>
