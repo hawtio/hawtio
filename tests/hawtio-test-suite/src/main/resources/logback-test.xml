@@ -32,6 +32,7 @@
   <logger name="hawtio-app">
     <appender-ref ref="container-logger"/>
   </logger>
+  <logger name="com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire" level="OFF"/>
   <appender class="ch.qos.logback.core.FileAppender" name="container-logger">
   	<file>target/hawtio-app.log</file>
     <encoder>

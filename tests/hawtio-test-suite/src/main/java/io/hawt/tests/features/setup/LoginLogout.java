@@ -2,6 +2,7 @@ package io.hawt.tests.features.setup;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
+
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.hooks.DeployAppHook;
 import io.hawt.tests.features.openshift.OpenshiftClient;
@@ -12,6 +13,8 @@ import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlinePage;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
+
+import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +38,17 @@ public class LoginLogout {
      * @param password to be used.
      */
     public static void login(String username, String password) {
-
         final String connectionName = "test-connection";
         final AppDeployment deploymentMethod = TestConfiguration.getAppDeploymentMethod();
         LOG.info("Opening and logging in on " + DeployAppHook.getBaseURL());
+
         if (deploymentMethod instanceof OpenshiftDeployment) {
             Selenide.open(DeployAppHook.getBaseURL(), HawtioOnlineLoginPage.class)
                 .login(TestConfiguration.getOpenshiftUsername(), TestConfiguration.getOpenshiftPassword());
         } else {
-            if (WebDriverRunner.hasWebDriverStarted() && WebDriverRunner.url().contains("/connect/login")) {
+            if (TestConfiguration.useKeycloak()) {
+                keycloakLogin("admin", "admin");
+            } else if (WebDriverRunner.hasWebDriverStarted() && WebDriverRunner.url().contains("/connect/login")) {
                 ConnectPage.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
             } else {
                 Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/connect", LoginPage.class).login(username, password);
@@ -59,6 +64,14 @@ public class LoginLogout {
             final String name = OpenshiftClient.get().pods().withLabel("app", "e2e-app").list().getItems().get(0).getMetadata().getName();
             new HawtioOnlinePage().getDiscoverTab().connectTo(name);
         }
+    }
+
+    private static void keycloakLogin(String username, String password) {
+        Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/connect");
+        Selenide.$(By.id("username")).sendKeys(username);
+        Selenide.$(By.id("password")).sendKeys(password);
+
+        Selenide.$(By.name("login")).click();
     }
 
     /**

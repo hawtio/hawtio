@@ -87,6 +87,10 @@ COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
 COPY --chown=185 target/quarkus-app/*.jar /deployments/
 COPY --chown=185 target/quarkus-app/app/ /deployments/app/
 COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --chown=185 ./start-keycloak.sh /deployments/
+
+#Needed for quarkus rebuild inside container for some reason
+RUN ln -s /deployments/ /quarkus-app && chmod a+rw /quarkus-app
 
 EXPOSE 8080
 USER 185

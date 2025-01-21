@@ -37,8 +37,16 @@ public class SkipTestsHook {
         Assumptions.assumeTrue(TestConfiguration.getAppDeploymentMethod() instanceof OpenshiftDeployment);
     }
 
+    @Before("@notKeycloak")
+    public void skipKeycloakTests() {
+        Assumptions.assumeFalse(TestConfiguration.useKeycloak());
+    }
+
     @After("@throttling")
     public void afterThrottling() {
+        if (TestConfiguration.useKeycloak()) {
+            return;
+        }
         while (WebDriverRunner.getWebDriver().getWindowHandles().size() != 1) {
             Selenide.closeWindow();
             Selenide.switchTo().window(0);
