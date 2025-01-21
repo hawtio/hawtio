@@ -25,6 +25,8 @@ public class TestConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(TestConfiguration.class);
 
     public static final String RUNTIME = "io.hawt.test.runtime";
+    public static final String USE_KEYCLOAK = "io.hawt.test.use.keycloak";
+    public static final String KEYCLOAK_IMAGE = "io.hawt.test.keycloak.image";
     public static final String APP_DOCKER_IMAGE = "io.hawt.test.docker.image";
     public static final String APP_PATH = "io.hawt.test.app.path";
     public static final String APP_URL = "io.hawt.test.url";
@@ -127,6 +129,14 @@ public class TestConfiguration {
             }
         }
         return null;
+    }
+
+    public static boolean useKeycloak() {
+        return getBoolean(USE_KEYCLOAK, false);
+    }
+
+    public static String getKeycloakImage() {
+        return getProperty(KEYCLOAK_IMAGE, "quay.io/keycloak/keycloak");
     }
 
     public static String getHawtioOnlineImageRepository() {

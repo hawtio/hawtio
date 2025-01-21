@@ -15,7 +15,7 @@ public class DockerDeployment implements AppDeployment {
     private GenericContainer<?> container;
 
     private static final Logger LOG = LoggerFactory.getLogger(DockerDeployment.class);
-    
+
     public DockerDeployment(String dockerImage) {
         this.dockerImage = dockerImage;
     }
@@ -26,13 +26,20 @@ public class DockerDeployment implements AppDeployment {
 
         container = new GenericContainer<>(DockerImageName.parse(dockerImage))
             .withExposedPorts(8080, 10000, 10001)
-            .waitingFor(Wait.forHttp(TestConfiguration.getUrlSuffix()).forPort(getPort()));
+            .waitingFor(Wait.forLogMessage(".*Hello Camel!.*", 2));
+
+        if (TestConfiguration.useKeycloak()) {
+            KeycloakDeployment.start();
+            container.addEnv("KEYCLOAK_URL", KeycloakDeployment.getURL());
+            container.setCommand("bash", "/deployments/start-keycloak.sh");
+        }
+
         container.start();
         final Logger containerLogger = LoggerFactory.getLogger("hawtio-app");
         Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(containerLogger);
 
         container.followOutput(logConsumer);
-        
+
         container.waitingFor(Wait.forHttp(TestConfiguration.getUrlSuffix()));
     }
 

@@ -1,0 +1,104 @@
+{
+  "realm": "hawtio-demo",
+  "registrationAllowed": true,
+  "enabled": true,
+  "sslRequired": "none",
+  "clients": [
+    {
+      "clientId": "hawtio-client",
+      "enabled": true,
+      "redirectUris": [
+        "http://localhost:8080/*",
+        "http://localhost:8181/*",
+        "http://localhost:10000/*",
+        "http://localhost:10001/*",
+        "http://0.0.0.0:8080/*",
+        "http://0.0.0.0:8181/*",
+        "http://0.0.0.0:10000/*",
+        "http://0.0.0.0:10001/*",
+        "*"
+      ],
+      "webOrigins": ["+", "*"],
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "publicClient": true,
+      "attributes": {
+        "pkce.code.challenge.method": ""
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "firstName": "Admin",
+      "lastName": "Hawtio",
+      "email": "admin@hawt.io",
+      "credentials": [
+        {
+          "type": "password",
+          "hashedSaltedValue": "lVKP+Q9eCLjfaPQs1581XFphVHHbrI5dsnFYa4sYxzP2ZT9mdPCNOKGK9yts3NYrgr1jgGdu/gtSqXh/PxWvwA==",
+          "salt": "uysYXjMukx9lNodzEuw/qw==",
+          "hashIterations": 27500,
+          "algorithm": "pbkdf2-sha256",
+          "temporary": false
+        }
+      ],
+      "requiredActions": [],
+      "realmRoles": ["user", "viewer", "manager", "admin"],
+      "clientRoles": {
+        "account": ["view-profile", "manage-account"]
+      }
+    },
+    {
+      "username": "viewer",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "firstName": "Viewer",
+      "lastName": "Hawtio",
+      "email": "viewer@hawt.io",
+      "credentials": [
+        {
+          "type": "password",
+          "hashedSaltedValue": "oU80vldSnPVT17jNoQX2tQQxZ+VToIcz6Ea6y5irQbIPsCYkRvKOvoJ2BthGr95AXsNs/lIFjXUswqe4pa24PA==",
+          "salt": "x8MOfkM/ynakMcCVBUXQDA==",
+          "hashIterations": 27500,
+          "algorithm": "pbkdf2-sha256",
+          "temporary": false
+        }
+      ],
+      "requiredActions": [],
+      "realmRoles": ["user", "viewer"],
+      "clientRoles": {
+        "account": ["view-profile", "manage-account"]
+      }
+    },
+    {
+      "username": "jdoe",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": false,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "jdoe@acme.com",
+      "credentials": [
+        {
+          "type": "password",
+          "hashedSaltedValue": "ltSl89y75f8LTzoT646xO9NPTrm114ubTauplgw+TQ62ZDy8K89+y7jFzp/jnSvEh9TENQ4RRvNA6vdGOUDcXg==",
+          "salt": "m8PY6Q9lICl9BHSS03D2Ug==",
+          "hashIterations": 1,
+          "temporary": false
+        }
+      ],
+      "requiredActions": [],
+      "realmRoles": ["user"],
+      "clientRoles": {
+        "account": ["view-profile", "manage-account"]
+      }
+    }
+  ]
+}

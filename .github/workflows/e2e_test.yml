@@ -23,10 +23,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ['17', '21']
-        runtime: ['quarkus', 'springboot']
-#        browser: ['firefox', 'chrome']
-        browser: ['firefox'] # chrome disabled because of https://github.com/hawtio/hawtio-next/issues/478
+        java: ["17", "21"]
+        runtime: ["quarkus", "springboot", "quarkus-keycloak"]
+        browser: ["firefox"] # chrome disabled because of https://github.com/hawtio/hawtio-next/issues/478
     env:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}}
     steps:
@@ -45,13 +44,19 @@ jobs:
       - name: ${{ matrix.runtime }} E2E test (Java ${{ matrix.java }})
         id: test
         run: |
+          runtime=${{matrix.runtime}}
+          extra_args=''
+          if [[ $runtime =~ "-keycloak" ]]; then
+            runtime=${runtime%-keycloak}
+            extra_args='-Dio.hawt.test.use.keycloak=true'
+          fi
           docker run --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
           -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
           --shm-size="2g" \
-          hawtio-test-suite:${{ matrix.java }} -Pe2e-${{ matrix.runtime }} -Dselenide.browser=${{ matrix.browser }} \
-          -Dio.hawt.test.docker.image=hawtio-${{ matrix.runtime }}-app:${{ matrix.java }}
+            hawtio-test-suite:${{ matrix.java }} -Pe2e-${runtime} -Dselenide.browser=${{ matrix.browser }} \
+            -Dio.hawt.test.docker.image=hawtio-${runtime}-app:${{ matrix.java }} $extra_args
       - name: Prepare report artifacts
         if: always()
         run: |
@@ -62,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: 'test-results-${{ matrix.runtime }}-java-${{ matrix.java }}-${{ matrix.browser }}'
+          name: "test-results-${{ matrix.runtime }}-java-${{ matrix.java }}-${{ matrix.browser }}"
           path: |
             ${{ env.REPORT_DIR }}/build/reports/tests/*.png
             ${{ env.REPORT_DIR }}/*.log
@@ -73,7 +78,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ['17', '21']
+        java: ["17", "21"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -86,9 +91,9 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: ${{ matrix.java }}
-          cache: 'maven'
+          cache: "maven"
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.3.0
       - name: Build
@@ -121,14 +126,14 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         if: always()
         with:
-          name: 'test-results'
+          name: "test-results"
           pattern: test-results-*
           separate-directories: true
       - name: Download Test Results
         uses: actions/download-artifact@v4
-        with: 
-          name: 'test-results'
-          path: 'test-results'
+        with:
+          name: "test-results"
+          path: "test-results"
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()

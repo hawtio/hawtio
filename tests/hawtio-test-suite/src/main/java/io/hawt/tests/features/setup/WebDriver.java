@@ -39,6 +39,8 @@ public class WebDriver {
         } else {
             FirefoxOptions options = new FirefoxOptions();
             options.addPreference("network.proxy.allow_hijacking_localhost", false);
+            //Trust the docker internal network
+            options.addPreference("dom.securecontext.allowlist", "172.17.0.1");
             Configuration.browserCapabilities = options;
         }
         Configuration.headless = TestConfiguration.browserHeadless();
