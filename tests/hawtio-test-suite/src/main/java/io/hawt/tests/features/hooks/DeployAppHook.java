@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import io.cucumber.java.Before;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
+import io.hawt.tests.features.setup.deployment.KeycloakDeployment;
 
 public class DeployAppHook {
 
@@ -35,6 +36,10 @@ public class DeployAppHook {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 LOG.info("Cleaning up");
                 app.stop();
+
+                if (TestConfiguration.useKeycloak()) {
+                    KeycloakDeployment.stop();
+                }
             }));
         } catch (Throwable e) {
             startupFailure = e;
