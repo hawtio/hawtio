@@ -49,6 +49,14 @@ If you have previously connected to an endpoint URL with a name, the connection 
 hawtio --connection=myconn
 ```
 
+You can also connect to multiple JVMs at once by providing the `--connection` options multiple times.
+
+```console
+hawtio --connection=conn1 --connection=conn2 --connection=conn3
+```
+
+In this case, multiple tabs open simultaneously on the browser, each showing the Hawtio console connected to a different connection.
+
 ### Running a Spring Boot app
 
 > [!NOTE]
