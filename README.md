@@ -34,6 +34,21 @@ jbang app install hawtio@hawtio/hawtio
 hawtio --help
 ```
 
+#### Connecting directly to a remote JVM from CLI
+
+Starting from Hawtio 4.3.0, it is possible to connect to remote Java applications directly from the CLI ([#3731](https://github.com/hawtio/hawtio/issues/3731)).
+Passing a remote Jolokia endpoint URL in the form `[Name]=[Jolokia URL]` to the `--connection` or `-n` option will automatically attempt to connect to that endpoint when Hawtio starts.
+
+```console
+hawtio --connection=myconn=http://localhost:8778/jolokia/
+```
+
+If you have previously connected to an endpoint URL with a name, the connection information is cached in the browser's local storage via the Connect plugin. In that case, you can connect to that endpoint by simply specifying the same connection name without URL.
+
+```console
+hawtio --connection=myconn
+```
+
 ### Running a Spring Boot app
 
 > [!NOTE]
