@@ -25,7 +25,6 @@ import org.jolokia.server.core.restrictor.DenyAllRestrictor;
 import org.jolokia.server.core.restrictor.RestrictorFactory;
 import org.jolokia.server.core.service.api.Restrictor;
 import org.jolokia.server.core.util.HttpMethod;
-import org.jolokia.server.core.util.NetworkUtil;
 import org.jolokia.server.core.util.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class RBACRestrictor implements Restrictor {
     }
 
     protected void initDelegate(Configuration config) {
-        String location = NetworkUtil.replaceExpression(config.getConfig(ConfigKey.POLICY_LOCATION));
+        String location = config.getConfig(ConfigKey.POLICY_LOCATION);
         try {
             this.delegate = RestrictorFactory.lookupPolicyRestrictor(location);
             if (this.delegate != null) {
