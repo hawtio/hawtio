@@ -52,7 +52,7 @@
     <!-- Jolokia -->
     <jolokia-version>2.2.2</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.15.2</quarkus-version>
+    <quarkus-version>3.18.2</quarkus-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring-version>6.2.2</spring-version>
