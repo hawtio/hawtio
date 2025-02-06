@@ -14,10 +14,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-20.04, macos-latest]
         java: ['17', '21']
     steps:
       - name: Checkout code
