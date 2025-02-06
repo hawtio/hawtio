@@ -1,5 +1,6 @@
 package io.hawt.jetty.security.jaas;
 
+import java.util.HashMap;
 import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -12,9 +13,18 @@ import org.eclipse.jetty.security.jaas.JAASLoginService;
  */
 public class PropertyFileLoginModule extends org.eclipse.jetty.security.jaas.spi.PropertyFileLoginModule {
 
+    public static final String DEFAULT_FILENAME = "realm.properties";
+
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
         JAASLoginService.INSTANCE.set(new HawtioJAASLoginService());
+        Object file = options.get("file");
+        if (file == null) {
+            file = System.getProperty("login.file", DEFAULT_FILENAME);
+            Map<String, Object> newOptions = new HashMap<>(options);
+            newOptions.put("file", file);
+            options = newOptions;
+        }
         try {
             super.initialize(subject, callbackHandler, sharedState, options);
         } finally {
