@@ -93,7 +93,7 @@ public class Main implements Callable<Integer> {
     @CommandLine.Option(names = { "--connection", "-n" },
         mapFallbackValue = CommandLine.Option.NULL_VALUE,
         description = "List of settings for automated connections.")
-    Map<String, Optional<Connection>> connections;
+    Map<String, Optional<String>> connections;
 
     @CommandLine.Option(names = { "--version", "-V" }, versionHelp = true, description = "Print Hawtio version")
     boolean versionRequested;
@@ -103,13 +103,14 @@ public class Main implements Callable<Integer> {
 
     private boolean welcome = true;
 
+    private final ConnectionConverter connectionConverter = new ConnectionConverter();
+
     public Main() {
     }
 
     public static void run(String... args) {
         Main main = new Main();
-        CommandLine commandLine = new CommandLine(main)
-            .registerConverter(Connection.class, new ConnectionConverter());
+        CommandLine commandLine = new CommandLine(main);
 
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
@@ -128,7 +129,7 @@ public class Main implements Callable<Integer> {
 
         // Preset connections
         if (connections != null && !connections.isEmpty()) {
-            Connection.setSystemProperty(connections);
+            Connection.setSystemProperty(connectionConverter.convert(connections));
         }
 
         this.run();
@@ -415,7 +416,7 @@ public class Main implements Callable<Integer> {
         this.keyStorePass = keyStorePass;
     }
 
-    public void setConnections(Map<String, Optional<Connection>> connections) {
+    public void setConnections(Map<String, Optional<String>> connections) {
         this.connections = connections;
     }
 }
