@@ -83,6 +83,10 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot-security</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
