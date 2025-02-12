@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: build
     strategy:
       fail-fast: false
@@ -74,7 +74,7 @@ jobs:
             ${{ env.REPORT_DIR }}/cucumber-reports/*
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -112,7 +112,7 @@ jobs:
           key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
 
   publish-results:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: test
     if: always()
     permissions:
