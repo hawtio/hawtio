@@ -1,0 +1,91 @@
+name: Jbang test
+
+on:
+  push:
+    branches:
+      - 3.x
+      - 4.x
+    paths-ignore:
+      - "**.md"
+
+jobs:
+  build:
+    env:
+      REPORT_DIR: results-camel-jbang-${{matrix.runtime}}-java(${{matrix.java}})
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['17', '21']
+        runtime: ['springboot', 'quarkus']
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.java }}
+          cache: "maven"
+      - name: Docker Setup QEMU
+        uses: docker/setup-qemu-action@v3.4.0
+      - name: Build Hawtio
+        run: |
+          mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
+      - name: Setup JBang
+        uses: jbangdev/setup-jbang@main
+      - name: Install Camel app
+        run: | 
+          jbang trust add https://github.com/apache/camel/
+          jbang --quiet app install camel@apache/camel
+      - name: Start Camel Hawtio
+        run: |
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          camel hawtio --version=$version > $REPORT_DIR/jbang.log &
+      - name: Setup application
+        run: |
+          case ${{ matrix.runtime }} in
+              quarkus)
+                APP_PORT=8080
+                echo "url-suffix=hawtio" >> $GITHUB_ENV
+                echo 'app-port=8080' >> $GITHUB_ENV
+              ;;
+
+              springboot)
+                APP_PORT=10001
+                echo "url-suffix=actuator/hawtio" >> $GITHUB_ENV
+                echo 'app-port=10001' >> $GITHUB_ENV
+              ;;
+          esac
+
+          id=$(docker run --name app --network host -d hawtio-${{matrix.runtime}}-app:${{matrix.java}})
+          timeout 30 bash -c "while ! docker logs $id 2>&1 | grep -q 'Hello Camel!'; do sleep 1; done"
+      - name: Run tests
+        run: |
+          mkdir -p $PWD/$REPORT_DIR/
+          docker run --rm --network host \
+          -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
+          -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
+          --shm-size="2g" \
+          hawtio-test-suite:${{matrix.java}} -Pe2e-${{ matrix.runtime }} -Dselenide.browser=firefox \
+          -Dio.hawt.test.url=http://localhost:8888/hawtio \
+          -Dio.hawt.test.app.connect.url=http://localhost:${{ env.app-port }}/${{ env.url-suffix }}/jolokia \
+          -Dhawtio-next-ci
+      - name: Prepare report artifacts
+        if: always()
+        run: |
+          mkdir -p results/$REPORT_DIR/
+          cp $REPORT_DIR/cucumber-reports/* results/$REPORT_DIR/
+          docker logs app 2>&1 > results/$REPORT_DIR/container.log
+          docker logs app 2>&1 > $REPORT_DIR/container.log
+          echo "Container log:"
+          cat results/$REPORT_DIR/container.log
+      - name: Archive test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: 'test-${{ env.REPORT_DIR }}'
+          path: |
+            ${{ env.REPORT_DIR }}/build/reports/tests/*.png
+            ${{ env.REPORT_DIR }}/*.log
+            ${{ env.REPORT_DIR }}/cucumber-reports/*
