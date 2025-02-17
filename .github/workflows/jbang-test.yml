@@ -3,7 +3,6 @@ name: JBang Test
 on:
   push:
     branches:
-      - 3.x
       - 4.x
     paths-ignore:
       - "**.md"
