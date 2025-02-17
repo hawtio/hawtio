@@ -1,4 +1,4 @@
-name: Jbang test
+name: JBang Test
 
 on:
   push:
