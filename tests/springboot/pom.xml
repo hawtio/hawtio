@@ -114,6 +114,10 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot-security</artifactId>
+    </dependency>
 
     <!--
       Include hawtio-log-logback if you want to use Logs plugin with Spring Boot.

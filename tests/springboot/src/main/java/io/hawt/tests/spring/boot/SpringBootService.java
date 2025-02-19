@@ -8,9 +8,11 @@ import io.hawt.springboot.HawtioPlugin;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_REALM;
@@ -27,6 +29,9 @@ public class SpringBootService {
         System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SpringBootService.class, args);
     }
+
+    @Autowired
+    private Environment env;
 
     /**
      * Loading a sample plugin.
@@ -68,7 +73,9 @@ public class SpringBootService {
 
         setSystemPropertyIfNotSet(HAWTIO_ROLES, "admin");
         setSystemPropertyIfNotSet(HAWTIO_REALM, "hawtio");
-        setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.security.jaas.JAASRole");
+        if (!this.env.matchesProfiles("keycloak")) {
+            setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.security.jaas.JAASRole");
+        }
 
         System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, Boolean.getBoolean("debugMode") ? "false" : "true");
     }
