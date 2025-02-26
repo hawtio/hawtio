@@ -437,7 +437,7 @@ public class HawtioManagementConfiguration {
         private static final String DUMMY = "/<DUMMY>";
 
         @Override
-        protected void registerHandler(final String urlPath, final Object handler) {
+        public void registerHandler(final String urlPath, final Object handler) {
             if (!DUMMY.equals(urlPath)) {
                 super.registerHandler(urlPath, handler);
             }

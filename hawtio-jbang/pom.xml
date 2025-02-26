@@ -13,7 +13,6 @@
 
   <properties>
     <dist.dir>dist</dist.dir>
-    <picocli-version>4.7.3</picocli-version>
   </properties>
 
   <dependencies>

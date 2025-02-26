@@ -2,6 +2,7 @@
   "realm": "hawtio-demo",
   "registrationAllowed": true,
   "enabled": true,
+  "sslRequired": "none",
   "clients": [
     {
       "clientId": "hawtio-client",

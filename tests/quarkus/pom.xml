@@ -114,6 +114,10 @@
       <artifactId>hawtio-quarkus</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-oidc</artifactId>
+    </dependency>
     <!--
       Hawtio example plugin project
       Since static resources are packaged under META-INF/resources in the JAR,

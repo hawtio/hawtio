@@ -33,12 +33,14 @@ public class WebDriver {
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
         if (Configuration.browser.equals("chrome")) {
             ChromeOptions options = new ChromeOptions();
-            options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false));
+            options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false, "profile.password_manager_leak_detection", false));
             options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
             Configuration.browserCapabilities = options;
         } else {
             FirefoxOptions options = new FirefoxOptions();
             options.addPreference("network.proxy.allow_hijacking_localhost", false);
+            //Trust the docker internal network
+            options.addPreference("dom.securecontext.allowlist", "172.17.0.1");
             Configuration.browserCapabilities = options;
         }
         Configuration.headless = TestConfiguration.browserHeadless();

@@ -36,7 +36,7 @@ public class ServletHelpersTest {
         JSONObject json = ServletHelpers.readObject(
             new BufferedReader(new InputStreamReader(new ByteArrayInputStream(data.getBytes()))));
         assertThat(json.get("string"), equalTo("text"));
-        assertThat(json.get("number"), equalTo(2));
+        assertThat(json.get("number"), equalTo(2L));
         assertThat(json.get("boolean"), equalTo(true));
     }
 

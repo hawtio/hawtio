@@ -24,8 +24,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
+import io.hawt.connect.Connection;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -46,7 +49,6 @@ import picocli.CommandLine;
     name = "hawtio", description = "Run Hawtio")
 public class Main implements Callable<Integer> {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    private static CommandLine commandLine;
 
     @CommandLine.Option(names = { "--war-location", "-l" },
         description = "Directory to search for .war files.")
@@ -87,19 +89,28 @@ public class Main implements Callable<Integer> {
     @CommandLine.Option(names = { "--key-store-pass", "-s" },
         description = "Password for the JKS keyStore with the keys for https.")
     String keyStorePass;
+
+    @CommandLine.Option(names = { "--connection", "-n" },
+        mapFallbackValue = CommandLine.Option.NULL_VALUE,
+        description = "List of settings for automated connections.")
+    Map<String, Optional<String>> connections;
+
     @CommandLine.Option(names = { "--version", "-V" }, versionHelp = true, description = "Print Hawtio version")
     boolean versionRequested;
     @CommandLine.Option(names = { "--help", "-h" }, usageHelp = true,
         description = "Print usage help and exit.")
     boolean usageHelpRequested;
+
     private boolean welcome = true;
+
+    private final ConnectionConverter connectionConverter = new ConnectionConverter();
 
     public Main() {
     }
 
     public static void run(String... args) {
         Main main = new Main();
-        commandLine = new CommandLine(main);
+        CommandLine commandLine = new CommandLine(main);
 
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
@@ -114,6 +125,11 @@ public class Main implements Callable<Integer> {
 
         if (war == null && warLocation == null) {
             HawtioDefaultLocator.setWar(this);
+        }
+
+        // Preset connections
+        if (connections != null && !connections.isEmpty()) {
+            Connection.setSystemProperty(connectionConverter.convert(connections));
         }
 
         this.run();
@@ -319,25 +335,29 @@ public class Main implements Callable<Integer> {
      * using known paths or maybe the local maven repository?
      */
     protected String findWar(String... paths) {
-        if (paths != null) {
-            for (String path : paths) {
-                if (path != null) {
-                    File file = new File(path);
-                    if (file.exists()) {
-                        if (file.isFile()) {
-                            String name = file.getName();
-                            if (isWarFileName(name)) {
-                                return file.getPath();
-                            }
-                        }
-                        if (file.isDirectory()) {
-                            // let's look for a war in this directory
-                            File[] wars = file.listFiles((dir, name) -> isWarFileName(name));
-                            if (wars != null && wars.length > 0) {
-                                return wars[0].getPath();
-                            }
-                        }
-                    }
+        if (paths == null) {
+            return null;
+        }
+
+        for (String path : paths) {
+            if (path == null) {
+                continue;
+            }
+            File file = new File(path);
+            if (!file.exists()) {
+                continue;
+            }
+            if (file.isFile()) {
+                String name = file.getName();
+                if (isWarFileName(name)) {
+                    return file.getPath();
+                }
+            }
+            if (file.isDirectory()) {
+                // let's look for a war in this directory
+                File[] wars = file.listFiles((dir, name) -> isWarFileName(name));
+                if (wars != null && wars.length > 0) {
+                    return wars[0].getPath();
                 }
             }
         }
@@ -394,5 +414,9 @@ public class Main implements Callable<Integer> {
 
     public void setKeyStorePass(String keyStorePass) {
         this.keyStorePass = keyStorePass;
+    }
+
+    public void setConnections(Map<String, Optional<String>> connections) {
+        this.connections = connections;
     }
 }

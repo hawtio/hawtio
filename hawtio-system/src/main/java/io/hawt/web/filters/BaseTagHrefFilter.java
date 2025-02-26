@@ -67,6 +67,11 @@ public class BaseTagHrefFilter implements Filter {
         final BaseTagHrefResponseWrapper responseWrapper = new BaseTagHrefResponseWrapper((HttpServletResponse) response);
         filterChain.doFilter(request, responseWrapper);
 
+        if (response.isCommitted()) {
+            // the chain may have already produced a response like 404
+            return;
+        }
+
         final ServletOutputStream out = response.getOutputStream();
         final String contentType = response.getContentType();
         final byte[] content = responseWrapper.getData();
