@@ -1,17 +1,7 @@
 package io.hawt.springboot;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import io.hawt.web.auth.AuthConfigurationServlet;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.http.HttpServletRequest;
-
 import io.hawt.system.ConfigManager;
+import io.hawt.web.auth.AuthConfigurationServlet;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
 import io.hawt.web.auth.ClientRouteRedirectFilter;
@@ -33,10 +23,11 @@ import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.proxy.ProxyServlet;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jolokia.support.spring.actuator.JolokiaEndpoint;
 import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -52,11 +43,15 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.AbstractUrlViewController;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 
 @Configuration
 @AutoConfigureAfter(JolokiaEndpointAutoConfiguration.class)
-@ConditionalOnBean(HawtioEndpoint.class)
+@ConditionalOnBean(HawtioWebEndpoint.class)
 public class HawtioManagementConfiguration {
 
     // a path within Spring server or management server that's the "base" of hawtio actuator.
@@ -66,11 +61,6 @@ public class HawtioManagementConfiguration {
 
     public HawtioManagementConfiguration(final EndpointPathResolver pathResolver) {
         this.hawtioPath = pathResolver.resolve("hawtio");
-    }
-
-    @Autowired
-    public void initializeHawtioPlugins(final HawtioEndpoint hawtioEndpoint, final Optional<List<HawtioPlugin>> plugins) {
-        hawtioEndpoint.setPlugins(plugins.orElse(Collections.emptyList()));
     }
 
     @Bean
@@ -284,7 +274,7 @@ public class HawtioManagementConfiguration {
     /**
      * This filter was called {@code LoginRedirectFilter}, but now it also handles redirection/forwarding for
      * client-side routes (React Router), so we no longer need this special RegExp mapped
-     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioEndpoint}.
+     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioWebEndpoint}.
      *
      * @param redirector
      * @param pathResolver
