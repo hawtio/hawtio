@@ -41,13 +41,13 @@ import static org.mockito.Mockito.when;
 public class HawtioEndpointTest {
 
     private EndpointPathResolver resolver;
-    private HawtioEndpoint hawtioEndpoint;
+    private HawtioPluginController hawtioEndpoint;
     private HttpServletRequest httpServletRequest;
 
     @BeforeEach
     public void setUp() {
         resolver = mock(EndpointPathResolver.class);
-        hawtioEndpoint = new HawtioEndpoint(resolver);
+        hawtioEndpoint = new HawtioPluginController(resolver);
         httpServletRequest = mock(HttpServletRequest.class);
     }
 
@@ -102,7 +102,7 @@ public class HawtioEndpointTest {
         DispatcherServletPath dispatcherServletPath = mock(DispatcherServletPath.class);
         when(dispatcherServletPath.getPath()).thenReturn("/");
 
-        HawtioEndpoint hawtioEndpoint = new HawtioEndpoint(new EndpointPathResolver(webEndpointProperties,
+        HawtioPluginController hawtioEndpoint = new HawtioPluginController(new EndpointPathResolver(webEndpointProperties,
                 serverProperties, managementServerProperties, dispatcherServletPath));
 
         PathMappedEndpoint pme = mock(PathMappedEndpoint.class);
@@ -135,7 +135,7 @@ public class HawtioEndpointTest {
                 Collections.singletonList(ece), null);
 
         handlerMapping.registerMapping(rmi, hawtioEndpoint,
-                HawtioEndpoint.class.getDeclaredMethod("forwardHawtioRequestToIndexHtml", HttpServletRequest.class));
+                HawtioPluginController.class.getDeclaredMethod("forwardHawtioRequestToIndexHtml", HttpServletRequest.class));
 
         // just basic usage to simulate handler mapping by DispatcherServlet
         MockHttpServletRequest req = new MockHttpServletRequest("GET", "/actuator/hawtio");

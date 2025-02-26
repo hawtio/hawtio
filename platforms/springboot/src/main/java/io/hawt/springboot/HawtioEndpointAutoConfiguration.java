@@ -1,8 +1,5 @@
 package io.hawt.springboot;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration;
@@ -18,6 +15,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Autoconfiguration for Hawtio on Spring Boot.
  */
@@ -30,13 +30,13 @@ public class HawtioEndpointAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnAvailableEndpoint
-    public HawtioEndpoint hawtioEndpoint(final EndpointPathResolver endpointPathResolver) {
-        return new HawtioEndpoint(endpointPathResolver);
+    public HawtioWebEndpoint hawtioMvcConfigurer(final EndpointPathResolver endpointPathResolver) {
+        return new HawtioWebEndpoint(endpointPathResolver);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(HawtioEndpoint.class)
+    @ConditionalOnBean(HawtioWebEndpoint.class)
     public EndpointPathResolver hawtioEndpointPathResolver(
         WebEndpointProperties webEndpointProperties,
         ServerProperties serverProperties,
@@ -46,7 +46,7 @@ public class HawtioEndpointAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(HawtioEndpoint.class)
+    @ConditionalOnBean(HawtioWebEndpoint.class)
     @ConfigurationProperties
     protected HawtioConfigurationProperties hawtioConfigurationProperties() {
         return new HawtioConfigurationProperties();
