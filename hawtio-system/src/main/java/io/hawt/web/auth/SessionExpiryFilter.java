@@ -65,6 +65,7 @@ public class SessionExpiryFilter implements Filter {
 
     private void writeOk(HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=UTF-8");
+        response.setHeader("X-Content-Type-Options", "nosniff");
         try (OutputStream out = response.getOutputStream()) {
             out.write("ok".getBytes());
             out.flush();
