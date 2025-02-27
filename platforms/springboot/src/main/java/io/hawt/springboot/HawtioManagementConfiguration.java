@@ -51,7 +51,7 @@ import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PA
 
 @Configuration
 @AutoConfigureAfter(JolokiaEndpointAutoConfiguration.class)
-@ConditionalOnBean(HawtioWebEndpoint.class)
+@ConditionalOnBean(HawtioEndpoint.class)
 public class HawtioManagementConfiguration {
 
     // a path within Spring server or management server that's the "base" of hawtio actuator.
@@ -274,7 +274,7 @@ public class HawtioManagementConfiguration {
     /**
      * This filter was called {@code LoginRedirectFilter}, but now it also handles redirection/forwarding for
      * client-side routes (React Router), so we no longer need this special RegExp mapped
-     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioWebEndpoint}.
+     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioEndpoint}.
      *
      * @param redirector
      * @param pathResolver
