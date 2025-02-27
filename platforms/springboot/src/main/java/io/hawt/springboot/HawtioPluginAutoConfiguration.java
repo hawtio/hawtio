@@ -44,8 +44,7 @@ public class HawtioPluginAutoConfiguration {
                                                        // This Qualifier is mandatory right now, but once the deprecated classes will be removed in SB 3.5, the Qualifier can be removed as well
                                                        @Autowired @Qualifier("requestMappingHandlerMapping") final RequestMappingHandlerMapping requestMappingHandlerMapping,
                                                        @Autowired final Optional<List<HawtioPlugin>> plugins) throws NoSuchMethodException {
-        HawtioPluginController hawtioRequestHandler = new HawtioPluginController(endpointPathResolver);
-        hawtioRequestHandler.setPlugins(plugins.orElse(Collections.emptyList()));
+        HawtioPluginController hawtioRequestHandler = new HawtioPluginController(plugins.orElse(Collections.emptyList()));
 
         Method getPlugins = HawtioPluginController.class.getMethod("getPlugins");
         RequestMappingInfo getPluginsMappingInfo = RequestMappingInfo

@@ -2,32 +2,33 @@ package io.hawt.springboot;
 
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 
 /**
- * <p>Spring Boot endpoint to expose Hawtio. It is more tightly integrated with Spring MVC than
- * {@link org.springframework.boot.actuate.endpoint.annotation.Endpoint} and methods annotated with
- * {@link RequestMapping} are invoked by {@link org.springframework.web.servlet.DispatcherServlet} through
- * {@link org.springframework.web.servlet.HandlerAdapter}.</p>
- *
- * <p>The implication is that {@link RequestMapping} methods are called after DispatcherServlet and after
- * all mapped Hawtio filters.</p>
+ * Web endpoint that provides access to Hawtio, a web console for JVM management.
+ * This endpoint integrates Hawtio with Spring Boot Actuator and configures the necessary
+ * resource handlers to serve Hawtio's static resources.
  */
 @WebEndpoint(id = "hawtio")
-public class HawtioWebEndpoint implements WebMvcConfigurer {
+public class HawtioEndpoint implements WebMvcConfigurer {
 
     private final EndpointPathResolver endpointPath;
 
-    public HawtioWebEndpoint(final EndpointPathResolver endpointPath) {
+    public HawtioEndpoint(final EndpointPathResolver endpointPath) {
         this.endpointPath = endpointPath;
     }
 
     @ReadOperation
-    public ModelAndView jolokia() {
-        return new ModelAndView("redirect:/actuator/hawtio/index.html");
+    public ModelAndView hawtio() {
+        final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(endpointPath.resolveUrlMapping("hawtio"))
+            .path("/index.html")
+            .build();
+
+        return new ModelAndView("redirect:" + uriComponents.getPath());
     }
 
     @Override

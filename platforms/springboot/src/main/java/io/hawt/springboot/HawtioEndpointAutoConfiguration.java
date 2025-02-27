@@ -30,13 +30,13 @@ public class HawtioEndpointAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnAvailableEndpoint
-    public HawtioWebEndpoint hawtioMvcConfigurer(final EndpointPathResolver endpointPathResolver) {
-        return new HawtioWebEndpoint(endpointPathResolver);
+    public HawtioEndpoint hawtioMvcConfigurer(final EndpointPathResolver endpointPathResolver) {
+        return new HawtioEndpoint(endpointPathResolver);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(HawtioWebEndpoint.class)
+    @ConditionalOnBean(HawtioEndpoint.class)
     public EndpointPathResolver hawtioEndpointPathResolver(
         WebEndpointProperties webEndpointProperties,
         ServerProperties serverProperties,
@@ -46,7 +46,7 @@ public class HawtioEndpointAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(HawtioWebEndpoint.class)
+    @ConditionalOnBean(HawtioEndpoint.class)
     @ConfigurationProperties
     protected HawtioConfigurationProperties hawtioConfigurationProperties() {
         return new HawtioConfigurationProperties();
