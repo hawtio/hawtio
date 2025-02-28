@@ -62,7 +62,8 @@ public class ContentSecurityPolicyFilterTest {
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
                 + "script-src-elem 'self'; "
-                + "style-src-elem 'self' 'unsafe-inline'");
+                + "style-src-elem 'self' 'unsafe-inline'; "
+                + "form-action 'self'");
     }
 
     @Test
@@ -80,7 +81,8 @@ public class ContentSecurityPolicyFilterTest {
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
                 + "script-src-elem 'self'; "
-                + "style-src-elem 'self' 'unsafe-inline'");
+                + "style-src-elem 'self' 'unsafe-inline'; "
+                + "form-action 'self'");
     }
 
     @Test
@@ -98,7 +100,8 @@ public class ContentSecurityPolicyFilterTest {
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
                 + "script-src-elem 'self'; "
-                + "style-src-elem 'self' 'unsafe-inline'");
+                + "style-src-elem 'self' 'unsafe-inline'; "
+                + "form-action 'self'");
     }
 
     @Test
@@ -120,7 +123,8 @@ public class ContentSecurityPolicyFilterTest {
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
                 + "script-src-elem 'self'; "
-                + "style-src-elem 'self' 'unsafe-inline'");
+                + "style-src-elem 'self' 'unsafe-inline'; "
+                + "form-action 'self'");
     }
 
     @Test
@@ -138,7 +142,8 @@ public class ContentSecurityPolicyFilterTest {
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'none'; "
                 + "script-src-elem 'self'; "
-                + "style-src-elem 'self' 'unsafe-inline'"));
+                + "style-src-elem 'self' 'unsafe-inline'; "
+                + "form-action 'self'"));
     }
 
     @Test
@@ -156,6 +161,7 @@ public class ContentSecurityPolicyFilterTest {
                 + "manifest-src 'self'; media-src 'self'; object-src 'self'; worker-src 'self' blob:; "
                 + "frame-ancestors 'self'; "
                 + "script-src-elem 'self'; "
-                + "style-src-elem 'self' 'unsafe-inline'");
+                + "style-src-elem 'self' 'unsafe-inline'; "
+                + "form-action 'self'");
     }
 }
