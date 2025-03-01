@@ -30,7 +30,7 @@ jobs:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}}
     steps:
       - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.3.0
+        uses: docker/setup-qemu-action@v3.6.0
       - name: Download images
         uses: actions/cache/restore@v4
         with:
@@ -95,7 +95,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: "maven"
       - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.3.0
+        uses: docker/setup-qemu-action@v3.6.0
       - name: Build
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
