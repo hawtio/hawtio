@@ -20,7 +20,7 @@
     <selenium-version>4.12.1</selenium-version>
     <selenide-version>7.2.0</selenide-version>
     <cucumber-version>7.20.1</cucumber-version>
-    <testcontainers-version>1.20.4</testcontainers-version>
+    <testcontainers-version>1.20.5</testcontainers-version>
     <awaitility-version>4.2.2</awaitility-version>
     <!-- Used for testing different versions of the Hawtio project then the current one - i.e. testing 4.0.0 with a SNAPSHOT version -->
     <hawtio.bom.version>${project.version}</hawtio.bom.version>
