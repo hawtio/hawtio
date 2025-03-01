@@ -74,7 +74,7 @@
     <hamcrest-version>3.0</hamcrest-version>
     <httpcore-version>4.4.16</httpcore-version>
     <httpclient-version>4.5.14</httpclient-version>
-    <jackson-version>2.18.2</jackson-version>
+    <jackson-version>2.18.3</jackson-version>
     <junit5-version>5.10.3</junit5-version>
     <log4j2-version>2.24.3</log4j2-version>
     <mockito-core-version>5.15.2</mockito-core-version>
