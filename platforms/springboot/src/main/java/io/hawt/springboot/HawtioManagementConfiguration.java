@@ -26,8 +26,8 @@ import io.hawt.web.proxy.ProxyServlet;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jolokia.support.spring.actuator.JolokiaEndpoint;
-import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
+import org.jolokia.support.spring.actuator.JolokiaWebEndpoint;
+import org.jolokia.support.spring.actuator.JolokiaWebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -50,7 +50,7 @@ import java.util.Map;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 
 @Configuration
-@AutoConfigureAfter(JolokiaEndpointAutoConfiguration.class)
+@AutoConfigureAfter(JolokiaWebEndpointAutoConfiguration.class)
 @ConditionalOnBean(HawtioEndpoint.class)
 public class HawtioManagementConfiguration {
 
@@ -82,7 +82,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(JolokiaEndpoint.class)
+    @ConditionalOnBean(JolokiaWebEndpoint.class)
     @ConditionalOnExposedEndpoint(name = "jolokia")
     public SimpleUrlHandlerMapping hawtioUrlMapping(final EndpointPathResolver pathResolver) {
         final String jolokiaPath = pathResolver.resolve("jolokia");
@@ -245,7 +245,7 @@ public class HawtioManagementConfiguration {
      */
     @Bean
     @Order(11)
-    @ConditionalOnBean(JolokiaEndpoint.class)
+    @ConditionalOnBean(JolokiaWebEndpoint.class)
     @ConditionalOnExposedEndpoint(name = "jolokia")
     public FilterRegistrationBean<AuthenticationFilter> jolokiaAuthenticationFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
