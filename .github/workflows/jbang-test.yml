@@ -40,8 +40,9 @@ jobs:
           jbang --quiet app install camel@apache/camel
       - name: Start Camel Hawtio
         run: |
+          mkdir -p $PWD/$REPORT_DIR/
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          camel hawtio --version=$version > $REPORT_DIR/jbang.log &
+          camel hawtio --version=$version > $PWD/$REPORT_DIR/jbang.log &
       - name: Setup application
         run: |
           case ${{ matrix.runtime }} in
