@@ -32,7 +32,9 @@ jobs:
       - name: Build Hawtio
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests
-          mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
+          mvn --batch-mode --no-transfer-progress install -DskipTests \
+            -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container \
+            -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot
       - name: Setup JBang
         uses: jbangdev/setup-jbang@main
       - name: Install Camel app
@@ -43,7 +45,7 @@ jobs:
         run: |
           mkdir -p $PWD/$REPORT_DIR/
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          camel hawtio --version=$version > $PWD/$REPORT_DIR/jbang.log &
+          camel hawtio --version=$version --openUrl=false > $PWD/$REPORT_DIR/jbang.log &
       - name: Setup application
         run: |
           case ${{ matrix.runtime }} in
@@ -66,13 +68,14 @@ jobs:
         run: |
           mkdir -p $PWD/$REPORT_DIR/
           docker run --rm --network host \
-          -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
-          -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
-          --shm-size="2g" \
-          hawtio-test-suite:${{matrix.java}} -Pe2e-${{ matrix.runtime }} -Dselenide.browser=firefox \
-          -Dio.hawt.test.url=http://localhost:8888/hawtio \
-          -Dio.hawt.test.app.connect.url=http://localhost:${{ env.app-port }}/${{ env.url-suffix }}/jolokia \
-          -Dhawtio-next-ci
+            -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
+            -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
+            --shm-size="2g" \
+            hawtio-test-suite:${{matrix.java}} \
+              -Pe2e-${{ matrix.runtime }} -Dselenide.browser=firefox \
+              -Dio.hawt.test.url=http://localhost:8888/hawtio \
+              -Dio.hawt.test.app.connect.url=http://localhost:${{ env.app-port }}/${{ env.url-suffix }}/jolokia \
+              -Dhawtio-next-ci
       - name: Prepare report artifacts
         if: always()
         run: |

@@ -26,11 +26,13 @@
         <include>io.hawt:hawtio-embedded</include>
         <include>io.hawt:hawtio-connect</include>
         <include>jakarta.servlet:jakarta.servlet-api</include>
+        <!-- Dependencies needed for Camel CLI Hawtio command to work -->
         <include>org.jolokia:jolokia-server-core</include>
         <include>org.jolokia:jolokia-service-serializer</include>
         <include>org.jolokia:jolokia-json</include>
         <include>org.apache.httpcomponents:httpcore</include>
         <include>org.apache.httpcomponents:httpclient</include>
+        <include>commons-codec:commons-codec</include>
       </includes>
     </dependencySet>
   </dependencySets>
