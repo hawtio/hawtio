@@ -46,8 +46,29 @@ mvn install -Pe2e,e2e-springboot -am -pl :hawtio-test-suite -Dlocal-app=true
 mvn install -Pe2e,e2e-quarkus -am -pl :hawtio-test-suite -Dlocal-app=true
 ```
 
+### Camel CLI tests
+
+**Spring Boot**
+
+```console
+mvn install -Pe2e,e2e-springboot -am -pl :hawtio-test-suite -Dlocal-app=true \
+  -Dio.hawt.test.url=http://localhost:8888/hawtio \
+  -Dio.hawt.test.app.connect.url=http://localhost:10001/actuator/hawtio/jolokia \
+  -Dhawtio-next-ci
+```
+
+**Quarkus**
+
+```console
+mvn install -Pe2e,e2e-quarkus -am -pl :hawtio-test-suite -Dlocal-app=true \
+  -Dio.hawt.test.url=http://localhost:8888/hawtio \
+  -Dio.hawt.test.app.connect.url=http://localhost:8080/hawtio/jolokia \
+  -Dhawtio-next-ci
+```
+
 ### Camel K E2E tests
-You need to provide an Openshift environment, either you need to be logged in to a cluster already or supply proper arguments you can find in the `io.hawt.tests.features.config.TestConfiguration` class.
+
+You need to provide an OpenShift environment, either you need to be logged in to a cluster already or supply proper arguments you can find in the `io.hawt.tests.features.config.TestConfiguration` class.
 ```console
 mvn install -Pe2e,e2e-camelk -am -pl :hawtio-test-suite -Dio.hawt.test.use.openshift=true
 ```
@@ -62,7 +83,7 @@ mvn install -Pe2e,e2e-camelk -am -pl :hawtio-test-suite -Dio.hawt.test.use.opens
 
 hawtio-test-suite can test application in 3 different ways:
 
-- start its own java app (MavenDeployment), it is expected that the application is compiled and you specified the runtime.
+- start its own java app (MavenDeployment), it is expected that the application is compiled, and you specified the runtime.
   - related maven arguments are -Pe2e-<quarkus|springboot>, -Dlocal-app=true (to automatically compile the tested app)
 - start a container with the tested app
   - related maven argument is `-Dio.hawt.test.docker.image=<<DOCKER_IMAGE>>`
