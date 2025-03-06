@@ -9,6 +9,6 @@ import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
  */
 public class CamelSource extends CamelPage {
     public void routeSourceCodeIsPresented() {
-        $$(".view-line span").shouldHave(sizeGreaterThanOrEqual(1));
+        $$("div.view-line").shouldHave(sizeGreaterThanOrEqual(1));
     }
 }
