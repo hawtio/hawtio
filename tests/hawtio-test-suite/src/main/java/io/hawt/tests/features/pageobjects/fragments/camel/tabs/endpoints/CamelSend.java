@@ -4,8 +4,8 @@ import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byTagAndText;
-import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.actions;
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
 
 
@@ -33,7 +33,9 @@ public class CamelSend extends CamelPage {
      * @param message body content
      */
     public void addMessageBody(String message) {
-        $(byXpath("//textarea")).sendKeys(message);
+        // .sendKeys() work directly only with interactable inputs and textareas
+        $("div.view-line").click();
+        actions().moveToElement($("div.view-line span span")).sendKeys(message).perform();
     }
 
     /**
