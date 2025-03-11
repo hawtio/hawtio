@@ -1,5 +1,9 @@
 package io.hawt.springboot;
 
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -16,6 +20,13 @@ public class HawtioWebMvcConfigurer implements WebMvcConfigurer {
 
     public HawtioWebMvcConfigurer(final EndpointPathResolver endpointPath) {
         this.endpointPath = endpointPath;
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        // this doesn't work when request.getServletContext().getMimeType(resource.getFilename())
+        // resolves to non-null type...
+        configurer.mediaType("html", new MediaType("text", "html", StandardCharsets.UTF_8));
     }
 
     @Override

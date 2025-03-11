@@ -81,6 +81,8 @@ public class BaseTagHrefFilter implements Filter {
             return;
         }
 
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
         final byte[] replacedContent = replaceHrefs(content, baseTagHref, responseWrapper);
         responseWrapper.setContentLength(replacedContent.length);
         out.write(replacedContent);
