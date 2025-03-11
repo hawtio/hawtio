@@ -1,3 +1,9 @@
+# autoconfiguration of beans that go to "main" context
+
+# autoconfiguration that registers a @Bean with @WebEndpoint, so we can see Hawtio endpoint under
+# /actuator page. If this autoconfiguration is in "management" context only and the "management" context uses
+# separate listening port, the link is not visible.
 io.hawt.springboot.HawtioEndpointAutoConfiguration
+
+# autoconfiguration for hawtio-log API and implementations JMX plugins
 io.hawt.springboot.HawtioLogAutoConfiguration
-io.hawt.springboot.HawtioManagementConfiguration
