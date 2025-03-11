@@ -1,4 +1,9 @@
-io.hawt.springboot.HawtioEndpointAutoConfiguration
-io.hawt.springboot.HawtioLogAutoConfiguration
+# autoconfiguration of beans that go to "management" context
+
+# autoconfiguration for Hawtio web application based on Spring MVC controllers and mappings
+# it is defined for "management" context, so it's available with other actuator endpoints
 io.hawt.springboot.HawtioManagementConfiguration
+
+# autoconfiguration for Hawtio /plugin web endpoint. It collects all HawtioPlugin @Beans
+# from "management" and "main" contexts
 io.hawt.springboot.HawtioPluginAutoConfiguration

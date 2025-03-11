@@ -6,10 +6,9 @@ import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -23,13 +22,16 @@ import java.util.Optional;
  */
 @ManagementContextConfiguration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@PropertySource("classpath:/io/hawt/springboot/application.properties")
-@EnableConfigurationProperties
 public class HawtioPluginAutoConfiguration {
 
     /**
+     * <p>This bean creates a Spring controller that is added to the ManagementContext (/actuator).</p>
      *
-     * This bean creates a Spring controller that is added to the ManagementContext (/actuator).
+     * <p>We can't simply have a {@link Bean @Bean} method that returns {@link Controller @Controller} annotated class
+     * because we need dynamic mapping, which can't be specified using
+     * {@link org.springframework.web.bind.annotation.RequestMapping}. And that's what
+     * {@link RequestMappingHandlerMapping} is doing internally. We have to register the handler method
+     * programmatically.</p>
      *
      * @param endpointPathResolver
      * @param requestMappingHandlerMapping
@@ -55,4 +57,5 @@ public class HawtioPluginAutoConfiguration {
 
         return hawtioRequestHandler;
     }
+
 }
