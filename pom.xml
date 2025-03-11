@@ -50,13 +50,13 @@
 
     <!-- Versions for major components -->
     <!-- Jolokia -->
-    <jolokia-version>2.2.6</jolokia-version>
+    <jolokia-version>2.2.2</jolokia-version>
     <!-- Quarkus -->
     <quarkus-version>3.18.2</quarkus-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring-version>6.2.3</spring-version>
-    <spring-boot-version>3.4.3</spring-boot-version>
+    <spring-boot-version>3.4.2</spring-boot-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.10.0</camel-spring-boot-version>
     <!-- Jetty -->

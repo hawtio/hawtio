@@ -1,7 +1,17 @@
 package io.hawt.springboot;
 
-import io.hawt.system.ConfigManager;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import io.hawt.web.auth.AuthConfigurationServlet;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletRequest;
+
+import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
 import io.hawt.web.auth.ClientRouteRedirectFilter;
@@ -23,15 +33,10 @@ import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.proxy.ProxyServlet;
-import jakarta.servlet.DispatcherType;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jolokia.support.spring.actuator.JolokiaServletAutoConfiguration;
-import org.jolokia.support.spring.actuator.JolokiaWebEndpoint;
-import org.jolokia.support.spring.actuator.JolokiaWebEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.actuate.autoconfigure.endpoint.expose.EndpointExposure;
-import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration;
+import org.jolokia.support.spring.actuator.JolokiaEndpoint;
+import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -39,30 +44,22 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.AbstractUrlViewController;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 
-/**
- * <p>This autoconfiguration class for <em>management context</em> registers required servlets and filters
- * for Hawtio web application based on Spring MVC.</p>
- */
-@ManagementContextConfiguration
-@AutoConfigureAfter({ JolokiaServletAutoConfiguration.class, JolokiaWebEndpointAutoConfiguration.class })
-@ConditionalOnBean({ HawtioEndpoint.class, EndpointPathResolver.class })
+@Configuration
+@AutoConfigureAfter(JolokiaEndpointAutoConfiguration.class)
+@ConditionalOnBean(HawtioEndpoint.class)
 public class HawtioManagementConfiguration {
 
-    // a path within Spring server or management server that's the "base" of Hawtio actuator.
+    // a path within Spring server or management server that's the "base" of hawtio actuator.
     // By default it should be "/actuator/hawtio", but may be affected by application.properties settings
     // (for example management.endpoints.web.base-path which defaults to "/actuator", but can be customized)
     private final String hawtioPath;
@@ -71,39 +68,21 @@ public class HawtioManagementConfiguration {
         this.hawtioPath = pathResolver.resolve("hawtio");
     }
 
-    /**
-     * Configuration manager bean that exposes Spring property sources (most importantly from
-     * {@code application.properties}) to Hawtio application
-     * @param hawtioProperties
-     * @return
-     */
+    @Autowired
+    public void initializeHawtioPlugins(final HawtioEndpoint hawtioEndpoint, final Optional<List<HawtioPlugin>> plugins) {
+        hawtioEndpoint.setPlugins(plugins.orElse(Collections.emptyList()));
+    }
+
     @Bean
     public ConfigManager hawtioConfigManager(final HawtioProperties hawtioProperties) {
         return new ConfigManager(hawtioProperties.get()::get);
     }
 
-    /**
-     * {@link org.springframework.web.servlet.config.annotation.WebMvcConfigurer MVC configurer} that
-     * registers static resource location for Hawtio resources (JS, images, styles, ...) using dynamic URL mapping.
-     * @param pathResolver
-     * @return
-     */
-    @Bean
-    public HawtioWebMvcConfigurer hawtioWebMvcConfigurer(final EndpointPathResolver pathResolver) {
-        return new HawtioWebMvcConfigurer(pathResolver);
-    }
-
-    /**
-     * Spring version of {@code web.xml}'s {@code <welcome-files>}, to make redirects/forwards consistent with WAR
-     * and Quarkus deployments.
-     * @param pathResolver
-     * @return
-     */
     @Bean
     public SimpleUrlHandlerMapping hawtioWelcomeFiles(final EndpointPathResolver pathResolver) {
         AbstractController abstractController = new AbstractController() {
             @Override
-            protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+            protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
                 return new ModelAndView("forward:" + pathResolver.resolve("hawtio") + "/index.html");
             }
         };
@@ -112,19 +91,9 @@ public class HawtioManagementConfiguration {
         return new SimpleUrlHandlerMapping(Map.of(pathResolver.resolve("hawtio") + "/", abstractController), 10);
     }
 
-    /**
-     * <p>{@link HandlerMapping} that <em>forwards</em> requests in the form of {@code /actuator/hawtio/jolokia}
-     * to actual Jolokia actuator endpoint normally registered under {@code /actuator/jolokia}.</p>
-     *
-     * <p>Note: With WAR deployment this is not required, because Hawtio's {@code web.xml} registers own version
-     * of Jolokia's {@link org.jolokia.server.core.http.AgentServlet}.</p>
-     *
-     * @param pathResolver
-     * @return
-     */
     @Bean
-    @ConditionalOnBean(JolokiaWebEndpoint.class)
-    @ConditionalOnAvailableEndpoint(value = JolokiaWebEndpoint.class, exposure = EndpointExposure.WEB)
+    @ConditionalOnBean(JolokiaEndpoint.class)
+    @ConditionalOnExposedEndpoint(name = "jolokia")
     public SimpleUrlHandlerMapping hawtioUrlMapping(final EndpointPathResolver pathResolver) {
         final String jolokiaPath = pathResolver.resolve("jolokia");
         final String hawtioPath = pathResolver.resolve("hawtio");
@@ -178,8 +147,6 @@ public class HawtioManagementConfiguration {
         filter.addUrlPatterns(hawtioPath);
         return filter;
     }
-
-    // Filters registered in the same order as in web.xml for WAR deployment
 
     @Bean
     @Order(1)
@@ -276,7 +243,7 @@ public class HawtioManagementConfiguration {
     // io.hawt.springboot.HawtioManagementConfiguration.JolokiaForwardingController which returns
     // "forward:/actuator/jolokia" view name handled by DispatcherServlet. Such request (with original URI
     // /actuator/hawtio/jolokia/*) is already handled by all the above Hawtio filters, so there's NO NEED
-    // to map "/hawtio/jolokia/*" pattern to AuthenticationFilter, because filters will be invoked during the forward
+    // to map "/hawtio/jolokia/*" pattern to AuthenticationFilter, because filters will be invoked by the forward
     //
     // when using /actuator/jolokia/* request, we invoke Jolokia Actuator endpoint directly and NO Hawtio filters
     // will be invoked (which is fine), but we need AuthenticationFilter being mapped to "/actuator/jolokia/*"
@@ -288,8 +255,8 @@ public class HawtioManagementConfiguration {
      */
     @Bean
     @Order(11)
-    @ConditionalOnBean(JolokiaWebEndpoint.class)
-    @ConditionalOnAvailableEndpoint(value = JolokiaWebEndpoint.class, exposure = EndpointExposure.WEB)
+    @ConditionalOnBean(JolokiaEndpoint.class)
+    @ConditionalOnExposedEndpoint(name = "jolokia")
     public FilterRegistrationBean<AuthenticationFilter> jolokiaAuthenticationFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new AuthenticationFilter());
@@ -316,7 +283,8 @@ public class HawtioManagementConfiguration {
 
     /**
      * This filter was called {@code LoginRedirectFilter}, but now it also handles redirection/forwarding for
-     * client-side routes (React Router).
+     * client-side routes (React Router), so we no longer need this special RegExp mapped
+     * {@link org.springframework.web.bind.annotation.RequestMapping} annotated method in {@link HawtioEndpoint}.
      *
      * @param redirector
      * @param pathResolver
@@ -363,7 +331,7 @@ public class HawtioManagementConfiguration {
     // Servlets
     // -------------------------------------------------------------------------
 
-    // Jolokia agent servlet is provided by Spring Boot actuator, so there's no need to register it here
+    // Jolokia agent servlet is provided by Spring Boot actuator
 
     @Bean
     public ServletRegistrationBean<ProxyServlet> jolokiaProxyServlet() {
@@ -475,5 +443,4 @@ public class HawtioManagementConfiguration {
             }
         }
     }
-
 }
