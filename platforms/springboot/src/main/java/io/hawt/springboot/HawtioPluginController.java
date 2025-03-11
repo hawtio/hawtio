@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Exposes Hawtio Plugins as a management (/actuator) RestController
  */
+@SuppressWarnings("ClassCanBeRecord")
 public class HawtioPluginController {
 
     private final List<HawtioPlugin> plugins;
