@@ -116,6 +116,9 @@ public class KeycloakServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            pathInfo = "/client-config";
+        }
         switch (pathInfo) {
         case "/enabled":
             ServletHelpers.sendJSONResponse(response, keycloakEnabled);
