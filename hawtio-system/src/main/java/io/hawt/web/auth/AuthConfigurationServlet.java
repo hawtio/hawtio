@@ -72,14 +72,15 @@ public class AuthConfigurationServlet extends HttpServlet {
             // now - timestamp now at server-side
             // timeout - sessionTimeout in seconds from webapp session
             String t = req.getParameter("t");
+            long v;
             try {
-                Integer.parseInt(t);
+                v = Long.parseLong(t);
             } catch (NumberFormatException e) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            String config = String.format("{\"req\":%s,\"now\":%d,\"timeout\":%d}",
-                    req.getParameter("t"), System.currentTimeMillis(),
+            String config = String.format("{\"req\":%d,\"now\":%d,\"timeout\":%d}",
+                    v, System.currentTimeMillis(),
                     AuthSessionHelpers.getSessionTimeout(getServletContext()));
             ServletHelpers.sendJSONResponse(resp, config);
         } else {
