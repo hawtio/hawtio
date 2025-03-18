@@ -139,7 +139,7 @@ public class MavenDeployment implements AppDeployment {
             if (TestConfiguration.isQuarkus()) {
                 keycloakFile = fs.getPath("keycloak-hawtio.json");
             } else {
-                keycloakFile = fs.getPath("BOOT-INF", "classes", "hawtio-static", "keycloak-hawtio.json");
+                keycloakFile = fs.getPath("BOOT-INF", "classes", "keycloak-hawtio.json");
             }
             String content = Files.readString(keycloakFile);
 

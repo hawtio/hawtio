@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - 4.x
+      - e2e-springboot-keycloak
     paths-ignore:
       - "**.md"
 
@@ -24,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         java: ["17", "21"]
-        runtime: ["quarkus", "springboot", "quarkus-keycloak"]
+        runtime: ["quarkus", "springboot", "quarkus-keycloak", "springboot-keycloak"]
         browser: ["firefox"] # chrome disabled because of https://github.com/hawtio/hawtio-next/issues/478
     env:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}}
