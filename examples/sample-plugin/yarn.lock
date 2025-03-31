@@ -407,28 +407,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_10@npm:@hawtio/camel-model@~4.10.0":
-  version: 4.10.0
-  resolution: "@hawtio/camel-model@npm:4.10.0"
-  checksum: 10/69fe1b25054eefa2c736ab33c9ca4602805b35a44b6069574830f7d19f1a8e65ca522ace9a143fd768162032e4289c4046af680564063a5018d1ebc6741ad23a
+"@hawtio/camel-model-v4_10@npm:@hawtio/camel-model@~4.10.2":
+  version: 4.10.2
+  resolution: "@hawtio/camel-model@npm:4.10.2"
+  checksum: 10/4b2d8d83bb06e2d135ab8dc00188e24788027617964d6b1175521ecaaa3a4b08e47e6d3697be2f4dc2c2bb2793d9f3e299c7d59dde931a6dd8e6ef070e4cf957
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_8@npm:@hawtio/camel-model@~4.8.3":
-  version: 4.8.3
-  resolution: "@hawtio/camel-model@npm:4.8.3"
-  checksum: 10/d51aaa771b4ca583f59439f5567e4e85d947be1030f74f99a686fe4be9bfe64683b70e08d63fcc5beec177d68e1de080a14586e2bcad570c4d627e4197ede31d
+"@hawtio/camel-model-v4_8@npm:@hawtio/camel-model@~4.8.5":
+  version: 4.8.5
+  resolution: "@hawtio/camel-model@npm:4.8.5"
+  checksum: 10/d39cb0c146eb597d7d41c57092ebcf0918e1738303508f349f9dccb9baf5d2ea947c8df72cc4127dc10c53d088f0e2a88f3d342c46afbe9f8d5d195675a8fe5f
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "@hawtio/react@npm:1.9.0"
+"@hawtio/react@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "@hawtio/react@npm:1.9.2"
   dependencies:
-    "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.0"
-    "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.3"
+    "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.2"
+    "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.5"
     "@jolokia.js/simple": "npm:^2.2.4"
-    "@module-federation/utilities": "npm:^3.1.45"
+    "@module-federation/utilities": "npm:^3.1.48"
     "@monaco-editor/react": "npm:^4.7.0"
     "@patternfly/react-charts": "npm:~7.4.9"
     "@patternfly/react-code-editor": "npm:~6.1.0"
@@ -438,11 +438,11 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:~16.2.0"
     "@testing-library/user-event": "npm:^14.6.1"
-    "@thumbmarkjs/thumbmarkjs": "npm:^0.19.1"
+    "@thumbmarkjs/thumbmarkjs": "npm:^0.20.0"
     "@types/dagre": "npm:^0.7.52"
     "@types/dagre-layout": "npm:^0.8.5"
     "@types/jest": "npm:^29.5.14"
-    "@types/node": "npm:^22.13.10"
+    "@types/node": "npm:^22.13.13"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18.3.1"
     "@types/react-router-dom": "npm:^5.3.3"
@@ -464,7 +464,7 @@ __metadata:
     reactflow: "npm:^11.11.4"
     superstruct: "npm:^2.0.2"
     typescript: "npm:^5.4.5"
-    xml-formatter: "npm:^3.6.4"
+    xml-formatter: "npm:^3.6.5"
   peerDependencies:
     "@patternfly/react-core": ^5
     keycloak-js: ^26
@@ -473,7 +473,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/53e91bb1895d58fe828beeb8e63f69b34c19ac15b120e9da6bd0a43ebf706282f6356ad55292d9709cbf19ffd8f9f90374941a2a37b86359b7b4164365b4fa70
+  checksum: 10/2c60c56e0523686a4c260653281a86bf1d007a5b0e9bbd22c2032ebca42db8b9fb6cfea637c1be4d0e5d45362372007db8bddbe944f433b7e9555922c56442bf
   languageName: node
   linkType: hard
 
@@ -850,18 +850,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/sdk@npm:0.10.0":
-  version: 0.10.0
-  resolution: "@module-federation/sdk@npm:0.10.0"
-  checksum: 10/70cee4e862f03ee6ac4dae23fa1711dd68f72a5b8b789c0da2bda20396746bc5a487bd3d1df12a6ed8447f7fa7970a0aec3c3e618f69bd536eb9c480ddc11868
+"@module-federation/sdk@npm:0.11.2":
+  version: 0.11.2
+  resolution: "@module-federation/sdk@npm:0.11.2"
+  checksum: 10/0b57523a03b8c81e975bf6bb756130742923a95f37dd7480335c5072500254a1d221077f0fbf595a8ddfb3ac30a0ffe685a259c2377b2982615ee80f856cb85c
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.1.45":
-  version: 3.1.46
-  resolution: "@module-federation/utilities@npm:3.1.46"
+"@module-federation/utilities@npm:^3.1.48":
+  version: 3.1.49
+  resolution: "@module-federation/utilities@npm:3.1.49"
   dependencies:
-    "@module-federation/sdk": "npm:0.10.0"
+    "@module-federation/sdk": "npm:0.11.2"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -873,7 +873,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/09d8f812556c58550a8b56b58fed292d4496e151d3af890b85654cea07df9ad60f4927063ccdb19ae56d3c363a19b240e780beaf7c641a058508240a2fece19a
+  checksum: 10/f79ab7218d401987b72ac73430a44522ca825f83b4b29e3df24c64d04c0d80a894683bae3b27b96d7d3cd10d27580e9fcad24eb75097bee8fc02d8abf31d2eab
   languageName: node
   linkType: hard
 
@@ -1397,10 +1397,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^0.19.1":
-  version: 0.19.1
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:0.19.1"
-  checksum: 10/d51eb956c3ad0cf3316587270311c63ca39903cd7cd80201de4af59f9f37cabbe50de6b82758f911b7aa79a5deb2363c05d424852866b4995d81bbd936319c9f
+"@thumbmarkjs/thumbmarkjs@npm:^0.20.0":
+  version: 0.20.0
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:0.20.0"
+  checksum: 10/b142b11bfbfd6ecfea2e1253f69a3c5adac401c23a4e02db5c37c74ce3f288cad06d1bfbc0ada193b585909e84ed817c0532ae6888bddb50374e813e87acb12a
   languageName: node
   linkType: hard
 
@@ -1989,12 +1989,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.13.10":
+"@types/node@npm:*":
   version: 22.13.10
   resolution: "@types/node@npm:22.13.10"
   dependencies:
     undici-types: "npm:~6.20.0"
   checksum: 10/57dc6a5e0110ca9edea8d7047082e649fa7fa813f79e4a901653b9174141c622f4336435648baced5b38d9f39843f404fa2d8d7a10981610da26066bc8caab48
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.13.13":
+  version: 22.13.14
+  resolution: "@types/node@npm:22.13.14"
+  dependencies:
+    undici-types: "npm:~6.20.0"
+  checksum: 10/5fafad441c7bb27f963aa8fdfa0787ffb1142b27f4dd2047a2cc27a39f981b432acc71a9b5a428a258f93daeb72f12b7468ab9163a41fe4f98584bc5d42ade6e
   languageName: node
   linkType: hard
 
@@ -4310,7 +4319,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.9.0"
+    "@hawtio/react": "npm:^1.9.2"
     "@swc/core": "npm:^1.11.5"
     copy-webpack-plugin: "npm:^13.0.0"
     css-loader: "npm:^7.1.2"
@@ -8664,12 +8673,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-formatter@npm:^3.6.4":
-  version: 3.6.4
-  resolution: "xml-formatter@npm:3.6.4"
+"xml-formatter@npm:^3.6.5":
+  version: 3.6.5
+  resolution: "xml-formatter@npm:3.6.5"
   dependencies:
     xml-parser-xo: "npm:^4.1.2"
-  checksum: 10/8596dcfeded7a1033c51cbc3664c656c38aad78bd2267b88f9a31e48eda84353307fbe593f24735434d0b82c4729107a130bdc4da5862a9d7c6951269b26ad3d
+  checksum: 10/6cf6abc8cfbb6b2fed15e7a5f9f91e159c655b9fdec7f8a7c70c206eca913db57d5c6d055c3dbe01d4294cdc3cfb03ca7556803f9c4fff415fd171cd08e43e27
   languageName: node
   linkType: hard
 
