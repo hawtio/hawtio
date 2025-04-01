@@ -14,7 +14,7 @@
   <properties>
     <image.name>hawtio-test-suite</image.name>
     <local-app>true</local-app>
-    <logback-classic-version>1.5.17</logback-classic-version>
+    <logback-classic-version>1.5.18</logback-classic-version>
     <slf4j-log4j12-version>2.0.5</slf4j-log4j12-version>
     <junit-platform-commons-version>1.10.3</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
