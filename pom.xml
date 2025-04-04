@@ -50,7 +50,7 @@
 
     <!-- Versions for major components -->
     <!-- Jolokia -->
-    <jolokia-version>2.2.7</jolokia-version>
+    <jolokia-version>2.2.8</jolokia-version>
     <!-- Quarkus -->
     <quarkus-version>3.20.0.temporary-redhat-00006</quarkus-version>
     <quarkus-extension-version>3.20.0.redhat-00002</quarkus-extension-version>
