@@ -50,7 +50,7 @@
 
     <!-- Versions for major components -->
     <!-- Jolokia -->
-    <jolokia-version>2.2.7</jolokia-version>
+    <jolokia-version>2.2.8</jolokia-version>
     <!-- Quarkus -->
     <quarkus-version>3.18.2</quarkus-version>
     <!-- Spring -->
