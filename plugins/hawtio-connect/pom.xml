@@ -14,12 +14,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-system</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <version>${servlet-api-version}</version>
