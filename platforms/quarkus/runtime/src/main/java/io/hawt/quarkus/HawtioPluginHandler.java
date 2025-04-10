@@ -45,6 +45,7 @@ public class HawtioPluginHandler implements Handler<RoutingContext> {
 
         routingContext.response()
             .putHeader("content-type", "application/json; charset=utf-8")
+            .putHeader("X-Content-Type-Options", "nosniff")
             .end(jsonContent);
     }
 }
