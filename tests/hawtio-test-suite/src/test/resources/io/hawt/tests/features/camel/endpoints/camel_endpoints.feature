@@ -16,11 +16,13 @@ Feature: Checking the functionality of Camel Endpoints page.
     And User is on Camel "endpoints" folder of "SampleCamel" context
     When User adds Endpoint "timer://foo?period=1000" from URI
     And Successful alert message is appeared and closed
-    Then Camel table has "timer://foo?period=1000" key and "Started" value
+    Then User is on Camel "endpoints" folder of "SampleCamel" context
+    And Camel table has "timer://foo?period=1000" key and "Started" value
 
   Scenario: Check to add an Endpoint from Data
     Given User is on "Camel" page
     And User is on Camel "endpoints" folder of "SampleCamel" context
     When User adds Endpoint "bar" name and "mock" component from Data
     And Successful alert message is appeared and closed
-    Then Camel table has "mock://bar" key and "Started" value
+    Then User is on Camel "endpoints" folder of "SampleCamel" context
+    And Camel table has "mock://bar" key and "Started" value
