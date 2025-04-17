@@ -27,7 +27,6 @@ public class CacheHeadersFilter extends HttpHeaderFilter {
         throws IOException {
         if (!cacheInBrowser(request)) {
             response.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate, proxy-revalidate, private");
-            response.setHeader("Pragma", "no-cache");
         }
     }
 
