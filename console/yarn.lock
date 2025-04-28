@@ -448,7 +448,7 @@ __metadata:
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.6"
-    "@hawtio/react": "npm:^1.9.2"
+    "@hawtio/react": "npm:^1.9.4"
     "@swc/core": "npm:^1.11.16"
     copy-webpack-plugin: "npm:^13.0.0"
     css-loader: "npm:^7.1.2"
@@ -467,9 +467,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.9.2":
-  version: 1.9.2
-  resolution: "@hawtio/react@npm:1.9.2"
+"@hawtio/react@npm:^1.9.4":
+  version: 1.9.4
+  resolution: "@hawtio/react@npm:1.9.4"
   dependencies:
     "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.2"
     "@hawtio/camel-model-v4_8": "npm:@hawtio/camel-model@~4.8.5"
@@ -519,7 +519,7 @@ __metadata:
   peerDependenciesMeta:
     keycloak-js:
       optional: true
-  checksum: 10/2c60c56e0523686a4c260653281a86bf1d007a5b0e9bbd22c2032ebca42db8b9fb6cfea637c1be4d0e5d45362372007db8bddbe944f433b7e9555922c56442bf
+  checksum: 10/38e11ede11d7bb2c8d24abc0092bc35683846d78fa74d2038d677bf25633455b00392b61ab630dc670e4430e13e0d78a5ecd832a752774abc98c38f8c1e99a33
   languageName: node
   linkType: hard
 
