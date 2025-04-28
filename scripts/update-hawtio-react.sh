@@ -20,6 +20,6 @@ fi
 version=$1
 echo Updating @hawtio/react to "$version"
 
-ag @hawtio/react -G package.json -l | xargs sed -i "s|\"@hawtio/react\": \".*\"|\"@hawtio/react\": \"^$version\"|g"
+ag @hawtio/react -G package.json -l | xargs gsed -i "s|\"@hawtio/react\": \".*\"|\"@hawtio/react\": \"^$version\"|g"
 
 echo Run \'mvn install\' to update yarn.lock
