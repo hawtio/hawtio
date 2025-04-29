@@ -15,7 +15,6 @@
     <image.name>hawtio-test-suite</image.name>
     <local-app>true</local-app>
     <logback-classic-version>1.5.18</logback-classic-version>
-    <slf4j-log4j12-version>2.0.5</slf4j-log4j12-version>
     <junit-platform-commons-version>1.10.3</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.12.1</gson-version>
@@ -42,11 +41,6 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${logback-classic-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-log4j12-version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
