@@ -15,7 +15,7 @@
     <image.name>hawtio-test-suite</image.name>
     <local-app>true</local-app>
     <logback-classic-version>1.5.18</logback-classic-version>
-    <junit-platform-commons-version>1.11.4</junit-platform-commons-version>
+    <junit-platform-commons-version>1.12.2</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.12.1</gson-version>
     <xtf.version>0.36</xtf.version>
