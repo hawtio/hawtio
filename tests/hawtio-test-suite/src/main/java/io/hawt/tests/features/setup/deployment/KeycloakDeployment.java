@@ -8,7 +8,7 @@ import io.hawt.tests.features.config.TestConfiguration;
 public class KeycloakDeployment {
 
     private static KeycloakContainer container = new KeycloakContainer(TestConfiguration.getKeycloakImage())
-        .withRealmImportFile("keycloak-demo-realm.json");
+        .withRealmImportFile("hawtio-demo-realm.json");
 
     public static void start() {
         container.start();
