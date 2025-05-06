@@ -17,83 +17,11 @@
   </filter-mapping>
 
   <filter>
-    <filter-name>cache</filter-name>
-    <filter-class>io.hawt.web.filters.CacheHeadersFilter</filter-class>
+    <filter-name>headers</filter-name>
+    <filter-class>io.hawt.web.filters.ResponseHeadersFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>cache</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>CORSFilter</filter-name>
-    <filter-class>io.hawt.web.filters.CORSFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>CORSFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>XFrameOptionsFilter</filter-name>
-    <filter-class>io.hawt.web.filters.XFrameOptionsFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>XFrameOptionsFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>XXSSProtectionFilter</filter-name>
-    <filter-class>io.hawt.web.filters.XXSSProtectionFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>XXSSProtectionFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>XContentTypeOptionsFilter</filter-name>
-    <filter-class>io.hawt.web.filters.XContentTypeOptionsFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>XContentTypeOptionsFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>ContentSecurityPolicyFilter</filter-name>
-    <filter-class>io.hawt.web.filters.ContentSecurityPolicyFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>ContentSecurityPolicyFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>StrictTransportSecurityFilter</filter-name>
-    <filter-class>io.hawt.web.filters.StrictTransportSecurityFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>StrictTransportSecurityFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>PublicKeyPinningFilter</filter-name>
-    <filter-class>io.hawt.web.filters.PublicKeyPinningFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>PublicKeyPinningFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>ReferrerPolicyFilter</filter-name>
-    <filter-class>io.hawt.web.filters.ReferrerPolicyFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>ReferrerPolicyFilter</filter-name>
+    <filter-name>headers</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
