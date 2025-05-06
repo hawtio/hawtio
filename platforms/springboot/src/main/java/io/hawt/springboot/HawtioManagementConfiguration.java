@@ -12,16 +12,8 @@ import io.hawt.web.auth.SessionExpiryFilter;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.auth.keycloak.KeycloakUserServlet;
 import io.hawt.web.filters.BaseTagHrefFilter;
-import io.hawt.web.filters.CORSFilter;
-import io.hawt.web.filters.CacheHeadersFilter;
-import io.hawt.web.filters.ContentSecurityPolicyFilter;
 import io.hawt.web.filters.FlightRecordingDownloadFacade;
-import io.hawt.web.filters.PublicKeyPinningFilter;
-import io.hawt.web.filters.ReferrerPolicyFilter;
-import io.hawt.web.filters.StrictTransportSecurityFilter;
-import io.hawt.web.filters.XContentTypeOptionsFilter;
-import io.hawt.web.filters.XFrameOptionsFilter;
-import io.hawt.web.filters.XXSSProtectionFilter;
+import io.hawt.web.filters.ResponseHeadersFilter;
 import io.hawt.web.proxy.ProxyServlet;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -192,81 +184,9 @@ public class HawtioManagementConfiguration {
 
     @Bean
     @Order(2)
-    public FilterRegistrationBean<CacheHeadersFilter> cacheFilter() {
-        final FilterRegistrationBean<CacheHeadersFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new CacheHeadersFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(3)
-    public FilterRegistrationBean<CORSFilter> hawtioCorsFilter() {
-        final FilterRegistrationBean<CORSFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new CORSFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(4)
-    public FilterRegistrationBean<XFrameOptionsFilter> xframeOptionsFilter() {
-        final FilterRegistrationBean<XFrameOptionsFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new XFrameOptionsFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(5)
-    public FilterRegistrationBean<XXSSProtectionFilter> xxssProtectionFilter() {
-        final FilterRegistrationBean<XXSSProtectionFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new XXSSProtectionFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(6)
-    public FilterRegistrationBean<XContentTypeOptionsFilter> xContentTypeOptionsFilter() {
-        final FilterRegistrationBean<XContentTypeOptionsFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new XContentTypeOptionsFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(7)
-    public FilterRegistrationBean<ContentSecurityPolicyFilter> contentSecurityPolicyFilter() {
-        final FilterRegistrationBean<ContentSecurityPolicyFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new ContentSecurityPolicyFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(8)
-    public FilterRegistrationBean<StrictTransportSecurityFilter> strictTransportSecurityFilter() {
-        final FilterRegistrationBean<StrictTransportSecurityFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new StrictTransportSecurityFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(9)
-    public FilterRegistrationBean<PublicKeyPinningFilter> publicKeyPinningFilter() {
-        final FilterRegistrationBean<PublicKeyPinningFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new PublicKeyPinningFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
-        return filter;
-    }
-
-    @Bean
-    @Order(10)
-    public FilterRegistrationBean<ReferrerPolicyFilter> referrerPolicyFilter() {
-        final FilterRegistrationBean<ReferrerPolicyFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new ReferrerPolicyFilter());
+    public FilterRegistrationBean<ResponseHeadersFilter> responseHeadersFilter() {
+        final FilterRegistrationBean<ResponseHeadersFilter> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new ResponseHeadersFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
     }
