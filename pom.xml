@@ -78,7 +78,7 @@
     <log4j2-version>2.24.3</log4j2-version>
     <mockito-core-version>5.16.1</mockito-core-version>
     <nimbusds-jose-version>10.0.2</nimbusds-jose-version>
-    <picocli-version>4.7.6</picocli-version>
+    <picocli-version>4.7.7</picocli-version>
     <servlet-api-version>5.0.0</servlet-api-version>
     <!-- Pin SLF4J version until https://issues.apache.org/jira/browse/CAMEL-20598 is resolved at SLF4J -->
     <slf4j-version>2.0.11</slf4j-version>
