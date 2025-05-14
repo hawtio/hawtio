@@ -57,7 +57,9 @@ public class HawtioDefaultLocator {
                 System.exit(1);
             }
             File warFile = File.createTempFile("hawtio-", ".war");
-            writeStreamTo(resource.openStream(), Files.newOutputStream(warFile.toPath()), 64 * KB);
+            try (InputStream in = resource.openStream(); OutputStream out = Files.newOutputStream(warFile.toPath())) {
+                writeStreamTo(in, out, 64 * KB);
+            }
 
             String warPath = warFile.getCanonicalPath();
             main.setWar(warPath);

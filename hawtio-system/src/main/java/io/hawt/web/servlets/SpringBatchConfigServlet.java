@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -32,14 +33,16 @@ public class SpringBatchConfigServlet extends HttpServlet {
     public void doGet(HttpServletRequest httpServletRequest,
                       HttpServletResponse httpServletResponse) throws IOException {
 
+        Properties properties = new Properties();
         InputStream propsIn = SpringBatchConfigServlet.class.getClassLoader().getResourceAsStream("springbatch.properties");
         httpServletResponse.setHeader("Content-type", "application/json");
         if (propsIn == null) {
             writeEmpty(httpServletResponse.getWriter());
             return;
         }
-        Properties properties = new Properties();
-        properties.load(propsIn);
+        try (propsIn) {
+            properties.load(propsIn);
+        }
         JSONObject responseJson = new JSONObject();
         JSONArray springBatchServersJson = new JSONArray();
         List<? extends String> springBatchServers = Arrays.asList(properties.getProperty("springBatchServerList").split(","));
@@ -64,11 +67,17 @@ public class SpringBatchConfigServlet extends HttpServlet {
                 serverList.add(server);
             }
             properties.setProperty("springBatchServerList", join(serverList, ","));
-            properties.store(Files.newOutputStream(file.toPath()), null);
+            OutputStream out = Files.newOutputStream(file.toPath());
+            try (out) {
+                properties.store(out, null);
+            }
             resp.getWriter().print("updated");
         } else if (server != null && !server.isEmpty()) {
             properties.setProperty("springBatchServerList", properties.getProperty("springBatchServerList") + "," + server);
-            properties.store(Files.newOutputStream(file.toPath()), null);
+            OutputStream out = Files.newOutputStream(file.toPath());
+            try (out) {
+                properties.store(out, null);
+            }
             resp.getWriter().print("added");
         } else {
             resp.getWriter().print("failed");
@@ -85,7 +94,10 @@ public class SpringBatchConfigServlet extends HttpServlet {
             List<String> serverList = new ArrayList<>(Arrays.asList(servers));
             serverList.remove(server);
             properties.setProperty("springBatchServerList", join(serverList, ","));
-            properties.store(Files.newOutputStream(file.toPath()), null);
+            OutputStream out = Files.newOutputStream(file.toPath());
+            try (out) {
+                properties.store(out, null);
+            }
             resp.getWriter().print("deleted");
         } else {
             resp.getWriter().print("failed");
@@ -104,9 +116,10 @@ public class SpringBatchConfigServlet extends HttpServlet {
     }
 
     private Properties getProperties(File file) throws IOException {
-        FileInputStream propsIn = new FileInputStream(file);
         Properties properties = new Properties();
-        properties.load(propsIn);
+        try (FileInputStream propsIn = new FileInputStream(file)) {
+            properties.load(propsIn);
+        }
         return properties;
     }
 

@@ -98,7 +98,9 @@ public class About implements AboutMBean {
                 is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-embedded/pom.properties");
             }
             // then try the general manifest file
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/MANIFEST.MF");
+            if (is == null) {
+                is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/MANIFEST.MF");
+            }
             if (is != null) {
                 p.load(is);
                 version = p.getProperty("Bundle-Version", null);
