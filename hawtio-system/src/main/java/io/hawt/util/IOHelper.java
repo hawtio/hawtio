@@ -135,6 +135,7 @@ public class IOHelper {
                 l = is.read(b);
             }
         } finally {
+            closeQuietly(is);
             closeQuietly(os);
         }
     }

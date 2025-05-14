@@ -39,15 +39,16 @@ public class MavenCoordinates {
 
     public static String mavenCoordinatesFromJarFile(File file) throws IOException {
         StringBuilder buffer = new StringBuilder();
-        JarFile jarFile = new JarFile(file);
-        Enumeration<JarEntry> entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
-            JarEntry jarEntry = entries.nextElement();
-            String name = jarEntry.getName();
-            if (name.endsWith("pom.properties")) {
-                InputStream is = jarFile.getInputStream(jarEntry);
-                if (is != null) {
-                    appendMavenCoordinateFromPomProperties(is, buffer);
+        try (JarFile jarFile = new JarFile(file)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry jarEntry = entries.nextElement();
+                String name = jarEntry.getName();
+                if (name.endsWith("pom.properties")) {
+                    InputStream is = jarFile.getInputStream(jarEntry);
+                    if (is != null) {
+                        appendMavenCoordinateFromPomProperties(is, buffer);
+                    }
                 }
             }
         }
