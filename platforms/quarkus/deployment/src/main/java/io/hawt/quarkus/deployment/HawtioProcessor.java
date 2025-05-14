@@ -12,6 +12,7 @@ import io.hawt.quarkus.HawtioConfig;
 import io.hawt.quarkus.HawtioProducers;
 import io.hawt.quarkus.HawtioRecorder;
 import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
+import io.hawt.quarkus.auth.SessionConfigurationServletExtension;
 import io.hawt.quarkus.filters.HawtioQuarkusAuthenticationFilter;
 import io.hawt.quarkus.filters.HawtioQuarkusClientRouteRedirectFilter;
 import io.hawt.quarkus.servlets.HawtioQuakusLoginServlet;
@@ -38,6 +39,7 @@ import io.quarkus.devui.spi.page.Page;
 import io.quarkus.undertow.deployment.FilterBuildItem;
 import io.quarkus.undertow.deployment.ListenerBuildItem;
 import io.quarkus.undertow.deployment.ServletBuildItem;
+import io.quarkus.undertow.deployment.ServletExtensionBuildItem;
 import io.quarkus.vertx.http.deployment.NonApplicationRootPathBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import org.jboss.metadata.parser.servlet.WebMetaDataParser;
@@ -97,7 +99,8 @@ public class HawtioProcessor {
     void registerHawtioBeans(
         BuildProducer<ServletBuildItem> servlet,
         BuildProducer<FilterBuildItem> filter,
-        BuildProducer<ListenerBuildItem> listener
+        BuildProducer<ListenerBuildItem> listener,
+        BuildProducer<ServletExtensionBuildItem> extension
     ) throws Exception {
 
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -113,6 +116,8 @@ public class HawtioProcessor {
             registerFilters(result, filter);
             registerListeners(result, listener);
         }
+
+        extension.produce(new ServletExtensionBuildItem(new SessionConfigurationServletExtension()));
     }
 
     private void registerServlets(WebMetaData webMetaData, BuildProducer<ServletBuildItem> servlet) {

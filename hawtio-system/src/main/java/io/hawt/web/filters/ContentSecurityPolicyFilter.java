@@ -49,6 +49,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         List<String> workerSrc = new ArrayList<>(List.of("'self'"));
         List<String> scriptSrcElem = new ArrayList<>(List.of("'self'"));
         List<String> styleSrcElem = new ArrayList<>(List.of("'self'"));
+        List<String> formAction = new ArrayList<>(List.of("'self'"));
 
         List<String> frameAncestors = new ArrayList<>();
         if (isXFrameSameOriginAllowed()) {
@@ -118,6 +119,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         addPolicy(builder, "frame-ancestors", frameAncestors);
         addPolicy(builder, "script-src-elem", scriptSrcElem);
         addPolicy(builder, "style-src-elem", styleSrcElem);
+        addPolicy(builder, "form-action", formAction);
 
         policy = builder.toString().trim();
         policy = policy.substring(0, policy.length() - 1);

@@ -81,6 +81,8 @@ public class BaseTagHrefFilter implements Filter {
             return;
         }
 
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
         final byte[] replacedContent = replaceHrefs(content, baseTagHref, responseWrapper);
         responseWrapper.setContentLength(replacedContent.length);
         out.write(replacedContent);
@@ -92,12 +94,47 @@ public class BaseTagHrefFilter implements Filter {
         }
         String encoding = Optional.ofNullable(response.getCharacterEncoding()).orElse(StandardCharsets.UTF_8.name());
         String original = new String(content, encoding);
-        String replaced = original.replaceAll(
-            String.format("(src|href)=(['\"])%s/", DEFAULT_CONTEXT_PATH),
-            String.format("$1=$2%s", href));
-        LOG.trace("Original:\n{}", original);
-        LOG.trace("Replaced:\n{}", replaced);
-        return replaced.getBytes(encoding);
+        int baseIdx = original.indexOf("<base ");
+        char[] array = original.toCharArray();
+        String baseToReplace = null;
+        if (baseIdx != -1) {
+            baseIdx += 6;
+            while (array[baseIdx] != '>') {
+                if (array[baseIdx] == 'h' && array[baseIdx + 1] == 'r'
+                        && array[baseIdx + 2] == 'e' && array[baseIdx + 3] == 'f') {
+                    baseIdx += 4;
+                    while (Character.isWhitespace(array[baseIdx]) || array[baseIdx] == '=') {
+                        baseIdx++;
+                    }
+                    if (array[baseIdx] == '\"') {
+                        // " is the delimiter
+                        baseToReplace = original.substring(baseIdx + 1, original.indexOf('\"', baseIdx + 1));
+                    } else if (array[baseIdx] == '\'') {
+                        // ' is the delimiter
+                        baseToReplace = original.substring(baseIdx + 1, original.indexOf('\'', baseIdx + 1));
+                    } else {
+                        // no delimiter (<base href=/hawtio>)
+                        int end = baseIdx + 1;
+                        while (!Character.isWhitespace(array[end]) && array[end] != '>') {
+                            end++;
+                        }
+                        baseToReplace = original.substring(baseIdx + 1, end);
+                    }
+                    break;
+                }
+            }
+            if (baseToReplace == null) {
+                baseToReplace = DEFAULT_CONTEXT_PATH;
+            }
+            String replaced = original.replaceAll(
+                String.format("(src|href)=(['\"]?)%s", baseToReplace),
+                String.format("$1=$2%s", href));
+            LOG.trace("Original:\n{}", original);
+            LOG.trace("Replaced:\n{}", replaced);
+            return replaced.getBytes(encoding);
+        } else {
+            return original.getBytes(encoding);
+        }
     }
 
     @Override

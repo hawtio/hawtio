@@ -1,13 +1,13 @@
 package io.hawt.connect;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +23,10 @@ public class PresetConnectionsServlet extends HttpServlet {
         String connections = Optional
             .ofNullable(System.getProperty(HAWTIO_CONNECT_PRESET_CONNECTIONS))
             .orElse("[]");
-        ServletHelpers.sendJSONResponse(resp, connections);
+        resp.setContentType("application/json");
+        PrintWriter writer = resp.getWriter();
+        writer.println(connections);
+        writer.flush();
+        writer.close();
     }
 }

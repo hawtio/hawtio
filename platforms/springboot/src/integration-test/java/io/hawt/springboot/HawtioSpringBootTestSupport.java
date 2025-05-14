@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import io.hawt.web.ServletHelpers;
 import org.assertj.core.api.Assertions;
-import org.jolokia.support.spring.actuator.JolokiaEndpointAutoConfiguration;
+import org.jolokia.support.spring.actuator.JolokiaWebEndpointAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
@@ -42,7 +42,7 @@ public class HawtioSpringBootTestSupport {
             .withConfiguration(AutoConfigurations.of(
                     DispatcherServletAutoConfiguration.class,
                     EndpointAutoConfiguration.class,
-                    JolokiaEndpointAutoConfiguration.class,
+                    JolokiaWebEndpointAutoConfiguration.class,
                     ManagementContextAutoConfiguration.class,
                     ServletManagementContextAutoConfiguration.class,
                     ServletWebServerFactoryAutoConfiguration.class,

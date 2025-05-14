@@ -32,7 +32,6 @@ public class BaseTagHrefFilterTest {
     private HttpServletRequest servletRequest;
     private HttpServletResponse servletResponse;
     private ServletOutputStream outputStream;
-    private FilterChain filterChain;
 
     @BeforeEach
     public void setUp() {
@@ -42,7 +41,6 @@ public class BaseTagHrefFilterTest {
         servletRequest = mock(HttpServletRequest.class);
         servletResponse = mock(HttpServletResponse.class);
         outputStream = mock(ServletOutputStream.class);
-        filterChain = mock(FilterChain.class);
     }
 
     @Test
@@ -82,12 +80,33 @@ public class BaseTagHrefFilterTest {
         assertFilteredContentContainsBaseHref("/management", "text/html; charset=utf-8", null, "/management/");
     }
 
+    @Test
+    public void filterNonHawtioIndex() throws Exception {
+        final String originalHtml = readHtml("index2.html");
+        final String expectedHtml = originalHtml.replaceAll("/literally-anything", "/special-console");
+
+        when(filterConfig.getServletContext()).thenReturn(servletContext);
+        when(filterConfig.getInitParameter(PARAM_APPLICATION_CONTEXT_PATH)).thenReturn(null);
+        when(servletContext.getContextPath()).thenReturn("/special-console");
+        when(servletResponse.getOutputStream()).thenReturn(outputStream);
+        when(servletResponse.getContentType()).thenReturn("text/html; charset=utf-8");
+
+        filter.init(filterConfig);
+        filter.doFilter(servletRequest, servletResponse, new MockFilterChain("index2.html"));
+
+        verify(outputStream).write(expectedHtml.getBytes(StandardCharsets.UTF_8));
+    }
+
     private void assertFilteredContentContainsBaseHref(String contextPath, String expectedBaseTagHref) throws Exception {
         assertFilteredContentContainsBaseHref(null, "text/html; charset=utf-8", contextPath, expectedBaseTagHref);
     }
 
     private void assertFilteredContentContainsBaseHref(String applicationContextPath, String contentType, String contextPath, String expectedBaseTagHref) throws Exception {
-        final String originalHtml = readHtml();
+        assertFilteredContentContainsBaseHref(applicationContextPath, contentType, contextPath, expectedBaseTagHref, "index.html");
+    }
+
+    private void assertFilteredContentContainsBaseHref(String applicationContextPath, String contentType, String contextPath, String expectedBaseTagHref, String resource) throws Exception {
+        final String originalHtml = readHtml(resource);
         final String expectedHtml = originalHtml.replace("/hawtio/", expectedBaseTagHref);
 
         when(filterConfig.getServletContext()).thenReturn(servletContext);
@@ -97,21 +116,27 @@ public class BaseTagHrefFilterTest {
         when(servletResponse.getContentType()).thenReturn(contentType);
 
         filter.init(filterConfig);
-        filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
+        filter.doFilter(servletRequest, servletResponse, new MockFilterChain(resource));
 
         verify(outputStream).write(expectedHtml.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String readHtml() throws IOException {
+    private String readHtml(String resource) throws IOException {
         return IOUtils.toString(
-            Objects.requireNonNull(BaseTagHrefFilterTest.class.getResourceAsStream("index.html")),
+            Objects.requireNonNull(BaseTagHrefFilterTest.class.getResourceAsStream(resource)),
             Charset.defaultCharset());
     }
 
     private class MockFilterChain implements FilterChain {
+        private final String resource;
+
+        private MockFilterChain(String resource) {
+            this.resource = resource;
+        }
+
         @Override
         public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
-            servletResponse.getOutputStream().write(readHtml().getBytes());
+            servletResponse.getOutputStream().write(readHtml(resource).getBytes());
         }
     }
 }

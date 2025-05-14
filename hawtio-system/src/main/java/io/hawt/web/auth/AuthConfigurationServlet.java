@@ -71,8 +71,16 @@ public class AuthConfigurationServlet extends HttpServlet {
             // req - timestamp sent from the requesting side - if you send non-numeric, you'll get a JSON error
             // now - timestamp now at server-side
             // timeout - sessionTimeout in seconds from webapp session
-            String config = String.format("{\"req\":%s,\"now\":%d,\"timeout\":%d}",
-                    req.getParameter("t"), System.currentTimeMillis(),
+            String t = req.getParameter("t");
+            long v;
+            try {
+                v = Long.parseLong(t);
+            } catch (NumberFormatException e) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            String config = String.format("{\"req\":%d,\"now\":%d,\"timeout\":%d}",
+                    v, System.currentTimeMillis(),
                     AuthSessionHelpers.getSessionTimeout(getServletContext()));
             ServletHelpers.sendJSONResponse(resp, config);
         } else {

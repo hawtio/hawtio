@@ -45,7 +45,11 @@ public class EndpointPathResolverTest {
         webEndpointProperties = new WebEndpointProperties();
 
         // for non-management server it returns "spring.mvc.servlet.path" property value
+        // - org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration.DispatcherServletRegistrationConfiguration.dispatcherServletRegistration
+        //   new DispatcherServletRegistrationBean(dispatcherServlet, webMvcProperties.getServlet().getPath())
         // for management server it returns "/" - always
+        // - org.springframework.boot.actuate.autoconfigure.web.servlet.WebMvcEndpointChildContextConfiguration.dispatcherServletRegistrationBean
+        //   mew DispatcherServletRegistrationBean(dispatcherServlet, "/") (hardcoded)
         dispatcherServletPath = mock(DispatcherServletPath.class);
 
         resolver = new EndpointPathResolver(webEndpointProperties, serverProperties,

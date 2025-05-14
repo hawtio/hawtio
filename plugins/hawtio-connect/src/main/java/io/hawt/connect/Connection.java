@@ -29,9 +29,8 @@ public class Connection {
 
     public static void setSystemProperty(Map<String, Optional<Connection>> connections) {
         JSONArray json = new JSONArray();
-        connections.forEach((name, conn) -> {
-            json.add(conn.map(c -> c.toJSON(name)).orElse(toNameOnly(name)));
-        });
+        connections.forEach((name, conn) ->
+            json.add(conn.map(c -> c.toJSON(name)).orElse(toNameOnly(name))));
         System.setProperty(HAWTIO_CONNECT_PRESET_CONNECTIONS, json.toJSONString());
     }
 
