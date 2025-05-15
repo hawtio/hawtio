@@ -52,7 +52,7 @@
     <!-- Jolokia -->
     <jolokia-version>2.2.9</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.20.0.temporary-redhat-00006</quarkus-version>
+    <quarkus-version>3.20.0.SP1-redhat-00001</quarkus-version>
     <quarkus-extension-version>3.20.0.redhat-00002</quarkus-extension-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/3.4.4/appendix/dependency-versions/coordinates.html -->
@@ -60,7 +60,7 @@
     <spring-boot-version>3.4.4</spring-boot-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
-    <camel-spring-boot-version>4.10.3.redhat-00011</camel-spring-boot-version>
+    <camel-spring-boot-version>4.10.3.redhat-00019</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.0.19</jetty12-version>
 
