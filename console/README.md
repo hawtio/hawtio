@@ -32,6 +32,15 @@ Suppose you have cloned the `hawtio-next` project in the same directory as the `
 
     yarn link ../../hawtio-next/packages/hawtio
 
+This will add this fragment to `package.json`:
+
+    "resolutions": {
+        "@hawtio/react": "portal:/absolute/path/to/hawtio-next/packages/hawtio"
+    }
+
+However (see [hawtio/hawtio#3321](https://github.com/hawtio/hawtio/issues/3321])), this may cause webpack bundling problems by duplicating JavaScript modules which are now resolved both from the `console` module and from the linked package.
+Changing `portal:` to `file:` [yarn protocol](https://yarnpkg.com/protocols) solves the problem at the cost of the need to run `yarn install` in the `console` after making changes in `@hawtio/react`.
+
 Then you can build the console with the local `hawtio-next` component by running the following command from the project root directory:
 
     mvn install
