@@ -84,8 +84,8 @@
     <slf4j-version>2.0.11</slf4j-version>
 
     <!-- Used for maven-frontend-plugin -->
-    <node-version>v20.9.0</node-version>
-    <yarn-version>v1.22.21</yarn-version>
+    <node-version>v22.15.1</node-version>
+    <yarn-version>v1.22.22</yarn-version>
 
     <!-- Maven plugins -->
     <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
