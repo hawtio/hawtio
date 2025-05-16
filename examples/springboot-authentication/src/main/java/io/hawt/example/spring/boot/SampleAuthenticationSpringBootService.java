@@ -39,7 +39,7 @@ public class SampleAuthenticationSpringBootService {
 
         setSystemPropertyIfNotSet(HAWTIO_ROLES, "admin");
         setSystemPropertyIfNotSet(HAWTIO_REALM, "hawtio");
-        setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
+        setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.security.jaas.JAASRole");
 
         System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, Boolean.getBoolean("debugMode") ? "false" : "true");
     }
