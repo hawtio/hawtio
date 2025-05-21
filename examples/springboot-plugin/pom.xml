@@ -89,17 +89,6 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>17</source>
-          <testSource>17</testSource>
-          <target>17</target>
-          <testTarget>17</testTarget>
-          <release>17</release>
-          <testRelease>17</testRelease>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot-version}</version>
