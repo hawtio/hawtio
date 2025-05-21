@@ -102,13 +102,22 @@
     <module>examples/quarkus</module>
     <module>examples/quarkus-keycloak</module>
     <module>examples/sample-plugin</module>
+    <module>examples/springboot</module>
+    <module>examples/springboot-authentication</module>
+    <module>examples/springboot-keycloak</module>
+    <module>examples/springboot-log4j2</module>
+    <module>examples/springboot-plugin</module>
+    <module>examples/springboot-security</module>
     <module>examples/war-plugin</module>
     <module>hawtio-jbang</module>
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>
     <module>hawtio-war-minimal</module>
+    <module>platforms/jetty-security</module>
     <module>platforms/quarkus</module>
+    <module>platforms/springboot</module>
+    <module>platforms/springboot-security</module>
     <module>plugins/hawtio-connect</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
@@ -123,12 +132,12 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>11</source>
-          <testSource>11</testSource>
-          <target>11</target>
-          <testTarget>11</testTarget>
-          <release>11</release>
-          <testRelease>11</testRelease>
+          <source>17</source>
+          <testSource>17</testSource>
+          <target>17</target>
+          <testTarget>17</testTarget>
+          <release>17</release>
+          <testRelease>17</testRelease>
         </configuration>
       </plugin>
 
@@ -277,24 +286,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>jdk17</id>
-      <activation>
-        <jdk>[17,)</jdk>
-      </activation>
-      <modules>
-        <module>examples/springboot</module>
-        <module>examples/springboot-authentication</module>
-        <module>examples/springboot-keycloak</module>
-        <module>examples/springboot-log4j2</module>
-        <module>examples/springboot-plugin</module>
-        <module>examples/springboot-security</module>
-        <module>platforms/springboot</module>
-        <module>platforms/springboot-security</module>
-        <module>platforms/jetty-security</module>
-      </modules>
-    </profile>
-
     <profile>
       <id>fastinstall</id>
       <properties>
