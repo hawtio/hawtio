@@ -8,10 +8,10 @@ Feature:  Checking the functionality of Help page.
     And User is returned to the previous page
 
     Examples: Link texts and URLs
-      | linkText     | url                        |
-      | Hawtio       | hawt.io                    |
-      | contributing | hawt.io/docs/contributing/ |
-      | GitHub       | github.com/hawtio/hawtio   |
+      | linkText     | url                            |
+      | Hawtio       | hawt.io                        |
+      | contributing | hawt.io/docs/contributing.html |
+      | GitHub       | github.com/hawtio/hawtio       |
 
   Scenario Outline: Check that the tabs contain data
     Given User clicks on "Help" option in Question mark drop-down menu
