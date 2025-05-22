@@ -175,7 +175,7 @@ public class HawtioOnlineUtils {
                         "properties", List.of(
                             "camel.context.name = SampleCamel",
                             "quarkus.camel.debug.enabled = true",
-                            "camel.trace.enable = true"
+                            "camel.trace.enabled = true"
                         )
                     )
                 ),
