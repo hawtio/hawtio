@@ -33,7 +33,7 @@ module.exports = (_, args) => {
           },
           '@hawtio/react': {
             singleton: true,
-            requiredVersion: dependencies['@hawtio/react'],
+            requiredVersion: '~1.9.0',
           },
         },
       }),
