@@ -4,7 +4,7 @@
     "showAppName": true,
     "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
     "companyLogoUrl": "img/Logo-RedHat-A-Reverse-RGB.png",
-    "css": "branding-redhat.css",
+    "css": "css/branding-redhat.css",
     "favicon": ""
   },
   "login": {
