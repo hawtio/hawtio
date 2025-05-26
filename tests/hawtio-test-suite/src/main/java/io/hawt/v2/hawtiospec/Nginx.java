@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1.hawtiospec;
+package io.hawt.v2.hawtiospec;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"clientBodyBufferSize","proxyBuffers","subrequestOutputBufferSize"})

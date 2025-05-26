@@ -17,7 +17,7 @@ import io.hawt.tests.features.openshift.HawtioOnlineUtils;
 import io.hawt.tests.features.openshift.OpenshiftClient;
 import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
-import io.hawt.v1alpha1.Hawtio;
+import io.hawt.v2.Hawtio;
 
 public class HawtioOnlineTestUtils {
 

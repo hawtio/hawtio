@@ -54,19 +54,19 @@ import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
 import io.hawt.tests.features.setup.LoginLogout;
 import io.hawt.tests.openshift.utils.BaseHawtioOnlineTest;
 import io.hawt.tests.utils.HawtioOnlineTestUtils;
-import io.hawt.v1alpha1.Hawtio;
-import io.hawt.v1alpha1.HawtioSpec;
-import io.hawt.v1alpha1.hawtiospec.Auth;
-import io.hawt.v1alpha1.hawtiospec.Config;
-import io.hawt.v1alpha1.hawtiospec.MetadataPropagation;
-import io.hawt.v1alpha1.hawtiospec.Nginx;
-import io.hawt.v1alpha1.hawtiospec.Rbac;
-import io.hawt.v1alpha1.hawtiospec.Resources;
-import io.hawt.v1alpha1.hawtiospec.config.About;
-import io.hawt.v1alpha1.hawtiospec.config.Branding;
-import io.hawt.v1alpha1.hawtiospec.config.Online;
-import io.hawt.v1alpha1.hawtiospec.config.about.ProductInfo;
-import io.hawt.v1alpha1.hawtiospec.config.online.ConsoleLink;
+import io.hawt.v2.Hawtio;
+import io.hawt.v2.HawtioSpec;
+import io.hawt.v2.hawtiospec.Auth;
+import io.hawt.v2.hawtiospec.Config;
+import io.hawt.v2.hawtiospec.MetadataPropagation;
+import io.hawt.v2.hawtiospec.Nginx;
+import io.hawt.v2.hawtiospec.Rbac;
+import io.hawt.v2.hawtiospec.Resources;
+import io.hawt.v2.hawtiospec.config.About;
+import io.hawt.v2.hawtiospec.config.Branding;
+import io.hawt.v2.hawtiospec.config.Online;
+import io.hawt.v2.hawtiospec.config.about.ProductInfo;
+import io.hawt.v2.hawtiospec.config.online.ConsoleLink;
 
 public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 

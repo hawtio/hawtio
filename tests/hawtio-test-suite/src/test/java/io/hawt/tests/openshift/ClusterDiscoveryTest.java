@@ -22,7 +22,7 @@ import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
 import io.hawt.tests.features.utils.ByUtils;
 import io.hawt.tests.openshift.utils.BaseHawtioOnlineTest;
 import io.hawt.tests.utils.HawtioOnlineTestUtils;
-import io.hawt.v1alpha1.Hawtio;
+import io.hawt.v2.Hawtio;
 
 public class ClusterDiscoveryTest extends BaseHawtioOnlineTest {
     public static final String CLUSTER_HAWTIO_NAME = "e2e-cluster-hawtio";
