@@ -8,6 +8,7 @@ import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelPrope
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRouteDiagram;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoutes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelSource;
+import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelTrace;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 
 public class CamelRoutesStepDefs {
@@ -16,6 +17,7 @@ public class CamelRoutesStepDefs {
     private final CamelRouteDiagram camelRouteDiagram = new CamelRouteDiagram();
     private final CamelSource camelSource = new CamelSource();
     private final CamelProperties camelProperties = new CamelProperties();
+    private final CamelTrace camelTrace = new CamelTrace();
 
     @When("^User clicks on Delete button in dropdown in routes table$")
     public void userClicksOnDeleteButtonRoutesTable() {
@@ -90,5 +92,35 @@ public class CamelRoutesStepDefs {
     @Then("^No node duplications exist$")
     public void noNodeDuplicationsExist() {
         camelRouteDiagram.noNodeDuplicationsExist();
+    }
+
+    @When("^User starts tracing$")
+    public void startTrace() {
+        camelTrace.startTracing();
+    }
+
+    @When("^User stops tracing$")
+    public void stopTrace() {
+        camelTrace.stopTracing();
+    }
+
+    @Then("^Tracing shows trace$")
+    public void traceTableIsShown() {
+        camelTrace.traceTableIsShown();
+    }
+
+    @Then("^Tracing shows diagram$")
+    public void traceDiagramIsShown() {
+        camelTrace.traceDiagramIsShown();
+    }
+
+    @Then("^Tracing not shows trace$")
+    public void traceTableIsntShown() {
+        camelTrace.traceTableIsntShown();
+    }
+
+    @Then("^Tracing not shows diagram$")
+    public void traceDiagramIsntShown() {
+        camelTrace.traceDiagramIsntShown();
     }
 }
