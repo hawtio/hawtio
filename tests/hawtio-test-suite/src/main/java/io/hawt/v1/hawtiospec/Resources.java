@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1.hawtiospec;
+package io.hawt.v1.hawtiospec;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"claims","limits","requests"})
@@ -17,13 +17,13 @@ public class Resources implements io.fabric8.kubernetes.api.model.KubernetesReso
     @com.fasterxml.jackson.annotation.JsonProperty("claims")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("Claims lists the names of resources, defined in spec.resourceClaims,\nthat are used by this container.\n\nThis is an alpha field and requires enabling the\nDynamicResourceAllocation feature gate.\n\nThis field is immutable. It can only be set for containers.")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private java.util.List<io.hawt.v1alpha1.hawtiospec.resources.Claims> claims;
+    private java.util.List<io.hawt.v1.hawtiospec.resources.Claims> claims;
 
-    public java.util.List<io.hawt.v1alpha1.hawtiospec.resources.Claims> getClaims() {
+    public java.util.List<io.hawt.v1.hawtiospec.resources.Claims> getClaims() {
         return claims;
     }
 
-    public void setClaims(java.util.List<io.hawt.v1alpha1.hawtiospec.resources.Claims> claims) {
+    public void setClaims(java.util.List<io.hawt.v1.hawtiospec.resources.Claims> claims) {
         this.claims = claims;
     }
 

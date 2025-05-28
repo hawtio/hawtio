@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1.hawtiospec.route;
+package io.hawt.v2.hawtiospec.route;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"key","name","optional"})

@@ -1,7 +1,7 @@
-package io.hawt.v1alpha1.hawtiospec;
+package io.hawt.v2.hawtiospec;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({"clientCertCheckSchedule","clientCertCommonName","clientCertExpirationDate","clientCertExpirationPeriod"})
+@com.fasterxml.jackson.annotation.JsonPropertyOrder({"clientCertCheckSchedule","clientCertCommonName","clientCertExpirationDate","clientCertExpirationPeriod","internalSSL"})
 @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 public class Auth implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
@@ -69,6 +69,23 @@ public class Auth implements io.fabric8.kubernetes.api.model.KubernetesResource 
 
     public void setClientCertExpirationPeriod(Long clientCertExpirationPeriod) {
         this.clientCertExpirationPeriod = clientCertExpirationPeriod;
+    }
+
+    /**
+     * Use SSL for internal communication
+     */
+    @com.fasterxml.jackson.annotation.JsonProperty("internalSSL")
+    @javax.validation.constraints.NotNull()
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("Use SSL for internal communication")
+    @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
+    private Boolean internalSSL = io.fabric8.kubernetes.client.utils.Serialization.unmarshal("true", Boolean.class);
+
+    public Boolean getInternalSSL() {
+        return internalSSL;
+    }
+
+    public void setInternalSSL(Boolean internalSSL) {
+        this.internalSSL = internalSSL;
     }
 }
 

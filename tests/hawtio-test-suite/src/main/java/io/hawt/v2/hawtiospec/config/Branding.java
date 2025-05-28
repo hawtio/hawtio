@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1.hawtiospec.config;
+package io.hawt.v2.hawtiospec.config;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"appLogoUrl","appName","css","favicon"})
