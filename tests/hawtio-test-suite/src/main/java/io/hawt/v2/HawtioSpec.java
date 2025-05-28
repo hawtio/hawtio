@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1;
+package io.hawt.v2;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"auth","config","externalRoutes","metadataPropagation","nginx","rbac","replicas","resources","route","routeHostName","type","version"})
@@ -11,13 +11,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("auth")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("The authentication configuration")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.Auth auth;
+    private io.hawt.v2.hawtiospec.Auth auth;
 
-    public io.hawt.v1alpha1.hawtiospec.Auth getAuth() {
+    public io.hawt.v2.hawtiospec.Auth getAuth() {
         return auth;
     }
 
-    public void setAuth(io.hawt.v1alpha1.hawtiospec.Auth auth) {
+    public void setAuth(io.hawt.v2.hawtiospec.Auth auth) {
         this.auth = auth;
     }
 
@@ -27,13 +27,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("config")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("The Hawtio console configuration")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.Config config;
+    private io.hawt.v2.hawtiospec.Config config;
 
-    public io.hawt.v1alpha1.hawtiospec.Config getConfig() {
+    public io.hawt.v2.hawtiospec.Config getConfig() {
         return config;
     }
 
-    public void setConfig(io.hawt.v1alpha1.hawtiospec.Config config) {
+    public void setConfig(io.hawt.v2.hawtiospec.Config config) {
         this.config = config;
     }
 
@@ -60,13 +60,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("metadataPropagation")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("The configuration for which metadata on Hawtio custom resources to propagate to\ngenerated resources such as deployments, pods, services, and routes.")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.MetadataPropagation metadataPropagation;
+    private io.hawt.v2.hawtiospec.MetadataPropagation metadataPropagation;
 
-    public io.hawt.v1alpha1.hawtiospec.MetadataPropagation getMetadataPropagation() {
+    public io.hawt.v2.hawtiospec.MetadataPropagation getMetadataPropagation() {
         return metadataPropagation;
     }
 
-    public void setMetadataPropagation(io.hawt.v1alpha1.hawtiospec.MetadataPropagation metadataPropagation) {
+    public void setMetadataPropagation(io.hawt.v2.hawtiospec.MetadataPropagation metadataPropagation) {
         this.metadataPropagation = metadataPropagation;
     }
 
@@ -76,13 +76,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("nginx")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("The Nginx runtime configuration")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.Nginx nginx;
+    private io.hawt.v2.hawtiospec.Nginx nginx;
 
-    public io.hawt.v1alpha1.hawtiospec.Nginx getNginx() {
+    public io.hawt.v2.hawtiospec.Nginx getNginx() {
         return nginx;
     }
 
-    public void setNginx(io.hawt.v1alpha1.hawtiospec.Nginx nginx) {
+    public void setNginx(io.hawt.v2.hawtiospec.Nginx nginx) {
         this.nginx = nginx;
     }
 
@@ -92,13 +92,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("rbac")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("The RBAC configuration")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.Rbac rbac;
+    private io.hawt.v2.hawtiospec.Rbac rbac;
 
-    public io.hawt.v1alpha1.hawtiospec.Rbac getRbac() {
+    public io.hawt.v2.hawtiospec.Rbac getRbac() {
         return rbac;
     }
 
-    public void setRbac(io.hawt.v1alpha1.hawtiospec.Rbac rbac) {
+    public void setRbac(io.hawt.v2.hawtiospec.Rbac rbac) {
         this.rbac = rbac;
     }
 
@@ -125,13 +125,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("resources")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("The Hawtio console compute resources")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.Resources resources;
+    private io.hawt.v2.hawtiospec.Resources resources;
 
-    public io.hawt.v1alpha1.hawtiospec.Resources getResources() {
+    public io.hawt.v2.hawtiospec.Resources getResources() {
         return resources;
     }
 
-    public void setResources(io.hawt.v1alpha1.hawtiospec.Resources resources) {
+    public void setResources(io.hawt.v2.hawtiospec.Resources resources) {
         this.resources = resources;
     }
 
@@ -141,13 +141,13 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     @com.fasterxml.jackson.annotation.JsonProperty("route")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("Custom certificate configuration for the route")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private io.hawt.v1alpha1.hawtiospec.Route route;
+    private io.hawt.v2.hawtiospec.Route route;
 
-    public io.hawt.v1alpha1.hawtiospec.Route getRoute() {
+    public io.hawt.v2.hawtiospec.Route getRoute() {
         return route;
     }
 
-    public void setRoute(io.hawt.v1alpha1.hawtiospec.Route route) {
+    public void setRoute(io.hawt.v2.hawtiospec.Route route) {
         this.route = route;
     }
 
@@ -209,10 +209,12 @@ public class HawtioSpec implements io.fabric8.kubernetes.api.model.KubernetesRes
     }
 
     /**
-     * The Hawtio console container image version. Defaults to 'latest'.
+     * The Hawtio console container image version.
+     * Deprecated: Remains for legacy purposes in respect of older
+     * operators (<1.0.0) still requiring it for their installs
      */
     @com.fasterxml.jackson.annotation.JsonProperty("version")
-    @com.fasterxml.jackson.annotation.JsonPropertyDescription("The Hawtio console container image version. Defaults to 'latest'.")
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("The Hawtio console container image version.\nDeprecated: Remains for legacy purposes in respect of older\noperators (<1.0.0) still requiring it for their installs")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
     private String version;
 
