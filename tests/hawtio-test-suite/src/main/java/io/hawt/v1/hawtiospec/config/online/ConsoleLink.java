@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1.hawtiospec.config.online;
+package io.hawt.v1.hawtiospec.config.online;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"imageRelativePath","section","text"})

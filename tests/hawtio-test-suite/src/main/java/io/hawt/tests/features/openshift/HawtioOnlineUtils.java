@@ -32,8 +32,8 @@ import io.fabric8.openshift.api.model.operatorhub.v1alpha1.ClusterServiceVersion
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.SubscriptionBuilder;
 import io.fabric8.openshift.client.dsl.OpenShiftOperatorHubAPIGroupDSL;
 import io.hawt.tests.features.config.TestConfiguration;
-import io.hawt.v1alpha1.Hawtio;
-import io.hawt.v1alpha1.HawtioSpec;
+import io.hawt.v2.Hawtio;
+import io.hawt.v2.HawtioSpec;
 
 public class HawtioOnlineUtils {
 
@@ -41,7 +41,7 @@ public class HawtioOnlineUtils {
 
     private static final ResourceDefinitionContext INTEGRATION_PLATFORM_CRD = new ResourceDefinitionContext.Builder()
         .withGroup("camel.apache.org")
-        .withVersion("v1")
+        .withVersion("v2")
         .withKind("IntegrationPlatform")
         .withPlural("integrationplatforms")
         .withNamespaced(true)

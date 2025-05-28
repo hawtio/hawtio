@@ -1,4 +1,4 @@
-package io.hawt.v1alpha1.hawtiospec.config;
+package io.hawt.v1.hawtiospec.config;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @com.fasterxml.jackson.annotation.JsonPropertyOrder({"additionalInfo","copyright","imgSrc","productInfo","title"})
@@ -60,13 +60,13 @@ public class About implements io.fabric8.kubernetes.api.model.KubernetesResource
     @com.fasterxml.jackson.annotation.JsonProperty("productInfo")
     @com.fasterxml.jackson.annotation.JsonPropertyDescription("List of product information")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
-    private java.util.List<io.hawt.v1alpha1.hawtiospec.config.about.ProductInfo> productInfo;
+    private java.util.List<io.hawt.v1.hawtiospec.config.about.ProductInfo> productInfo;
 
-    public java.util.List<io.hawt.v1alpha1.hawtiospec.config.about.ProductInfo> getProductInfo() {
+    public java.util.List<io.hawt.v1.hawtiospec.config.about.ProductInfo> getProductInfo() {
         return productInfo;
     }
 
-    public void setProductInfo(java.util.List<io.hawt.v1alpha1.hawtiospec.config.about.ProductInfo> productInfo) {
+    public void setProductInfo(java.util.List<io.hawt.v1.hawtiospec.config.about.ProductInfo> productInfo) {
         this.productInfo = productInfo;
     }
 
