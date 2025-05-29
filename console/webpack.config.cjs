@@ -33,7 +33,7 @@ module.exports = (_, args) => {
           },
           '@hawtio/react': {
             singleton: true,
-            requiredVersion: '~1.9.0',
+            requiredVersion: '~1.9.6-redhat',
           },
         },
       }),
