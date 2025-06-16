@@ -81,4 +81,14 @@ public class CamelRoutesStepDefs {
         }
         camelDebug.startDebuggingOptionIsPresented();
     }
+
+    @Then("^Nodes do not overlay$")
+    public void nodesDoNotOverlay() {
+        camelRouteDiagram.nodesDoNotOverlay();
+    }
+
+    @Then("^No node duplications exist$")
+    public void noNodeDuplicationsExist() {
+        camelRouteDiagram.noNodeDuplicationsExist();
+    }
 }

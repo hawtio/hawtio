@@ -12,6 +12,18 @@ Feature: Checking the functionality of Camel Routes page.
       | Name   | cron   | Started |
       | State  | simple | Started |
 
+  Scenario: Check that route nodes do not overlay
+    Given User is on "Camel" page
+    And User is on Camel "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Route Diagram" tab
+    Then Nodes do not overlay
+
+  Scenario: Check that no route duplications exist
+    Given User is on "Camel" page
+    And User is on Camel "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Route Diagram" tab
+    Then No node duplications exist
+
   Scenario Outline: Check the operations on Camel Routes page
     Given User is on "Camel" page
     And User is on Camel "routes" folder of "SampleCamel" context
