@@ -4,6 +4,7 @@ import static com.codeborne.selenide.CollectionCondition.containExactTextsCaseSe
 import static com.codeborne.selenide.CollectionCondition.exactTextsCaseSensitive;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.attribute;
+import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byTagAndText;
@@ -76,6 +77,16 @@ public class Table {
      */
     public void checkColumnIsNotEmpty(String headerName) {
         getColumn(headerName).shouldBe(sizeGreaterThanOrEqual(1));
+    }
+
+    /**
+     * Check that column contains the value.
+     *
+     * @param headerName of the column to be checked
+     * @param value to be checked if it is under the column
+     */
+    public void checkColumnHasValue(String headerName, String value) {
+        getColumn(headerName).findBy(exactText(value)).shouldBe(visible);
     }
 
     /**
