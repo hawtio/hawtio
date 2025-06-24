@@ -18,6 +18,11 @@ public class CamelTableStepDefs {
         table.checkColumnIsNotEmpty(column);
     }
 
+    @Then("^Camel table \"([^\"]*)\" column has \"([^\"]*)\" value$")
+    public void camelTableColumnHasValue(String column, String value) {
+        table.checkColumnHasValue(column, value);
+    }
+
     @Then("^Camel table has \"([^\"]*)\" key and \"([^\"]*)\" value$")
     public void camelTableHasKeyAndValue(String key, String value) {
         table.checkKeyAndValuePairs(key, value);

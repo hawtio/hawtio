@@ -31,7 +31,7 @@ Feature: Checking the functionality of a specific camel context page.
     And User is on Camel "SampleCamel" context
     When User clicks on Camel "Operations" tab
     When User executes operation with name "getTotalRoutes()"
-    Then Result of "getTotalRoutes()" operation is "2"
+    Then Result of "getTotalRoutes()" operation is "6"
 
   Scenario: Check to view and edit chart of Specific Context
     Given User is on "Camel" page
@@ -41,7 +41,7 @@ Feature: Checking the functionality of a specific camel context page.
     And User unwatch all "SampleCamel" attributes
     And User watches "TotalRoutes" attribute
     And User closes Edit watches mode of Camel Chart
-    Then Camel Attribute "TotalRoutes" and its value "2" are displayed in Camel Chart
+    Then Camel Attribute "TotalRoutes" and its value "6" are displayed in Camel Chart
     And Camel Attribute "ExchangesFailed" is not displayed in Camel Chart
 
   Scenario: Check the suspend action with Camel Specific Context.

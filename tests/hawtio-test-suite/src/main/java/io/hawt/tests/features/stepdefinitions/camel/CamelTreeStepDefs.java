@@ -38,6 +38,15 @@ public class CamelTreeStepDefs {
             .selectSpecificItem(folder(context) + "-" + folder(folder) + "-" + item);
     }
 
+    @And("^User is on Camel \"([^\"]*)\" item of \"([^\"]*)\" group of \"([^\"]*)\" folder of \"([^\"]*)\" context$")
+    public void userIsOnCamelItemOfGroupOfFolderOfContext(String item, String group, String folder, String context) {
+        camelPage.tree()
+            .expandSpecificFolder(Tree.class, folder(context))
+            .expandSpecificFolder(Tree.class, folder(context) + "-" + folder(folder))
+            .expandSpecificFolder(Tree.class, folder(context) + "-" + folder(folder) + "-" + folder(group))
+            .selectSpecificItem(folder(context) + "-" + folder(folder) + "-" + folder(group) + "-" + item);
+    }
+
     @When("^User expands Camel tree$")
     public void userExpandsCamelTree() {
         camelPage.tree().expandTree();
