@@ -17,7 +17,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
-    "jest": "^29.7.0",
+    "jest": "^30.0.3",
     "style-loader": "^4.0.0",
     "swc-loader": "^0.2.6",
     "webpack": "^5.99.9",
