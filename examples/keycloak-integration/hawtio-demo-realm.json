@@ -8,10 +8,12 @@
       "clientId": "hawtio-client",
       "enabled": true,
       "redirectUris": [
+        "http://localhost:3000/*",
         "http://localhost:8080/*",
         "http://localhost:8181/*",
         "http://localhost:10000/*",
         "http://localhost:10001/*",
+        "http://0.0.0.0:3000/*",
         "http://0.0.0.0:8080/*",
         "http://0.0.0.0:8181/*",
         "http://0.0.0.0:10000/*",

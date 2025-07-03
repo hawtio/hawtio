@@ -18,6 +18,14 @@ public class DockerDeployment implements AppDeployment {
 
     public DockerDeployment(String dockerImage) {
         this.dockerImage = dockerImage;
+        if (this.dockerImage.contains("springboot")) {
+            System.setProperty(TestConfiguration.RUNTIME, "springboot");
+            System.setProperty(TestConfiguration.APP_URL_SUFFIX, "/actuator/hawtio");
+        }
+        if (this.dockerImage.contains("quarkus")) {
+            System.setProperty(TestConfiguration.RUNTIME, "quarkus");
+            System.setProperty(TestConfiguration.APP_URL_SUFFIX, "/hawtio");
+        }
     }
 
     @Override
