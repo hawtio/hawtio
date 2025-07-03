@@ -225,7 +225,7 @@
       <id>e2e-quarkus</id>
       <properties>
         <test-runtime>quarkus</test-runtime>
-        <hawtio.url>/hawtio</hawtio.url>
+        <hawtio.url.suffix>/hawtio</hawtio.url.suffix>
         <skipTests>false</skipTests>
         <local-app>true</local-app>
       </properties>
@@ -234,7 +234,7 @@
       <id>e2e-springboot</id>
       <properties>
         <test-runtime>springboot</test-runtime>
-        <hawtio.url>/actuator/hawtio</hawtio.url>
+        <hawtio.url.suffix>/actuator/hawtio</hawtio.url.suffix>
         <skipTests>false</skipTests>
         <local-app>true</local-app>
       </properties>
@@ -308,7 +308,7 @@
           <rerunFailingTestsCount>3</rerunFailingTestsCount>
           <systemProperties>
             <io.hawt.test.runtime>${test-runtime}</io.hawt.test.runtime>
-            <io.hawt.test.url.suffix>${hawtio.url}</io.hawt.test.url.suffix>
+            <io.hawt.test.url.suffix>${hawtio.url.suffix}</io.hawt.test.url.suffix>
           </systemProperties>
         </configuration>
       </plugin>
