@@ -56,7 +56,7 @@
     <quarkus-extension-version>3.20.0.redhat-00002</quarkus-extension-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring-version>6.2.8</spring-version>
+    <spring-version>6.2.9</spring-version>
     <spring-boot-version>3.4.5</spring-boot-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
