@@ -8,10 +8,10 @@ updates:
     reviewers:
       - tadayosi
       - phantomjinx
-      - mmelko
       - jsolovjo
-      - mmuzikar
       - grgrzybek
+      - kariuwu
+      - joshiraezcode
   - package-ecosystem: npm
     directory: '/console'
     schedule:
@@ -20,10 +20,10 @@ updates:
     reviewers:
       - tadayosi
       - phantomjinx
-      - mmelko
       - jsolovjo
-      - mmuzikar
       - grgrzybek
+      - kariuwu
+      - joshiraezcode
   - package-ecosystem: npm
     directory: '/console-minimal'
     schedule:
@@ -32,10 +32,10 @@ updates:
     reviewers:
       - tadayosi
       - phantomjinx
-      - mmelko
       - jsolovjo
-      - mmuzikar
       - grgrzybek
+      - kariuwu
+      - joshiraezcode
   - package-ecosystem: npm
     directory: '/examples/sample-plugin'
     schedule:
@@ -44,10 +44,10 @@ updates:
     reviewers:
       - tadayosi
       - phantomjinx
-      - mmelko
       - jsolovjo
-      - mmuzikar
       - grgrzybek
+      - kariuwu
+      - joshiraezcode
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
@@ -56,7 +56,7 @@ updates:
     reviewers:
       - tadayosi
       - phantomjinx
-      - mmelko
       - jsolovjo
-      - mmuzikar
       - grgrzybek
+      - kariuwu
+      - joshiraezcode
