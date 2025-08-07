@@ -8,9 +8,17 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@hawtio/react": "^1.9.6",
+    "@hawtio/react": "^1.10.2",
+    "@patternfly/react-charts": "^7.4.9",
+    "@patternfly/react-code-editor": "^5.4.18",
+    "@patternfly/react-core": "^5.4.14",
+    "@patternfly/react-icons": "^5.4.2",
+    "@patternfly/react-styles": "^5.4.1",
+    "@patternfly/react-table": "^5.4.16",
+    "monaco-editor": "^0.52.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1"
   },
   "devDependencies": {
     "@swc/core": "^1.13.3",

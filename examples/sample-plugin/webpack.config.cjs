@@ -35,6 +35,10 @@ module.exports = (_, args) => {
             singleton: true,
             requiredVersion: dependencies['@hawtio/react'],
           },
+          '@patternfly/react-core': {
+            singleton: true,
+            requiredVersion: dependencies['@patternfly/react-core'],
+          },
         },
       }),
       new HtmlWebpackPlugin({
