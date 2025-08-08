@@ -206,30 +206,30 @@ public class HawtioProcessor {
 
     @BuildStep
     void hawtioSystemProperties(BuildProducer<SystemPropertyBuildItem> systemProperties, HawtioConfig config, Capabilities capabilities) {
-        if (config.authenticationEnabled && !capabilities.isPresent(Capability.SECURITY)) {
+        if (config.authenticationEnabled() && !capabilities.isPresent(Capability.SECURITY)) {
             throw new RuntimeException("Hawtio authentication is enabled but no Quarkus security extension is present. "
                 + "You must configure one or disable authentication");
         }
 
-        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_ENABLED, config.authenticationEnabled.toString()));
-        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_THROTTLED, config.authenticationThrottled.toString()));
-        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_ENABLED, config.keycloakEnabled.toString()));
-        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy.toString()));
-        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing.toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_ENABLED, config.authenticationEnabled().toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_AUTHENTICATION_THROTTLED, config.authenticationThrottled().toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_ENABLED, config.keycloakEnabled().toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_DISABLE_PROXY, config.disableProxy().toString()));
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_LOCAL_ADDRESS_PROBING, config.localAddressProbing().toString()));
 
-        config.roles
+        config.roles()
             .map(roles -> new SystemPropertyBuildItem(HAWTIO_ROLES, String.join(",", roles)))
             .ifPresent(systemProperties::produce);
 
-        config.keycloakClientConfig
+        config.keycloakClientConfig()
             .map(keycloakClientConfig -> new SystemPropertyBuildItem(HAWTIO_KEYCLOAK_CLIENT_CONFIG, keycloakClientConfig))
             .ifPresent(systemProperties::produce);
 
-        config.proxyAllowlist
+        config.proxyAllowlist()
             .map(allowlist -> new SystemPropertyBuildItem(HAWTIO_PROXY_ALLOWLIST, String.join(",", allowlist)))
             .ifPresent(systemProperties::produce);
 
-        config.sessionTimeout
+        config.sessionTimeout()
             .map(sessionTimeout -> new SystemPropertyBuildItem(HAWTIO_SESSION_TIMEOUT, sessionTimeout.toString()))
             .ifPresent(systemProperties::produce);
     }
@@ -237,7 +237,7 @@ public class HawtioProcessor {
     @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
     RouteBuildItem hawtioPluginHandler(HawtioConfig config, HawtioRecorder recorder, Capabilities capabilities) {
-        if (config.pluginConfigs == null || config.pluginConfigs.isEmpty()) {
+        if (config.pluginConfigs() == null || config.pluginConfigs().isEmpty()) {
             return null;
         }
 
@@ -247,7 +247,7 @@ public class HawtioProcessor {
 
         return RouteBuildItem.builder()
             .route(HawtioConfig.DEFAULT_PLUGIN_PATH)
-            .handler(recorder.pluginHandler(config.pluginConfigs))
+            .handler(recorder.pluginHandler(config))
             .build();
     }
 
