@@ -23,7 +23,7 @@ public class HawtioQuarkusAuthenticationDisabledTest {
 
     @RegisterExtension
     static final QuarkusUnitTest CONFIG = new QuarkusUnitTest()
-        .setForcedDependencies(List.of(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "4.2.0-SNAPSHOT")))
+        .setForcedDependencies(List.of(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "4.2.1-SNAPSHOT")))
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(applicationProperties(), "application.properties"));
