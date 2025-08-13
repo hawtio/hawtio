@@ -5,7 +5,7 @@
   <parent>
     <artifactId>hawtio-tests</artifactId>
     <groupId>io.hawt.tests</groupId>
-    <version>4.5-SNAPSHOT</version>
+    <version>4.5.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hawtio-tests-quarkus</artifactId>
