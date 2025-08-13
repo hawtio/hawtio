@@ -8,28 +8,23 @@ The following walks through how we make a release.
 
 ### Before releasing
 
-Pop onto [IRC](https://hawt.io/community/) and let folks know you are about to cut a release.
+Get in touch with the [community](https://hawt.io/community/) and let folks know you are about to cut a release.
 
-Also, pull `main` and make sure things build locally fine first.
+Also, pull the main branch and make sure things build locally fine first.
 
 #### Sonatype OSSRH Account
 
-Hawtio relies on Sonatype OSSRH (OSS Repository Hosting) for releasing, so you need to have an account and be given the access right to the project.
+Hawtio relies on [Sonatype Maven Central Repository Hosting](https://central.sonatype.org/) for releasing, so you need to have an account and be given the access right to the project.
 
 If you haven't got it yet, follow this guide to acquire it:
-https://central.sonatype.org/pages/ossrh-guide.html
+<https://central.sonatype.org/register/central-portal/>
 
 Once you get the account, set up your default Maven settings (`$HOME/.m2/settings.xml`) with the Sonatype credentials and GPG passphrase to use for releasing:
 
 ```xml
     <servers>
         <server>
-            <id>oss-sonatype-staging</id>
-            <username>myuser</username>
-            <password>mypassword</password>
-        </server>
-        <server>
-            <id>oss-sonatype-snapshots</id>
+            <id>central</id>
             <username>myuser</username>
             <password>mypassword</password>
         </server>
@@ -47,35 +42,44 @@ Once you get the account, set up your default Maven settings (`$HOME/.m2/setting
 
 ### Releasing
 
-Use the [two scripts](scripts/) for releasing a version of Hawtio:
+Prepare release:
 
-* `release`
-```
-./scripts/release.sh
-Use this script to release a Hawtio version from the snapshot main branch.
-
-Usage:
-  release.sh <release_version> <next_snapshot_version> [path to m2 settings file]
+```console
+mvn release:prepare -Prelease
 ```
 
-* `release-from-tag`
-```
-./scripts/release-from-tag.sh
-Use this script to release a Hawtio version from an existing tag.
-It is normally used when a tag has been published to GitHub but
-releasing it to OSSRH has failed for some reason.
+Then perform release:
 
-Usage:
-  release-from-tag.sh <release_version> [path to m2 settings file]
-```
-
-So, for example, if you want to release version `2.8.0` then normally all you need to do is run the following command:
-```
-./scripts/release.sh 2.8.0 2.9-SNAPSHOT
+```console
+mvn release:perform -Prelease
 ```
 
 ### After releasing
 
-Go to [GitHub releases page](https://github.com/hawtio/hawtio/releases) and draft a new release based on the tag you have just released (e.g. `hawtio-2.8.0`) with release notes, then publish it.
+Go to [GitHub releases page](https://github.com/hawtio/hawtio/releases) and draft a new release based on the tag you have just released (e.g. `hawtio-4.5.0`) with release notes. Upload and attach the following artifacts to the release notes:
 
-Finally tweet the new release from [@hawtio](https://twitter.com/hawtio) to let the community know!
+- **hawtio-war**
+  - hawtio-war-4.x.x.war
+  - hawtio-war-4.x.x.war.asc
+  - hawtio-war-4.x.x.war.md5
+  - hawtio-war-4.x.x.war.sha1
+  - hawtio-war-4.x.x.war.sha256
+  - hawtio-war-4.x.x.war.sha512
+- **hawtio-war-minimal**
+  - hawtio-war-minimal-4.x.x.war
+  - hawtio-war-minimal-4.x.x.war.asc
+  - hawtio-war-minimal-4.x.x.war.md5
+  - hawtio-war-minimal-4.x.x.war.sha1
+  - hawtio-war-minimal-4.x.x.war.sha256
+  - hawtio-war-minimal-4.x.x.war.sha512
+- **hawtio-default**
+  - hawtio-default-4.x.x.war
+  - hawtio-default-4.x.x.war.asc
+  - hawtio-default-4.x.x.war.md5
+  - hawtio-default-4.x.x.war.sha1
+  - hawtio-default-4.x.x.war.sha256
+  - hawtio-default-4.x.x.war.sha512
+
+Then publish it.
+
+Finally, let the community know the release!
