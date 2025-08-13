@@ -31,19 +31,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>oss-sonatype-staging</id>
-      <name>Sonatype Staging Repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>oss-sonatype-snapshots</id>
-      <name>OSS Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -103,12 +90,6 @@
     <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
     <maven-surefire-plugin-version>3.5.2</maven-surefire-plugin-version>
     <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
-
-    <!-- Overrides jboss-parent properties as otherwise releasing starts to fail since jboss-parent 43. -->
-    <jboss.releases.repo.id>oss-sonatype-staging</jboss.releases.repo.id>
-    <jboss.releases.repo.url>https://oss.sonatype.org/service/local/staging/deploy/maven2</jboss.releases.repo.url>
-    <jboss.snapshots.repo.id>oss-sonatype-snapshots</jboss.snapshots.repo.id>
-    <jboss.snapshots.repo.url>https://oss.sonatype.org/content/repositories/snapshots</jboss.snapshots.repo.url>
   </properties>
 
   <modules>
@@ -298,6 +279,11 @@
           <artifactId>jetty-maven-plugin</artifactId>
           <version>${jetty-plugin-version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${central-publishing-maven-plugin-version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -383,6 +369,24 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <configuration>
+              <tagNameFormat>hawtio-@{project.version}</tagNameFormat>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <deploymentName>hawtio-${project.version}</deploymentName>
+              <waitUntil>uploaded</waitUntil>
+            </configuration>
           </plugin>
         </plugins>
       </build>
