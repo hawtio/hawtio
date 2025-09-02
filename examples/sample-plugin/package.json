@@ -11,7 +11,7 @@
     "@hawtio/react": "^1.10.2",
     "@patternfly/react-charts": "^7.4.9",
     "@patternfly/react-code-editor": "^5.4.18",
-    "@patternfly/react-core": "^5.4.14",
+    "@patternfly/react-core": "^6.3.1",
     "@patternfly/react-icons": "^5.4.2",
     "@patternfly/react-styles": "^5.4.1",
     "@patternfly/react-table": "^5.4.16",
