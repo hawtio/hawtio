@@ -31,7 +31,6 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeBuild;
@@ -255,15 +254,6 @@ public class HawtioProcessor {
     @BuildStep
     UberJarMergedResourceBuildItem mergeJolokiaServicesDefault() {
         return new UberJarMergedResourceBuildItem("META-INF/jolokia/services-default");
-    }
-
-    @BuildStep
-    RunTimeConfigurationDefaultBuildItem disableProactiveAuthByDefault() {
-        // https://quarkus.io/guides/security-proactive-authentication
-        // If proactive authentication is enabled, Quarkus security always intercepts
-        // unauthenticated requests before they reach HawtioQuarkusAuthenticator,
-        // and thus authentication throttling doesn't take effect.
-        return new RunTimeConfigurationDefaultBuildItem("quarkus.http.auth.proactive", "false");
     }
 
     @BuildStep(onlyIf = NativeBuild.class)
