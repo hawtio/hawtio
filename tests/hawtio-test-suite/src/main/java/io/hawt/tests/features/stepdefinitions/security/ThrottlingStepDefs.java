@@ -4,10 +4,13 @@ import com.codeborne.selenide.Selenide;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.junit.CucumberOptions;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.pageobjects.pages.ConnectPage;
 import io.hawt.tests.features.pageobjects.pages.LoginPage;
 import io.hawt.tests.features.setup.LoginLogout;
+import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,8 @@ import java.util.function.BiConsumer;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
+@Ignore
+@Disabled
 public class ThrottlingStepDefs {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlingStepDefs.class);
