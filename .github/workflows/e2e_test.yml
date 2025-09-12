@@ -81,12 +81,12 @@ jobs:
         java: ["17", "21"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: github.event_name == 'pull_request_target'
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: github.event_name == 'push'
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -121,7 +121,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Archive failed test reports
         uses: actions/upload-artifact/merge@v4
         if: always()
