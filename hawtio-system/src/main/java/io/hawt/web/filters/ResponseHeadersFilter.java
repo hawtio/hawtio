@@ -38,7 +38,6 @@ public class ResponseHeadersFilter implements Filter {
         filters.add(new XContentTypeOptionsFilter());
         filters.add(new ContentSecurityPolicyFilter());
         filters.add(new StrictTransportSecurityFilter());
-        filters.add(new PublicKeyPinningFilter());
         filters.add(new ReferrerPolicyFilter());
 
         for (HttpHeaderFilter filter : filters) {
