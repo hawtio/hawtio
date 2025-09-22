@@ -35,6 +35,10 @@ module.exports = (_, args) => {
             singleton: true,
             requiredVersion: '~1.9.6-redhat',
           },
+          '@patternfly/react-core': {
+            singleton: true,
+            requiredVersion: dependencies['@patternfly/react-core'],
+          },
         },
       }),
       new HtmlWebpackPlugin({
