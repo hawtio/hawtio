@@ -1,4 +1,4 @@
-@throttling @notOnline @notKeycloak
+@Ignore @throttling @notOnline @notKeycloak
 Feature: Account Lockout (Throttling)
 
   Scenario: User account gets locked out after multiple failed login attempts

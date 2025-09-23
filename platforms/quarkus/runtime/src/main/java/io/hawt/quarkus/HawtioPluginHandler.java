@@ -28,13 +28,13 @@ public class HawtioPluginHandler implements Handler<RoutingContext> {
         pluginConfigs.forEach((name, config) -> {
             JsonObject object = new JsonObject();
             // mandatory parameters
-            object.put("url", config.url.orElse(""));
-            object.put("scope", config.scope);
-            object.put("module", config.module);
+            object.put("url", config.url().orElse(""));
+            object.put("scope", config.scope());
+            object.put("module", config.module());
             // optional parameters
-            config.remoteEntryFileName.ifPresent(value -> object.put("remoteEntryFileName", value));
-            config.bustRemoteEntryCache.ifPresent(value -> object.put("bustRemoteEntryCache", value));
-            config.pluginEntry.ifPresent(value -> object.put("pluginEntry", value));
+            config.remoteEntryFileName().ifPresent(value -> object.put("remoteEntryFileName", value));
+            config.bustRemoteEntryCache().ifPresent(value -> object.put("bustRemoteEntryCache", value));
+            config.pluginEntry().ifPresent(value -> object.put("pluginEntry", value));
             plugins.add(object);
         });
         return Json.encode(plugins);

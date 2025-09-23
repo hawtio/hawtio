@@ -8,9 +8,25 @@ Feature: Checking the functionality of Camel Routes page.
     And Camel table has "<name>" key and "<state>" value
 
     Examples: Columns
-      | column | name   | state   |
-      | Name   | cron   | Started |
-      | State  | simple | Started |
+      | column    | name           | state   |
+      | Name      | cron           | Started |
+      | State     | simple         | Started |
+      | Uptime    | interval1Route | Started |
+      | Completed | interval2Route | Started |
+      | Failed    | subject1Route  | Started |
+      | Total     | subject2Route  | Started |
+
+  Scenario: Check that route nodes do not overlay
+    Given User is on "Camel" page
+    And User is on Camel "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Route Diagram" tab
+    Then Nodes do not overlay
+
+  Scenario: Check that no route duplications exist
+    Given User is on "Camel" page
+    And User is on Camel "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Route Diagram" tab
+    Then No node duplications exist
 
   Scenario Outline: Check the operations on Camel Routes page
     Given User is on "Camel" page
@@ -26,6 +42,18 @@ Feature: Checking the functionality of Camel Routes page.
       | action | initial state | desired state |
       | Stop   | Started       | Stopped       |
       | Start  | Stopped       | Started       |
+
+  Scenario Outline: Check route groups
+    Given User is on "Camel" page
+    When User is on Camel "<group>" item of "routes" folder of "SampleCamel" context
+    Then Camel table "MBean" column has "<route1>" value
+    And Camel table "MBean" column has "<route2>" value
+
+    Examples: Groups
+      | group     | route1         | route2         |
+      | default   | cron           | simple         |
+      | intervals | interval1Route | interval2Route |
+      | subjects  | subject1Route  | subject2Route  |
 
   Scenario: Check the delete operation on Camel route
     Given User is on "Camel" page
