@@ -17,6 +17,11 @@ public class SkipTestsHook {
         Assumptions.assumeTrue(System.getProperty("hawtio-next-ci") == null);
     }
 
+    @Before("@notJBang")
+    public void  skipNotJBangTests() {
+        Assumptions.assumeTrue(System.getProperty("hawtio-jbang-ci") == null);
+    }
+
     @Before("@quarkus")
     public void skipQuarkus() {
         Assumptions.assumeTrue(TestConfiguration.isQuarkus());

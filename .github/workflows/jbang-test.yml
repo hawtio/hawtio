@@ -85,7 +85,7 @@ jobs:
               -Pe2e-${{ matrix.runtime }} -Dselenide.browser=firefox \
               -Dio.hawt.test.url=http://localhost:8888/hawtio \
               -Dio.hawt.test.app.connect.url=http://localhost:${{ env.app-port }}/${{ env.url-suffix }}/jolokia \
-              -Dhawtio-next-ci
+              -Dhawtio-jbang-ci
       - name: Prepare report artifacts
         if: always()
         run: |

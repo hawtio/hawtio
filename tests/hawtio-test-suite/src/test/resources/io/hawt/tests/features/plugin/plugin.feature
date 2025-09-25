@@ -1,4 +1,4 @@
-@notHawtioNext @notOnline
+@notHawtioNext @notJBang @notOnline
 Feature: Checking the functionality of Plugin page.
 
   Scenario: Check that Sample Plugin got installed and accessible
