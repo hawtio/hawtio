@@ -25,7 +25,7 @@ Feature:  Checking the functionality of Help page.
       | JMX           |
       | Camel         |
 
-    @notHawtioNext # - plugins are not present in hawtio-next CI runs
+    @notHawtioNext @notJBang # - plugins are not present in hawtio-next CI runs
     Examples:
       | Sample Plugin |
 
