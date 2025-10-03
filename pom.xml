@@ -39,7 +39,7 @@
     <!-- Jolokia -->
     <jolokia-version>2.3.0</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.25.4</quarkus-version>
+    <quarkus-version>3.27.0</quarkus-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring-version>6.2.11</spring-version>
