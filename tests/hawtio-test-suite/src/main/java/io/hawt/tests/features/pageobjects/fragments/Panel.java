@@ -52,6 +52,12 @@ public class Panel {
         $(byText(option)).shouldBe(interactable).click();
     }
 
+
+    public void openHawtioDropDownMenu(String option) {
+        this.openDropDownMenu(".pf-v5-c-toolbar__group:nth-of-type(3)");
+        $(byText(option)).shouldBe(interactable).click();
+    }
+
     /**
      * Open a drop-down menu by css selector value.
      */
