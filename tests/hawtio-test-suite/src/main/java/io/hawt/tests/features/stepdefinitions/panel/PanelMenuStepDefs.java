@@ -1,5 +1,7 @@
 package io.hawt.tests.features.stepdefinitions.panel;
 
+import io.cucumber.java.PendingException;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.hawt.tests.features.pageobjects.fragments.about.AboutModalWindow;
@@ -17,5 +19,10 @@ public class PanelMenuStepDefs {
     @Then("^About modal window is closed$")
     public void aboutDialogIsClosed() {
         aboutModalWindow.close();
+    }
+
+    @Given("^User clicks on \"([^\"]*)\" option in hawtio drop-down menu")
+    public void userClicksOnOptionInHawtioDropDownMenu(String option) {
+        hawtioPage.panel().openHawtioDropDownMenu(option);
     }
 }
