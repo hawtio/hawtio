@@ -49,7 +49,7 @@ public class ClusterDiscoveryTest extends BaseHawtioOnlineTest {
         HawtioOnlineTestUtils.withCleanup(() -> {
             OpenshiftClient.get().createNamespace(namespace);
 
-            HawtioOnlineUtils.deployApplication("e2e-discover-app", "quarkus", namespace, "17");
+            HawtioOnlineUtils.deployApplication("e2e-discover-app", "springboot", namespace, "4.x-" + (System.getProperty("java.vm.specification.version", "17")));
 
             var discoverPage = new DiscoverTab();
             WaitUtils.untilAsserted(() -> {

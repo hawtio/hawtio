@@ -5,14 +5,12 @@ import java.util.Optional;
 import jakarta.annotation.PostConstruct;
 
 import io.hawt.springboot.HawtioPlugin;
-import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_REALM;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLE_PRINCIPAL_CLASSES;
@@ -24,7 +22,6 @@ public class SpringBootService {
 
     public static void main(String[] args) {
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
-        System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SpringBootService.class, args);
     }
 
@@ -70,7 +67,12 @@ public class SpringBootService {
         setSystemPropertyIfNotSet(HAWTIO_REALM, "hawtio");
         setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.security.jaas.JAASRole");
 
-        System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, Boolean.getBoolean("debugMode") ? "false" : "true");
+        /*
+         * If enabled, this line dynamically controls Hawtio authentication based on the "debugMode" system property.
+         * NOTE: This overrides any build-time configuration (e.g., -Dhawtio.authenticationEnabled).
+         *
+         * System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, Boolean.getBoolean("debugMode") ? "false" : "true");
+         */
     }
 
     private void setSystemPropertyIfNotSet(final String key, final String value) {

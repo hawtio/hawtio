@@ -2,18 +2,12 @@ package io.hawt.tests.features.pageobjects.pages;
 
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.interactable;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byAttribute;
-import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 
 import org.openqa.selenium.By;
 
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
 import io.hawt.tests.features.pageobjects.fragments.Panel;
@@ -96,26 +90,10 @@ public class HawtioPage {
      */
     public void openTab(String tab) {
         final SelenideElement tabElement = $(byXpath("//a[text()='" + tab + "']"));
-        final SelenideElement scrollRightButton = $(byAttribute("aria-label", "Scroll right"));
-        final String currentCamelTreeNode = $(byXpath("//h1[contains(@class, 'title')]")).shouldBe(visible).getText();
-
-        // if the tab is not active, navigate to the tab
         if (!tabElement.has(cssClass("active"))) {
-
-            // if the tab is not displayed, refresh the page (workaround for a slow network connection)
-            // after the refresh, camel page is reset and camel tree is collapsed, so it is needed to get back
-            if (!tabElement.isDisplayed()) {
-                Selenide.refresh();
-                $(byAttribute("aria-label", "Expand Collapse")).shouldBe(enabled).click();
-                $(byTagAndText("button", currentCamelTreeNode)).shouldBe(visible).click();
-            }
-
-            // if the tab is hidden, scroll to the right
-            while (!tabElement.is(visible)) {
-                scrollRightButton.shouldBe(enabled).click();
-            }
-
-            tabElement.should(exist).shouldNotBe(hidden).click();
+            tabElement.scrollTo();
+            tabElement.shouldBe(enabled).click();
+            tabElement.shouldHave(cssClass("active"));
         }
     }
 

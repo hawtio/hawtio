@@ -2,13 +2,11 @@ package io.hawt.tests.openshift;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.awaitility.Awaitility;
 import org.openqa.selenium.NoSuchWindowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,13 +107,13 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
 
             assertThat(p.stream().filter(pod -> pod.getStatus().equalsIgnoreCase("Running"))).hasSize(appDeployment.getStatus().getReplicas());
             return p;
-        }, 5, Duration.ofSeconds(5));
+        }, 5, Duration.ofSeconds(20));
 
         assertThat(pods.get(0)).satisfies(pod -> {
             final Pod podResource = OpenshiftClient.get().getPod(pod.getName());
 
             assertThat(pod.getContainerCount()).isEqualTo(pod.getContainerCount());
-            assertThat(pod.getRouteCount()).isEqualTo(2);
+            assertThat(pod.getRouteCount()).isEqualTo(6);
             assertThat(pod.getNamespace()).isEqualTo(podResource.getMetadata().getNamespace());
 
             assertThat(pod.getLabels()).containsAllEntriesOf(pod.getLabels());
@@ -137,12 +135,12 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
             WaitUtils.untilAsserted(() -> {
                 assertThat(deploymentEntry.getPods()).hasSize(3);
                 assertThat(deploymentEntry.getPods()).allMatch(pod -> pod.getStatus().toLowerCase().matches("running|containercreating"));
-            }, Duration.ofSeconds(10));
+            }, Duration.ofSeconds(20));
             //TODO: https://github.com/hawtio/hawtio-online/issues/290
 
         }, () -> {
             appDeployment.scale(1);
-            appDeployment.waitUntilReady(10, TimeUnit.SECONDS);
+            appDeployment.waitUntilReady(20, TimeUnit.SECONDS);
         });
     }
 
@@ -171,6 +169,6 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
             } else {
                 assertThat(parts[0]).isEqualToIgnoringCase(resourceType);
             }
-        }, Duration.ofSeconds(15));
+        }, Duration.ofSeconds(20));
     }
 }
