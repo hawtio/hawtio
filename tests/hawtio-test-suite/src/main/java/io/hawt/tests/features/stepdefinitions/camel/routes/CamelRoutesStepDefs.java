@@ -2,14 +2,12 @@ package io.hawt.tests.features.stepdefinitions.camel.routes;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelDebug;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelProperties;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRouteDiagram;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoutes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelSource;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelTrace;
-import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 
 public class CamelRoutesStepDefs {
     private final CamelDebug camelDebug = new CamelDebug();
@@ -78,9 +76,6 @@ public class CamelRoutesStepDefs {
 
     @Then("^Start debugging option is presented$")
     public void startDebuggingOptionIsPresented() {
-        if (TestConfiguration.getAppDeploymentMethod() instanceof OpenshiftDeployment && camelDebug.isDebuggingOn()) {
-            camelDebug.stopDebugging();
-        }
         camelDebug.startDebuggingOptionIsPresented();
     }
 

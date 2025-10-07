@@ -17,6 +17,7 @@
     <hawtio.managementPort>8080</hawtio.managementPort>
     <skipITs>true</skipITs>
     <image.name>hawtio-quarkus-app</image.name>
+    <hawtio.authenticationEnabled>true</hawtio.authenticationEnabled>
   </properties>
 
   <dependencyManagement>
@@ -77,6 +78,7 @@
       <groupId>org.apache.camel.quarkus</groupId>
       <artifactId>camel-quarkus-quartz</artifactId>
     </dependency>
+
     <!--
       This dependency is mandatory for enabling Camel management
       via JMX / Hawtio.
@@ -172,6 +174,11 @@
         <groupId>io.quarkus.platform</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus-version}</version>
+        <configuration>
+          <systemProperties>
+            <quarkus.hawtio.authenticationEnabled>${hawtio.authenticationEnabled}</quarkus.hawtio.authenticationEnabled>
+          </systemProperties>
+        </configuration>
         <extensions>true</extensions>
         <executions>
           <execution>

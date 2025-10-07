@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +50,22 @@ public class HawtioOnlineUtils {
 
     public static Deployment deployApplication(String name, String runtime, String namespace, String tag) {
         List<EnvVar> envVars = new LinkedList<>();
+        Map<String, String> annotations = new HashMap<>();
+        int containerPort = 10001;
+
+        annotations.put("hawt.io/protocol", "http");
 
         switch (runtime.toLowerCase()) {
             case "quarkus":
-                //no-op for now
+                annotations.put("hawt.io/jolokiaPath", "/hawtio/jolokia/");
+                containerPort = 8080;
                 break;
 
             case "springboot":
                 envVars.add(new EnvVar("AB_JOLOKIA_AUTH_OPENSHIFT", "cn=hawtio-online.hawtio.svc", null));
                 envVars.add(new EnvVar("AB_JOLOKIA_OPTS", "caCert=/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt", null));
+                annotations.put("hawt.io/jolokiaPath", "/actuator/jolokia/");
+                containerPort = 10001;
                 break;
 
             case "camelk":
@@ -74,7 +82,7 @@ public class HawtioOnlineUtils {
         }
 
         //@formatter:off
-        final String imageName = "example-camel-" + runtime.toLowerCase();
+        final String imageName = runtime.toLowerCase() + "-test-app";
         final DeploymentBuilder deploymentBuilder = new DeploymentBuilder()
             .editOrNewMetadata()
                 .withName(name)
@@ -87,6 +95,7 @@ public class HawtioOnlineUtils {
                 .endSelector()
                 .editOrNewTemplate()
                     .editOrNewMetadata()
+                        .addToAnnotations(annotations)
                         .addToLabels("app", name)
                         //Used to differentiate the pod hash of the Replica Sets
                         .addToLabels("randomId", RandomStringUtils.randomAlphabetic(5))
@@ -95,8 +104,9 @@ public class HawtioOnlineUtils {
                         .addNewContainer()
                             .addAllToEnv(envVars)
                             .withName("app")
-                            .withImage("quay.io/hawtio/hawtio-online-"+ imageName + ":" + tag)
-                            .withPorts(new ContainerPortBuilder().withName("jolokia").withContainerPort(8778).withProtocol("TCP").build())
+                            .withImage("quay.io/hawtio/hawtio-"+ imageName + ":" + tag + "-noauth")
+                            .withImagePullPolicy("Always")
+                            .withPorts(new ContainerPortBuilder().withName("jolokia").withContainerPort(containerPort).withProtocol("TCP").build())
                         .endContainer()
                     .endSpec()
                 .endTemplate()

@@ -18,6 +18,7 @@
     <hawtio.url>/actuator/hawtio</hawtio.url>
     <hawtio.managementPort>10001</hawtio.managementPort>
     <image.name>hawtio-springboot-app</image.name>
+    <hawtio.authenticationEnabled>true</hawtio.authenticationEnabled>
   </properties>
 
   <dependencyManagement>
@@ -185,6 +186,13 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
