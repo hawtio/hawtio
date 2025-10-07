@@ -23,7 +23,7 @@ public class OpenshiftDeployment implements AppDeployment {
     public void start() {
         HawtioOnlineUtils.deployOperator();
         host = HawtioOnlineUtils.deployNamespacedHawtio(DEFAULT_HAWTIO_NAME, TestConfiguration.getOpenshiftNamespace());
-        appDeployment = HawtioOnlineUtils.deployApplication(DEFAULT_APP_NAME, TestConfiguration.getRuntime(), TestConfiguration.getOpenshiftNamespace(), "latest");
+        appDeployment = HawtioOnlineUtils.deployApplication(DEFAULT_APP_NAME, TestConfiguration.getRuntime(), TestConfiguration.getOpenshiftNamespace(), "4.x-" + (System.getProperty("java.vm.specification.version", "17")));
     }
 
     @Override

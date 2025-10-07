@@ -31,23 +31,39 @@ jobs:
       - name: Install
         run: |
           mvn ${MVN_ARGS} install
-      - name: Build images
+      - name: Build auth enabled images
         run: |
-          mvn ${MVN_ARGS} install -Dquarkus.container-image.build=true -pl examples/quarkus
-          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
-      - name: Display images
-        run: |
-          docker images
-      - name: Push image to Quay.io
+          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=true
+      - name: Push auth enabled images to Quay.io
         env:
           USERNAME: ${{ secrets.QUAY_USERNAME }}
           PASSWORD: ${{ secrets.QUAY_PASSWORD }}
         run: |
           docker login -u $USERNAME -p $PASSWORD quay.io
+
           docker tag hawtio-test-suite:${{ matrix.java }} quay.io/hawtio/hawtio-test-suite:${{ github.ref_name }}-${{ matrix.java }}
           docker tag hawtio-quarkus-app:${{ matrix.java }} quay.io/hawtio/hawtio-quarkus-test-app:${{ github.ref_name }}-${{ matrix.java }}
           docker tag hawtio-springboot-app:${{ matrix.java }} quay.io/hawtio/hawtio-springboot-test-app:${{ github.ref_name }}-${{ matrix.java }}
+
           for image in $(docker images --filter=reference='quay.io/hawtio/*' --format='{{.Repository}}:{{.Tag}}')
           do
             docker push $image
           done
+      - name: Build auth disabled images
+        run: |
+          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=false
+      - name: Push auth disabled images to Quay.io
+        env:
+          USERNAME: ${{ secrets.QUAY_USERNAME }}
+          PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+        run: |
+          docker login -u $USERNAME -p $PASSWORD quay.io
+
+          docker tag hawtio-quarkus-app:${{ matrix.java }} quay.io/hawtio/hawtio-quarkus-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
+          docker tag hawtio-springboot-app:${{ matrix.java }} quay.io/hawtio/hawtio-springboot-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
+          
+          docker push quay.io/hawtio/hawtio-quarkus-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
+          docker push quay.io/hawtio/hawtio-springboot-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
+      - name: Display images
+        run: |
+          docker images

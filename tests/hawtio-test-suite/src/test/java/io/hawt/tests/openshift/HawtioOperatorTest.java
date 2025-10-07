@@ -78,7 +78,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     @BeforeAll
     public static void setupApp() {
         String name = "camel-app-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        deployment = HawtioOnlineUtils.deployApplication(name, "springboot", TestConfiguration.getOpenshiftNamespace(), "21");
+        deployment = HawtioOnlineUtils.deployApplication(name, "springboot", TestConfiguration.getOpenshiftNamespace(), "4.x-" + (System.getProperty("java.vm.specification.version", "21")));
         podName = OpenshiftClient.get().pods().withLabel("app", name).list().getItems().get(0).getMetadata().getName();
     }
 
@@ -208,7 +208,8 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             .resource(new NamespaceBuilder().withNewMetadata().withName(namespace).addToLabels("myLabel", namespace).endMetadata().build()).create();
 
         HawtioOnlineTestUtils.withCleanup(() -> {
-            HawtioOnlineUtils.deployApplication("selector-test-springboot", "quarkus", namespace, "21");
+            HawtioOnlineUtils.deployApplication("selector-test-springboot", "springboot", namespace, "4.x-" + (System.getProperty("java.vm.specification.version", "21")));
+
             runTest(spec -> {
 
                 Config config = new Config();
