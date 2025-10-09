@@ -69,7 +69,7 @@
 
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
-    <servlet-class>io.hawt.web.servlets.JolokiaConfiguredAgentServlet</servlet-class>
+    <servlet-class>org.jolokia.server.core.http.AgentServlet</servlet-class>
     <init-param>
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
