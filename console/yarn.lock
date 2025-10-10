@@ -594,16 +594,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/backend-middleware@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "@hawtio/backend-middleware@npm:1.0.7"
+"@hawtio/backend-middleware@portal:/data/sources/github.com/hawtio/hawtio-next/packages/backend-middleware::locator=%40hawtio%2Fconsole-assembly%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@hawtio/backend-middleware@portal:/data/sources/github.com/hawtio/hawtio-next/packages/backend-middleware::locator=%40hawtio%2Fconsole-assembly%40workspace%3A."
   dependencies:
-    axios: "npm:^1.12.0"
+    axios: "npm:^1.12.2"
     express: "npm:^5.1.0"
     js-logger: "npm:^1.6.1"
-  checksum: 10/c5e2861b9540796e429f7c8f9c0b809e7ad97fd018cb14f397450c9dcb6d1671fa449175788f39db44a3ff4c79bdc8cde9709119c55594f3bca1a1abb00e620f
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "@hawtio/camel-model-v4_10@npm:@hawtio/camel-model@~4.10.7":
   version: 4.10.7
@@ -641,7 +640,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     html-webpack-plugin: "npm:^5.6.4"
     jest: "npm:^30.2.0"
-    monaco-editor: "npm:^0.52.2"
+    monaco-editor: "npm:~0.52.2"
     monaco-editor-webpack-plugin: "npm:^7.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1672,10 +1671,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/d3-array@npm:*, @types/d3-array@npm:^3.0.3":
+"@types/d3-array@npm:*":
   version: 3.2.1
   resolution: "@types/d3-array@npm:3.2.1"
   checksum: 10/4a9ecacaa859cff79e10dcec0c79053f027a4749ce0a4badeaff7400d69a9c44eb8210b147916b6ff5309be049030e7d68a0e333294ff3fa11c44aa1af4ba458
+  languageName: node
+  linkType: hard
+
+"@types/d3-array@npm:^3.0.3":
+  version: 3.2.2
+  resolution: "@types/d3-array@npm:3.2.2"
+  checksum: 10/1afebd05b688cafaaea295f765b409789f088b274b8a7ca40a4bc2b79760044a898e06a915f40bbc59cf39eabdd2b5d32e960b136fc025fd05c9a9d4435614c6
   languageName: node
   linkType: hard
 
@@ -2874,7 +2880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.0":
+"axios@npm:^1.12.2":
   version: 1.12.2
   resolution: "axios@npm:1.12.2"
   dependencies:
@@ -6830,7 +6836,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:^0.52.2":
+"monaco-editor@npm:~0.52.2":
   version: 0.52.2
   resolution: "monaco-editor@npm:0.52.2"
   checksum: 10/0d4962d69ffa0a8df040faa9c582cef1893fa3fb617feca8f1425c5e670e74c2856104b9a2b01cbda0103a5e5f92f58843206bc9a0e070471c0c1270d7f52a96
