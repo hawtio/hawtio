@@ -49,7 +49,7 @@
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
     <camel-spring-boot-version>4.10.3.redhat-00019</camel-spring-boot-version>
     <!-- Jetty -->
-    <jetty12-version>12.1.0</jetty12-version>
+    <jetty12-version>12.1.1</jetty12-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.4</assertj-core-version>
@@ -61,10 +61,10 @@
     <httpcore-version>4.4.16</httpcore-version>
     <httpclient-version>4.5.14</httpclient-version>
     <jackson-version>2.19.2</jackson-version>
-    <junit5-version>5.13.4</junit5-version>
-    <log4j2-version>2.25.1</log4j2-version>
-    <mockito-core-version>5.19.0</mockito-core-version>
-    <nimbusds-jose-version>10.4.2</nimbusds-jose-version>
+    <junit5-version>6.0.0</junit5-version>
+    <log4j2-version>2.25.2</log4j2-version>
+    <mockito-core-version>5.20.0</mockito-core-version>
+    <nimbusds-jose-version>10.5</nimbusds-jose-version>
     <picocli-version>4.7.7</picocli-version>
     <servlet-api-version>5.0.0</servlet-api-version>
     <!-- Pin SLF4J version until https://issues.apache.org/jira/browse/CAMEL-20598 is resolved at SLF4J -->
@@ -77,7 +77,7 @@
     <!-- Maven plugins -->
     <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
     <docker-plugin-version>0.46.0</docker-plugin-version>
-    <exec-maven-plugin-version>3.5.1</exec-maven-plugin-version>
+    <exec-maven-plugin-version>3.6.0</exec-maven-plugin-version>
     <frontend-maven-plugin-version>1.15.1</frontend-maven-plugin-version>
     <jetty-plugin-version>11.0.24</jetty-plugin-version>
     <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
