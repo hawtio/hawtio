@@ -202,7 +202,12 @@ public class HawtioManagementConfiguration {
     // will be invoked (which is fine), but we need AuthenticationFilter being mapped to "/actuator/jolokia/*"
 
     /**
-     * {@link AuthenticationFilter} handling direct Jolokia Actuator endpoint requests ({@code /actuator/jolokia/*}).
+     * <p>{@link AuthenticationFilter} handling direct Jolokia Actuator endpoint requests ({@code /actuator/jolokia/*})
+     * and proxy requests ({@code /actuator/hawtio/proxy/*})</p>
+     *
+     * <p>{@code /actuator/hawtio/jolokia/*} is forwarded to {@code /actuator/jolokia/*} using
+     * {@link JolokiaForwardingController}.</p>
+     *
      * @param pathResolver
      * @return
      */
@@ -212,23 +217,9 @@ public class HawtioManagementConfiguration {
     @ConditionalOnAvailableEndpoint(value = JolokiaWebEndpoint.class, exposure = EndpointExposure.WEB)
     public FilterRegistrationBean<AuthenticationFilter> jolokiaAuthenticationFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
+        // same filter instance for two path patterns
         filter.setFilter(new AuthenticationFilter());
         filter.addUrlPatterns(pathResolver.resolveUrlMapping("jolokia", "*"));
-        filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
-        return filter;
-    }
-
-    /**
-     * {@link AuthenticationFilter} handling proxy requests ({@code /actuator/hawtio/proxy/*}). No need to declare
-     * {@code /actuator/hawtio/jolokia/*} mapping here, as it'd be a duplication of {@link #jolokiaAuthenticationFilter}
-     * mapping.
-     * @return
-     */
-    @Bean
-    @Order(11)
-    public FilterRegistrationBean<AuthenticationFilter> hawtioProxyAuthenticationFilter() {
-        final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new AuthenticationFilter());
         filter.addUrlPatterns(hawtioPath + "/proxy/*");
         filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
         return filter;
