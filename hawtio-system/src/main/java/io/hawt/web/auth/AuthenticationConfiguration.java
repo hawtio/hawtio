@@ -182,9 +182,11 @@ public class AuthenticationConfiguration {
     private final String realm;
     private final String roles;
     private String rolePrincipalClasses;
-    private Class<? extends Principal> defaultRolePrincipalClass;
+    private final Class<? extends Principal> defaultRolePrincipalClass;
     private final boolean noCredentials401;
     private final boolean keycloakEnabled;
+
+    /** Configuration to be used instead of relying on default {@link Configuration#getConfiguration()} */
     private Configuration configuration;
 
     private final ConfigManager configManager;
@@ -288,8 +290,8 @@ public class AuthenticationConfiguration {
     }
 
     public Optional<AuthenticationThrottler> getThrottler() {
-        // Throttling should be disabled when OIDC is used
-        if (isOidcEnabled()) {
+        // Throttling should be disabled when OIDC or Keycloak or Spring Security is used
+        if (isExternalAuthenticationEnabled()) {
             return Optional.empty();
         }
         return throttler;
@@ -323,6 +325,13 @@ public class AuthenticationConfiguration {
         return configuration;
     }
 
+    /**
+     * When {@link Configuration} is provided, Hawtio will call special {@link javax.security.auth.login.LoginContext}
+     * constructor where login modules are passed in programmatic way instead of being read from
+     * a file specified with {@code -Djava.security.auth.login.config}
+     *
+     * @param configuration
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
@@ -332,7 +341,7 @@ public class AuthenticationConfiguration {
     }
 
     public boolean isOidcEnabled() {
-        return oidcConfiguration != null && oidcConfiguration.isEnabled();
+        return enabled && oidcConfiguration != null && oidcConfiguration.isEnabled();
     }
 
     public void setSpringSecurityEnabled(boolean springSecurityEnabled) {

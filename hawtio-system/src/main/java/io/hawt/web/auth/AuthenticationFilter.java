@@ -35,9 +35,6 @@ public class AuthenticationFilter implements Filter {
 
     protected AuthenticationConfiguration authConfiguration;
 
-    /** Session timeout */
-    protected int timeout;
-
     /**
      * Number of path segments to skip to get <em>Hawtio path</em> (e.g., skip 2 segments for
      * {@code /actuator/hawtio}).
@@ -48,7 +45,6 @@ public class AuthenticationFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         ServletContext servletContext = filterConfig.getServletContext();
         authConfiguration = AuthenticationConfiguration.getConfiguration(servletContext);
-        timeout = AuthSessionHelpers.getSessionTimeout(servletContext);
         pathIndex = ServletHelpers.hawtioPathIndex(servletContext);
     }
 
@@ -94,6 +90,12 @@ public class AuthenticationFilter implements Filter {
         }
 
         if (session != null) {
+            // this attribute can be set by calling
+            // io.hawt.web.auth.AuthSessionHelpers.setup():
+            //  - in io.hawt.web.auth.LoginServlet.doPost() after authentication using JAAS
+            //  - in io.hawt.quarkus.servlets.HawtioQuakusLoginServlet.doPost() after authentication using
+            //    io.quarkus.security.identity.IdentityProviderManager.authenticateBlocking()
+            //  - in io.hawt.web.auth.ClientRouteRedirectFilter.tryAuthenticateRequest()
             Subject subject = (Subject) session.getAttribute("subject");
 
             // No special Spring Security handling here, because we now use proper JAAS configuration

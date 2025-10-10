@@ -96,6 +96,11 @@ public class OidcConfiguration extends Configuration {
     public static final String OIDC_JAAS_CONFIGURATION = "OidcConfiguration";
 
     /**
+     * Provider name - used when displaying OIDC as login method in Hawtio client application
+     */
+    private String name;
+
+    /**
      * URL for the provider. Must be the base part where {@code .well-known/openid-configuration} can be appended
      */
     private URL providerURL;
@@ -189,6 +194,11 @@ public class OidcConfiguration extends Configuration {
         }
         prompt = PromptType.fromString(props.getProperty("prompt"));
 
+        name = props.getProperty("name");
+        if (name == null || name.isBlank()) {
+            name = providerURL.toExternalForm();
+        }
+
         // server-side configuration
 
         String jwksCacheTime = props.getProperty("jwks.cacheTime");
@@ -235,6 +245,10 @@ public class OidcConfiguration extends Configuration {
 
     public URL getProviderURL() {
         return providerURL;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getClientId() {
