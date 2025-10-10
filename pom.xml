@@ -39,8 +39,8 @@
     <!-- Jolokia -->
     <jolokia-version>2.3.0</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.20.0.SP1-redhat-00001</quarkus-version>
-    <quarkus-extension-version>3.20.0.redhat-00002</quarkus-extension-version>
+    <quarkus-version>3.27.0.redhat-00001</quarkus-version>
+    <quarkus-extension-version>3.27.0.redhat-00001</quarkus-extension-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring-version>6.2.11</spring-version>
