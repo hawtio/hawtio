@@ -59,6 +59,9 @@ public class Authenticator {
     private X509Certificate[] certificates;
     private Principal requestPrincipal;
 
+    // if set to true, don't use io.hawt.web.auth.AuthenticationConfiguration.getConfiguration()
+    private boolean declarativeJAAS;
+
     /**
      * Explicit username/password authenticator when authenticating users from login page.
      */
@@ -69,7 +72,9 @@ public class Authenticator {
     }
 
     /**
-     * Request-based authenticator such as when authenticating direct Jolokia accesses.
+     * Request-based authenticator such as when authenticating direct Jolokia accesses or when the credentials are
+     * obtained in different way (including pre configured credentials available in
+     * {@link HttpServletRequest#getUserPrincipal()})
      */
     public Authenticator(HttpServletRequest request, AuthenticationConfiguration authConfiguration) {
         this.authConfiguration = authConfiguration;
@@ -88,6 +93,16 @@ public class Authenticator {
 
         // existing auth - can be configured by Spring Security
         this.requestPrincipal = request.getUserPrincipal();
+    }
+
+    /**
+     * A hint that we should not rely on programmatic OIDC related JAAS {@link Configuration} and instead
+     * use a {@code realm} name to let {@link LoginContext} load the configuration.
+     * @return
+     */
+    public Authenticator declarativeJAAS() {
+        this.declarativeJAAS = true;
+        return this;
     }
 
     /**
@@ -202,7 +217,7 @@ public class Authenticator {
                 realm, role, rolePrincipalClasses, configuration, username, "******");
 
             Subject subject = new Subject();
-            login(subject, realm, configuration);
+            login(subject, realm, declarativeJAAS ? null : configuration);
             if (checkRoles(subject, role, rolePrincipalClasses)) {
                 return subject;
             }
@@ -273,8 +288,8 @@ public class Authenticator {
 
     private boolean checkIfSubjectHasRequiredRole(Subject subject,
                                                   String role, String rolePrincipalClasses) {
-        String[] roleArray = role.split(",");
-        String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
+        String[] roleArray = role.split("\\s*,\\s*");
+        String[] rolePrincipalClazzes = rolePrincipalClasses.split("\\s*,\\s*");
         boolean found = false;
         for (String clazz : rolePrincipalClazzes) {
             LOG.debug("Looking for rolePrincipalClass: {}", clazz);

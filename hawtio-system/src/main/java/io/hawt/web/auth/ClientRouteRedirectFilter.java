@@ -139,7 +139,7 @@ public class ClientRouteRedirectFilter implements Filter {
 
         // 0) whatever the configuration, accessing css, index.html, fonts, ..., should be handled normally
         //    this is also true for some special URLs like /jolokia/* or /proxy/* which are processed by
-        //    next filters (like AuthenticationFilter)
+        //    other filters (like AuthenticationFilter)
         if (!loginPage && !isSecuredPath(path)) {
             chain.doFilter(request, response);
             return;
@@ -200,7 +200,7 @@ public class ClientRouteRedirectFilter implements Filter {
                 // this is usually normal - user browses to Hawtio for the first time
                 redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
             } else {
-                // NOT_AUTHORIZED means there WAS an authentication attempt (for example with certificat login)
+                // NOT_AUTHORIZED means there WAS an authentication attempt (for example with certificate login)
                 // so we have to tell client-side login page that there was some kind of failure
                 // (without providing too many details)
                 redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL + "#noauth");
