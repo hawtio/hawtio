@@ -17,11 +17,13 @@ package io.hawt.system;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.security.auth.Subject;
 
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,12 @@ public class AuthHelpers {
     public static final List<String> KNOWN_PRINCIPALS = Arrays.asList(
         "UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal");
 
+    /**
+     * Get a username from JAAS {@link Subject} by checking well known {@link Principal} class names.
+     *
+     * @param subject
+     * @return
+     */
     public static String getUsername(Subject subject) {
         Set<Principal> principals = subject.getPrincipals();
 
@@ -46,6 +54,33 @@ public class AuthHelpers {
                 if (KNOWN_PRINCIPALS.contains(principalClass)) {
                     username = principal.getName();
                     LOG.debug("Username in principal: {}", username);
+                }
+            }
+        }
+
+        return username;
+    }
+
+    /**
+     * Get a username from JAAS {@link Subject} using actually validated {@link Principal} class names.
+     * @param authConfiguration
+     * @param subject
+     * @return
+     */
+    public static String getUsername(AuthenticationConfiguration authConfiguration, Subject subject) {
+        Set<Class<Principal>> rolePrincipalClasses = new LinkedHashSet<>(authConfiguration.getRolePrincipalClasses());
+        Set<Principal> principals = subject.getPrincipals();
+
+        String username = null;
+
+        if (principals != null) {
+            for (Principal principal : principals) {
+                if (rolePrincipalClasses.contains(principal.getClass())) {
+                    username = principal.getName();
+                    if (username != null && !username.isBlank()) {
+                        LOG.debug("Username in principal: {}", username);
+                        break;
+                    }
                 }
             }
         }
