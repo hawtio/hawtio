@@ -50,8 +50,8 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
 
             final PropertyUserStore prev = PROPERTY_USERSTORES.putIfAbsent(filename, propertyUserStore);
             if (prev == null) {
-                LOG.info("setupPropertyUserStore: Starting new PropertyUserStore. PropertiesFile: " + filename
-                    + " hotReload: " + hotReload);
+                LOG.info("setupPropertyUserStore: Starting new PropertyUserStore. PropertiesFile: {} hotReload: {}",
+                        filename, hotReload);
 
                 try {
                     propertyUserStore.start();

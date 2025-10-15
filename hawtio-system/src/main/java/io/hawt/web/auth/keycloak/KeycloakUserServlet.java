@@ -35,7 +35,7 @@ public class KeycloakUserServlet extends UserServlet {
         AtomicReference<String> username = new AtomicReference<>();
         new Authenticator(req, authConfiguration).authenticate(
             subject -> {
-                username.set(AuthHelpers.getUsername(subject));
+                username.set(AuthHelpers.getUsername(authConfiguration, subject));
 
                 // Start httpSession
                 req.getSession(true);
