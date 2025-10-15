@@ -223,7 +223,7 @@ public class ClientRouteRedirectFilter implements Filter {
     AuthenticateResult.Type tryAuthenticateRequest(HttpServletRequest request, HttpSession session) {
         AuthenticateResult result = new Authenticator(request, authConfiguration).authenticate(
             subject -> {
-                String username = AuthHelpers.getUsername(subject);
+                String username = AuthHelpers.getUsername(authConfiguration, subject);
                 LOG.info("Logging in user: {}", username);
                 AuthSessionHelpers.setup(session != null ? session :
                     request.getSession(true), subject, username, timeout);

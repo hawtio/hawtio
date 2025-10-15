@@ -352,6 +352,11 @@ public class AuthenticationConfiguration {
         //    Artemis uses -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal
         config.get(ROLE_PRINCIPAL_CLASSES).ifPresent(option
                 -> this.rolePrincipalClassNames.addAll(Arrays.asList(option.split("\\s*,\\s*"))));
+        // 3. if Keycloak is enabled we add known class name
+        if (keycloakEnabled) {
+            this.rolePrincipalClassNames.add("org.keycloak.KeycloakPrincipal");
+            this.rolePrincipalClassNames.add("org.keycloak.adapters.jaas.RolePrincipal");
+        }
 
         // Use container discovery, so we can get dynamic JAAS configurations and additional principal classes
         String authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES).orElse(null);
@@ -388,23 +393,6 @@ public class AuthenticationConfiguration {
         if (!enabled) {
             return;
         }
-
-        // 3. finally add last (fallback) role name class to use
-        rolePrincipalClassNames.add(RolePrincipal.class.getName());
-
-        // now we can verify if the added Principal class names are actually loadable
-        List<Class<Principal>> knownPrincipalClasses = new ArrayList<>(rolePrincipalClassNames.size());
-        for (String className : rolePrincipalClassNames) {
-            Class<Principal> clz = tryLoadClass(className, Principal.class);
-            if (clz != null) {
-                // reachable, loadable, but not necessarily with 1-arg String constructor
-                knownPrincipalClasses.add(clz);
-            }
-        }
-        this.rolePrincipalClasses = Collections.unmodifiableList(knownPrincipalClasses);
-
-        // we need one Principal class to use as role for Hawtio itself. will use it in own Login modules (like OIDC)
-        this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass();
 
         // if authentication is not disabled, it is a responsibility of the "deployer" to allow authenticated
         // access to Jolokia. This is a scenario, where Hawtio+Jolokia can act as remote Jolokia Agent which
@@ -453,6 +441,37 @@ public class AuthenticationConfiguration {
                 return allLoginModules;
             }
         };
+
+        // search through login modules and add known principal classes
+        for (AppConfigurationEntry lm : allLoginModules) {
+            String className = lm.getLoginModuleName();
+            if ("io.hawt.jetty.security.jaas.PropertyFileLoginModule".equals(className)) {
+                rolePrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASPrincipal");
+                rolePrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASRole");
+                rolePrincipalClassNames.add("org.eclipse.jetty.security.UserPrincipal");
+            }
+            if ("com.sun.security.auth.module.LdapLoginModule".equals(className)) {
+                rolePrincipalClassNames.add("com.sun.security.auth.LdapPrincipal");
+                rolePrincipalClassNames.add("com.sun.security.auth.UserPrincipal");
+            }
+        }
+
+        // 5. finally add last (fallback) role name class to use
+        rolePrincipalClassNames.add(RolePrincipal.class.getName());
+
+        // now we can verify if the added Principal class names are actually loadable
+        List<Class<Principal>> knownPrincipalClasses = new ArrayList<>(rolePrincipalClassNames.size());
+        for (String className : rolePrincipalClassNames) {
+            Class<Principal> clz = tryLoadClass(className, Principal.class);
+            if (clz != null) {
+                // reachable, loadable, but not necessarily with 1-arg String constructor
+                knownPrincipalClasses.add(clz);
+            }
+        }
+        this.rolePrincipalClasses = Collections.unmodifiableList(knownPrincipalClasses);
+
+        // we need one Principal class to use as role for Hawtio itself. will use it in own Login modules (like OIDC)
+        this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass();
 
         initialized = true;
     }

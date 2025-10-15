@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
 
         AuthenticateResult result = authenticator.authenticate(
                 subject -> {
-                    LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
+                    LOG.info("Logging in user: {}", AuthHelpers.getUsername(authConfiguration, subject));
                     AuthSessionHelpers.setup(
                             request.getSession(true), subject, username, timeout);
                     sendResponse(response, subject);
