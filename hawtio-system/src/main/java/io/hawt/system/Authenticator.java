@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationThrottler;
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,8 +138,8 @@ public class Authenticator {
         String authType = parts[0];
         String authInfo = parts[1];
 
-        if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
-            String decoded = new String(Base64.decodeBase64(authInfo));
+        if (credentialsCallback != null && authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
+            String decoded = new String(Base64.getDecoder().decode(authInfo));
             int delimiter = decoded.indexOf(':');
             if (delimiter < 0) {
                 return;

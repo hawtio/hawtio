@@ -96,6 +96,7 @@
     </dependency>
 
     <dependency>
+      <!-- Only to override transitive dependency from HttpClient4 -->
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>${commons-codec-version}</version>

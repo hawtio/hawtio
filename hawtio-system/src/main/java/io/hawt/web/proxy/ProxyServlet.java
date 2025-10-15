@@ -10,6 +10,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.BitSet;
 import java.util.Enumeration;
 
@@ -24,7 +25,6 @@ import io.hawt.system.ProxyAllowlist;
 import io.hawt.util.Strings;
 import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -233,7 +233,7 @@ public class ProxyServlet extends HttpServlet {
         String password = proxyAddress.getPassword();
 
         if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
-            String encodedCreds = Base64.encodeBase64String((username + ":" + password).getBytes());
+            String encodedCreds = Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
             proxyRequest.setHeader("Authorization", "Basic " + encodedCreds);
         }
 
