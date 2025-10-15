@@ -14,12 +14,25 @@ import io.hawt.web.auth.SessionExpiryFilter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+/**
+ * <p>Extension of {@link HawtioContextListener} that performs Spring Framework/Boot specific initialization
+ * of the web environment for Hawtio.</p>
+ *
+ * <p><strong>It's still critical to call base listener methods.</strong></p>
+ */
 public class SpringHawtioContextListener extends HawtioContextListener {
 
     public final String servletPath;
 
-    public SpringHawtioContextListener(final ConfigManager configManager,
-                                       final String servletPath) {
+    /**
+     * Called from Spring Bean (Java) configuration passing pre-configured {@link ConfigManager} and
+     * a path under which the Hawtio servlets and filters are registered. This path can't be determined using
+     * Jakarta Servlet API only (like {@code /actuator/hawtio} prefix).
+     *
+     * @param configManager
+     * @param servletPath
+     */
+    public SpringHawtioContextListener(final ConfigManager configManager, final String servletPath) {
         super(configManager);
         this.servletPath = Objects.requireNonNull(servletPath);
     }
@@ -27,8 +40,8 @@ public class SpringHawtioContextListener extends HawtioContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
         super.contextInitialized(servletContextEvent);
-        servletContextEvent.getServletContext()
-            .setAttribute(SessionExpiryFilter.SERVLET_PATH, this.servletPath);
+        ServletContext context = servletContextEvent.getServletContext();
+        context.setAttribute(SessionExpiryFilter.SERVLET_PATH, this.servletPath);
     }
 
     @Override
@@ -49,7 +62,7 @@ public class SpringHawtioContextListener extends HawtioContextListener {
 
                     // we have to configure JAAS login module that'll integrate with Spring Security
                     authConfig.setSpringSecurityEnabled(true);
-                    authConfig.setConfiguration(new SpringSecurityJAASConfiguration(authConfig));
+                    authConfig.addConfiguration(new SpringSecurityJAASConfiguration(authConfig));
                     break;
                 }
                 context = context.getParent();

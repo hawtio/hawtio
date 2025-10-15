@@ -65,7 +65,7 @@ public class LoginServlet extends HttpServlet {
         String username = (String) json.get("username");
         String password = (String) json.get("password");
 
-        Authenticator authenticator = new Authenticator(authConfiguration, username, password).declarativeJAAS();
+        Authenticator authenticator = new Authenticator(authConfiguration, username, password);
 
         AuthenticateResult result = authenticator.authenticate(
                 subject -> {

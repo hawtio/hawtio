@@ -65,6 +65,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import io.hawt.util.Strings;
+import io.hawt.web.auth.oidc.token.BearerTokenCallback;
 import io.hawt.web.auth.oidc.token.KidKeySelector;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -176,7 +177,7 @@ public class OidcConfigurationTest {
     @Test
     public void emptyConfiguration() throws Exception {
         Properties props = new Properties();
-        OidcConfiguration cfg = new OidcConfiguration(props);
+        OidcConfiguration cfg = new OidcConfiguration(null, props);
         assertNull(cfg.getProviderURL());
     }
 
@@ -185,7 +186,7 @@ public class OidcConfigurationTest {
         Properties props = new Properties();
         props.setProperty("provider", "http://localhost:8180");
         props.setProperty("offline", "true");
-        OidcConfiguration cfg = new OidcConfiguration(props);
+        OidcConfiguration cfg = new OidcConfiguration(null, props);
         assertNotNull(cfg.getProviderURL());
     }
 
@@ -199,7 +200,7 @@ public class OidcConfigurationTest {
         props.setProperty("scope", "openid email");
         props.setProperty("redirect_uri", "http://localhost:8080");
         props.setProperty("oidc.rolesPath", "resource_access.${client_id}.roles");
-        OidcConfiguration cfg = new OidcConfiguration(props);
+        OidcConfiguration cfg = new OidcConfiguration(null, props);
         JSONObject json = (JSONObject) new JSONParser().parse(cfg.toJSON());
 
         assertEquals("http://localhost:8180", json.get("provider"));
@@ -215,7 +216,7 @@ public class OidcConfigurationTest {
         props.setProperty("client_id", "some-client");
         props.setProperty("oidc.rolesPath", "resource_access.${client_id}.roles");
         props.setProperty("roleMapping.Hawtio.Admin", "admin");
-        OidcConfiguration cfg = new OidcConfiguration(props);
+        OidcConfiguration cfg = new OidcConfiguration(null, props);
         cfg.setRolePrincipalClass(MyPrincipal.class);
         assertNotNull(cfg.getProviderURL());
         assertSame(MyPrincipal.class, cfg.getRoleClass());
@@ -268,8 +269,8 @@ public class OidcConfigurationTest {
 
         CallbackHandler handler = callbacks -> {
             for (Callback c : callbacks) {
-                if (c instanceof PasswordCallback) {
-                    ((PasswordCallback) c).setPassword(accessToken.toCharArray());
+                if (c instanceof BearerTokenCallback) {
+                    ((BearerTokenCallback) c).setToken(accessToken);
                 }
             }
         };
