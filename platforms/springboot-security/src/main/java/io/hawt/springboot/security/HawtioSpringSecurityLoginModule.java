@@ -70,6 +70,8 @@ public class HawtioSpringSecurityLoginModule implements LoginModule {
         Set<Principal> principals = new LinkedHashSet<>(this.subject.getPrincipals());
         for (Principal principal : principals) {
             if (principal instanceof Authentication auth) {
+                // convert all GrantedAuthorities of single Spring Security principal into
+                // separate role principals specific for Hawtio
                 for (GrantedAuthority ga : auth.getAuthorities()) {
                     String role = ga.getAuthority();
                     if (role.startsWith("ROLE_")) {

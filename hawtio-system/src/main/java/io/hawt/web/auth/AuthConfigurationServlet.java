@@ -45,12 +45,25 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthConfigurationServlet.class);
 
+    // path needed to prepare absolute (host:port relative) links to login page
+    // this path is "/" in WAR deployment, but could be different in Spring Boot. We need to pass proper
+    // "base" because it can't be determined otherwise using request.getContextPath() and request.getServletPath()
+    private String hawtioPath;
+
     private boolean keycloakEnabled = false;
 
     private OidcConfiguration oidcConfiguration = null;
     private boolean oidcEnabled = false;
 
     private final JSONArray authMethods = new JSONArray();
+
+
+    public AuthConfigurationServlet() {
+    }
+
+    public AuthConfigurationServlet(String hawtioPath) {
+        this.hawtioPath = hawtioPath;
+    }
 
     @Override
     protected String getDefaultPath() {
@@ -60,6 +73,11 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+
+        if (hawtioPath == null) {
+            // we have to determine it from Servlet environment
+            hawtioPath = getServletContext().getContextPath();
+        }
 
         keycloakEnabled = authConfiguration.isKeycloakEnabled();
 
@@ -110,14 +128,14 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
                 //  - io.hawt.web.auth.LoginServlet
                 //  - io.hawt.quarkus.servlets.HawtioQuakusLoginServlet
                 // which means proper form authentication
-                String contextPath = getServletContext().getContextPath();
+                String basePath = ServletHelpers.webContextPath(hawtioPath);
                 JSONObject entry = new JSONObject();
                 entry.put("method", "form");
                 entry.put("name", "User credentials");
                 entry.put("type", "json");
                 // should match what we have in web.xml
-                entry.put("url", contextPath + "/auth/login");
-                entry.put("logoutUrl", contextPath + "/auth/logout");
+                entry.put("url", basePath + "/auth/login");
+                entry.put("logoutUrl", basePath + "/auth/logout");
                 entry.put("userField", "username");
                 entry.put("passwordField", "password");
                 authMethods.add(entry);

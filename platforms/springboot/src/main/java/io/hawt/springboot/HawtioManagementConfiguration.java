@@ -108,6 +108,9 @@ public class HawtioManagementConfiguration {
      * <p>{@link HandlerMapping} that <em>forwards</em> requests in the form of {@code /actuator/hawtio/jolokia}
      * to actual Jolokia actuator endpoint normally registered under {@code /actuator/jolokia}.</p>
      *
+     * <p>Jolokia's {@link org.jolokia.server.core.http.AgentServlet} is registered dynamically by
+     * {@link org.jolokia.support.spring.actuator.JolokiaServletRegistration#onStartup}.</p>
+     *
      * <p>Note: With WAR deployment this is not required, because Hawtio's {@code web.xml} registers own version
      * of Jolokia's {@link org.jolokia.server.core.http.AgentServlet}.</p>
      *
@@ -316,7 +319,7 @@ public class HawtioManagementConfiguration {
     @Bean
     public ServletRegistrationBean<AuthConfigurationServlet> oidcServlet() {
         return new ServletRegistrationBean<>(
-            new AuthConfigurationServlet(),
+            new AuthConfigurationServlet(hawtioPath),
             hawtioPath + "/auth/config/*");
     }
 
