@@ -168,7 +168,7 @@ public class OidcConfiguration extends Configuration {
     // for tests
     private boolean offline;
 
-    public OidcConfiguration(Properties props) throws IOException {
+    public OidcConfiguration(String realm, Properties props) throws IOException {
         String provider = props.getProperty("provider");
         if (Strings.isBlank(provider)) {
             // means there's no OIDC configuration
@@ -479,9 +479,10 @@ public class OidcConfiguration extends Configuration {
 
         this.json = json.toString();
 
+        // add SUFFICIENT entry, so we can proceed with other modules if these are present
         this.jaasAppConfigurationEntries = new AppConfigurationEntry[] {
                 new AppConfigurationEntry(OidcLoginModule.class.getName(),
-                        AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, Map.of(OIDC_JAAS_CONFIGURATION, this))
+                        AppConfigurationEntry.LoginModuleControlFlag.SUFFICIENT, Map.of(OIDC_JAAS_CONFIGURATION, this))
         };
     }
 

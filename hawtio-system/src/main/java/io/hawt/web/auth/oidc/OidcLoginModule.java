@@ -20,14 +20,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.text.ParseException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
@@ -40,6 +37,7 @@ import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import io.hawt.web.auth.RolePrincipal;
+import io.hawt.web.auth.oidc.token.BearerTokenCallback;
 import io.hawt.web.auth.oidc.token.KidKeySelector;
 import io.hawt.web.auth.oidc.token.ValidAccessToken;
 import org.slf4j.Logger;
@@ -77,21 +75,20 @@ public class OidcLoginModule implements LoginModule {
 
     @Override
     public boolean login() throws LoginException {
-        Callback[] callbacks = new Callback[2];
-        callbacks[0] = new NameCallback("username");
-        callbacks[1] = new PasswordCallback("password", false);
+        Callback[] callbacks = new Callback[1];
+        callbacks[0] = new BearerTokenCallback();
 
         try {
             callbackHandler.handle(callbacks);
-            String username = ((NameCallback) callbacks[0]).getName();
-            char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
-            String password = new String(tmpPassword);
-            ((PasswordCallback) callbacks[1]).clearPassword();
+            String tokenValue = ((BearerTokenCallback) callbacks[0]).getToken();
+            if (tokenValue == null) {
+                return false;
+            }
 
             // we're interested only in the token, which is passed as base64(JWT)
             // token is validated and container information is stored until commit(), where
             // javax.security.auth.Subject is populated with principals and credentials
-            ValidAccessToken token = validateToken(password);
+            ValidAccessToken token = validateToken(tokenValue);
 
             if (token == null) {
                 return false;
@@ -140,7 +137,11 @@ public class OidcLoginModule implements LoginModule {
 
     @Override
     public boolean abort() {
-        return true;
+        if (parsedToken != null) {
+            parsedToken = null;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -149,11 +150,11 @@ public class OidcLoginModule implements LoginModule {
         if (subject != null) {
             subject.getPrivateCredentials().clear();
 
-            Set<Principal> principals = new HashSet<>(subject.getPrincipals());
-            principals.removeIf(p ->
+            subject.getPrincipals().removeIf(p ->
                     oidcConfiguration.getRoleClass().isAssignableFrom(p.getClass()) || RolePrincipal.class == p.getClass());
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**

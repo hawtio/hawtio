@@ -1,6 +1,6 @@
 package io.hawt.quarkus.auth;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,7 +27,7 @@ public class HawtioQuarkusAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusAuthenticator.class);
 
     @Inject
-    private IdentityProviderManager identityProviderManager;
+    IdentityProviderManager identityProviderManager;
 
     public AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
                                            String username, String password) {
@@ -53,7 +53,7 @@ public class HawtioQuarkusAuthenticator {
 
         try {
             SecurityIdentity identity = identityProviderManager.authenticateBlocking(authRequest);
-            String roleConfig = authConfiguration.getRoles();
+            List<String> roleConfig = authConfiguration.getRoles();
             // Verify the allowed roles matches with those specified in Quarkus security config
             if (!verifyRole(identity, roleConfig)) {
                 return AuthenticateResult.notAuthorized();
@@ -68,12 +68,11 @@ public class HawtioQuarkusAuthenticator {
 
     }
 
-    private static boolean verifyRole(SecurityIdentity identity, String roleConfig) {
-        if (Strings.isBlank(roleConfig) || roleConfig.equals("*")) {
+    private static boolean verifyRole(SecurityIdentity identity, List<String> roleConfig) {
+        if (roleConfig.isEmpty() || roleConfig.contains("*")) {
             return true;
         }
 
-        String[] roles = roleConfig.split(",");
-        return Arrays.stream(roles).anyMatch(identity.getRoles()::contains);
+        return roleConfig.stream().anyMatch(identity.getRoles()::contains);
     }
 }
