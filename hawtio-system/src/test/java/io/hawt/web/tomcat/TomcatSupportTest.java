@@ -16,6 +16,14 @@
  */
 package io.hawt.web.tomcat;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Base64;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,6 +60,44 @@ public class TomcatSupportTest {
         assertNotNull(u5);
         TomcatSupport.TomcatUser u6 = ts.attemptLogin("u6", "tomcat");
         assertNotNull(u6);
+    }
+
+    @Test
+    public void fixTomcatIssue() throws Exception {
+        // see https://bz.apache.org/bugzilla/show_bug.cgi?id=69852
+        // for SSHA, when verifying password, first the credentials are digested then the salt
+        // but salt$ic$digest format is verified by org.apache.catalina.realm.MessageDigestCredentialHandler.mutate
+        // which first digests the salt and then the credentials
+        // so we can't even create a password for SSHA using:
+        // $ bin/digest.sh -a SHA-1 -i 1 -s <salt-size> <password>
+        // because this would digest salt first...
+
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        byte[] salt = new byte[38];
+        SecureRandom.getInstance("SHA1PRNG").nextBytes(salt);
+
+        sha1.update("tomcat".getBytes(StandardCharsets.UTF_8));
+        sha1.update(salt);
+
+        byte[] digest = sha1.digest();
+        byte[] digestAndSalt = new byte[58];
+        System.arraycopy(digest, 0, digestAndSalt, 0, 20);
+        System.arraycopy(salt, 0, digestAndSalt, 20, 38);
+        String base64 = Base64.getEncoder().encodeToString(digestAndSalt);
+
+        File f = File.createTempFile("tomcat-users-", ".xml");
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
+            bw.write("<tomcat-users xmlns=\"http://tomcat.apache.org/xml\">\n");
+            bw.write(String.format("  <user username=\"tomcat\" password=\"{SSHA}%s\" roles=\"admin\"/>\n", base64));
+            bw.write("</tomcat-users>\n");
+        }
+
+        // MD5 should be ignored
+        TomcatSupport ts = new TomcatSupport("MD5", f.getAbsolutePath());
+        TomcatSupport.TomcatUser u1 = ts.attemptLogin("tomcat", "tomcat");
+        assertNotNull(u1);
+        assertEquals(1, u1.getRoles().size());
+        assertTrue(u1.getRoles().contains("admin"));
     }
 
 }
