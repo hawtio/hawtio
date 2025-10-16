@@ -35,7 +35,11 @@ public class TestConfiguration {
     public static final String KEYCLOAK_IMAGE = "io.hawt.test.keycloak.image";
     /** Property to select container image for running the application being tested */
     public static final String APP_DOCKER_IMAGE = "io.hawt.test.docker.image";
-    /** Property to specify existing Maven application ({@code mvn clean package} need to be run there) */
+    /**
+     * Property to specify existing Maven application ({@code mvn clean package} need to be run there). The path
+     * should be the {@code target} directory which should contain {@code classes} subdirectory and
+     * {@code application.properties} inside it.
+     */
     public static final String APP_PATH = "io.hawt.test.app.path";
     /** The <em>main</em> URL to be used by Selenium tests - should point to Hawtio client application */
     public static final String APP_URL = "io.hawt.test.url";
