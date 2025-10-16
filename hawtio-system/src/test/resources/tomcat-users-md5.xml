@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<tomcat-users version="string" xmlns="http://tomcat.apache.org/xml">
+<tomcat-users xmlns="http://tomcat.apache.org/xml">
     <!-- https://tomcat.apache.org/tomcat-11.0-doc/config/credentialhandler.html#MessageDigestCredentialHandler -->
     <!-- check bin/digest.sh -a md5 [-i ic] [-s salt-length] password -->
     <!-- org.apache.catalina.realm.DigestCredentialHandlerBase.DEFAULT_SALT_LENGTH is 32 -->
@@ -11,9 +11,9 @@
     <user username="u2" password="{MD5}GzWdh1OFi1W++gRBBnqu0w==" roles="r1,r2" groups="g1" />
     <!-- a Base64 encoded SHA1 digest of the password -->
     <user username="u3" password="{SHA}U2wLM5NFYWwbM8r0VEVNi4oZDWw=" roles="r1,r2" groups="g1" />
-    <!-- 20 character salt followed by the salted SHA1 digest Base64 encoded -->
-    <user username="u4" password="{SSHA}QxsCbkrZwiLgvTnvdlGW2KI/EfIr4M7y7o4nnG1VqsaRKl6ISrDcYg==" roles="r1,r2" groups="g1" />
-    <!-- a hex encoded salt, iteration code and a hex encoded credential, each separated by $ -->
+    <!-- 20 character of SHA-1 digest of password+salt followed by remaining bytes of the salt, Base64 encoded -->
+    <user username="u4" password="{SSHA}OJfhvk+T+IAv5XpLgIqsZZwwmQSsCJbHYqvS9y0D1ui9Si6fNX1mWR75bGW6K4+L7j8GSFFktUE9Qw==" roles="r1,r2" groups="g1" />
+    <!-- a hex encoded salt, iteration code and a hex encoded credential, each separated by $, however digest of salt+password is used, not password+salt -->
     <user username="u5" password="e74212ae5fb0b6248bb48c5e0c615bf54997757e43f40eb0201a732c695a6883ca4019cb6fdfc399$20$384826363541f4a9e1c0efab604c0c23" roles="r1,r2" groups="g1" />
     <user username="u6" password="$1000$badf0ef098419b28277e51216c04729b" roles="r1,r2" groups="g1" />
 </tomcat-users>
