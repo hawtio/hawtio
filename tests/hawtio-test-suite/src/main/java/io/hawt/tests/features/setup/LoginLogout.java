@@ -56,7 +56,8 @@ public class LoginLogout {
         }
 
         if (TestConfiguration.getConnectUrl() != null && WebDriverRunner.url().contains("/connect/")) {
-            LOG.info("Connect page URL: " + WebDriverRunner.url());
+            LOG.info("Connect page URL: {}", WebDriverRunner.url());
+            LOG.info("Remote Jolokia Agent URL: {}", TestConfiguration.getConnectUrl());
             var connectPage = new ConnectPage();
             connectPage.addConnection(connectionName, TestConfiguration.getConnectUrl());
             connectPage.connectToAndLogin(connectionName);
