@@ -39,9 +39,15 @@ mvn clean install -DskipTests -Pe2e
 ## The testing elements (detailed)
 
 There are 3 components involved when running Hawtio integration (e2e) tests:
-- The test scenarios
-- Hawtio web application
+- The test scenarios - placed in `tests/hawtio-test-suite` Maven module of https://github.com/hawtio/hawtio repository
+  - Scenarios are implemented using Cucumber and Selenium
+  - Can be run directly with `mvn verify -Pe2e`
+  - Can be run using `quay.io/hawtio/hawtio-test-suite` container image
+- Hawtio web/client application
+  - Runs in a browser (or using https://www.w3.org/TR/webdriver/ with Selenium/Selenide)
+  - Can be served by `yarn webpack server` express.js server or from Java Hawtio application deployed as WAR application, Spring Boot application or Quarkus application
 - JVM where sample Camel route is running
+  - Can run Hawtio server application itself or only a Jolokia Agent connected to from Hawtio web application using "Connect tab"
 
 However the tests are so flexible that we may have different modes of running the tests.
 
@@ -49,9 +55,16 @@ We may want to run _full Hawtio_ or run Hawtio client that connects to remote Jo
 - Hawtio web application and the JVM with camel route may run in the same JVM - The Jolokia agent and Hawtio client
   application are served from the same web server. `-Dio.hawt.test.app.connect.url` property can't be specified
 - Hawtio web application is running separately and `-Dio.hawt.test.app.connect.url` property points at remote Jolokia agent
-  to be used for remote connection. This mode allows testing hawtio/hawtio-next client project.
+  to be used for remote connection. This mode allows testing https://github.com/hawtio/hawtio-next client project.
 
 ### Choosing how the Hawtio application being tested is deployed
+
+See `io.hawt.tests.features.config.TestConfiguration.getAppDeploymentMethod` class for the details.
+
+The cucumber/selenium tests need the managed/automated/webdriver browser to be pointed to a URL from which Hawtio
+web application (`index.html` and related JS/CSS files) will be loaded.
+This web application may already be served from a JVM where Jolokia is running, or this "first Hawtio" may contain
+only single "Connect" tab which will be used to yet another JVM with Jolokia and Camel routes running.
 
 The deployment method is selected in this order, depending on available system properties:
 - when `-Dio.hawt.test.url` is specified, Cucumber/Selenium tests connect to already running application
@@ -106,7 +119,7 @@ Here is general information:
 * When entire Hawtio was already build with `-Pe2e` specified, we no longer have to provide this profile when running the tests if we simply specify `-f tests/hawtio-test-suite`. When using `-pl :hawtio-test-suite -am` option, `-Pe2e` is mandatory
 * `-Pe2e-springboot` and `-Pe2e-quarkus` profiles set up proper dependencies and system properties, so Cucumber test can start the application for us
 * When planning to use already running application, we have to specify `-Dio.hawt.test.url` and optionally `-Dio.hawt.test.app.connect.url`
-  properties (it's required when `-Dio.hawt.test.url` points to application run with `webpack` for example)
+  properties (it's required when `-Dio.hawt.test.url` points to application run with `webpack` for example, because such application doesn't have background Java server with Jolokia and/or Camel application running. It's pure JS express.js application).
 * When using existing application, we also have to specify `-Dio.hawt.test.runtime` to disable tests specific to given runtime (see Cucumber annotations/tags)
 
 If we want to run selected Cucumber tests (features) we have to use one trick - add some annotation like `@this` on selected scenario, for example:
@@ -127,57 +140,171 @@ It's much easier to run individual test with Cucumber for Java plugin for Intell
 
 ### Spring Boot E2E tests
 
+Note that "Spring Boot" means Hawtio deployment method, where we have:
+ - JVM started with `main()` class annotated with `@org.springframework.boot.autoconfigure.SpringBootApplication` or with `mvn spring-boot:run`
+ - reachable port 10001 (the management port, `management.server.port` option)
+ - Hawtio accessible at `/actuator/hawtio`
+ - Jolokia accessible at `/actuator/jolokia`
+
 **Spring Boot with the application started by the test itself**
 ```console
-mvn install -Pe2e-springboot -f tests/hawtio-test-suite
+mvn verify -f tests/hawtio-test-suite -Pe2e-springboot 
 ```
 
-In this setup the URLs are auto-detected and/or specifed in Maven configuration for `e2e-springboot` profile
+In this setup the URLs are auto-detected and/or specified in Maven configuration for `e2e-springboot` profile. This
+profile sets these properties:
+ - `test-runtime=springboot` - to parameterize the dependency from a profile activated by setting `local-app=true`
+ - `local-app=true` - activates `local-test-app-dependency` profile which adds `io.hawt.tests:hawtio-tests-${test-runtime}` artifact to the classpath so the test can run the application itself
+ - `hawtio.url.suffix=/actuator/hawtio` - configures the URL used in `com.codeborne.selenide.Selenide.open(java.lang.String)` call
 
-**Spring Boot with the application started by us** (full Spring Boot application with Camel routes running)
+Because `io.hawt.test.url` is NOT set, `TestConfiguration` uses `io.hawt.tests.features.setup.deployment.MavenDeployment` which
+starts JVM process using `java -jar` with a JAR found in `../${test-runtime}/target/*.jar`. Current directory is the location of `hawtio-test-suite` module.
+
+**Spring Boot with the application started by us and used as Hawtio application** (full Spring Boot application with Camel routes running)
 ```console
-mvn spring-boot:run -f tests/springboot &
-mvn install -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio -Pio.hawt.test.runtime=springboot
+mvn spring-boot:run -f tests/springboot
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio
 ```
 
-In this setup we have to point Cucumber/Selenium tests to running application and specify its type (`springboot`). Instead of running the
-application with `spring-boot:run`, we can start it from IDE.
+In this setup we have to point Cucumber/Selenium tests to a running application. We don't have to tell the test suite
+that `io.hawt.test.url` points to a Spring Boot application - it's not relevant (so we don't need `-Pe2e-springboot` profile or `test-runtime=springboot` property or `-Dio.hawt.test.runtime` property).
+Instead of running the application with `spring-boot:run`, we can start it from the IDE.
 
-**Spring Boot with the application started by us** (using `webpack server`)
+**Spring Boot with the application started by us and used as remote Jolokia agent** (using `webpack server`)
 ```console
-mvn spring-boot:run -f tests/springboot &
-mvn install -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:10001/actuator/jolokia -Pio.hawt.test.runtime=springboot
+DISABLE_WS=true yarn webpack server
+mvn spring-boot:run -f tests/springboot
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:10001/actuator/jolokia -Dhawtio-next-ci=true
 ```
 
-In this setup we have to point Cucumber/Selenium tests to running application, specify the remote Jolokia agent to connect to
-and specify its type (`springboot`).
+In this setup, we first start a `webpack server` in a JS project - this may be both https://github.com/hawtio/hawtio/tree/4.x/console and
+https://github.com/hawtio/hawtio-next/tree/main/app!
+We also manually (could be in IDE) start a Spring Boot application.
+Finally we have to point Cucumber/Selenium tests to a running application (which has only the "Connect" tab available) and to pass
+the URL (using `-Dio.hawt.test.app.connect.url`) to use at "Connect" tab to connect to actual Spring Boot application.
+
+Even if the Spring Boot application itself runs Hawtio, we use Hawtio as served by `webpack server`. That's why
+`-Dhawtio-next-ci=true` option is needed to skip `plugin.feature` scenario.
+
+**Spring Boot with the application started in a container**
+```console
+export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
+systemctl --user enable --now podman.socket
+podman run -ti --rm -p 10001:10001 quay.io/hawtio/hawtio-springboot-test-app:4.x-17
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio
+```
+
+This setup start Spring Boot Hawtio application using a container image and tests are pointed to http://localhost:10001/actuator/hawtio. There's no
+remote Jolokia connection using "Connect" tab in Hawtio.
+
+**Spring Boot with the application started in a container and used as remote Jolokia agent**
+```console
+DISABLE_WS=true yarn webpack server
+export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
+systemctl --user enable --now podman.socket
+podman run -ti --rm -p 10001:10001 quay.io/hawtio/hawtio-springboot-test-app:4.x-17
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:10001/actuator/jolokia -Dhawtio-next-ci=true
+```
+
+Finally, for completeness, here:
+ - Spring Boot application with Hawtio is running from a container (but Hawtio is not used, only Jolokia agent)
+ - Hawtio web application is served from `webpack server`
+ - tests are running by pointing to http://localhost:3000/hawtio web application and http://localhost:10001/actuator/jolokia remote Jolokia agent to be accessed using "Connect" tab.
+
+**Spring Boot with the tests run from a container**
+```console
+mvn spring-boot:run -f tests/springboot
+cd /tmp
+podman run --rm -ti --network host --shm-size="2g" quay.io/hawtio/hawtio-test-suite:4.x-17 -Dselenide.browser=firefox -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio
+```
+
+Here we used simplest method to run Spring Boot Hawtio application without remote Jolokia Agent to be connected to. Any previously mentioned
+method can also be used.
+The difference is that this time we run the test suite itself using a container.
 
 ### Quarkus E2E tests
 
-**Quarkus with the application started by test itself**
+Note that "Quarkus" means Hawtio deployment method, where we have:
+- JVM started with `java -jar target/quarkus-app/quarkus-run.jar` or `mvn compile quarkus:dev`
+- reachable port 8080
+- Hawtio accessible at `/hawtio`
+- Jolokia accessible at `/hawtio/jolokia`
 
+**Quarkus with the application started by the test itself**
 ```console
-mvn install -Pe2e-quarkus -f tests/hawtio-test-suite
+mvn verify -f tests/hawtio-test-suite -Pe2e-quarkus 
 ```
 
-In this setup the URLs are auto-detected and/or specifed in Maven configuration for `e2e-quarkus` profile
+In this setup the URLs are auto-detected and/or specified in Maven configuration for `e2e-quarkus` profile. This
+profile sets these properties:
+- `test-runtime=quarkus` - to parameterize the dependency from a profile activated by setting `local-app=true`
+- `local-app=true` - activates `local-test-app-dependency` profile which adds `io.hawt.tests:hawtio-tests-${test-runtime}` artifact to the classpath so the test can run the application itself
+- `hawtio.url.suffix=/hawtio` - configures the URL used in `com.codeborne.selenide.Selenide.open(java.lang.String)` call
 
-**Quarkus with the application started by us** (full Spring Boot application with Camel routes running)
+Because `io.hawt.test.url` is NOT set, `TestConfiguration` uses `io.hawt.tests.features.setup.deployment.MavenDeployment` which
+starts JVM process using `java -jar` with a JAR found in `../${test-runtime}/target/*.jar`. Current directory is the location of `hawtio-test-suite` module.
+
+**Quarkus with the application started by us and used as Hawtio application** (full Quarkus application with Camel routes running)
 ```console
-java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar &
-mvn install -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:8080/hawtio -Pio.hawt.test.runtime=quarkus
+java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:8080/hawtio -Dio.hawt.test.runtime=quarkus
 ```
 
-In this setup we have to point Cucumber/Selenium tests to running application and specify its type (`quarkus`)
+In this setup we have to point Cucumber/Selenium tests to a running application.
+We don't need `-Pe2e-quarkus` profile, but we need `-Dio.hawt.test.runtime=quarkus` property to activate Cucumber `@quarkus` annotation, so Quarkus-specific scenarios are run (like starting Camel debugging).
 
-**Quarkus with the application started by us** (using `webpack server`)
+**Quarkus with the application started by us and used as remote Jolokia agent** (using `webpack server`)
 ```console
-java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar &
-mvn install -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:8080/hawtio/jolokia -Pio.hawt.test.runtime=quarkus
+DISABLE_WS=true yarn webpack server
+java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:8080/hawtio/jolokia -Dio.hawt.test.runtime=quarkus -Dhawtio-next-ci=true
 ```
 
-In this setup we have to point Cucumber/Selenium tests to running application, specify the remote Jolokia agent to connect to
-and specify its type (`quarkus`).
+In this setup, we first start a `webpack server` in a JS project - this may be both https://github.com/hawtio/hawtio/tree/4.x/console and
+https://github.com/hawtio/hawtio-next/tree/main/app!
+We also manually (could be in IDE) start a Quarkus application.
+Finally we have to point Cucumber/Selenium tests to a running application (which has only the "Connect" tab available) and to pass
+the URL (using `-Dio.hawt.test.app.connect.url`) to use at "Connect" tab to connect to actual Quarkus application.
+
+Even if the Quarkus application itself runs Hawtio, we use Hawtio as served by `webpack server`. That's why
+`-Dhawtio-next-ci=true` option is needed to skip `plugin.feature` scenario.
+We don't need `-Pe2e-quarkus` profile, but we need `-Dio.hawt.test.runtime=quarkus` property to activate Cucumber `@quarkus` annotation, so Quarkus-specific scenarios are run (like starting Camel debugging).
+
+**Quarkus with the application started in a container**
+```console
+export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
+systemctl --user enable --now podman.socket
+podman run -ti --rm -p 8080:8080 quay.io/hawtio/hawtio-quarkus-test-app:4.x-17
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:8080/hawtio -Dio.hawt.test.runtime=quarkus
+```
+
+This setup start Quarkus Hawtio application using a container image and tests are pointed to http://localhost:8080/hawtio. There's no
+remote Jolokia connection using "Connect" tab in Hawtio.
+
+**Quarkus with the application started in a container and used as remote Jolokia agent**
+```console
+DISABLE_WS=true yarn webpack server
+export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
+systemctl --user enable --now podman.socket
+podman run -ti --rm -p 8080:8080 quay.io/hawtio/hawtio-quarkus-test-app:4.x-17
+mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:8080/hawtio/jolokia -Dio.hawt.test.runtime=quarkus -Dhawtio-next-ci=true
+```
+
+Finally, for completeness, here:
+- Quarkus application with Hawtio is running from a container (but Hawtio is not used, only Jolokia agent)
+- Hawtio web application is served from `webpack server`
+- tests are running by pointing to http://localhost:3000/hawtio web application and http://localhost:8080/hawtio/jolokia remote Jolokia agent to be accessed using "Connect" tab.
+
+**Quarkus with the tests run from a container**
+```console
+java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar
+cd /tmp
+podman run --rm -ti --network host --shm-size="2g" quay.io/hawtio/hawtio-test-suite:4.x-17 -Dselenide.browser=firefox -Dio.hawt.test.url=http://localhost:8080/hawtio -Dio.hawt.test.runtime=quarkus
+```
+
+Here we used simplest method to run Quarkus Hawtio application without remote Jolokia Agent to be connected to. Any previously mentioned
+method can also be used.
+The difference is that this time we run the test suite itself using a container.
 
 ### Camel CLI tests
 
