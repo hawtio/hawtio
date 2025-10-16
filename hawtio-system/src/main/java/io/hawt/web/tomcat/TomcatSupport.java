@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
@@ -250,7 +249,7 @@ public class TomcatSupport {
             //  - encodedCredential - a hex encoded digest of the password digested using the configured digest
             //  - {MD5}encodedCredential - a Base64 encoded MD5 digest of the password
             //  - {SHA}encodedCredential - a Base64 encoded SHA1 digest of the password
-            //  - {SSHA}encodedCredential - 20 character salt followed by the salted SHA1 digest Base64 encoded
+            //  - {SSHA}encodedCredential - 20 character salt followed by the salted SHA1 digest Base64 encoded - wrong description
             //  - salt$iterationCount$encodedCredential - a hex encoded salt, iteration code and a hex encoded credential, each separated by $
 
             if (password == null) {
@@ -270,15 +269,15 @@ public class TomcatSupport {
                     this.password = HexFormat.of().withLowerCase().formatHex(binPassword).toCharArray();
                 } else if (password.startsWith("{SSHA}")) {
                     specialDigest = "SHA-1";
-                    byte[] salt20Password = Base64.getDecoder().decode(password.substring(6));
-                    if (salt20Password.length < 20) {
+                    byte[] digestAndSalt = Base64.getDecoder().decode(password.substring(6));
+                    if (digestAndSalt.length < 20) {
                         throw new IllegalArgumentException("{SSHA} prefixed password should contain 20 bytes of salt value");
                     }
-                    salt = new byte[20];
-                    byte[] binPassword = new byte[salt20Password.length - 20];
-                    System.arraycopy(salt20Password, 0, salt, 0, 20);
-                    System.arraycopy(salt20Password, 20, binPassword, 0, salt20Password.length - 20);
-                    this.password = HexFormat.of().withLowerCase().formatHex(binPassword).toCharArray();
+                    byte[] digestedPassword = new byte[20]; // SHA-1 digest is 160 bits
+                    salt = new byte[digestAndSalt.length - 20];
+                    System.arraycopy(digestAndSalt, 0, digestedPassword, 0, 20);
+                    System.arraycopy(digestAndSalt, 20, salt, 0, digestAndSalt.length - 20);
+                    this.password = HexFormat.of().withLowerCase().formatHex(digestedPassword).toCharArray();
                 } else {
                     throw new IllegalArgumentException("Wrong password format, unknown prefix for encoded password for user: \"" + username + "\"");
                 }
@@ -335,13 +334,24 @@ public class TomcatSupport {
                 try {
                     MessageDigest md = MessageDigest.getInstance(specialDigest == null ? digestAlgorithm : specialDigest);
 
-                    // see org.apache.tomcat.util.security.ConcurrentMessageDigest.digest(java.lang.String, int, byte[]...)
-                    // for iteration count and salt.
-                    if (salt != null && salt.length > 0) {
-                        md.update(salt);
+                    byte[] digest;
+                    if (specialDigest == null) {
+                        // see org.apache.tomcat.util.security.ConcurrentMessageDigest.digest(java.lang.String, int, byte[]...)
+                        // for iteration count and salt.
+                        if (salt != null && salt.length > 0) {
+                            md.update(salt);
+                        }
+                        md.update(password.getBytes(StandardCharsets.UTF_8));
+                        digest = md.digest();
+                    } else {
+                        // for {SSHA} we first digest the password then the salt
+                        // for {SHA} and {MD5} there's no salt
+                        md.update(password.getBytes(StandardCharsets.UTF_8));
+                        if (salt != null && salt.length > 0) {
+                            md.update(salt);
+                        }
+                        digest = md.digest();
                     }
-                    md.update(password.getBytes(StandardCharsets.UTF_8));
-                    byte[] digest = md.digest();
 
                     for (int i = 1; i < ic; i++) {
                         md.update(digest);
