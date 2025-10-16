@@ -86,6 +86,12 @@
       <artifactId>camel-quarkus-management</artifactId>
     </dependency>
 
+    <!-- To enable Camel route dumping to XML. Required for the route diagram -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-jaxb</artifactId>
+    </dependency>
+
     <!--
       To enable Camel plugin debugging feature, add this dependency.
     -->

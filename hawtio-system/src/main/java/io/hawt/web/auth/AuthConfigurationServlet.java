@@ -75,8 +75,12 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
         super.init();
 
         if (hawtioPath == null) {
+            String path = getInitParameter("hawtioPath");
             // we have to determine it from Servlet environment
             hawtioPath = getServletContext().getContextPath();
+            if (path != null) {
+                hawtioPath += path;
+            }
         }
 
         keycloakEnabled = authConfiguration.isKeycloakEnabled();
