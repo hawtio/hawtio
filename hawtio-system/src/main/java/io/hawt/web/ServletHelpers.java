@@ -1,6 +1,7 @@
 package io.hawt.web;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -131,9 +132,9 @@ public class ServletHelpers {
             return Thread.currentThread().getContextClassLoader().getResourceAsStream(classPathLocation);
         }
         try {
-            if (!path.contains(":")) {
-                //assume file protocol
-                path = "file://" + path;
+            if (!path.startsWith("file:")) {
+                // assume file protocol
+                path = new File(path).toURI().toString();
             }
             return new URL(path).openStream();
         } catch (Exception e) {
