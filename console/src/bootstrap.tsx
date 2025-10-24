@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import { configManager, hawtio, HawtioInitialization, TaskState, Logger } from '@hawtio/react/init'
+import { configManager, hawtio, HawtioInitialization, Logger, TaskState } from '@hawtio/react/init'
 
 configManager.initItem('Loading UI', TaskState.started, 'config')
 
@@ -16,21 +16,21 @@ configManager.addProductInfo('Hawtio', hawtioVersion)
 // Set up plugin location
 hawtio.addUrl('plugin')
 
-import('@hawtio/react').then(async m => {
-  const log = m.Logger.get('hawtio-console')
+import('@hawtio/react').then(async ({ Logger, registerPlugins, hawtio }) => {
+  const log = Logger.get('hawtio-console')
   log.info('Hawtio console:', hawtioVersion)
 
   // Register builtin plugins
-  m.registerPlugins()
+  registerPlugins()
 
   configManager.initItem('Loading UI', TaskState.finished, 'config')
 
   // Bootstrap Hawtio
-  m.hawtio.bootstrap().then(() => {
-    import('@hawtio/react/ui').then(ui => {
+  hawtio.bootstrap().then(() => {
+    import('@hawtio/react/ui').then(({ Hawtio }) => {
       root.render(
         <React.StrictMode>
-          <ui.Hawtio />
+          <Hawtio />
         </React.StrictMode>,
       )
     })
