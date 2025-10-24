@@ -7,28 +7,29 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
 /**
- * Configuration class to avoid having to deal with jaas.config files in the classpath
+ * {@link Configuration} class declaring a {@link javax.security.auth.spi.LoginModule} that authenticates
+ * users based on Tomcat specific {@code conf/tomcat-users.xml} file.<br />
+ * This is a dynamic JAAS {@link Configuration} which doesn't require setting
+ * {@code -Djava.security.auth.login.config}.
  */
 public class TomcatLoginContextConfiguration extends Configuration {
 
     private final AppConfigurationEntry entry;
 
     public TomcatLoginContextConfiguration(final String digestAlgorithm, final String tomcatUserLocation) {
-        Map<String, Object> options = new HashMap<>(1);
-        options.put(TomcatUserDatabaseLoginContext.OPTION_DIGEST_ALGORITHM, digestAlgorithm);
-        options.put(TomcatUserDatabaseLoginContext.OPTION_TOMCAT_USER_LOCATION, tomcatUserLocation);
-        this.entry = new TomcatAppConfigurationEntry(Collections.unmodifiableMap(options));
+        Map<String, Object> options = new HashMap<>();
+        options.put(TomcatUsersLoginModule.OPTION_DIGEST_ALGORITHM, digestAlgorithm);
+        options.put(TomcatUsersLoginModule.OPTION_TOMCAT_USER_LOCATION, tomcatUserLocation);
+        options.put(TomcatUsersLoginModule.OPTION_TOMCAT_SUPPORT, new TomcatSupport(digestAlgorithm, tomcatUserLocation));
+
+        // the flag is SUFFICIENT to allow multi-authentication in Hawtio
+        this.entry = new AppConfigurationEntry(TomcatUsersLoginModule.class.getName(),
+                AppConfigurationEntry.LoginModuleControlFlag.SUFFICIENT, Collections.unmodifiableMap(options));
     }
 
     @Override
     public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
-        return new AppConfigurationEntry[]{entry};
-    }
-
-    private static final class TomcatAppConfigurationEntry extends AppConfigurationEntry {
-        public TomcatAppConfigurationEntry(Map<String, Object> options) {
-            super("io.hawt.web.tomcat.TomcatUserDatabaseLoginContext", LoginModuleControlFlag.REQUIRED, options);
-        }
+        return new AppConfigurationEntry[] { entry };
     }
 
 }

@@ -44,8 +44,8 @@ public class NamespacedDiscoveryTest extends BaseHawtioOnlineTest {
     public void testMultipleDeployments() {
         final String name = "e2e-hawtio-second-deployment";
         HawtioOnlineTestUtils.withCleanup(() -> {
-            final Deployment deployment = HawtioOnlineUtils.deployApplication(name, "quarkus",
-                TestConfiguration.getOpenshiftNamespace(), "17");
+            final Deployment deployment = HawtioOnlineUtils.deployApplication(name, "springboot",
+                TestConfiguration.getOpenshiftNamespace(), "4.x-" + (System.getProperty("java.vm.specification.version", "17")));
             OpenshiftClient.get().apps().deployments().resource(deployment).waitUntilReady(2, TimeUnit.MINUTES);
 
             WaitUtils.untilAsserted(() -> {
@@ -64,7 +64,7 @@ public class NamespacedDiscoveryTest extends BaseHawtioOnlineTest {
         final String deploymentName = "hawtio-discover-test";
         HawtioOnlineTestUtils.withCleanup(() -> {
             OpenshiftClient.get().createNamespace(namespace);
-            HawtioOnlineUtils.deployApplication(deploymentName, "quarkus", namespace, "17");
+            HawtioOnlineUtils.deployApplication(deploymentName, "springboot", namespace, "4.x-" + (System.getProperty("java.vm.specification.version", "17")));
 
             var discover = new DiscoverTab();
 

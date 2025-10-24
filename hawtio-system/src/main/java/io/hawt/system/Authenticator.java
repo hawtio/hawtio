@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
@@ -14,17 +15,18 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
+import io.hawt.web.auth.oidc.token.BearerTokenCallback;
 import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationThrottler;
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,31 +56,47 @@ public class Authenticator {
     private static Method jbosseapGetGroupsMethod;
 
     private final AuthenticationConfiguration authConfiguration;
+
+    // Basic auth username
     private String username;
+    // Basic auth password
     private String password;
+    // Bearer token
+    private String token;
+    // Certificate(s) from the request's jakarta.servlet.request.X509Certificate attribute
     private X509Certificate[] certificates;
+    // existing principal from request.getUserPrincipal()
     private Principal requestPrincipal;
 
     /**
-     * Explicit username/password authenticator when authenticating users from login page.
+     * Explicit username/password authenticator when authenticating users from login page. This constructor
+     * should also be a hint that special login modules (not relying on user/password) should be ignored.
      */
     public Authenticator(AuthenticationConfiguration authConfiguration, String username, String password) {
         this.authConfiguration = authConfiguration;
         this.username = username;
         this.password = password;
+        this.token = null;
     }
 
     /**
-     * Request-based authenticator such as when authenticating direct Jolokia accesses.
+     * Request-based authenticator such as when authenticating direct Jolokia accesses or when the credentials are
+     * obtained in different way (including pre configured credentials available in
+     * {@link HttpServletRequest#getUserPrincipal()})
      */
     public Authenticator(HttpServletRequest request, AuthenticationConfiguration authConfiguration) {
         this.authConfiguration = authConfiguration;
 
-        // Basic auth
-        extractAuthHeader(request, (username, password) -> {
-            this.username = username;
-            this.password = password;
-        });
+        // "Authorization: Basic" and "Authorization: Bearer"
+        extractAuthHeader(request,
+                (username, password) -> {
+                    this.username = username;
+                    this.password = password;
+                },
+                (token) -> {
+                    this.token = token;
+                },
+                false);
 
         // Client certificate auth
         Object certificates = request.getAttribute(ATTRIBUTE_X509_CERTIFICATE);
@@ -99,11 +117,29 @@ public class Authenticator {
     }
 
     /**
-     * Extracts username/password from Authorization header.
-     * Callback is invoked only when Authorization header is present.
+     * Extracts credentials from {@code Authorization} header. Callback is invoked only when Authorization header is
+     * present.
+     *
+     * @param request
+     * @param callback
+     * @param checkExtraHeaders when {@code true}, check special {@code X-Jolokia-Authorization} header.
      */
     public static void extractAuthHeader(HttpServletRequest request, BiConsumer<String, String> callback,
             boolean checkExtraHeaders) {
+        extractAuthHeader(request, callback, null, checkExtraHeaders);
+    }
+
+    /**
+     * Extracts credentials or Bearer token from {@code Authorization} header. Callbacks are invoked only when Authorization header is
+     * present.
+     *
+     * @param request
+     * @param credentialsCallback
+     * @param tokenCallback
+     * @param checkExtraHeaders when {@code true}, check special {@code X-Jolokia-Authorization} header.
+     */
+    public static void extractAuthHeader(HttpServletRequest request, BiConsumer<String, String> credentialsCallback,
+            Consumer<String> tokenCallback, boolean checkExtraHeaders) {
         String authHeader = null;
         if (checkExtraHeaders) {
             authHeader = request.getHeader(X_J_HEADER_AUTHORIZATION);
@@ -123,19 +159,19 @@ public class Authenticator {
         String authType = parts[0];
         String authInfo = parts[1];
 
-        if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
-            String decoded = new String(Base64.decodeBase64(authInfo));
+        if (credentialsCallback != null && authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
+            String decoded = new String(Base64.getDecoder().decode(authInfo));
             int delimiter = decoded.indexOf(':');
             if (delimiter < 0) {
                 return;
             }
             String username = decoded.substring(0, delimiter);
             String password = decoded.substring(delimiter + 1);
-            callback.accept(username, password);
+            credentialsCallback.accept(username, password);
         }
 
-        if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BEARER)) {
-            callback.accept("token", authInfo);
+        if (tokenCallback != null && authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BEARER)) {
+            tokenCallback.accept(authInfo);
         }
     }
 
@@ -143,9 +179,13 @@ public class Authenticator {
         return Strings.isNotBlank(username) && Strings.isNotBlank(password);
     }
 
+    public boolean isTokenSet() {
+        return Strings.isNotBlank(token);
+    }
+
     public boolean hasNoCredentials() {
         return (!isUsernamePasswordSet() || username.equals("public")) && certificates == null
-                && requestPrincipal == null;
+                && requestPrincipal == null && token == null;
     }
 
     public static void logout(AuthenticationConfiguration authConfiguration, Subject subject) {
@@ -193,20 +233,19 @@ public class Authenticator {
 
     protected Subject doAuthenticate() {
         String realm = authConfiguration.getRealm();
-        String role = authConfiguration.getRoles();
-        String rolePrincipalClasses = authConfiguration.getRolePrincipalClasses();
+        List<String> roles = authConfiguration.getRoles();
+        List<Class<Principal>> rolePrincipalClasses = authConfiguration.getRolePrincipalClasses();
         Configuration configuration = authConfiguration.getConfiguration();
 
         try {
-            LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
-                realm, role, rolePrincipalClasses, configuration, username, "******");
+            LOG.debug("doAuthenticate[realm={}, roles={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
+                realm, String.join(", ", roles), rolePrincipalClasses, configuration, username, "******");
 
             Subject subject = new Subject();
             login(subject, realm, configuration);
-            if (checkRoles(subject, role, rolePrincipalClasses)) {
+            if (checkRoles(subject, roles, rolePrincipalClasses)) {
                 return subject;
             }
-
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
@@ -234,57 +273,57 @@ public class Authenticator {
     private CallbackHandler createCallbackHandler() {
         if (isUsernamePasswordSet()) {
             return new UsernamePasswordCallbackHandler(username, password);
+        } else if (isTokenSet()) {
+            return new BearerTokenCallbackHandler(token);
         } else {
             return new CertificateCallbackHandler(certificates);
         }
     }
 
-    protected boolean checkRoles(Subject subject, String role, String rolePrincipalClasses) {
-        if (Strings.isBlank(role)) {
+    protected boolean checkRoles(Subject subject, List<String> roles, List<Class<Principal>> rolePrincipalClasses) {
+        if (roles.isEmpty()) {
             LOG.debug("Skipping role check, no role configured");
             return true;
         }
 
-        if (role.equals("*")) {
-            LOG.debug("Skipping role check, all roles allowed");
+        if (roles.contains("*")) {
+            LOG.debug("Skipping role check, all roles allowed (wildcard role \"*\" configured");
             return true;
         }
 
         boolean found;
         if (isRunningOnWebsphere(subject)) {
-            found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, role);
+            found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, roles);
         } else if (isRunningOnJbossEAP(subject)) {
-            found = checkIfSubjectHasRequiredRoleOnJbossEAP(subject, role);
+            found = checkIfSubjectHasRequiredRoleOnJbossEAP(subject, roles);
         } else {
-            if (Strings.isBlank(rolePrincipalClasses)) {
+            if (rolePrincipalClasses.isEmpty()) {
                 LOG.debug("Skipping role check, no rolePrincipalClasses configured");
                 return true;
             }
 
-            found = checkIfSubjectHasRequiredRole(subject, role, rolePrincipalClasses);
+            found = checkIfSubjectHasRequiredRole(subject, roles, rolePrincipalClasses);
         }
 
         if (!found) {
-            LOG.debug("User {} does not have the required role {}", username, role);
+            LOG.debug("User {} does not have the required role(s) {}", username, String.join(", ", roles));
         }
 
         return found;
     }
 
-    private boolean checkIfSubjectHasRequiredRole(Subject subject,
-                                                  String role, String rolePrincipalClasses) {
-        String[] roleArray = role.split(",");
-        String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
+    private boolean checkIfSubjectHasRequiredRole(Subject subject, List<String> roles,
+            List<Class<Principal>> rolePrincipalClasses) {
         boolean found = false;
-        for (String clazz : rolePrincipalClazzes) {
+        for (Class<Principal> clazz : rolePrincipalClasses) {
             LOG.debug("Looking for rolePrincipalClass: {}", clazz);
             for (Principal p : subject.getPrincipals()) {
                 LOG.debug("Checking principal, classname: {} toString: {}", p.getClass().getName(), p);
-                if (!p.getClass().getName().equals(clazz.trim())) {
-                    LOG.debug("principal class {} doesn't match {}, continuing", p.getClass().getName(), clazz.trim());
+                if (!clazz.isAssignableFrom(p.getClass())) {
+                    LOG.debug("principal class {} doesn't match {}, continuing", p.getClass().getName(), clazz.getName());
                     continue;
                 }
-                for (String r : roleArray) {
+                for (String r : roles) {
                     if (r == null || !p.getName().equals(r.trim())) {
                         LOG.debug("role {} doesn't match {}, continuing", p.getName(), r);
                         continue;
@@ -332,8 +371,10 @@ public class Authenticator {
         return jbosseapDetected;
     }
 
-    private static boolean checkIfSubjectHasRequiredRoleOnWebsphere(Subject subject, String role) {
-        LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential", role);
+    private static boolean checkIfSubjectHasRequiredRoleOnWebsphere(Subject subject, List<String> roles) {
+        LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential",
+                String.join(", ", roles));
+
         for (final Object cred : subject.getPublicCredentials()) {
             LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
             if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
@@ -345,10 +386,9 @@ public class Authenticator {
                         LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
 
                         for (Object group : groups) {
-                            LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
+                            LOG.debug("Matching IBM Websphere group name {} to required role {}", group, roles);
 
-                            String[] roleArray = role.split(",");
-                            for (String r : roleArray) {
+                            for (String r : roles) {
                                 if (r.equals(group.toString())) {
                                     LOG.debug("Required role {} found in IBM WebSphere specific credentials", r);
                                     return true;
@@ -371,21 +411,22 @@ public class Authenticator {
         return false;
     }
 
-    private static boolean checkIfSubjectHasRequiredRoleOnJbossEAP(Subject subject, String role) {
-        LOG.debug("Running on Jboss EAP: checking if the Role {} is in the set of groups in SimpleGroup", role);
-        for (final Principal prin : subject.getPrincipals()) {
-            LOG.debug("Checking principal {} if it is a Jboss specific SimpleGroup containing group info", prin);
-            if ("org.jboss.security.SimpleGroup".equals(prin.getClass().getName()) && "Roles".equals(prin.getName())) {
+    private static boolean checkIfSubjectHasRequiredRoleOnJbossEAP(Subject subject, List<String> roles) {
+        LOG.debug("Running on Jboss EAP: checking if the Role {} is in the set of groups in SimpleGroup",
+                String.join(", ", roles));
+
+        for (final Principal p : subject.getPrincipals()) {
+            LOG.debug("Checking principal {} if it is a Jboss specific SimpleGroup containing group info", p);
+            if ("org.jboss.security.SimpleGroup".equals(p.getClass().getName()) && "Roles".equals(p.getName())) {
                 try {
-                    Method groupsMethod = getJbossEAPGetGroupsMethod(prin);
-                    @SuppressWarnings("unchecked") final Enumeration<Principal> groups = (Enumeration<Principal>) groupsMethod.invoke(prin);
+                    Method groupsMethod = getJbossEAPGetGroupsMethod(p);
+                    @SuppressWarnings("unchecked") final Enumeration<Principal> groups = (Enumeration<Principal>) groupsMethod.invoke(p);
 
                     if (groups != null) {
                         while (groups.hasMoreElements()) {
                             Principal group = groups.nextElement();
-                            LOG.debug("Matching Jboss EAP group name {} to required role(s) {}", group, role);
-                            String[] roleArray = role.split(",");
-                            for (String r : roleArray) {
+                            LOG.debug("Matching Jboss EAP group name {} to required role(s) {}", group, String.join(", ", roles));
+                            for (String r : roles) {
                                 if (r.equals(group.toString())) {
                                     LOG.debug("Required role {} found in Jboss EAP specific credentials", r);
                                     return true;
@@ -466,7 +507,30 @@ public class Authenticator {
     }
 
     /**
-     * JAAS callback handler for X509 client certificates.
+     * {@link CallbackHandler} to pass the bearer token to the {@link javax.security.auth.spi.LoginModule}.
+     */
+    private static final class BearerTokenCallbackHandler implements CallbackHandler {
+        private final String token;
+
+        private BearerTokenCallbackHandler(String token) {
+            this.token = token;
+        }
+
+        @Override
+        public void handle(Callback[] callbacks) throws UnsupportedCallbackException {
+            for (Callback callback : callbacks) {
+                if (callback instanceof BearerTokenCallback) {
+                    ((BearerTokenCallback) callback).setToken(token);
+                } else {
+                    throw new UnsupportedCallbackException(callback);
+                }
+            }
+        }
+    }
+
+    /**
+     * JAAS callback handler for X509 client certificates - but dedicated to Artemis and its
+     * {@code org.apache.activemq.artemis.spi.core.security.jaas.CertificateCallback}
      */
     private static final class CertificateCallbackHandler implements CallbackHandler {
 

@@ -50,7 +50,7 @@ public class OpenshiftClient extends OpenShift {
         configBuilder
             .withNamespace(namespace)
 //            .withHttpsProxy(TestConfiguration.openshiftHttpsProxy())
-            .withBuildTimeout(60_000)
+            .withBuildTimeout(60_000L)
             .withRequestTimeout(120_000)
             .withConnectionTimeout(120_000)
             .withTrustCerts(true);

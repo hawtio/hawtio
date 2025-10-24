@@ -102,14 +102,6 @@ Feature: Checking the functionality of Camel Specific Route page.
     When User clicks on Camel "Properties" tab
     Then Default quartz properties of "simple" are Auto Startup: "true", Log Mask: "false", Delayer: "advanced"
 
-  Scenario: Check Camel Trace starts tracing
-    Given User is on "Camel" page
-    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
-    And User clicks on Camel "Trace" tab
-    When User starts tracing
-    Then Tracing shows trace
-    And Tracing shows diagram
-
   Scenario: Check Camel Trace stops tracing
     Given User is on "Camel" page
     And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
@@ -117,3 +109,13 @@ Feature: Checking the functionality of Camel Specific Route page.
     When User stops tracing
     Then Tracing not shows trace
     And Tracing not shows diagram
+
+  Scenario: Check Camel Trace starts tracing
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    And User clicks on Camel "Trace" tab
+    And User stops tracing
+    And Tracing not shows trace
+    When User starts tracing
+    Then Tracing shows trace
+    And Tracing shows diagram

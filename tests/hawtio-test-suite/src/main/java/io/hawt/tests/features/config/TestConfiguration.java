@@ -6,8 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -24,18 +27,30 @@ public class TestConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestConfiguration.class);
 
+    /** Selected runtime: {@code springboot} or {@code quarkus} */
     public static final String RUNTIME = "io.hawt.test.runtime";
+    /** Should Keycloak server be started using testcontainers? */
     public static final String USE_KEYCLOAK = "io.hawt.test.use.keycloak";
+    /** Property to select container image for Keycloak to be used with tests */
     public static final String KEYCLOAK_IMAGE = "io.hawt.test.keycloak.image";
+    /** Property to select container image for running the application being tested */
     public static final String APP_DOCKER_IMAGE = "io.hawt.test.docker.image";
+    /**
+     * Property to specify existing Maven application ({@code mvn clean package} need to be run there). The path
+     * should be the {@code target} directory which should contain {@code classes} subdirectory and
+     * {@code application.properties} inside it.
+     */
     public static final String APP_PATH = "io.hawt.test.app.path";
+    /** The <em>main</em> URL to be used by Selenium tests - should point to Hawtio client application */
     public static final String APP_URL = "io.hawt.test.url";
+    /** The path part of the URL used for connecting to Hawtio client - different for Spring Boot and Quarkus */
     public static final String APP_URL_SUFFIX = "io.hawt.test.url.suffix";
     public static final String APP_USERNAME = "io.hawt.test.username";
     public static final String APP_PASSWORD = "io.hawt.test.password";
 
     public static final String BROWSER_HEADLESS = "io.hawt.test.browser.headless";
 
+    /** Required to use Hawtio client application to remotely connect to different JVM with Jolokia agent */
     public static final String CONNECT_URL = "io.hawt.test.app.connect.url";
     public static final String CONNECT_APP_USERNAME = "io.hawt.test.app.connect.username";
     public static final String CONNECT_APP_PASSWORD = "io.hawt.test.app.connect.password";
@@ -100,6 +115,38 @@ public class TestConfiguration {
             final String path = Path.of("").toAbsolutePath().getParent().resolve(getRequiredProperty(RUNTIME)).resolve("target").toString();
             deployment = new MavenDeployment(path);
             return deployment;
+        }
+
+        if (hasProperty("org.jetbrains.run.directory")) {
+            // we run the "*.feature" file directly from IntelliJ IDEA using Cucumber for Java plugin
+            // while we could configure the run/debug configuration after it fails initially, let's roughly discover
+            // what is running (Quarkus or SpringBoot application)
+            boolean appFound = false;
+            try {
+                URLConnection c = new URL("http://localhost:10001/actuator/hawtio").openConnection();
+                c.connect();
+                if (c instanceof HttpURLConnection && ((HttpURLConnection) c).getResponseCode() == 200) {
+                    appFound = true;
+                    deployment = new URLDeployment("http://localhost:10001/actuator/hawtio");
+                    System.setProperty(RUNTIME, "springboot");
+                    return deployment;
+                }
+            } catch (IOException ignored) {
+            }
+            try {
+                URLConnection c = new URL("http://localhost:8080/hawtio").openConnection();
+                c.connect();
+                if (c instanceof HttpURLConnection && ((HttpURLConnection) c).getResponseCode() == 200) {
+                    appFound = true;
+                    deployment = new URLDeployment("http://localhost:8080/hawtio");
+                    System.setProperty(RUNTIME, "quarkus");
+                    return deployment;
+                }
+            } catch (IOException ignored) {
+            }
+
+            LOG.error("Cucumber test(s) are running from IntelliJ IDEA, but no running Hawtio application is detected.");
+            Assume.assumeTrue("Please run Hawtio SpringBoot or Quarkus application", appFound);
         }
 
         LOG.error("Invalid configuration for tested app deployment");

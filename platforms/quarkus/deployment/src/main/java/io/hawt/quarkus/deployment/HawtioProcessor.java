@@ -146,6 +146,10 @@ public class HawtioProcessor {
                     .forEach(param -> builder.addInitParam(param.getParamName(), param.getParamValue()));
             }
 
+            if ("io.hawt.web.auth.AuthConfigurationServlet".equals(servletMetaData.getServletClass())) {
+                builder.addInitParam("hawtioPath", DEFAULT_CONTEXT_PATH);
+            }
+
             servlet.produce(builder.build());
         }
     }

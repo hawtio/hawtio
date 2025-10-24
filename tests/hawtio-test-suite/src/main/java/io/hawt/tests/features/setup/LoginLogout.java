@@ -56,7 +56,8 @@ public class LoginLogout {
         }
 
         if (TestConfiguration.getConnectUrl() != null && WebDriverRunner.url().contains("/connect/")) {
-            LOG.info("Connect page URL: " + WebDriverRunner.url());
+            LOG.info("Connect page URL: {}", WebDriverRunner.url());
+            LOG.info("Remote Jolokia Agent URL: {}", TestConfiguration.getConnectUrl());
             var connectPage = new ConnectPage();
             connectPage.addConnection(connectionName, TestConfiguration.getConnectUrl());
             connectPage.connectToAndLogin(connectionName);
@@ -95,7 +96,7 @@ public class LoginLogout {
      * Check that Hawtio page is properly and fully loaded.
      */
     public static void hawtioIsLoaded() {
-        $("img.pf-v5-c-brand").should(exist, Duration.ofSeconds(20)).shouldBe(interactable);
+        $("img.pf-v5-c-brand").should(exist, Duration.ofSeconds(30)).shouldBe(interactable);
         $("#vertical-nav-toggle").should(exist).shouldBe(interactable);
     }
 }

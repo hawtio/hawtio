@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tomcat-users xmlns="http://tomcat.apache.org/xml">
+    <role rolename="string" description="string" />
+    <group groupname="g1" description="string" roles="rg1, rg2" />
+    <user username="u1" password="plain-text" roles="r1,r2" groups="g1" />
+    <user username="u2" roles="r1,r2" groups="g1" />
+</tomcat-users>

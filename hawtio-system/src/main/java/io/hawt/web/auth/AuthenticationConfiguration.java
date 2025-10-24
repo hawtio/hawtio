@@ -6,21 +6,36 @@ import java.lang.reflect.Constructor;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
 import io.hawt.util.IOHelper;
 import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.oidc.OidcConfiguration;
+import io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery;
 import jakarta.servlet.ServletContext;
 
 import io.hawt.system.ConfigManager;
+import org.jolokia.server.core.http.AgentServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * <p>Entire security related configuration for Hawtio applications. Should be created according to the lifecycle
+ * specific to deployment environment. In Servlet containers, this should be created in
+ * {@link io.hawt.HawtioContextListener} (or subclass).</p>
+ *
+ * <p>When using different environment (like embedding
+ * Hawtio with Netty or JDK HTTP Server) it is important to properly initialize this configuration and call
+ * {@link #initializationComplete}.</p>
+ */
 public class AuthenticationConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
@@ -120,8 +135,16 @@ public class AuthenticationConfiguration {
     public static final String ROLES = "roles";
 
     /**
+     * Old version of the "roles" property for those who didn't migrate
+     *
+     * @deprecated use "roles"
+     */
+    @Deprecated
+    public static final String ROLE = "role";
+
+    /**
      * JAAS class name that would contain the role principal.
-     * Empty string disables authorization.
+     * Empty string effectively disables authorization (so only authentication is performed).
      */
     public static final String ROLE_PRINCIPAL_CLASSES = "rolePrincipalClasses";
 
@@ -153,14 +176,11 @@ public class AuthenticationConfiguration {
     // JVM system properties
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio." + AUTHENTICATION_ENABLED;
     public static final String HAWTIO_AUTH = "hawtio." + AUTH;
-    @SuppressWarnings("unused")
     public static final String HAWTIO_AUTHENTICATION_THROTTLED = "hawtio." + AUTHENTICATION_THROTTLED;
     public static final String HAWTIO_REALM = "hawtio." + REALM;
     public static final String HAWTIO_ROLES = "hawtio." + ROLES;
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio." + ROLE_PRINCIPAL_CLASSES;
-    @SuppressWarnings("unused")
     public static final String HAWTIO_NO_CREDENTIALS_401 = "hawtio." + NO_CREDENTIALS_401;
-    @SuppressWarnings("unused")
     public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio." + AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES;
     public static final String HAWTIO_KEYCLOAK_ENABLED = "hawtio." + KEYCLOAK_ENABLED;
 
@@ -170,22 +190,78 @@ public class AuthenticationConfiguration {
     // Default values
     public static final String DEFAULT_REALM = "hawtio";
     private static final String DEFAULT_KARAF_ROLES = "admin,manager,viewer";
-    public static final String DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES =
-        "org.apache.karaf.jaas.boot.principal.RolePrincipal,"
-            + "org.apache.karaf.jaas.modules.RolePrincipal,"
-            + "org.apache.karaf.jaas.boot.principal.GroupPrincipal";
-    public static final String TOMCAT_AUTH_CONTAINER_DISCOVERY =
-        "io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery";
+    public static final List<String> DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES = List.of(
+        "org.apache.karaf.jaas.boot.principal.RolePrincipal",
+        "org.apache.karaf.jaas.modules.RolePrincipal",
+        "org.apache.karaf.jaas.boot.principal.GroupPrincipal"
+    );
 
+    /** Whether authentication is enabled at all - defaults to {@code true} */
     private final boolean enabled;
-    private final Optional<AuthenticationThrottler> throttler;
+
+    /**
+     * <em>Realm</em> for Hawtio application, which can be interpreted as BASIC authentication realm or
+     * <em>application</em> in JAAS sense (a key into a {@link Configuration}).
+     */
     private final String realm;
-    private final String roles;
-    private String rolePrincipalClasses;
+
+    /**
+     * JAAS role names required by Hawtio for successful authentication. When there are no roles, authentication
+     * is still enabled, but there's no <em>authorization</em>.
+     */
+    private final List<String> roles = new ArrayList<>();
+
+    /**
+     * JAAS {@link Principal} classes supported by Hawtio. Dynamic authentication mechanisms may add specific
+     * {@link Principal} types and some types may be specific to deployment environment or servlet container.
+     */
+    private final Set<String> rolePrincipalClassNames = new LinkedHashSet<>();
+
+    /**
+     * Actual {@link Class} objects known by Hawtio as supported {@link Principal} classes.
+     */
+    private List<Class<Principal>> rolePrincipalClasses;
+
+    /**
+     * When Hawtio itself creates principals using own {@link javax.security.auth.spi.LoginModule login modules}
+     * the {@link Principal principals} added to authenticated subjects will use this class.<br />
+     * This class will have public, 1-arg constructor accepting String with principal (role) name.
+     */
     private Class<? extends Principal> defaultRolePrincipalClass;
+
+    /**
+     * Whether authentication failure should result in 401 ({@code true}) (WWW-Authenticate challenge)
+     * or 403 (when {@cpde false}).
+     */
     private final boolean noCredentials401;
+
+    /**
+     * Whether native Keycloak (no generic OIDC) is enabled
+     */
     private final boolean keycloakEnabled;
+
+    private AuthenticationThrottler throttler;
+
+    private volatile boolean initialized = false;
+
+    /**
+     * If user doesn't configure {@code hawtio.authenticationContainerDiscoveryClasses} option we will use
+     * the default, built-in discovery classes.
+     */
+    @SuppressWarnings("FieldCanBeLocal")
+    private final List<AuthenticationContainerDiscovery> builtInIntegrations = List.of(
+            new TomcatAuthenticationContainerDiscovery()
+    );
+
+    /**
+     * Merged {@link Configuration JAAS configuration} to be used when performing authentication in Hawtio.
+     */
     private Configuration configuration;
+
+    /**
+     * Dynamic {@link Configuration JAAS configuration} configured during Hawtio initialization.
+     */
+    private final List<Configuration> dynamicConfigurations = new ArrayList<>();
 
     private final ConfigManager configManager;
     // OidcConfiguration implements javax.security.auth.login.Configuration, but let's keep it separate from
@@ -198,6 +274,25 @@ public class AuthenticationConfiguration {
      */
     private boolean springSecurityEnabled = false;
 
+    /**
+     * Static helper to get a single {@link AuthenticationConfiguration} configured in a Servlet environment.
+     * @param servletContext
+     * @return
+     */
+    public static AuthenticationConfiguration getConfiguration(ServletContext servletContext) {
+        AuthenticationConfiguration authConfig = (AuthenticationConfiguration) servletContext.getAttribute(AUTHENTICATION_CONFIGURATION);
+        if (authConfig == null) {
+            authConfig = new AuthenticationConfiguration(servletContext);
+            servletContext.setAttribute(AUTHENTICATION_CONFIGURATION, authConfig);
+        }
+        return authConfig;
+    }
+
+    /**
+     * Private constructor used by {@link #getConfiguration}
+     *
+     * @param servletContext
+     */
     private AuthenticationConfiguration(ServletContext servletContext) {
         ConfigManager config = (ConfigManager) servletContext.getAttribute(ConfigManager.CONFIG_MANAGER);
         if (config == null) {
@@ -214,59 +309,191 @@ public class AuthenticationConfiguration {
 
         this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
         this.realm = config.get(REALM).orElse(DEFAULT_REALM);
-        this.roles = config.get(ROLES).orElse(DEFAULT_KARAF_ROLES);
-        String defaultRolePrincipalClasses = isKaraf() ? DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES : "";
-        this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES).orElse(defaultRolePrincipalClasses);
-        this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass(this.rolePrincipalClasses);
-        this.noCredentials401 = config.getBoolean(NO_CREDENTIALS_401, false);
         this.keycloakEnabled = this.enabled && config.getBoolean(KEYCLOAK_ENABLED, false);
+        this.noCredentials401 = config.getBoolean(NO_CREDENTIALS_401, false);
 
-        boolean throttled = config.getBoolean(AUTHENTICATION_THROTTLED, true);
-        // Throttling should be disabled when Keycloak is used
-        if (this.keycloakEnabled) {
-            throttled = false;
-        }
-        LOG.info("Authentication throttling is {}", throttled ? "enabled" : "disabled");
-        this.throttler = throttled ? Optional.of(new AuthenticationThrottler()) : Optional.empty();
-
-        if (this.enabled) {
-            String authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES).orElse(TOMCAT_AUTH_CONTAINER_DISCOVERY);
-            List<AuthenticationContainerDiscovery> discoveries = getDiscoveries(authDiscoveryClasses);
-            for (AuthenticationContainerDiscovery discovery : discoveries) {
-                if (discovery.canAuthenticate(this)) {
-                    LOG.info("Discovered container {} to use with hawtio authentication filter", discovery.getContainerName());
-                    break;
-                }
-            }
-
-            LOG.info(
-                "Starting Hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
-                this.realm, this.roles, this.rolePrincipalClasses);
-        } else {
+        if (!this.enabled) {
+            // no need to configure anything more
+            initialized = true;
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
+            return;
         }
+
+        // role names expected in the authenticated Subject's getPrincipals()
+        // from -Dhawtio.role (because we have this in the docs...
+        config.get(ROLE).ifPresent(r -> {
+            if (!r.isBlank()) {
+                List<String> deprecatedRoleFromRole = Arrays.asList(r.split("\\s*,\\s*"));
+                this.roles.addAll(deprecatedRoleFromRole.stream().filter(r2 -> !r2.isBlank()).toList());
+            }
+        });
+        // from -Dhawtio.roles - has default "admin,manager,viewer"
+        String roleNames = config.get(ROLES).orElse(DEFAULT_KARAF_ROLES);
+        List<String> roleValues = Arrays.asList(roleNames.split("\\s*,\\s*"));
+        this.roles.addAll(roleValues.stream().filter(r -> !r.isBlank()).toList());
+        if (roles.contains("*")) {
+            // accepting "all roles" means that Hawtio is skipping the authorization part, but we still
+            // authenticate the subject and populate the roles, so the subject can be authenticated in the
+            // deployment environment (like Artemis)
+            LOG.debug("Hawtio authorization is disabled when using wildcard \"*\" role. Authentication is still performed.");
+        }
+
+        // throttling - may be disabled later when OIDC, Keycloak or Spring Security is detected.
+        boolean throttled = config.getBoolean(AUTHENTICATION_THROTTLED, true);
+        LOG.info("Authentication throttling is {}", throttled ? "enabled" : "disabled");
+        this.throttler = throttled ? new AuthenticationThrottler() : null;
+
+        // java.security.Principal class names checked in Subject.getPrincipals()
+        // 1. from known environment
+        if (isKaraf()) {
+            this.rolePrincipalClassNames.addAll(DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES);
+        }
+        // 2. from external configuration of -Dhawtio.rolePrincipalClasses, for example
+        //    Artemis uses -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal
+        config.get(ROLE_PRINCIPAL_CLASSES).ifPresent(option
+                -> this.rolePrincipalClassNames.addAll(Arrays.asList(option.split("\\s*,\\s*"))));
+        // 3. if Keycloak is enabled we add known class name
+        if (keycloakEnabled) {
+            this.rolePrincipalClassNames.add("org.keycloak.KeycloakPrincipal");
+            this.rolePrincipalClassNames.add("org.keycloak.adapters.jaas.RolePrincipal");
+        }
+
+        // Use container discovery, so we can get dynamic JAAS configurations and additional principal classes
+        String authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES).orElse(null);
+        List<AuthenticationContainerDiscovery> discoveries;
+        if (authDiscoveryClasses == null) {
+            // user didn't configure -Dhawtio.authenticationContainerDiscoveryClasses at all
+            discoveries = builtInIntegrations;
+        } else {
+            // user specified -Dhawtio.authenticationContainerDiscoveryClasses, potentially with empty value
+            // which is used to disable built-in discovery classes
+            discoveries = getDiscoveries(authDiscoveryClasses);
+        }
+        for (AuthenticationContainerDiscovery discovery : discoveries) {
+            if (discovery.registerContainerAuthentication(this)) {
+                LOG.info("Discovered container {} to use with hawtio authentication filter", discovery.getContainerName());
+                // don't break, continue with other discovery services.
+            }
+        }
+
+        LOG.info("Starting Hawtio authentication filter, JAAS realm: \"{}\"" +
+                        " authorized role(s): {}, role principal class names: {}",
+                this.realm, String.join(", ", this.roles), String.join(", ", this.rolePrincipalClassNames));
+    }
+
+    /**
+     * After creating the {@link AuthenticationConfiguration} we may call some other configuration methods like:<ul>
+     *     <li>{@link #addConfiguration}</li>
+     *     <li>{@link #addRolePrincipalClassName}</li>
+     *     <li>{@link #configureOidc}</li>
+     * </ul>
+     * So it is important to highlight an end of the configuration, so some important defaults can be calculated.
+     */
+    public void initializationComplete(ServletContext context) {
+        if (!enabled) {
+            return;
+        }
+
+        // if authentication is not disabled, it is a responsibility of the "deployer" to allow authenticated
+        // access to Jolokia. This is a scenario, where Hawtio+Jolokia can act as remote Jolokia Agent which
+        // can be accessed from other Hawtio instances.
+        // for now we don't support fancy authentication schemes when accessing the Jolokia agent configured
+        // by Hawtio itself, but it may change in the future
+        // see https://github.com/hawtio/hawtio/issues/2941
+        //
+        // set a flag for Jolokia's Agent servlet, so it can return supported authentication method
+        // using /jolokia/config endpoint (new in 2.4.0)
+        context.setAttribute(AgentServlet.EXTERNAL_BASIC_AUTH_REALM, realm);
+
+        // some services (Tomcat discovery, OIDC, Spring Boot + Spring Security) may have added extra
+        // JAAS configurations. We will now combine all Login Modules in a single configuration under
+        // Hawtio realm == JAAS Application name. Default login modules (from -Djava.security.auth.login.config)
+        // we'll be used as fallback modules.
+
+        Configuration defaultJAASConfig = Configuration.getConfiguration();
+        AppConfigurationEntry[] defaultEntries = defaultJAASConfig == null ? null : defaultJAASConfig.getAppConfigurationEntry(realm);
+
+        List<AppConfigurationEntry> mergedEntries = new ArrayList<>();
+
+        // now here's a decision to make and situation to be aware of. If user has explicitly configured OIDC login
+        // module or Spring Security (with org.springframework.security.authentication.jaas.SecurityContextLoginModule)
+        // but also used -Djava.security.auth.login.config with some login modules, we need to be sure that
+        // SUFFICIENT flag is used instead of REQUIRED - at least for the dynamic configurations.
+        // user may decided to use whatever flag in login.config file
+
+        for (Configuration jaasConfig : this.dynamicConfigurations) {
+            // Hawtio itself prepares the Configurations without bothering with "application entry name" anyway
+            // but we pass a realm here
+            AppConfigurationEntry[] entries = jaasConfig.getAppConfigurationEntry(realm);
+            Collections.addAll(mergedEntries, entries);
+        }
+
+        // and add defaults (from -Djava.security.auth.login.config) at the end
+        if (defaultEntries != null) {
+            Collections.addAll(mergedEntries, defaultEntries);
+        }
+
+        final AppConfigurationEntry[] allLoginModules = mergedEntries.toArray(AppConfigurationEntry[]::new);
+
+        this.configuration = new Configuration() {
+            @Override
+            public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
+                return allLoginModules;
+            }
+        };
+
+        // search through login modules and add known principal classes
+        for (AppConfigurationEntry lm : allLoginModules) {
+            String className = lm.getLoginModuleName();
+            if ("io.hawt.jetty.security.jaas.PropertyFileLoginModule".equals(className)) {
+                rolePrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASPrincipal");
+                rolePrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASRole");
+                rolePrincipalClassNames.add("org.eclipse.jetty.security.UserPrincipal");
+            }
+            if ("com.sun.security.auth.module.LdapLoginModule".equals(className)) {
+                rolePrincipalClassNames.add("com.sun.security.auth.LdapPrincipal");
+                rolePrincipalClassNames.add("com.sun.security.auth.UserPrincipal");
+            }
+        }
+
+        // 5. finally add last (fallback) role name class to use
+        rolePrincipalClassNames.add(RolePrincipal.class.getName());
+
+        // now we can verify if the added Principal class names are actually loadable
+        List<Class<Principal>> knownPrincipalClasses = new ArrayList<>(rolePrincipalClassNames.size());
+        for (String className : rolePrincipalClassNames) {
+            Class<Principal> clz = tryLoadClass(className, Principal.class);
+            if (clz != null) {
+                // reachable, loadable, but not necessarily with 1-arg String constructor
+                knownPrincipalClasses.add(clz);
+            }
+        }
+        this.rolePrincipalClasses = Collections.unmodifiableList(knownPrincipalClasses);
+
+        // we need one Principal class to use as role for Hawtio itself. will use it in own Login modules (like OIDC)
+        this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass();
+
+        initialized = true;
     }
 
     private static boolean isKaraf() {
         return System.getProperty("karaf.name") != null;
     }
 
-    public static AuthenticationConfiguration getConfiguration(ServletContext servletContext) {
-        AuthenticationConfiguration authConfig = (AuthenticationConfiguration) servletContext.getAttribute(AUTHENTICATION_CONFIGURATION);
-        if (authConfig == null) {
-            authConfig = new AuthenticationConfiguration(servletContext);
-            servletContext.setAttribute(AUTHENTICATION_CONFIGURATION, authConfig);
-        }
-        return authConfig;
-    }
-
+    /**
+     * Locate {@link TomcatAuthenticationContainerDiscovery} services to do some security configuration
+     * specific to deployment environment.
+     *
+     * @param authDiscoveryClasses
+     * @return
+     */
     private static List<AuthenticationContainerDiscovery> getDiscoveries(String authDiscoveryClasses) {
         List<AuthenticationContainerDiscovery> discoveries = new ArrayList<>();
         if (authDiscoveryClasses == null || authDiscoveryClasses.trim().isEmpty()) {
             return discoveries;
         }
 
-        String[] discoveryClasses = authDiscoveryClasses.split(",");
+        String[] discoveryClasses = authDiscoveryClasses.split("\\s*,\\s*");
         for (String discoveryClass : discoveryClasses) {
             try {
                 // Should have more clever classloading?
@@ -283,48 +510,89 @@ public class AuthenticationConfiguration {
         return discoveries;
     }
 
+    /**
+     * Is authentication enabled at all? When {@code false} both authentication and authorization is disabled.
+     * @return
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
     public Optional<AuthenticationThrottler> getThrottler() {
-        // Throttling should be disabled when OIDC is used
-        if (isOidcEnabled()) {
+        // Throttling should be disabled when OIDC or Keycloak or Spring Security is used
+        if (isExternalAuthenticationEnabled()) {
             return Optional.empty();
         }
-        return throttler;
+        return Optional.of(throttler);
     }
 
     public boolean isNoCredentials401() {
         return noCredentials401;
     }
 
+    /**
+     * Get Hawtio's <em>realm</em> which may mean BASIC authentication realm or JAAS application entry.
+     * @return
+     */
     public String getRealm() {
         return realm;
     }
 
-    public String getRoles() {
+    /**
+     * Get a list of supported (recognized, expected) role names. When this list is empty, authorization
+     * is effectively disabled (and only authentication is performed).
+     *
+     * @return
+     */
+    public List<String> getRoles() {
         return roles;
     }
 
-    public String getRolePrincipalClasses() {
-        return rolePrincipalClasses;
+    /**
+     * Dynamic configurations may add extra {@link Principal} class names to be supported (recognized) by Hawtio
+     *
+     * @param rolePrincipalClassName
+     */
+    public void addRolePrincipalClassName(String rolePrincipalClassName) {
+        this.rolePrincipalClassNames.add(rolePrincipalClassName);
     }
 
-    public void setRolePrincipalClasses(String rolePrincipalClasses) {
-        this.rolePrincipalClasses = rolePrincipalClasses;
-    }
-
+    /**
+     * Return default {@link Class} of {@link Principal} to be used by Hawtio in own
+     * {@link javax.security.auth.spi.LoginModule login modules}.
+     *
+     * @return
+     */
     public Class<? extends Principal> getDefaultRolePrincipalClass() {
         return defaultRolePrincipalClass;
+    }
+
+    /**
+     * Ger a list of <em>all</em> supported {@link Principal} classes
+     *
+     * @return
+     */
+    public List<Class<Principal>> getRolePrincipalClasses() {
+        return rolePrincipalClasses;
     }
 
     public Configuration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
+    /**
+     * <p>Add dynamic {@link Configuration JAAS configuration} object to be used in addition to static JAAS
+     * configuration.</p>
+     *
+     * <p>Normally Hawtio uses JAAS with default settings, where JAAS configuration file is configured with
+     * {@code -Djava.security.auth.login.config} option. However when configuring more complex
+     * {@link javax.security.auth.spi.LoginModule JAAS login modules}, static configuration file is not sufficient
+     * and we need dynamically configuration {@link AppConfigurationEntry JAAS configuration entries}.</p>
+     *
+     * @param configuration
+     */
+    public void addConfiguration(Configuration configuration) {
+        dynamicConfigurations.add(configuration);
     }
 
     public boolean isKeycloakEnabled() {
@@ -332,7 +600,7 @@ public class AuthenticationConfiguration {
     }
 
     public boolean isOidcEnabled() {
-        return oidcConfiguration != null && oidcConfiguration.isEnabled();
+        return enabled && oidcConfiguration != null && oidcConfiguration.isEnabled();
     }
 
     public void setSpringSecurityEnabled(boolean springSecurityEnabled) {
@@ -371,10 +639,10 @@ public class AuthenticationConfiguration {
             Properties props = new Properties();
             try {
                 props.load(is);
-                this.oidcConfiguration = new OidcConfiguration(props);
+                this.oidcConfiguration = new OidcConfiguration(this.realm, props);
                 this.oidcConfiguration.setRolePrincipalClass(defaultRolePrincipalClass);
                 if (this.oidcConfiguration.isEnabled()) {
-                    this.configuration = this.oidcConfiguration;
+                    addConfiguration(this.oidcConfiguration);
                 }
             } catch (IOException e) {
                 LOG.warn("Couldn't read OIDC configuration file", e);
@@ -424,34 +692,29 @@ public class AuthenticationConfiguration {
     }
 
     /**
-     * Parses Hawtio configuration option for role principal classes (comma-separated list of class names)
-     * and returns first that's available and has proper (1-arg String) constructor.
+     * Process configured {@link Principal} class names and returns first that's available and has
+     * proper (1-arg String) constructor.
      *
-     * @param rolePrincipalClasses
      * @return
      */
-    private Class<? extends Principal> determineDefaultRolePrincipalClass(String rolePrincipalClasses) {
-        if (rolePrincipalClasses == null || rolePrincipalClasses.isBlank()) {
+    private Class<? extends Principal> determineDefaultRolePrincipalClass() {
+        if (rolePrincipalClasses.isEmpty()) {
             return null;
-        } else {
-            String[] roleClasses = rolePrincipalClasses.split("\\s*,\\s*");
-            Class<? extends Principal> roleClass = null;
-
-            // let's load first available class - needs 1-arg String constructor
-            for (String classCandidate : roleClasses) {
-                Class<? extends Principal> clz = tryLoadClass(classCandidate, Principal.class);
-                if (clz != null) {
-                    try {
-                        Constructor<?> ctr = clz.getConstructor(String.class);
-                        roleClass = clz;
-                    } catch (NoSuchMethodException e) {
-                        LOG.warn("Can't use role principal class {}: {}", classCandidate, e.getMessage());
-                    }
-                }
-            }
-
-            return roleClass;
         }
+
+        Class<? extends Principal> roleClass = null;
+
+        // let's load first available class - needs 1-arg String constructor
+        for (Class<Principal> clz : this.rolePrincipalClasses) {
+            try {
+                Constructor<?> ctr = clz.getConstructor(String.class);
+                roleClass = clz;
+            } catch (NoSuchMethodException e) {
+                LOG.warn("Can't use role principal class {}: {}", clz.getName(), e.getMessage());
+            }
+        }
+
+        return roleClass;
     }
 
     @SuppressWarnings("unchecked")
@@ -484,10 +747,11 @@ public class AuthenticationConfiguration {
             ", noCredentials401=" + noCredentials401 +
             ", realm='" + realm + '\'' +
             ", roles='" + roles + '\'' +
-            ", rolePrincipalClasses='" + rolePrincipalClasses + '\'' +
+            ", rolePrincipalClasses='" + String.join(", ", rolePrincipalClassNames) + '\'' +
             ", configuration=" + configuration +
             ", keycloakEnabled=" + keycloakEnabled +
             ", oidcEnabled=" + (oidcConfiguration != null && oidcConfiguration.isEnabled()) +
             ']';
     }
+
 }

@@ -96,6 +96,11 @@ public class OidcConfiguration extends Configuration {
     public static final String OIDC_JAAS_CONFIGURATION = "OidcConfiguration";
 
     /**
+     * Provider name - used when displaying OIDC as login method in Hawtio client application
+     */
+    private String name;
+
+    /**
      * URL for the provider. Must be the base part where {@code .well-known/openid-configuration} can be appended
      */
     private URL providerURL;
@@ -163,7 +168,7 @@ public class OidcConfiguration extends Configuration {
     // for tests
     private boolean offline;
 
-    public OidcConfiguration(Properties props) throws IOException {
+    public OidcConfiguration(String realm, Properties props) throws IOException {
         String provider = props.getProperty("provider");
         if (Strings.isBlank(provider)) {
             // means there's no OIDC configuration
@@ -188,6 +193,11 @@ public class OidcConfiguration extends Configuration {
                     .map(String::trim).toArray(String[]::new);
         }
         prompt = PromptType.fromString(props.getProperty("prompt"));
+
+        name = props.getProperty("name");
+        if (name == null || name.isBlank()) {
+            name = providerURL.toExternalForm();
+        }
 
         // server-side configuration
 
@@ -235,6 +245,10 @@ public class OidcConfiguration extends Configuration {
 
     public URL getProviderURL() {
         return providerURL;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getClientId() {
@@ -465,9 +479,10 @@ public class OidcConfiguration extends Configuration {
 
         this.json = json.toString();
 
+        // add SUFFICIENT entry, so we can proceed with other modules if these are present
         this.jaasAppConfigurationEntries = new AppConfigurationEntry[] {
                 new AppConfigurationEntry(OidcLoginModule.class.getName(),
-                        AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, Map.of(OIDC_JAAS_CONFIGURATION, this))
+                        AppConfigurationEntry.LoginModuleControlFlag.SUFFICIENT, Map.of(OIDC_JAAS_CONFIGURATION, this))
         };
     }
 

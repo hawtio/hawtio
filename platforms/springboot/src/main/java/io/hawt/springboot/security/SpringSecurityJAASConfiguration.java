@@ -54,10 +54,20 @@ public class SpringSecurityJAASConfiguration extends Configuration {
     public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
         return new AppConfigurationEntry[] {
                 new AppConfigurationEntry(SPRING_SECURITY_LOGIN_MODULE,
+                        // for multi-authentication, SUFFICIENT is preferred
+                        // but because someone configures Spring Security, it means (s)he
+                        // is aware what is going on, this we use REQUIRED
+                        // also, SUFFICIENT will skip commit() method of the next module which is required
+                        // to augment the principals created by Spring Security...
                         AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
                         Collections.emptyMap()),
                 new AppConfigurationEntry(HAWTIO_SPRING_SECURITY_LOGIN_MODULE,
+                        // OPTIONAL, because this login module only alters subject's roles if Spring Security
+                        // added proper principal
                         AppConfigurationEntry.LoginModuleControlFlag.OPTIONAL,
+                        // yes - this is how it's done with JAAS. With default configuration
+                        // (-Djava.security.auth.login.config) we can pass only String values, but programmatically
+                        // we have more flexibility
                         Map.of(AuthenticationConfiguration.class.getName(), authConfig))
         };
     }
