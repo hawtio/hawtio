@@ -49,9 +49,10 @@ public class LogoutServlet extends HttpServlet {
     }
 
     protected void addHeaders(HttpServletResponse response) {
-        // Do not specify "storage" as local storage contains persistent data such as
+        // do NOT send `Clear-Site-Data: "cache", "cookies`, because it'll clear session cookies for
+        // other Hawtio instances in the same Origin
+        // Do not specify "storage" too for Clear-Site-Data, as local storage contains persistent data such as
         // preferences and connections but without credentials.
-        response.addHeader("Clear-Site-Data", "\"cache\", \"cookies\"");
     }
 
     public void setRedirector(Redirector redirector) {
