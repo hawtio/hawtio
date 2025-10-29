@@ -21,11 +21,16 @@ public class KeycloakUserServlet extends UserServlet {
 
     @Override
     protected String getUsername(HttpServletRequest req, HttpServletResponse resp) {
-        if (authConfiguration.isKeycloakEnabled()) {
-            return getKeycloakUsername(req);
-        } else {
-            return super.getUsername(req, resp);
+        String username = null;
+        boolean keycloakEnabled = authConfiguration.isKeycloakEnabled();
+        if (keycloakEnabled) {
+            username = getKeycloakUsername(req);
         }
+        if (!keycloakEnabled || username == null) {
+            // special case when there are more login modules configured
+            username = super.getUsername(req, resp);
+        }
+        return username;
     }
 
     /**

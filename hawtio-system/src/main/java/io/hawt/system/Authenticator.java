@@ -500,7 +500,7 @@ public class Authenticator {
                 } else if (callback instanceof PasswordCallback) {
                     ((PasswordCallback) callback).setPassword(password.toCharArray());
                 } else {
-                    LOG.debug("Unknown callback class [{}]", callback.getClass().getName());
+                    LOG.debug("Callback class not supported: {}", callback.getClass().getName());
                 }
             }
         }
@@ -517,12 +517,18 @@ public class Authenticator {
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws UnsupportedCallbackException {
+        public void handle(Callback[] callbacks) {
             for (Callback callback : callbacks) {
                 if (callback instanceof BearerTokenCallback) {
                     ((BearerTokenCallback) callback).setToken(token);
+                } else if (callback instanceof NameCallback) {
+                    // just in case
+                    ((NameCallback) callback).setName("token");
+                } else if (callback instanceof PasswordCallback) {
+                    // this is how org.keycloak.adapters.jaas.BearerTokenLoginModule gets the token
+                    ((PasswordCallback) callback).setPassword(token.toCharArray());
                 } else {
-                    throw new UnsupportedCallbackException(callback);
+                    LOG.debug("Callback class not supported: {}", callback.getClass().getName());
                 }
             }
         }
@@ -549,13 +555,11 @@ public class Authenticator {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Callback type {} -> {}", callback.getClass(), callback);
                 }
-                // currently supports only Apache ActiveMQ Artemis
-                switch (callback.getClass().getName()) {
-                case ARTEMIS_CALLBACK:
+                // currently supports only Apache ActiveMQ Artemis (via reflection)
+                if (callback.getClass().getName().equals(ARTEMIS_CALLBACK)) {
                     setCertificates(callback);
-                    break;
-                default:
-                    LOG.warn("Callback class not supported: {}", callback.getClass().getName());
+                } else {
+                    LOG.debug("Callback class not supported: {}", callback.getClass().getName());
                 }
             }
         }
@@ -567,7 +571,6 @@ public class Authenticator {
                 method.invoke(callback, new Object[] { certificates });
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 LOG.error("Setting certificates to callback failed", e);
-
                 // Artemis <=2.17 is no longer supported as it used deprecated javax.security.cert.X509Certificate class.
             }
         }
