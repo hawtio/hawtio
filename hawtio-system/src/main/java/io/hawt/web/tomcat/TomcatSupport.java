@@ -365,6 +365,10 @@ public class TomcatSupport {
             }
         }
 
+        public String getUsername() {
+            return username;
+        }
+
         public Set<String> getRoles() {
             return roles;
         }
