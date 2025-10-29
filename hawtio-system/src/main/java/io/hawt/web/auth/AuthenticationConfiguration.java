@@ -394,6 +394,11 @@ public class AuthenticationConfiguration {
             return;
         }
 
+        // just a security check
+        if (isKeycloakEnabled() && isOidcEnabled()) {
+            throw new IllegalStateException("Keycloak (hawtio.keycloakEnabled) and OpenID Connect are configure. Configure only one of these.");
+        }
+
         // if authentication is not disabled, it is a responsibility of the "deployer" to allow authenticated
         // access to Jolokia. This is a scenario, where Hawtio+Jolokia can act as remote Jolokia Agent which
         // can be accessed from other Hawtio instances.
@@ -710,7 +715,7 @@ public class AuthenticationConfiguration {
                 Constructor<?> ctr = clz.getConstructor(String.class);
                 roleClass = clz;
             } catch (NoSuchMethodException e) {
-                LOG.warn("Can't use role principal class {}: {}", clz.getName(), e.getMessage());
+                LOG.debug("Can't use role principal class {} as default role principal: {}", clz.getName(), e.getMessage());
             }
         }
 
