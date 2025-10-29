@@ -50,8 +50,6 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
     // "base" because it can't be determined otherwise using request.getContextPath() and request.getServletPath()
     private String hawtioPath;
 
-    private boolean keycloakEnabled = false;
-
     private OidcConfiguration oidcConfiguration = null;
     private boolean oidcEnabled = false;
 
@@ -83,7 +81,7 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
             }
         }
 
-        keycloakEnabled = authConfiguration.isKeycloakEnabled();
+        boolean keycloakEnabled = authConfiguration.isKeycloakEnabled();
 
         oidcEnabled = authConfiguration.isOidcEnabled();
         LOG.info("OpenID Connection integration is {}", oidcEnabled ? "enabled" : "disabled");
@@ -99,7 +97,7 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
         // when disabled, we don't return any supported authentication methods
         if (authEnabled) {
             // OIDC - configured with hawtio-oidc.properties on CLASSPATH and programmatic (no login.conf)
-            // usag of io.hawt.web.auth.oidc.OidcLoginModule
+            // usage of io.hawt.web.auth.oidc.OidcLoginModule
             if (oidcEnabled) {
                 JSONObject entry = new JSONObject();
                 entry.put("method", "oidc");
@@ -130,7 +128,7 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
             } else {
                 // no Spring security, but Hawtio/WAR and Hawtio/Quarkus will use (respectively):
                 //  - io.hawt.web.auth.LoginServlet
-                //  - io.hawt.quarkus.servlets.HawtioQuakusLoginServlet
+                //  - io.hawt.quarkus.servlets.HawtioQuarkusLoginServlet
                 // which means proper form authentication
                 String basePath = ServletHelpers.webContextPath(hawtioPath);
                 JSONObject entry = new JSONObject();
