@@ -1,4 +1,4 @@
-@notJBang @throttling @notOnline @notKeycloak
+@notJBang @throttling @notOnline @notKeycloak @notHawtioNext
 Feature: Account Lockout (Throttling)
 
   Scenario: User account gets locked out after multiple failed login attempts
