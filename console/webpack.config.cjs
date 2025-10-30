@@ -301,28 +301,15 @@ module.exports = (_, args) => {
           /* Available authentication methods to configure <HawtioLogin> page */
 
           const authLoginConfig = [
-            {
-              method: 'basic',
-              name: 'Basic Authentication',
-              realm: 'Hawtio Realm',
-            },
+            // {
+            //   method: 'basic',
+            //   name: 'Basic Authentication',
+            //   realm: 'Hawtio Realm',
+            // },
             {
               // special method that is declared at server side, but never handled in @hawtio/react
               method: 'external',
               name: 'Spring Security',
-            },
-            {
-              // Actual configuration of OIDC provider will be added from
-              // /auth/config/oidc endpoint
-              // TODO: support more OIDC methods - like Keycloak, Azure and Spring Authorization Server at the same time
-              method: 'oidc',
-              name: 'OpenID Connect (Keycloak)',
-            },
-            {
-              // Actual configuration of Keycloak provider will be added from
-              // /keycloak/client-config endpoint
-              method: 'keycloak',
-              name: 'Keycloak (keycloak.js)',
             },
             // {
             //   "method": "form",
@@ -343,9 +330,31 @@ module.exports = (_, args) => {
               passwordField: 'password',
             },
           ]
+
+          if (keycloakEnabled) {
+            authLoginConfig.push({
+              // Actual configuration of Keycloak provider will be added from
+              // /keycloak/client-config endpoint
+              method: 'keycloak',
+              name: 'Keycloak (keycloak.js)',
+            })
+          }
+          if (oidcEnabled) {
+            authLoginConfig.push({
+              // Actual configuration of OIDC provider will be added from
+              // /auth/config/oidc endpoint
+              // TODO: support more OIDC methods - like Keycloak, Azure and Spring Authorization Server at the same time
+              method: 'oidc',
+              name: 'OpenID Connect (Keycloak)',
+            })
+          }
+
           devServer.app.get(`${publicPath}/auth/config/login`, (_, res) => {
-            // res.json([])
-            res.json(authLoginConfig)
+            if (!(keycloakEnabled || oidcEnabled)) {
+              res.json([])
+            } else {
+              res.json(authLoginConfig)
+            }
           })
 
           // Hawtio backend middleware should be run before other middlewares (thus 'unshift')
