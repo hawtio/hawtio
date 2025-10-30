@@ -18,9 +18,9 @@
  * limitations under the License.
  */
 
-//JAVA 11+
+//JAVA 17+
 //REPOS mavencentral,redhat-ga=https://maven.repository.redhat.com/ga,redhat-ea=https://maven.repository.redhat.com/earlyaccess/all
-//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:4.5.0}
+//DEPS io.hawt:hawtio-embedded:${hawtio.jbang.version:4.6.0}
 
 package main;
 
