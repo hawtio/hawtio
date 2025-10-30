@@ -10,7 +10,7 @@
     "replace-version": "replace __HAWTIO_VERSION_PLACEHOLDER__"
   },
   "dependencies": {
-    "@hawtio/react": "1.11.0-pre.1",
+    "@hawtio/react": "^1.11.1",
     "@patternfly/react-charts": "^7.4.9",
     "@patternfly/react-code-editor": "^5.4.18",
     "@patternfly/react-core": "^5.4.14",
@@ -34,12 +34,12 @@
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.4",
     "jest": "^30.2.0",
-    "monaco-editor-webpack-plugin": "^7.1.0",
+    "monaco-editor-webpack-plugin": "^7.1.1",
     "replace": "^1.2.2",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
     "swc-loader": "^0.2.6",
-    "webpack": "^5.102.0",
+    "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   },

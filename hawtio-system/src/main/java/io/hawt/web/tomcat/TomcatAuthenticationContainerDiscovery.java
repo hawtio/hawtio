@@ -7,6 +7,7 @@ import javax.management.ObjectName;
 
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationContainerDiscovery;
+import io.hawt.web.auth.RolePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,8 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
                 String tomcatUsersLocation = System.getProperty(AUTHENTICATION_TOMCAT_USER_LOCATION, null);
 
                 configuration.addConfiguration(new TomcatLoginContextConfiguration(digestAlgorithm, tomcatUsersLocation));
-                configuration.addRolePrincipalClassName(TomcatPrincipal.class.getName());
+                configuration.addUserPrincipalClassName(TomcatPrincipal.class.getName());
+                configuration.addRolePrincipalClassName(RolePrincipal.class.getName());
             }
             return isTomcat;
 

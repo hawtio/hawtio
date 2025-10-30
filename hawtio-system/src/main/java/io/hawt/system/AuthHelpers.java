@@ -68,7 +68,7 @@ public class AuthHelpers {
      * @return
      */
     public static String getUsername(AuthenticationConfiguration authConfiguration, Subject subject) {
-        Set<Class<Principal>> rolePrincipalClasses = new LinkedHashSet<>(authConfiguration.getRolePrincipalClasses());
+        Set<Class<Principal>> rolePrincipalClasses = new LinkedHashSet<>(authConfiguration.getUserPrincipalClasses());
         Set<Principal> principals = subject.getPrincipals();
 
         String username = null;

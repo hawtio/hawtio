@@ -218,9 +218,20 @@ public class AuthenticationConfiguration {
     private final Set<String> rolePrincipalClassNames = new LinkedHashSet<>();
 
     /**
+     * JAAS {@ink Principal} classes recognized by Hawtio as user name/identity. Hawtio never creates
+     * instances of these roles (as opposed to {@link #defaultRolePrincipalClass}).
+     */
+    private final Set<String> userPrincipalClassNames = new LinkedHashSet<>();
+
+    /**
      * Actual {@link Class} objects known by Hawtio as supported {@link Principal} classes.
      */
     private List<Class<Principal>> rolePrincipalClasses;
+
+    /**
+     * {@link Class} objects for {@link Principal principals} that represent actual user name/identity (not the role).
+     */
+    private List<Class<Principal>> userPrincipalClasses;
 
     /**
      * When Hawtio itself creates principals using own {@link javax.security.auth.spi.LoginModule login modules}
@@ -354,7 +365,7 @@ public class AuthenticationConfiguration {
                 -> this.rolePrincipalClassNames.addAll(Arrays.asList(option.split("\\s*,\\s*"))));
         // 3. if Keycloak is enabled we add known class name
         if (keycloakEnabled) {
-            this.rolePrincipalClassNames.add("org.keycloak.KeycloakPrincipal");
+            this.userPrincipalClassNames.add("org.keycloak.KeycloakPrincipal");
             this.rolePrincipalClassNames.add("org.keycloak.adapters.jaas.RolePrincipal");
         }
 
@@ -392,6 +403,11 @@ public class AuthenticationConfiguration {
     public void initializationComplete(ServletContext context) {
         if (!enabled) {
             return;
+        }
+
+        // just a security check
+        if (isKeycloakEnabled() && isOidcEnabled()) {
+            throw new IllegalStateException("Keycloak (hawtio.keycloakEnabled) and OpenID Connect are configure. Configure only one of these.");
         }
 
         // if authentication is not disabled, it is a responsibility of the "deployer" to allow authenticated
@@ -442,17 +458,27 @@ public class AuthenticationConfiguration {
             }
         };
 
-        // search through login modules and add known principal classes
+        // search through login modules and add known principal classes for names/identities and roles
         for (AppConfigurationEntry lm : allLoginModules) {
             String className = lm.getLoginModuleName();
             if ("io.hawt.jetty.security.jaas.PropertyFileLoginModule".equals(className)) {
-                rolePrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASPrincipal");
+                userPrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASPrincipal");
+                userPrincipalClassNames.add("org.eclipse.jetty.security.UserPrincipal");
                 rolePrincipalClassNames.add("org.eclipse.jetty.security.jaas.JAASRole");
-                rolePrincipalClassNames.add("org.eclipse.jetty.security.UserPrincipal");
             }
             if ("com.sun.security.auth.module.LdapLoginModule".equals(className)) {
-                rolePrincipalClassNames.add("com.sun.security.auth.LdapPrincipal");
-                rolePrincipalClassNames.add("com.sun.security.auth.UserPrincipal");
+                userPrincipalClassNames.add("com.sun.security.auth.LdapPrincipal");
+                userPrincipalClassNames.add("com.sun.security.auth.UserPrincipal");
+            }
+            // Keycloak handled earlier
+//            if ("org.keycloak.adapters.jaas.BearerTokenLoginModule".equals(className)) {
+//                userPrincipalClassNames.add("org.keycloak.KeycloakPrincipal");
+//                rolePrincipalClassNames.add("org.keycloak.adapters.jaas.RolePrincipal");
+//            }
+            if ("org.apache.activemq.artemis.spi.core.security.jaas.PropertiesLoginModule".equals(className)) {
+                userPrincipalClassNames.add("org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal");
+                // even if it's configured with -Dhawtio.rolePrincipalClasses
+                rolePrincipalClassNames.add("org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal");
             }
         }
 
@@ -460,18 +486,32 @@ public class AuthenticationConfiguration {
         rolePrincipalClassNames.add(RolePrincipal.class.getName());
 
         // now we can verify if the added Principal class names are actually loadable
-        List<Class<Principal>> knownPrincipalClasses = new ArrayList<>(rolePrincipalClassNames.size());
+        List<Class<Principal>> knownUserPrincipalClasses = new ArrayList<>(userPrincipalClassNames.size());
+        for (String className : userPrincipalClassNames) {
+            Class<Principal> clz = tryLoadClass(className, Principal.class);
+            if (clz != null) {
+                // reachable, loadable, but not necessarily with 1-arg String constructor
+                knownUserPrincipalClasses.add(clz);
+            }
+        }
+        this.userPrincipalClasses = Collections.unmodifiableList(knownUserPrincipalClasses);
+
+        List<Class<Principal>> knownRolePrincipalClasses = new ArrayList<>(rolePrincipalClassNames.size());
         for (String className : rolePrincipalClassNames) {
             Class<Principal> clz = tryLoadClass(className, Principal.class);
             if (clz != null) {
                 // reachable, loadable, but not necessarily with 1-arg String constructor
-                knownPrincipalClasses.add(clz);
+                knownRolePrincipalClasses.add(clz);
             }
         }
-        this.rolePrincipalClasses = Collections.unmodifiableList(knownPrincipalClasses);
+        this.rolePrincipalClasses = Collections.unmodifiableList(knownRolePrincipalClasses);
 
         // we need one Principal class to use as role for Hawtio itself. will use it in own Login modules (like OIDC)
         this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass();
+
+        if (oidcConfiguration != null) {
+            oidcConfiguration.setRolePrincipalClass(defaultRolePrincipalClass);
+        }
 
         initialized = true;
     }
@@ -549,12 +589,21 @@ public class AuthenticationConfiguration {
     }
 
     /**
-     * Dynamic configurations may add extra {@link Principal} class names to be supported (recognized) by Hawtio
+     * Dynamic configurations may add extra role {@link Principal} class names to be supported (recognized) by Hawtio
      *
      * @param rolePrincipalClassName
      */
     public void addRolePrincipalClassName(String rolePrincipalClassName) {
         this.rolePrincipalClassNames.add(rolePrincipalClassName);
+    }
+
+    /**
+     * Dynamic configurations may add extra user {@link Principal} class names to be supported (recognized) by Hawtio
+     *
+     * @param userPrincipalClassName
+     */
+    public void addUserPrincipalClassName(String userPrincipalClassName) {
+        this.userPrincipalClassNames.add(userPrincipalClassName);
     }
 
     /**
@@ -568,12 +617,21 @@ public class AuthenticationConfiguration {
     }
 
     /**
-     * Ger a list of <em>all</em> supported {@link Principal} classes
+     * Ger a list of <em>all</em> supported {@link Principal} classes representing user roles
      *
      * @return
      */
     public List<Class<Principal>> getRolePrincipalClasses() {
         return rolePrincipalClasses;
+    }
+
+    /**
+     * Ger a list of <em>all</em> supported {@link Principal} classes representing user names/identities
+     *
+     * @return
+     */
+    public List<Class<Principal>> getUserPrincipalClasses() {
+        return userPrincipalClasses;
     }
 
     public Configuration getConfiguration() {
@@ -709,8 +767,9 @@ public class AuthenticationConfiguration {
             try {
                 Constructor<?> ctr = clz.getConstructor(String.class);
                 roleClass = clz;
+                break;
             } catch (NoSuchMethodException e) {
-                LOG.warn("Can't use role principal class {}: {}", clz.getName(), e.getMessage());
+                LOG.debug("Can't use role principal class {} as default role principal: {}", clz.getName(), e.getMessage());
             }
         }
 

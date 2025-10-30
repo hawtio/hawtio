@@ -11,6 +11,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import io.hawt.web.auth.AuthenticationFilter;
+import io.hawt.web.auth.RolePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class TomcatUsersLoginModule implements LoginModule {
             supportObject = new TomcatSupport(options);
         }
         if (!(supportObject instanceof TomcatSupport)) {
-            throw new IllegalArgumentException("Unexpected class for TomcatUsersLoginModule suport service: "
+            throw new IllegalArgumentException("Unexpected class for TomcatUsersLoginModule support service: "
                     + supportObject.getClass().getName());
         }
 
@@ -96,8 +97,9 @@ public class TomcatUsersLoginModule implements LoginModule {
     @Override
     public boolean commit() {
         if (loggedUser != null) {
+            subject.getPrincipals().add(new TomcatPrincipal(loggedUser.getUsername()));
             for (String role : loggedUser.getRoles()) {
-                subject.getPrincipals().add(new TomcatPrincipal(role));
+                subject.getPrincipals().add(new RolePrincipal(role));
             }
         }
         return loginSuccessful;
