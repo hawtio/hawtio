@@ -131,7 +131,7 @@ public class HawtioProcessor {
             }
 
             ServletBuildItem.Builder builder = ServletBuildItem.builder(servletMetaData.getServletName(), getClassName(servletMetaData.getServletClass()))
-                .setLoadOnStartup(servletMetaData.getLoadOnStartupDefault());
+                .setLoadOnStartup(servletMetaData.getLoadOnStartupInt());
 
             // Servlet mappings
             getServletMappings(webMetaData, servletMetaData.getName()).ifPresent(servletMappings ->
