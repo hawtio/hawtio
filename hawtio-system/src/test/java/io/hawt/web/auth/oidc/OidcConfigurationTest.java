@@ -27,7 +27,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
@@ -42,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginContext;
 
 import com.nimbusds.jose.JOSEException;
@@ -65,6 +63,8 @@ import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import io.hawt.util.Strings;
+import io.hawt.web.auth.RolePrincipal;
+import io.hawt.web.auth.UserPrincipal;
 import io.hawt.web.auth.oidc.token.BearerTokenCallback;
 import io.hawt.web.auth.oidc.token.KidKeySelector;
 import org.apache.http.client.config.RequestConfig;
@@ -217,9 +217,11 @@ public class OidcConfigurationTest {
         props.setProperty("oidc.rolesPath", "resource_access.${client_id}.roles");
         props.setProperty("roleMapping.Hawtio.Admin", "admin");
         OidcConfiguration cfg = new OidcConfiguration(null, props);
-        cfg.setRolePrincipalClass(MyPrincipal.class);
+        cfg.setUserPrincipalClass(UserPrincipal.class);
+        cfg.setRolePrincipalClass(RolePrincipal.class);
         assertNotNull(cfg.getProviderURL());
-        assertSame(MyPrincipal.class, cfg.getRoleClass());
+        assertSame(UserPrincipal.class, cfg.getUserClass());
+        assertSame(RolePrincipal.class, cfg.getRoleClass());
 
         assertNotNull(cfg.getAppConfigurationEntry(null));
 
@@ -276,7 +278,7 @@ public class OidcConfigurationTest {
         };
         Subject subject = new Subject();
         new LoginContext("hawtio", subject, handler, cfg).login();
-        Set<MyPrincipal> principals = subject.getPrincipals(MyPrincipal.class);
+        Set<RolePrincipal> principals = subject.getPrincipals(RolePrincipal.class);
         assertEquals(1, principals.size());
         assertEquals("admin", principals.iterator().next().getName());
     }
@@ -339,19 +341,6 @@ public class OidcConfigurationTest {
             CloseableHttpResponse res = client.execute(get);
             LOG.info("Result: {}", res.getStatusLine());
             LOG.info("Content-Type: {}", res.getFirstHeader("Content-Type"));
-        }
-    }
-
-    public static class MyPrincipal implements Principal {
-        private final String role;
-
-        public MyPrincipal(String role) {
-            this.role = role;
-        }
-
-        @Override
-        public String getName() {
-            return role;
         }
     }
 

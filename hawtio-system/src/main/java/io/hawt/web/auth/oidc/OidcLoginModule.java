@@ -118,10 +118,11 @@ public class OidcLoginModule implements LoginModule {
             return false;
         }
 
-        // populate the subject with roles extracted from preferred_username claim of the token (TODO: configurable)
+        // populate the subject with roles extracted from preferred_username claim of the token
         Class<?> userClass = oidcConfiguration.getUserClass();
         try {
-            String userId = parsedToken.getJwt().getJWTClaimsSet().getClaimAsString("preferred_username");
+            String userIdClaimField = oidcConfiguration.getUserPath();
+            String userId = parsedToken.getJwt().getJWTClaimsSet().getClaimAsString(userIdClaimField);
             Constructor<?> ctr = userClass.getConstructor(String.class);
             this.subject.getPrincipals().add((Principal) ctr.newInstance(userId));
             this.subject.getPrivateCredentials().add(parsedToken.getAccessToken());
