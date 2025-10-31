@@ -161,6 +161,7 @@ public class OidcConfiguration extends Configuration {
     private Class<? extends Principal> userClass;
     private Class<? extends Principal> roleClass;
 
+    private String userPath;
     private String rolesPathConfig;
     private String[] rolesPath;
     private final Map<String, String> roleMapping = new HashMap<>();
@@ -224,6 +225,11 @@ public class OidcConfiguration extends Configuration {
         this.rolesPathConfig = Strings.resolvePlaceholders(rolesPath, props);
         this.rolesPath = Arrays.stream(this.rolesPathConfig.split("\\.")).map(String::trim).toArray(String[]::new);
 
+        this.userPath = props.getProperty("oidc.userPath");
+        if (this.userPath == null || this.userPath.isBlank()) {
+            this.userPath = "preferred_username";
+        }
+
         for (String p : props.stringPropertyNames()) {
             if (!p.startsWith("roleMapping.")) {
                 continue;
@@ -276,6 +282,10 @@ public class OidcConfiguration extends Configuration {
 
     public PromptType getPrompt() {
         return prompt;
+    }
+
+    public String getUserPath() {
+        return userPath;
     }
 
     public String[] getRolesPath() {
