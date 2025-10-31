@@ -123,6 +123,7 @@
   <servlet>
     <servlet-name>auth-config</servlet-name>
     <servlet-class>io.hawt.web.auth.AuthConfigurationServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>auth-config</servlet-name>

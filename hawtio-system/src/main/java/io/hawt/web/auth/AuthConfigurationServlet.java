@@ -17,6 +17,8 @@ package io.hawt.web.auth;
 
 import java.io.IOException;
 
+import javax.security.auth.login.AppConfigurationEntry;
+
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.oidc.OidcConfiguration;
 import io.hawt.web.servlets.ConfigurationServlet;
@@ -130,17 +132,27 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
                 //  - io.hawt.web.auth.LoginServlet
                 //  - io.hawt.quarkus.servlets.HawtioQuarkusLoginServlet
                 // which means proper form authentication
-                String basePath = ServletHelpers.webContextPath(hawtioPath);
-                JSONObject entry = new JSONObject();
-                entry.put("method", "form");
-                entry.put("name", "User credentials");
-                entry.put("type", "json");
-                // should match what we have in web.xml
-                entry.put("url", basePath + "/auth/login");
-                entry.put("logoutUrl", basePath + "/auth/logout");
-                entry.put("userField", "username");
-                entry.put("passwordField", "password");
-                authMethods.add(entry);
+                // But for Quarkus it's tricky, because there's no JAAS at all and when keycloak is enabled,
+                // io.hawt.quarkus.servlets.HawtioQuakusLoginServlet and io.hawt.quarkus.auth.HawtioQuarkusAuthenticator
+                // will simply fail because there's no proper identity and we get:
+                // java.lang.IllegalArgumentException: No IdentityProviders were registered to handle
+                // AuthenticationRequest io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest
+                AppConfigurationEntry[] entries = authConfiguration.getConfiguration().getAppConfigurationEntry(null);
+                if (!keycloakEnabled || entries != null && entries.length > 1) {
+                    // when there's no Keycloak, we assume there's something, but if Keycloak is enabled,
+                    // we only add form authentication if there are more JAAS login modules involved
+                    String basePath = ServletHelpers.webContextPath(hawtioPath);
+                    JSONObject entry = new JSONObject();
+                    entry.put("method", "form");
+                    entry.put("name", "User credentials");
+                    entry.put("type", "json");
+                    // should match what we have in web.xml
+                    entry.put("url", basePath + "/auth/login");
+                    entry.put("logoutUrl", basePath + "/auth/logout");
+                    entry.put("userField", "username");
+                    entry.put("passwordField", "password");
+                    authMethods.add(entry);
+                }
             }
 
             // basic auth detection is not supported as login method to Hawtio itself

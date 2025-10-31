@@ -118,21 +118,33 @@ public class OidcLoginModule implements LoginModule {
             return false;
         }
 
+        // populate the subject with roles extracted from preferred_username claim of the token (TODO: configurable)
+        Class<?> userClass = oidcConfiguration.getUserClass();
+        try {
+            String userId = parsedToken.getJwt().getJWTClaimsSet().getClaimAsString("preferred_username");
+            Constructor<?> ctr = userClass.getConstructor(String.class);
+            this.subject.getPrincipals().add((Principal) ctr.newInstance(userId));
+            this.subject.getPrivateCredentials().add(parsedToken.getAccessToken());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ParseException e) {
+            LOG.warn("Problem instantiating user principal for class {}", userClass);
+            return false;
+        }
+
         // populate the subject with roles extracted from access_token (if any)
-        Class<?> clz = oidcConfiguration.getRoleClass();
+        Class<?> roleClass = oidcConfiguration.getRoleClass();
         try {
             String[] roles = oidcConfiguration.extractRoles(parsedToken);
             for (String role : roles) {
-                Constructor<?> ctr = clz.getConstructor(String.class);
+                Constructor<?> ctr = roleClass.getConstructor(String.class);
                 this.subject.getPrincipals().add((Principal) ctr.newInstance(role));
             }
-            this.subject.getPrivateCredentials().add(parsedToken.getAccessToken());
-            return true;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LOG.warn("Problem instantiating role principal for class {}", clz);
+            LOG.warn("Problem instantiating role principal for class {}", roleClass);
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     @Override
