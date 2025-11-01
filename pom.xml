@@ -90,7 +90,7 @@
     <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
-    <maven-surefire-plugin-version>3.5.2</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
     <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
   </properties>
 
