@@ -82,7 +82,7 @@
     <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
     <maven-clean-plugin-version>3.5.0</maven-clean-plugin-version>
     <maven-compiler-plugin-version>3.14.0</maven-compiler-plugin-version>
-    <maven-dependency-plugin-version>3.8.1</maven-dependency-plugin-version>
+    <maven-dependency-plugin-version>3.9.0</maven-dependency-plugin-version>
     <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
     <maven-failsafe-plugin-version>3.5.4</maven-failsafe-plugin-version>
     <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
