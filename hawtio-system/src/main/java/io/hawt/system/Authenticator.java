@@ -190,7 +190,7 @@ public class Authenticator {
 
     public static void logout(AuthenticationConfiguration authConfiguration, Subject subject) {
         try {
-            LoginContext loginContext = new LoginContext(authConfiguration.getRealm(), subject);
+            LoginContext loginContext = new LoginContext(authConfiguration.getRealm(), subject, null, authConfiguration.getConfiguration());
             loginContext.logout();
         } catch (Exception e) {
             LOG.warn("Error occurred while logging out", e);
