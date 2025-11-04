@@ -53,6 +53,7 @@ import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.proc.JWKSecurityContext;
 import io.hawt.util.Strings;
 import io.hawt.web.auth.RolePrincipal;
+import io.hawt.web.auth.UserPrincipal;
 import io.hawt.web.auth.oidc.token.ValidAccessToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -156,8 +157,11 @@ public class OidcConfiguration extends Configuration {
     private volatile long lastCheck = 0L;
 
     private CloseableHttpClient httpClient;
+
+    private Class<? extends Principal> userClass;
     private Class<? extends Principal> roleClass;
 
+    private String userPath;
     private String rolesPathConfig;
     private String[] rolesPath;
     private final Map<String, String> roleMapping = new HashMap<>();
@@ -221,6 +225,11 @@ public class OidcConfiguration extends Configuration {
         this.rolesPathConfig = Strings.resolvePlaceholders(rolesPath, props);
         this.rolesPath = Arrays.stream(this.rolesPathConfig.split("\\.")).map(String::trim).toArray(String[]::new);
 
+        this.userPath = props.getProperty("oidc.userPath");
+        if (this.userPath == null || this.userPath.isBlank()) {
+            this.userPath = "preferred_username";
+        }
+
         for (String p : props.stringPropertyNames()) {
             if (!p.startsWith("roleMapping.")) {
                 continue;
@@ -275,12 +284,20 @@ public class OidcConfiguration extends Configuration {
         return prompt;
     }
 
+    public String getUserPath() {
+        return userPath;
+    }
+
     public String[] getRolesPath() {
         return rolesPath;
     }
 
-    public Class<?> getRoleClass() {
+    public Class<? extends Principal> getRoleClass() {
         return roleClass;
+    }
+
+    public Class<? extends Principal> getUserClass() {
+        return userClass;
     }
 
     public Map<String, String> getRoleMapping() {
@@ -479,10 +496,11 @@ public class OidcConfiguration extends Configuration {
 
         this.json = json.toString();
 
-        // add SUFFICIENT entry, so we can proceed with other modules if these are present
+        // add REQUIRED entry, but the login module returns false on unhandled credentials,
+        // so we can proceed with other modules if these are present
         this.jaasAppConfigurationEntries = new AppConfigurationEntry[] {
                 new AppConfigurationEntry(OidcLoginModule.class.getName(),
-                        AppConfigurationEntry.LoginModuleControlFlag.SUFFICIENT, Map.of(OIDC_JAAS_CONFIGURATION, this))
+                        AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, Map.of(OIDC_JAAS_CONFIGURATION, this))
         };
     }
 
@@ -662,6 +680,15 @@ public class OidcConfiguration extends Configuration {
             return defaultValue;
         }
         return v.equalsIgnoreCase("true");
+    }
+
+    /**
+     * Configure identity principal class name available for OIDC.
+     *
+     * @param userPrincipalClass
+     */
+    public void setUserPrincipalClass(Class<? extends Principal> userPrincipalClass) {
+        this.userClass = userPrincipalClass == null ? UserPrincipal.class : userPrincipalClass;
     }
 
     /**

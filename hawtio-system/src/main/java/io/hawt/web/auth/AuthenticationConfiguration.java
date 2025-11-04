@@ -143,6 +143,12 @@ public class AuthenticationConfiguration {
     public static final String ROLE = "role";
 
     /**
+     * JAAS class name that would contain the user principal.
+     * Empty string effectively disables authorization (so only authentication is performed).
+     */
+    public static final String USER_PRINCIPAL_CLASSES = "userPrincipalClasses";
+
+    /**
      * JAAS class name that would contain the role principal.
      * Empty string effectively disables authorization (so only authentication is performed).
      */
@@ -180,6 +186,7 @@ public class AuthenticationConfiguration {
     public static final String HAWTIO_REALM = "hawtio." + REALM;
     public static final String HAWTIO_ROLES = "hawtio." + ROLES;
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio." + ROLE_PRINCIPAL_CLASSES;
+    public static final String HAWTIO_USER_PRINCIPAL_CLASSES = "hawtio." + USER_PRINCIPAL_CLASSES;
     public static final String HAWTIO_NO_CREDENTIALS_401 = "hawtio." + NO_CREDENTIALS_401;
     public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio." + AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES;
     public static final String HAWTIO_KEYCLOAK_ENABLED = "hawtio." + KEYCLOAK_ENABLED;
@@ -232,6 +239,12 @@ public class AuthenticationConfiguration {
      * {@link Class} objects for {@link Principal principals} that represent actual user name/identity (not the role).
      */
     private List<Class<Principal>> userPrincipalClasses;
+
+    /**
+     * When Hawtio itself creates a principal for user ID (like with {@link io.hawt.web.auth.oidc.OidcLoginModule},
+     * we need to use some class for the {@link Principal}.
+     */
+    private Class<? extends Principal> defaultUserPrincipalClass;
 
     /**
      * When Hawtio itself creates principals using own {@link javax.security.auth.spi.LoginModule login modules}
@@ -361,6 +374,8 @@ public class AuthenticationConfiguration {
         }
         // 2. from external configuration of -Dhawtio.rolePrincipalClasses, for example
         //    Artemis uses -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal
+        config.get(USER_PRINCIPAL_CLASSES).ifPresent(option
+                -> this.userPrincipalClassNames.addAll(Arrays.asList(option.split("\\s*,\\s*"))));
         config.get(ROLE_PRINCIPAL_CLASSES).ifPresent(option
                 -> this.rolePrincipalClassNames.addAll(Arrays.asList(option.split("\\s*,\\s*"))));
         // 3. if Keycloak is enabled we add known class name
@@ -475,14 +490,16 @@ public class AuthenticationConfiguration {
 //                userPrincipalClassNames.add("org.keycloak.KeycloakPrincipal");
 //                rolePrincipalClassNames.add("org.keycloak.adapters.jaas.RolePrincipal");
 //            }
-            if ("org.apache.activemq.artemis.spi.core.security.jaas.PropertiesLoginModule".equals(className)) {
+            if ("org.apache.activemq.artemis.spi.core.security.jaas.PropertiesLoginModule".equals(className)
+                    || "org.apache.activemq.artemis.spi.core.security.jaas.LDAPLoginModule".equals(className)) {
                 userPrincipalClassNames.add("org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal");
                 // even if it's configured with -Dhawtio.rolePrincipalClasses
                 rolePrincipalClassNames.add("org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal");
             }
         }
 
-        // 5. finally add last (fallback) role name class to use
+        // 5. finally add last (fallback) user/role name class to use
+        userPrincipalClassNames.add(UserPrincipal.class.getName());
         rolePrincipalClassNames.add(RolePrincipal.class.getName());
 
         // now we can verify if the added Principal class names are actually loadable
@@ -508,8 +525,11 @@ public class AuthenticationConfiguration {
 
         // we need one Principal class to use as role for Hawtio itself. will use it in own Login modules (like OIDC)
         this.defaultRolePrincipalClass = determineDefaultRolePrincipalClass();
+        // and for the user
+        this.defaultUserPrincipalClass = determineDefaultUserPrincipalClass();
 
         if (oidcConfiguration != null) {
+            oidcConfiguration.setUserPrincipalClass(defaultUserPrincipalClass);
             oidcConfiguration.setRolePrincipalClass(defaultRolePrincipalClass);
         }
 
@@ -608,12 +628,22 @@ public class AuthenticationConfiguration {
 
     /**
      * Return default {@link Class} of {@link Principal} to be used by Hawtio in own
-     * {@link javax.security.auth.spi.LoginModule login modules}.
+     * {@link javax.security.auth.spi.LoginModule login modules} for user role.
      *
      * @return
      */
     public Class<? extends Principal> getDefaultRolePrincipalClass() {
         return defaultRolePrincipalClass;
+    }
+
+    /**
+     * Return default {@link Class} of {@link Principal} to be used by Hawtio in own
+     * {@link javax.security.auth.spi.LoginModule login modules} for user identity.
+     *
+     * @return
+     */
+    public Class<? extends Principal> getDefaultUserPrincipalClass() {
+        return defaultUserPrincipalClass;
     }
 
     /**
@@ -699,6 +729,7 @@ public class AuthenticationConfiguration {
                 props.load(is);
                 this.oidcConfiguration = new OidcConfiguration(this.realm, props);
                 this.oidcConfiguration.setRolePrincipalClass(defaultRolePrincipalClass);
+                this.oidcConfiguration.setUserPrincipalClass(defaultUserPrincipalClass);
                 if (this.oidcConfiguration.isEnabled()) {
                     addConfiguration(this.oidcConfiguration);
                 }
@@ -750,7 +781,7 @@ public class AuthenticationConfiguration {
     }
 
     /**
-     * Process configured {@link Principal} class names and returns first that's available and has
+     * Process configured {@link Principal} class names for roles and returns first that's available and has
      * proper (1-arg String) constructor.
      *
      * @return
@@ -774,6 +805,33 @@ public class AuthenticationConfiguration {
         }
 
         return roleClass;
+    }
+
+    /**
+     * Process configured {@link Principal} class names for identities and returns first that's available and has
+     * proper (1-arg String) constructor.
+     *
+     * @return
+     */
+    private Class<? extends Principal> determineDefaultUserPrincipalClass() {
+        if (userPrincipalClasses.isEmpty()) {
+            return null;
+        }
+
+        Class<? extends Principal> userClass = null;
+
+        // let's load first available class - needs 1-arg String constructor
+        for (Class<Principal> clz : this.userPrincipalClasses) {
+            try {
+                Constructor<?> ctr = clz.getConstructor(String.class);
+                userClass = clz;
+                break;
+            } catch (NoSuchMethodException e) {
+                LOG.debug("Can't use user principal class {} as default user principal: {}", clz.getName(), e.getMessage());
+            }
+        }
+
+        return userClass;
     }
 
     @SuppressWarnings("unchecked")

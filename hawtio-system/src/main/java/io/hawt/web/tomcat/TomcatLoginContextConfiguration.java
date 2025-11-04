@@ -22,9 +22,10 @@ public class TomcatLoginContextConfiguration extends Configuration {
         options.put(TomcatUsersLoginModule.OPTION_TOMCAT_USER_LOCATION, tomcatUserLocation);
         options.put(TomcatUsersLoginModule.OPTION_TOMCAT_SUPPORT, new TomcatSupport(digestAlgorithm, tomcatUserLocation));
 
-        // the flag is SUFFICIENT to allow multi-authentication in Hawtio
+        // the flag is REQUIRED, but this login module returns false if user is not found.
+        // This allows multi-authentication in Hawtio
         this.entry = new AppConfigurationEntry(TomcatUsersLoginModule.class.getName(),
-                AppConfigurationEntry.LoginModuleControlFlag.SUFFICIENT, Collections.unmodifiableMap(options));
+                AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, Collections.unmodifiableMap(options));
     }
 
     @Override
