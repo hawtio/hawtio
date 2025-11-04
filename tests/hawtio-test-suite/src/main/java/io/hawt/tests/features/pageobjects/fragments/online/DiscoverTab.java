@@ -85,8 +85,21 @@ public class DiscoverTab {
         final Map<String, DeploymentEntry> deployments = getDeployments();
         if (REPLICA_SET_WORKAROUND) {
             final List<DeploymentEntry> matchingEntries = deployments.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(name) && entry.getValue().getPods().get(0).getNamespace().equals(namespace)).map(
-                    Map.Entry::getValue).collect(Collectors.toList());
+                .filter(entry -> {
+                    if (!entry.getKey().startsWith(name)) {
+                        return false;
+                    }
+
+                    List<PodEntry> pods = entry.getValue().getPods();
+                    if (pods == null || pods.isEmpty()) {
+                        return false;
+                    }
+
+                    return pods.get(0).getNamespace().equals(namespace);
+                })
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+
             Assertions.assertThat(matchingEntries).hasSize(1);
             return matchingEntries.get(0);
         } else {
