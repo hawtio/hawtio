@@ -112,7 +112,8 @@ public class HawtioOnlineShellTest extends BaseHawtioOnlineTest {
         assertThat(pods.get(0)).satisfies(pod -> {
             final Pod podResource = OpenshiftClient.get().getPod(pod.getName());
 
-            assertThat(pod.getContainerCount()).isEqualTo(pod.getContainerCount());
+            assertThat(pod.getReadyContainerCount()).isEqualTo(pod.getTotalContainerCount());
+            assertThat(pod.getTotalContainerCount()).isEqualTo(podResource.getSpec().getContainers().size());
             assertThat(pod.getRouteCount()).isEqualTo(6);
             assertThat(pod.getNamespace()).isEqualTo(podResource.getMetadata().getNamespace());
 
