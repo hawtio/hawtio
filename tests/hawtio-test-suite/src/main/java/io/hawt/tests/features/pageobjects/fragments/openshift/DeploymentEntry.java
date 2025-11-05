@@ -32,6 +32,6 @@ public class DeploymentEntry {
     }
 
     public List<PodEntry> getPods() {
-        return $(root).sibling(0).$(By.className("pf-v5-c-list")).$$(By.cssSelector("li.pf-v5-c-list__item")).asFixedIterable().stream().map(PodEntry::new).collect(Collectors.toList());
+        return $(root).sibling(0).$(By.className("pf-v5-c-list")).$$(By.cssSelector("li.pod-item-list-item")).asFixedIterable().stream().map(PodEntry::new).collect(Collectors.toList());
     }
 }

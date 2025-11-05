@@ -61,6 +61,18 @@ public class PodEntry {
         return Integer.parseInt($(root).$(By.className("pod-item-" + label)).innerText().split(" ")[0]);
     }
 
+    private String getContainerRatioText() {
+        return $(root).$(By.className("pod-item-containers")).innerText().split(" ")[0];
+    }
+
+    public int getReadyContainerCount() {
+        return Integer.parseInt(getContainerRatioText().split("/")[0].trim());
+    }
+
+    public int getTotalContainerCount() {
+        return Integer.parseInt(getContainerRatioText().split("/")[1].trim());
+    }
+
     public int getContainerCount() {
         return getNumFromLabel("containers");
     }
@@ -88,7 +100,7 @@ public class PodEntry {
     }
 
     public String getStatus() {
-        return $(root).$(By.cssSelector("svg.state-icon")).$(By.tagName("title")).innerText();
+        return $(root).$(By.cssSelector("span.state-text")).innerText();
     }
 
     public void connect() {
