@@ -6,7 +6,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Properties;
 
-import io.quarkus.bootstrap.model.AppArtifact;
+import io.quarkus.maven.dependency.Dependency;
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -23,7 +23,7 @@ public class HawtioQuarkusAuthenticationDisabledTest {
 
     @RegisterExtension
     static final QuarkusUnitTest CONFIG = new QuarkusUnitTest()
-        .setForcedDependencies(List.of(new AppArtifact("io.hawt", "hawtio-quarkus-deployment", "4.3.0-SNAPSHOT")))
+        .setForcedDependencies(List.of(Dependency.of("io.hawt", "hawtio-quarkus-deployment", "4.3.0-SNAPSHOT")))
         .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource(applicationProperties(), "application.properties"));
