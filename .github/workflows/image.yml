@@ -10,6 +10,8 @@ on:
 
 env:
   MVN_ARGS: --batch-mode --no-transfer-progress
+  PLATFORMS_TEST_APP: linux/amd64,linux/ppc64le,linux/s390x,linux/arm64
+  PLATFORMS_TEST_SUITE: linux/amd64
 
 jobs:
   build:
@@ -20,50 +22,50 @@ jobs:
         java: ['17', '21']
     runs-on: ubuntu-latest
     steps:
+      # --- Checkout code ---
       - name: Checkout code
         uses: actions/checkout@v5
+      # --- Set up Java ---
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: ${{ matrix.java }}
           cache: "maven"
-      - name: Install
+      # --- Enable QEMU and Buildx for multi-arch builds ---
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      # --- Log in to Quay.io
+      - name: Log in to Quay.io
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+      # --- Install dependencies ---
+      - name: Install Maven dependencies
         run: |
-          mvn ${MVN_ARGS} install
-      - name: Build auth enabled images
+          mvn ${MVN_ARGS} install -DskipTests
+      # --- Build and push auth-enabled images ---
+      - name: Build auth-enabled JARs
         run: |
-          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=true
-      - name: Push auth enabled images to Quay.io
-        env:
-          USERNAME: ${{ secrets.QUAY_USERNAME }}
-          PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+          mvn ${MVN_ARGS} install -DskipTests -Pe2e -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=true
+      - name: Build and push multi-arch auth-enabled images
         run: |
-          docker login -u $USERNAME -p $PASSWORD quay.io
-
-          docker tag hawtio-test-suite:${{ matrix.java }} quay.io/hawtio/hawtio-test-suite:${{ github.ref_name }}-${{ matrix.java }}
-          docker tag hawtio-quarkus-app:${{ matrix.java }} quay.io/hawtio/hawtio-quarkus-test-app:${{ github.ref_name }}-${{ matrix.java }}
-          docker tag hawtio-springboot-app:${{ matrix.java }} quay.io/hawtio/hawtio-springboot-test-app:${{ github.ref_name }}-${{ matrix.java }}
-
-          for image in $(docker images --filter=reference='quay.io/hawtio/*' --format='{{.Repository}}:{{.Tag}}')
-          do
-            docker push $image
-          done
-      - name: Build auth disabled images
+          TAG_SUFFIX=${{ github.ref_name }}-${{ matrix.java }}
+          JAVA_ARG="--build-arg JAVA_VERSION=${{ matrix.java }}"
+          docker buildx build --platform $PLATFORMS_TEST_SUITE $JAVA_ARG -t quay.io/hawtio/hawtio-test-suite:$TAG_SUFFIX --push ./tests/hawtio-test-suite/
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-quarkus-test-app:$TAG_SUFFIX --push ./tests/quarkus/
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-springboot-test-app:$TAG_SUFFIX --push ./tests/springboot/
+      # --- Build and push auth-disabled images ---
+      - name: Build auth-disabled JARs
         run: |
-          mvn ${MVN_ARGS} install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=false
-      - name: Push auth disabled images to Quay.io
-        env:
-          USERNAME: ${{ secrets.QUAY_USERNAME }}
-          PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+          mvn ${MVN_ARGS} install -DskipTests -Pe2e -pl :hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=false
+      - name: Build and push multi-arch auth-disabled images
         run: |
-          docker login -u $USERNAME -p $PASSWORD quay.io
-
-          docker tag hawtio-quarkus-app:${{ matrix.java }} quay.io/hawtio/hawtio-quarkus-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
-          docker tag hawtio-springboot-app:${{ matrix.java }} quay.io/hawtio/hawtio-springboot-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
-          
-          docker push quay.io/hawtio/hawtio-quarkus-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
-          docker push quay.io/hawtio/hawtio-springboot-test-app:${{ github.ref_name }}-${{ matrix.java }}-noauth
-      - name: Display images
-        run: |
-          docker images
+          TAG_SUFFIX=${{ github.ref_name }}-${{ matrix.java }}-noauth
+          JAVA_ARG="--build-arg JAVA_VERSION=${{ matrix.java }}"
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-quarkus-test-app:$TAG_SUFFIX --push ./tests/quarkus/
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-springboot-test-app:$TAG_SUFFIX --push ./tests/springboot/
