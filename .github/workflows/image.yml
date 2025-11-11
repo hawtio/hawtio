@@ -56,9 +56,9 @@ jobs:
         run: |
           TAG_SUFFIX=${{ github.ref_name }}-${{ matrix.java }}
           JAVA_ARG="--build-arg JAVA_VERSION=${{ matrix.java }}"
-          docker buildx build --platform $PLATFORMS_TEST_SUITE $JAVA_ARG -t quay.io/hawtio/hawtio-test-suite:$TAG_SUFFIX --push ./tests/hawtio-test-suite/
-          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-quarkus-test-app:$TAG_SUFFIX --push ./tests/quarkus/
-          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-springboot-test-app:$TAG_SUFFIX --push ./tests/springboot/
+          docker buildx build --platform $PLATFORMS_TEST_SUITE $JAVA_ARG -f tests/hawtio-test-suite/Dockerfile -t quay.io/hawtio/hawtio-test-suite:$TAG_SUFFIX --push .
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -f tests/quarkus/Dockerfile -t quay.io/hawtio/hawtio-quarkus-test-app:$TAG_SUFFIX --push tests/quarkus
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -f tests/springboot/Dockerfile -t quay.io/hawtio/hawtio-springboot-test-app:$TAG_SUFFIX --push tests/springboot
       # --- Build and push auth-disabled images ---
       - name: Build auth-disabled JARs
         run: |
@@ -67,5 +67,5 @@ jobs:
         run: |
           TAG_SUFFIX=${{ github.ref_name }}-${{ matrix.java }}-noauth
           JAVA_ARG="--build-arg JAVA_VERSION=${{ matrix.java }}"
-          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-quarkus-test-app:$TAG_SUFFIX --push ./tests/quarkus/
-          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -t quay.io/hawtio/hawtio-springboot-test-app:$TAG_SUFFIX --push ./tests/springboot/
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -f tests/quarkus/Dockerfile -t quay.io/hawtio/hawtio-quarkus-test-app:$TAG_SUFFIX --push tests/quarkus
+          docker buildx build --platform $PLATFORMS_TEST_APP $JAVA_ARG -f tests/springboot/Dockerfile -t quay.io/hawtio/hawtio-springboot-test-app:$TAG_SUFFIX --push tests/springboot
