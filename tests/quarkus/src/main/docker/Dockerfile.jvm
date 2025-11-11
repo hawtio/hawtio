@@ -90,7 +90,7 @@ COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
 COPY --chown=185 ./start-keycloak.sh /deployments/
 
 #Needed for quarkus rebuild inside container for some reason
-RUN ln -s /deployments/ /quarkus-app && chmod a+rw /quarkus-app
+RUN ln -s /deployments/ /quarkus-app && chmod -R a+rw /quarkus-app && chown -R 185:185 /deployments
 
 EXPOSE 8080
 USER 185
@@ -98,4 +98,4 @@ ENV AB_JOLOKIA_OFF=""
 ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
-CMD java -jar ${JAVA_OPTS} ${JAVA_APP_JAR}
+CMD java ${JAVA_OPTS} -jar ${JAVA_APP_JAR}

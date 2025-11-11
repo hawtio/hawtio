@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC1091
-source env_init.sh
+source /hawtio-test-suite/env_init.sh
 export VNC_NO_PASSWORD=true
 Xvfb :99 -screen 0 1920x1080x24 &
 /opt/bin/start-vnc.sh &
