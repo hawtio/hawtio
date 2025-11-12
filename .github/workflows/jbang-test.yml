@@ -78,19 +78,18 @@ jobs:
         run: |
           mkdir -p $PWD/$REPORT_DIR/
           docker run --rm --network host \
-            -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
-            -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
+            -v $PWD/$REPORT_DIR:/workspace/tests/hawtio-test-suite/target \
+            -v $PWD/$REPORT_DIR/build:/workspace/tests/hawtio-test-suite/build/ \
             --shm-size="2g" \
             hawtio-test-suite:${{matrix.java}} \
               -Pe2e-${{ matrix.runtime }} -Dselenide.browser=firefox \
               -Dio.hawt.test.url=http://localhost:8888/hawtio \
               -Dio.hawt.test.app.connect.url=http://localhost:${{ env.app-port }}/${{ env.url-suffix }}/jolokia \
               -Dhawtio-jbang-ci
-      - name: Prepare report artifacts
+      - name: Prepare container logs
         if: always()
         run: |
           mkdir -p results/$REPORT_DIR/
-          cp $REPORT_DIR/cucumber-reports/* results/$REPORT_DIR/
           docker logs app 2>&1 > results/$REPORT_DIR/container.log
           docker logs app 2>&1 > $REPORT_DIR/container.log
           echo "Container log:"
