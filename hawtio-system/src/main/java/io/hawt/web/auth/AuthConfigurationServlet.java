@@ -138,7 +138,7 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
                 // java.lang.IllegalArgumentException: No IdentityProviders were registered to handle
                 // AuthenticationRequest io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest
                 AppConfigurationEntry[] entries = authConfiguration.getConfiguration().getAppConfigurationEntry(null);
-                if (!keycloakEnabled || entries != null && entries.length > 1) {
+                if (!(keycloakEnabled || oidcEnabled) || entries != null && entries.length > 1) {
                     // when there's no Keycloak, we assume there's something, but if Keycloak is enabled,
                     // we only add form authentication if there are more JAAS login modules involved
                     String basePath = ServletHelpers.webContextPath(hawtioPath);
