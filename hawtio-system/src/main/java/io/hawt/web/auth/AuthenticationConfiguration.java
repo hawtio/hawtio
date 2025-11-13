@@ -762,14 +762,14 @@ public class AuthenticationConfiguration {
             return tomcatHome + "/conf/hawtio-oidc.properties";
         }
 
-        String jbossHome = System.getProperty("jboss.server.config.dir");
-        if (jbossHome != null) {
-            return jbossHome + "/hawtio-oidc.properties";
+        String jbossConfigDir = System.getProperty("jboss.server.config.dir");
+        if (jbossConfigDir != null) {
+            return jbossConfigDir + "/hawtio-oidc.properties";
         }
 
-        String artemisHome = System.getProperty("artemis.instance.etc");
-        if (artemisHome != null) {
-            return artemisHome + "/hawtio-oidc.properties";
+        String artemisInstanceEtc = System.getProperty("artemis.instance.etc");
+        if (artemisInstanceEtc != null) {
+            return artemisInstanceEtc + "/hawtio-oidc.properties";
         }
 
         // Fallback to classpath inside hawtio.war

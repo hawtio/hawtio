@@ -24,10 +24,6 @@ public class ResponseHeadersFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseHeadersFilter.class);
 
-    public static final String ALLOW_X_FRAME_SAME_ORIGIN = "http.allowXFrameSameOrigin";
-    @SuppressWarnings("unused")
-    public static final String HAWTIO_ALLOW_X_FRAME_SAME_ORIGIN = "hawtio." + ALLOW_X_FRAME_SAME_ORIGIN;
-
     private final List<HttpHeaderFilter> filters = new ArrayList<>();
 
     public void init(FilterConfig filterConfig) throws ServletException {
