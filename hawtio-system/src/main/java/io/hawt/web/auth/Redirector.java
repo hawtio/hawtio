@@ -32,7 +32,7 @@ public class Redirector {
                 // default ports should not be added to redirect URL
                 redirectUrl = String.format("%s://%s", scheme, request.getServerName());
             } else {
-                redirectUrl = String.format("%s://%s:%s", scheme, request.getServerName(), port);
+                redirectUrl = String.format("%s://%s:%d", scheme, request.getServerName(), port);
             }
         }
 
