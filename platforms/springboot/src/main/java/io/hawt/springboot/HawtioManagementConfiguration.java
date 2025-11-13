@@ -281,9 +281,11 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public ServletRegistrationBean<ProxyServlet> jolokiaProxyServlet() {
-        return new ServletRegistrationBean<>(
-            new ProxyServlet(),
-            hawtioPath + "/proxy/*");
+        ServletRegistrationBean<ProxyServlet> registration = new ServletRegistrationBean<>(
+                new ProxyServlet(),
+                hawtioPath + "/proxy/*");
+        registration.addInitParameter("proxyAllowlist", "localhost, 127.0.0.1");
+        return registration;
     }
 
     @Bean
