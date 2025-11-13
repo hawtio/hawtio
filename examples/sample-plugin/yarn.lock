@@ -608,16 +608,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.11.2":
-  version: 1.11.2
-  resolution: "@hawtio/react@npm:1.11.2"
+"@hawtio/react@npm:^1.11.3":
+  version: 1.11.3
+  resolution: "@hawtio/react@npm:1.11.3"
   dependencies:
     "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.7"
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.1"
     "@jolokia.js/simple": "npm:^2.4.0"
-    "@module-federation/utilities": "npm:^3.1.72"
+    "@module-federation/utilities": "npm:^3.1.74"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.3.2"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.3.3"
     dagre: "npm:^0.8.5"
     dompurify: "npm:^3.3.0"
     eventemitter3: "npm:^5.0.1"
@@ -643,7 +643,7 @@ __metadata:
     react: ^17 || ^18
     react-dom: ^17 || ^18
     react-router-dom: ^6.30
-  checksum: 10/7cda21a99367f07f4e031d1c377df747580ead7bfe33b15ff756bbf2e0d2b9d5f8290ca9a225aa0417876ef4cb0ebe07d1ab32ce1d97a9d522c2f3bdc0c38af6
+  checksum: 10/22c342a1a9c41f97df5315e47b2606047b7a32fb6f8b908b02e683899d11836af27e8ea72aadbd83aaa00e03029d9542e190b89b57ee85eec3e3d708d999eae6
   languageName: node
   linkType: hard
 
@@ -1066,18 +1066,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/sdk@npm:0.21.2":
-  version: 0.21.2
-  resolution: "@module-federation/sdk@npm:0.21.2"
-  checksum: 10/e71a85bc4daf16cbe065c4ee8c36d6652b0d9a2cd5cc4fc53494f1c7f1111a67a08c4817e5738a7e4f66b7f60769abceb955c23bf94eb3205d2646002852b10f
+"@module-federation/sdk@npm:0.21.4":
+  version: 0.21.4
+  resolution: "@module-federation/sdk@npm:0.21.4"
+  checksum: 10/74c9ee2a057babf4f2638f8644a6eee6bd2c76441440dcc3855fb01a0e527e88518b8cc9c2d6d8f6b28858e34e40a3a966c03bb5d42897b9ea9163985edfa159
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.1.72":
-  version: 3.1.73
-  resolution: "@module-federation/utilities@npm:3.1.73"
+"@module-federation/utilities@npm:^3.1.74":
+  version: 3.1.75
+  resolution: "@module-federation/utilities@npm:3.1.75"
   dependencies:
-    "@module-federation/sdk": "npm:0.21.2"
+    "@module-federation/sdk": "npm:0.21.4"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -1089,7 +1089,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/751038c51fa2a98e94999383730cd0f388125e2f08724d40f2a380f96cce74bd0bc82a4c16f98fafa29aca3867ef7f6737bbc9dfebf26b335c7e2d3e34b80947
+  checksum: 10/8b8d0ad84ebae319434ab4d9d20284a2491c6b1d5ec45fa62783330ce23b8f73a89abf3a7ccc1a45338394de90a05741de089a9c2727a1ca3c47b0fad80523f6
   languageName: node
   linkType: hard
 
@@ -1530,10 +1530,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.3.2"
-  checksum: 10/15d6c24cb37aeda1e804210f66e8a503760ecbfe02450712e9667870f95a8fd94a0de8b06289acb4b2b4d2f284878a32390a7415accfc9ce0f156ff184ad155c
+"@thumbmarkjs/thumbmarkjs@npm:^1.3.3":
+  version: 1.3.3
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.3.3"
+  checksum: 10/195f4cd9858eee30f21c68607cc554866540179a912057cf2ef619ef7fb87b1e41317ddab4a8e95d0b3aec455da649d9ab092e432060c1462daeec1c95095ecd
   languageName: node
   linkType: hard
 
@@ -4631,7 +4631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.11.2"
+    "@hawtio/react": "npm:^1.11.3"
     "@patternfly/react-charts": "npm:^7.4.9"
     "@patternfly/react-code-editor": "npm:^5.4.18"
     "@patternfly/react-core": "npm:^5.4.14"
