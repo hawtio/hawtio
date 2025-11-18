@@ -608,9 +608,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.11.3":
-  version: 1.11.3
-  resolution: "@hawtio/react@npm:1.11.3"
+"@hawtio/react@npm:^1.11.4":
+  version: 1.11.4
+  resolution: "@hawtio/react@npm:1.11.4"
   dependencies:
     "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.7"
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.1"
@@ -643,7 +643,7 @@ __metadata:
     react: ^17 || ^18
     react-dom: ^17 || ^18
     react-router-dom: ^6.30
-  checksum: 10/22c342a1a9c41f97df5315e47b2606047b7a32fb6f8b908b02e683899d11836af27e8ea72aadbd83aaa00e03029d9542e190b89b57ee85eec3e3d708d999eae6
+  checksum: 10/ac602ec36179677c526de592de7ad745407c4b2599f4fccef71694ea8905dce0d7d188d7e2c361f2d5b282d6237f4203cc97415ec32283f92bb0c2a1f6841306
   languageName: node
   linkType: hard
 
@@ -4631,7 +4631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.11.3"
+    "@hawtio/react": "npm:^1.11.4"
     "@patternfly/react-charts": "npm:^7.4.9"
     "@patternfly/react-code-editor": "npm:^5.4.18"
     "@patternfly/react-core": "npm:^5.4.14"
@@ -5700,14 +5700,14 @@ __metadata:
   linkType: hard
 
 "js-yaml@npm:^3.13.1":
-  version: 3.14.1
-  resolution: "js-yaml@npm:3.14.1"
+  version: 3.14.2
+  resolution: "js-yaml@npm:3.14.2"
   dependencies:
     argparse: "npm:^1.0.7"
     esprima: "npm:^4.0.0"
   bin:
     js-yaml: bin/js-yaml.js
-  checksum: 10/9e22d80b4d0105b9899135365f746d47466ed53ef4223c529b3c0f7a39907743fdbd3c4379f94f1106f02755b5e90b2faaf84801a891135544e1ea475d1a1379
+  checksum: 10/172e0b6007b0bf0fc8d2469c94424f7dd765c64a047d2b790831fecef2204a4054eabf4d911eb73ab8c9a3256ab8ba1ee8d655b789bf24bf059c772acc2075a1
   languageName: node
   linkType: hard
 
