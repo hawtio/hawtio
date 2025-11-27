@@ -172,7 +172,7 @@ public class Main implements Callable<Integer> {
         File tempDir = new File(tempDirPath);
         tempDir.mkdirs();
         log.info("Using temp directory for jetty: {}", tempDir.getPath());
-        webapp.setTempDirectory(tempDir);
+        webapp.setTempDirectory(new File(tempDir, "hawtio"));
 
         // check for 3rd party plugins before we add hawtio, so they are initialized before hawtio
         findThirdPartyPlugins(log, handlers, tempDir);
