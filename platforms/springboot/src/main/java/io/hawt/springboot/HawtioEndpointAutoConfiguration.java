@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointPr
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -32,6 +33,7 @@ import java.util.Map;
  */
 @AutoConfiguration
 @ConditionalOnWebApplication(type = Type.SERVLET)
+@ConditionalOnBooleanProperty(value = "hawtio.enabled", havingValue = true, matchIfMissing = true)
 @PropertySource("classpath:/io/hawt/springboot/application.properties")
 @EnableConfigurationProperties
 public class HawtioEndpointAutoConfiguration {
