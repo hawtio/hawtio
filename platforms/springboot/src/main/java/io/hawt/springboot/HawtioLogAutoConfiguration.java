@@ -3,6 +3,7 @@ package io.hawt.springboot;
 import io.hawt.log.logback.LogbackLogQuery;
 import io.hawt.log.support.LogQuerySupport;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @AutoConfiguration
 @ConditionalOnClass(LogQuerySupport.class)
+@ConditionalOnBooleanProperty(value = "hawtio.enabled", havingValue = true, matchIfMissing = true)
 public class HawtioLogAutoConfiguration {
 
     /**
