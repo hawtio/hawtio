@@ -26,6 +26,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.expose.EndpointEx
 import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -52,6 +53,7 @@ import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PA
 @ManagementContextConfiguration
 @AutoConfigureAfter({ JolokiaServletAutoConfiguration.class, JolokiaWebEndpointAutoConfiguration.class })
 @ConditionalOnBean({ HawtioEndpoint.class, EndpointPathResolver.class })
+@ConditionalOnBooleanProperty(value = "hawtio.enabled", havingValue = true, matchIfMissing = true)
 public class HawtioManagementConfiguration {
 
     // a path within Spring server or management server that's the "base" of Hawtio actuator.
