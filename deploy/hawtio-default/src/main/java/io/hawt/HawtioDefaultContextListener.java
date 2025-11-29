@@ -2,7 +2,6 @@ package io.hawt;
 
 import jakarta.servlet.ServletContextEvent;
 
-import io.hawt.HawtioContextListener;
 import io.hawt.jvm.local.JVMList;
 
 public class HawtioDefaultContextListener extends HawtioContextListener {
