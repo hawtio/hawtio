@@ -42,7 +42,7 @@
     <quarkus-version>3.27.0</quarkus-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring-version>6.2.12</spring-version>
+    <spring-version>7.0.1</spring-version>
     <spring-boot-version>3.5.7</spring-boot-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.14.1</camel-spring-boot-version>
