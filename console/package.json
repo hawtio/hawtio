@@ -24,7 +24,7 @@
     "react-router-dom": "^6.30.2"
   },
   "devDependencies": {
-    "@hawtio/backend-middleware": "^1.0.7",
+    "@hawtio/backend-middleware": "^1.0.8",
     "@swc/core": "^1.14.0",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
