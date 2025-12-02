@@ -594,14 +594,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/backend-middleware@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "@hawtio/backend-middleware@npm:1.0.7"
+"@hawtio/backend-middleware@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "@hawtio/backend-middleware@npm:1.0.8"
   dependencies:
-    axios: "npm:^1.12.0"
+    axios: "npm:^1.13.2"
     express: "npm:^5.1.0"
     js-logger: "npm:^1.6.1"
-  checksum: 10/c5e2861b9540796e429f7c8f9c0b809e7ad97fd018cb14f397450c9dcb6d1671fa449175788f39db44a3ff4c79bdc8cde9709119c55594f3bca1a1abb00e620f
+  checksum: 10/fec6a6ea86947317b87a6286521bd541ab92524aafaa8e2a9c54c2f1291fdea6ba988da09902c8742af876452189dcd59938119f135b3a72d9441e35ba1c52a2
   languageName: node
   linkType: hard
 
@@ -623,7 +623,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
-    "@hawtio/backend-middleware": "npm:^1.0.7"
+    "@hawtio/backend-middleware": "npm:^1.0.8"
     "@hawtio/react": "npm:^1.11.4"
     "@patternfly/react-charts": "npm:^7.4.9"
     "@patternfly/react-code-editor": "npm:^5.4.18"
@@ -2882,14 +2882,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.0":
-  version: 1.12.2
-  resolution: "axios@npm:1.12.2"
+"axios@npm:^1.13.2":
+  version: 1.13.2
+  resolution: "axios@npm:1.13.2"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10/886a79770594eaad76493fecf90344b567bd956240609b5dcd09bd0afe8d3e6f1ad6d3257a93a483b6192b409d4b673d9515a34619e3e3ed1b2c0ec2a83b20ba
+  checksum: 10/ae4e06dcd18289f2fd18179256d550d27f9a53ecb2f9c59f2ccc4efd1d7151839ba8c3e0fb533dac793e4a59a576ca8689a19244dce5c396680837674a47a867
   languageName: node
   linkType: hard
 
