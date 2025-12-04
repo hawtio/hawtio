@@ -650,7 +650,7 @@ __metadata:
     source-map-loader: "npm:^5.0.0"
     style-loader: "npm:^4.0.0"
     swc-loader: "npm:^0.2.6"
-    webpack: "npm:^5.102.1"
+    webpack: "npm:^5.103.0"
     webpack-cli: "npm:^6.0.1"
     webpack-dev-server: "npm:^5.2.2"
   languageName: unknown
@@ -6125,10 +6125,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-runner@npm:^4.2.0":
-  version: 4.3.0
-  resolution: "loader-runner@npm:4.3.0"
-  checksum: 10/555ae002869c1e8942a0efd29a99b50a0ce6c3296efea95caf48f00d7f6f7f659203ed6613688b6181aa81dc76de3e65ece43094c6dffef3127fe1a84d973cd3
+"loader-runner@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "loader-runner@npm:4.3.1"
+  checksum: 10/d77127497c3f91fdba351e3e91156034e6e590e9f050b40df6c38ac16c54b5c903f7e2e141e09fefd046ee96b26fb50773c695ebc0aa205a4918683b124b04ba
   languageName: node
   linkType: hard
 
@@ -9496,9 +9496,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.102.1":
-  version: 5.102.1
-  resolution: "webpack@npm:5.102.1"
+"webpack@npm:^5.103.0":
+  version: 5.103.0
+  resolution: "webpack@npm:5.103.0"
   dependencies:
     "@types/eslint-scope": "npm:^3.7.7"
     "@types/estree": "npm:^1.0.8"
@@ -9517,7 +9517,7 @@ __metadata:
     glob-to-regexp: "npm:^0.4.1"
     graceful-fs: "npm:^4.2.11"
     json-parse-even-better-errors: "npm:^2.3.1"
-    loader-runner: "npm:^4.2.0"
+    loader-runner: "npm:^4.3.1"
     mime-types: "npm:^2.1.27"
     neo-async: "npm:^2.6.2"
     schema-utils: "npm:^4.3.3"
@@ -9530,7 +9530,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10/4ba737916c4b72812cdd1961ea82d0a6de8ac814134584b54d523a2c4b9e1d377490d63b2c74856e2b9146dbe6d09b05c8878439b0783c3e5195ca3e248b2131
+  checksum: 10/0018e77d159da412aa8cc1c3ac1d7c0b44228d0f5ce3939b4f424c04feba69747d8490541bcf8143b358a64afbbd69daad95e573ec9c4a90a99bef55d51dd43e
   languageName: node
   linkType: hard
 
