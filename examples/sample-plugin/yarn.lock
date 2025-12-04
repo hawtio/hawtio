@@ -608,24 +608,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^1.11.4":
-  version: 1.11.4
-  resolution: "@hawtio/react@npm:1.11.4"
+"@hawtio/react@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "@hawtio/react@npm:1.12.0"
   dependencies:
     "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.7"
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.1"
-    "@jolokia.js/simple": "npm:^2.4.0"
-    "@module-federation/utilities": "npm:^3.1.74"
+    "@jolokia.js/simple": "npm:^2.4.2"
+    "@module-federation/utilities": "npm:^3.1.77"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.3.3"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.5.1"
     dagre: "npm:^0.8.5"
     dompurify: "npm:^3.3.0"
     eventemitter3: "npm:^5.0.1"
-    jolokia.js: "npm:^2.4.0"
+    jolokia.js: "npm:^2.4.2"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
     keycloak-js: "npm:^26.2.1"
-    oauth4webapi: "npm:^3.8.2"
+    oauth4webapi: "npm:^3.8.3"
     react-markdown: "npm:^10.1.0"
     react-split: "npm:^2.0.14"
     reactflow: "npm:^11.11.4"
@@ -643,7 +643,7 @@ __metadata:
     react: ^17 || ^18
     react-dom: ^17 || ^18
     react-router-dom: ^6.30
-  checksum: 10/ac602ec36179677c526de592de7ad745407c4b2599f4fccef71694ea8905dce0d7d188d7e2c361f2d5b282d6237f4203cc97415ec32283f92bb0c2a1f6841306
+  checksum: 10/a13d08d2f8b499fd2d448eeec6b4d0cb81f6fbd699e26e4e2ea0133e598b8d47ebd749d1ee41670305490df83f32b9d1b25f0b41bd71d4977ca5f8bd85c56be0
   languageName: node
   linkType: hard
 
@@ -956,12 +956,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jolokia.js/simple@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@jolokia.js/simple@npm:2.4.0"
+"@jolokia.js/simple@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "@jolokia.js/simple@npm:2.4.2"
   dependencies:
-    jolokia.js: "npm:2.4.0"
-  checksum: 10/976a5448700b81ff86b18c9c2707bb9fd694a07e12011993282f9379219f06e8d226c945862a5669e7af17f94b389976e88b52093a7c2007fd04ff77725c2b07
+    jolokia.js: "npm:2.4.2"
+  checksum: 10/ed20a02f96935b171e0d6bcd8dcc171b829bb8245e18a9ff64c60a419f3e1bd85abfdbe060319b428806306b8b82eeab06872fcf6667428350277d2cb5df5df9
   languageName: node
   linkType: hard
 
@@ -1066,18 +1066,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/sdk@npm:0.21.4":
-  version: 0.21.4
-  resolution: "@module-federation/sdk@npm:0.21.4"
-  checksum: 10/74c9ee2a057babf4f2638f8644a6eee6bd2c76441440dcc3855fb01a0e527e88518b8cc9c2d6d8f6b28858e34e40a3a966c03bb5d42897b9ea9163985edfa159
+"@module-federation/sdk@npm:0.21.6":
+  version: 0.21.6
+  resolution: "@module-federation/sdk@npm:0.21.6"
+  checksum: 10/effc4aa932e2f06742bda8f02aaec84e138f5512b50f18c38b051490020b20d3d8edf7ece853fccffc1f78a0b43dec78e69bf02150e7e2801d5ce03c3ee367b9
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.1.74":
-  version: 3.1.75
-  resolution: "@module-federation/utilities@npm:3.1.75"
+"@module-federation/utilities@npm:^3.1.77":
+  version: 3.1.77
+  resolution: "@module-federation/utilities@npm:3.1.77"
   dependencies:
-    "@module-federation/sdk": "npm:0.21.4"
+    "@module-federation/sdk": "npm:0.21.6"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -1089,7 +1089,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/8b8d0ad84ebae319434ab4d9d20284a2491c6b1d5ec45fa62783330ce23b8f73a89abf3a7ccc1a45338394de90a05741de089a9c2727a1ca3c47b0fad80523f6
+  checksum: 10/a5440155d4588c4c0c7bde84299b740926c4648e0a6729778b4ceaf4bca7d0a17a35cae56e670da02bd54dbbf6a9a3d7e11eae54c05d3d9e06255e571f7227f4
   languageName: node
   linkType: hard
 
@@ -1530,10 +1530,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.3.3"
-  checksum: 10/195f4cd9858eee30f21c68607cc554866540179a912057cf2ef619ef7fb87b1e41317ddab4a8e95d0b3aec455da649d9ab092e432060c1462daeec1c95095ecd
+"@thumbmarkjs/thumbmarkjs@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.5.1"
+  checksum: 10/ef165659485a21806ba67bd54f870b9798a1c50a4f1728441651e0802bf5f8c6d416e3526a5e141f47a50a94c66beafd39acfead96938754fba467ade84d2c42
   languageName: node
   linkType: hard
 
@@ -4631,7 +4631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^1.11.4"
+    "@hawtio/react": "npm:^1.12.0"
     "@patternfly/react-charts": "npm:^7.4.9"
     "@patternfly/react-code-editor": "npm:^5.4.18"
     "@patternfly/react-core": "npm:^5.4.14"
@@ -5691,10 +5691,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:2.4.0, jolokia.js@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "jolokia.js@npm:2.4.0"
-  checksum: 10/970d89d194304d194f3c68e89f260542719f12dd5b289d86784b4fe98f16f7a3fe16f81ca16eb3e8f13a8321f2ea107518f2186fd577256e905c15b412beb1f5
+"jolokia.js@npm:2.4.2, jolokia.js@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "jolokia.js@npm:2.4.2"
+  checksum: 10/7a266d855bf9e1c8e5da34aee5a9fc9c1398832e23bbf90f7334f30d1f917a02d5f94cf72a706f8e59bea3e0818b9b16bf5f002022fb2014f9176bc13b31942d
   languageName: node
   linkType: hard
 
@@ -6662,10 +6662,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^3.8.2":
-  version: 3.8.2
-  resolution: "oauth4webapi@npm:3.8.2"
-  checksum: 10/5f96b50dd50298402a15d5d545decab0ef20aa14fdd0fe6d6ccc9e47d645d795f0aebb0c1fd452e2504170d8880b89021a87a168aed4df64bf39a1ba7e85f245
+"oauth4webapi@npm:^3.8.3":
+  version: 3.8.3
+  resolution: "oauth4webapi@npm:3.8.3"
+  checksum: 10/8cd3209bef3f556d083da509c79a53880fd401be36c4bba18fecb3bc89f588baee4310eeb489a34e349d4a420cea52a934e61d483b828020eeefa28a109a7cf0
   languageName: node
   linkType: hard
 
