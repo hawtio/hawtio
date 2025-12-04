@@ -84,7 +84,7 @@
     <maven-dependency-plugin-version>3.9.0</maven-dependency-plugin-version>
     <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
     <maven-failsafe-plugin-version>3.5.4</maven-failsafe-plugin-version>
-    <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
+    <maven-release-plugin-version>3.3.0</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
     <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
