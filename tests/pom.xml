@@ -19,7 +19,7 @@
     <slf4j-version>2.0.9</slf4j-version>
     <selenium-version>4.31.0</selenium-version>
     <selenide-version>7.2.0</selenide-version>
-    <cucumber-version>7.22.1</cucumber-version>
+    <cucumber-version>7.32.0</cucumber-version>
     <testcontainers-version>1.21.3</testcontainers-version>
     <awaitility-version>4.3.0</awaitility-version>
     <!-- Used for testing different versions of the Hawtio project then the current one - i.e. testing 4.0.0 with a SNAPSHOT version -->
