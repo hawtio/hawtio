@@ -19,7 +19,7 @@ mvn package && java -jar target/quarkus-app/quarkus-run.jar
 Or build the container image and run it (see <https://quarkus.io/guides/container-image>):
 ```console
 mvn clean install -DskipTests -Dquarkus.container-image.build=true
-podman run -p 8080:8080 quay.io/hawtio/hawtio-example-quarkus:4.7-SNAPSHOT
+podman run -p 8080:8080 quay.io/hawtio/hawtio-example-quarkus:5.0-SNAPSHOT
 ```
 
 Hawtio is available at <http://localhost:8080/hawtio>.
