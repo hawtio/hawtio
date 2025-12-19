@@ -3,12 +3,12 @@ name: E2E Test
 on:
   pull_request_target:
     branches:
-      - 4.x
+      - 5.x
     paths-ignore:
       - "**.md"
   push:
     branches:
-      - 4.x
+      - 5.x
     paths-ignore:
       - "**.md"
 
