@@ -101,21 +101,21 @@ public class CamelRoutesStepDefs {
 
     @Then("^Tracing shows trace$")
     public void traceTableIsShown() {
-        camelTrace.traceTableIsShown();
+        camelTrace.traceTableHasData();
     }
 
     @Then("^Tracing shows diagram$")
     public void traceDiagramIsShown() {
-        camelTrace.traceDiagramIsShown();
+        camelTrace.traceDiagramHasData();
     }
 
     @Then("^Tracing not shows trace$")
-    public void traceTableIsntShown() {
-        camelTrace.traceTableIsntShown();
+    public void traceTableIsNotShown() {
+        camelTrace.traceTableIsNotShown();
     }
 
     @Then("^Tracing not shows diagram$")
-    public void traceDiagramIsntShown() {
-        camelTrace.traceDiagramIsntShown();
+    public void traceDiagramIsNotShown() {
+        camelTrace.traceDiagramIsNotShown();
     }
 }

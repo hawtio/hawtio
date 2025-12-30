@@ -19,12 +19,12 @@ import static com.codeborne.selenide.Selenide.$;
 public class ConnectPage extends HawtioPage {
 
     private static final By CONNECT_BUTTON = By.cssSelector("#connect-toolbar button");
-    private static final By MODAL = By.cssSelector(".pf-v5-c-modal-box");
+    private static final By MODAL = By.cssSelector(".pf-v6-c-modal-box");
     private static final By CONNECTION_FORM = By.id("connection-form");
 
     private static final By CONNECTION_SCHEME = By.id("connection-form-scheme");
 
-    private static final By CONNECTION_SCHEME_TOGGLE = By.cssSelector("span.pf-v5-c-switch__toggle");
+    private static final By CONNECTION_SCHEME_TOGGLE = By.cssSelector("span.pf-v6-c-switch__toggle");
 
     private static final By CONNECTION_LIST = By.id("connection-list");
 

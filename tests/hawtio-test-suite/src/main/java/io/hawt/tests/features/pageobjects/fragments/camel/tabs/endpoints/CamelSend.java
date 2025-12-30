@@ -21,7 +21,7 @@ public class CamelSend extends CamelPage {
      * @param headerValue to be added
      */
     public void addOneHeader(String header, String headerValue) {
-        $(byTagAndText("button", "Add Headers")).shouldBe(enabled).click();
+        clickButton("Add Headers");
         $(byAttribute("aria-label", "Search input")).shouldBe(enabled).click();
         $(byTagAndText("p", header)).shouldBe(visible).click();
         $(byAttribute("name", "value")).shouldBe(enabled).setValue(headerValue);

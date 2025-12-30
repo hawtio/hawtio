@@ -13,12 +13,12 @@ import io.hawt.tests.features.utils.ByUtils;
 
 public class HelpPage extends HawtioPage {
     public void switchTab(String tab) {
-        $(By.cssSelector("main nav.pf-v5-c-nav")).$(ByUtils.byExactText(tab)).shouldBe(interactable).click();
-        $("div .pf-v5-c-content h2").shouldNotBe(empty);
+        $(By.cssSelector("main nav.pf-v6-c-nav")).$(ByUtils.byExactText(tab)).shouldBe(interactable).click();
+        $("div .pf-v6-c-content h2").shouldNotBe(empty);
     }
 
     public void checkContent() {
-        $("div .pf-v5-c-content h2").shouldNotBe(empty);
-        $$("div .pf-v5-c-content p").shouldHave(sizeGreaterThanOrEqual(1));
+        $("div .pf-v6-c-content h2").shouldNotBe(empty);
+        $$("div .pf-v6-c-content p").shouldHave(sizeGreaterThanOrEqual(1));
     }
 }

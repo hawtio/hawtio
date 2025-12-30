@@ -17,7 +17,7 @@ import java.util.Map;
 public class AboutModalWindow {
 
 
-    public static final By MODAL_DIALOG = By.className("pf-v5-c-about-modal-box");
+    public static final By MODAL_DIALOG = By.className("pf-v6-c-about-modal-box");
 
     /**
      * Click on Close button.
@@ -27,7 +27,7 @@ public class AboutModalWindow {
     }
 
     public String getHeaderText() {
-        return $(MODAL_DIALOG).$(By.className("pf-v5-c-title")).text();
+        return $(MODAL_DIALOG).$(By.className("pf-v6-c-title")).text();
     }
 
     public Map<String, String> getAppComponents() {
@@ -39,11 +39,11 @@ public class AboutModalWindow {
     }
 
     public String getCopyright() {
-        return $(MODAL_DIALOG).$(By.className("pf-v5-c-about-modal-box__strapline")).getText();
+        return $(MODAL_DIALOG).$(By.className("pf-v6-c-about-modal-box__strapline")).getText();
     }
 
     public SelenideElement getBrandImage() {
-        return $(MODAL_DIALOG).$(By.className("pf-v5-c-about-modal-box__brand-image"));
+        return $(MODAL_DIALOG).$(By.className("pf-v6-c-about-modal-box__brand-image"));
     }
 
 }
