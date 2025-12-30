@@ -138,6 +138,6 @@ public class Tree {
     }
 
     private void assureLoaded() {
-        $(By.className("pf-v5-c-tree-view__list")).should(exist, Duration.ofSeconds(10));
+        $(By.className("pf-v6-c-tree-view__list")).should(exist, Duration.ofSeconds(10));
     }
 }
