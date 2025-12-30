@@ -96,7 +96,7 @@ public class LoginLogout {
      * Check that Hawtio page is properly and fully loaded.
      */
     public static void hawtioIsLoaded() {
-        $("img.pf-v5-c-brand").should(exist, Duration.ofSeconds(30)).shouldBe(interactable);
+        $("img.pf-v6-c-brand").should(exist, Duration.ofSeconds(30)).shouldBe(interactable);
         $("#vertical-nav-toggle").should(exist).shouldBe(interactable);
     }
 }
