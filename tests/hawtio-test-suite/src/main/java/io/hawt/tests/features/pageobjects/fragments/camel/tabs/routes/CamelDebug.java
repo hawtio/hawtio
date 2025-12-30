@@ -1,21 +1,28 @@
 package io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes;
 
-import static com.codeborne.selenide.Condition.enabled;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byClassName;
-import static com.codeborne.selenide.Selectors.byTagAndText;
-import static com.codeborne.selenide.Selectors.withTagAndText;
-import static com.codeborne.selenide.Selenide.$;
-
-import com.codeborne.selenide.SelenideElement;
-
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
 import io.hawt.tests.features.utils.ByUtils;
+import static com.codeborne.selenide.Condition.clickable;
+import static com.codeborne.selenide.Condition.enabled;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byAttribute;
+import static com.codeborne.selenide.Selectors.byClassName;
+import static com.codeborne.selenide.Selectors.byTagAndText;
+import static com.codeborne.selenide.Selectors.byTagName;
+import static com.codeborne.selenide.Selectors.withTagAndText;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
+
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelenideElement;
 
 /**
  * Represents Debug Tab page in Camel.
  */
 public class CamelDebug extends CamelPage {
+    private static final ElementsCollection BUTTONS = $$(".pf-v6-c-button__text");
+
     /**
      * Add a breakpoint on a specific node.
      *
@@ -32,11 +39,11 @@ public class CamelDebug extends CamelPage {
      * @param node from what the breakpoint is removed
      */
     public void removeBreakpoint(String node) {
-        final SelenideElement resumeBtn = $(byTagAndText("button", "Resume"));
+        final SelenideElement resumeButton = $(byAttribute("title", "Resume running")).$(byTagName("button"));
         $(withTagAndText("div", node)).shouldBe(visible).click();
         clickButton("Remove breakpoint");
-        if (resumeBtn.is(enabled)) {
-            resumeBtn.click();
+        if (resumeButton.is(enabled)) {
+            resumeButton.click();
         }
     }
 
@@ -66,7 +73,7 @@ public class CamelDebug extends CamelPage {
      * Check that the debugging is started.
      */
     public void debuggingIsStarted() {
-        $(byTagAndText("button", "Stop Debugging")).shouldBe(visible).shouldBe(enabled);
+        BUTTONS.findBy(exactText("Stop Debugging")).closest("button").shouldBe(clickable);
         $(byTagAndText("p", "Debugging allows you to step through camel routes to diagnose issues.")).shouldNotBe(visible);
     }
 
@@ -85,7 +92,7 @@ public class CamelDebug extends CamelPage {
      * Check whether the start debugging option is present.
      */
     public void startDebuggingOptionIsPresented() {
-        $(byTagAndText("button", "Start Debugging")).shouldBe(visible).shouldBe(enabled);
+        BUTTONS.findBy(exactText("Start Debugging")).closest("button").shouldBe(clickable);
         $(byTagAndText("p", "Debugging allows you to step through camel routes to diagnose issues.")).shouldBe(visible);
     }
 }

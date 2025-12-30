@@ -6,10 +6,10 @@ import io.hawt.tests.features.pageobjects.pages.HawtioPage;
 
 public class PluginPage extends HawtioPage {
     public void checkTitle(String title) {
-        $("div .pf-v5-c-content h1").shouldHave(exactText(title));
+        $("div .pf-v6-c-content h1").shouldHave(exactText(title));
     }
 
     public void checkContentParagraph(String content) {
-        $("div .pf-v5-c-content p").shouldHave(exactText(content));
+        $("div .pf-v6-c-content p").shouldHave(exactText(content));
     }
 }
