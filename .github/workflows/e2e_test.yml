@@ -32,7 +32,7 @@ jobs:
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.6.0
       - name: Download images
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: /tmp/images
           key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
@@ -100,7 +100,7 @@ jobs:
           docker save hawtio-quarkus-app:${{ matrix.java }} > /tmp/images/hawtio-quarkus-app-${{ matrix.java }}.tar
           docker save hawtio-springboot-app:${{ matrix.java }} > /tmp/images/hawtio-springboot-app-${{ matrix.java }}.tar
       - name: Cache images
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: /tmp/images
           key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
