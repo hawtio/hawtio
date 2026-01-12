@@ -1,20 +1,19 @@
 package io.hawt.tests.features.pageobjects.pages;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.ex.ConditionNotMetError;
-import com.codeborne.selenide.ex.UIAssertionError;
-
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.features.utils.ByUtils;
+import static com.codeborne.selenide.Selenide.$;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.ex.UIAssertionError;
+
 import java.net.URL;
 import java.time.Duration;
-
-import static com.codeborne.selenide.Selenide.$;
 
 public class ConnectPage extends HawtioPage {
 
@@ -26,15 +25,13 @@ public class ConnectPage extends HawtioPage {
 
     private static final By CONNECTION_SCHEME_TOGGLE = By.cssSelector("span.pf-v6-c-switch__toggle");
 
-    private static final By CONNECTION_LIST = By.id("connection-list");
+    private static final By CONNECTION_LIST = By.id("connect-connection-list");
 
     private static final By CONNECTION_LOGIN_FORM = By.id("connect-login-form");
 
     private static final By FOOTER_BUTTON = By.cssSelector("footer button.pf-m-primary");
 
     public void addConnection(String name, URL connection) {
-        final String connectionSchemeHttps = "connection-form-scheme-on";
-
         //Don't try to create the same connection twice
         try {
             $(ByUtils.byAttribute("rowid", "connection " + name)).shouldNot(Condition.exist, Duration.ofSeconds(10));
@@ -47,7 +44,7 @@ public class ConnectPage extends HawtioPage {
         $(CONNECTION_FORM).$(By.id("connection-form-name")).setValue(name);
 
         // If Scheme is HTTPS, switch to HTTP
-        if (connectionSchemeHttps.equals($(CONNECTION_SCHEME).getAttribute("aria-labelledby"))) {
+        if ($(CONNECTION_SCHEME).isSelected()) {
             $(CONNECTION_SCHEME_TOGGLE).click();
         }
 
