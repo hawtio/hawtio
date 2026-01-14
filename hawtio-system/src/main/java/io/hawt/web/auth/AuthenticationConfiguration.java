@@ -580,7 +580,7 @@ public class AuthenticationConfiguration {
 
     public Optional<AuthenticationThrottler> getThrottler() {
         // Throttling should be disabled when OIDC or Keycloak or Spring Security is used
-        if (isExternalAuthenticationEnabled()) {
+        if (isExternalAuthenticationEnabled() || throttler == null) {
             return Optional.empty();
         }
         return Optional.of(throttler);
