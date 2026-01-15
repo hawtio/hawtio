@@ -39,13 +39,13 @@
     <!-- Jolokia -->
     <jolokia-version>2.4.2</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.27.0</quarkus-version>
+    <quarkus-version>3.30.1</quarkus-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring-version>6.2.12</spring-version>
-    <spring-boot-version>3.5.7</spring-boot-version>
+    <spring-version>6.2.15</spring-version>
+    <spring-boot-version>3.5.9</spring-boot-version>
     <!-- Camel -->
-    <camel-spring-boot-version>4.14.1</camel-spring-boot-version>
+    <camel-spring-boot-version>4.17.0</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.4</jetty12-version>
 
