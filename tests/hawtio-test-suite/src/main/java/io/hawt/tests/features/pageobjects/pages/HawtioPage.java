@@ -3,6 +3,7 @@ package io.hawt.tests.features.pageobjects.pages;
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 
@@ -42,7 +43,7 @@ public class HawtioPage {
      * @param text on the given button
      */
     public HawtioPage clickButton(String text) {
-        $(byXpath("//button[text()[normalize-space() = '" + text + "']]")).shouldBe(enabled).click();
+        $(byXpath("//button[text()[normalize-space() = '" + text + "']]")).shouldBe(visible).shouldBe(enabled).click();
         return this;
     }
 
@@ -52,7 +53,7 @@ public class HawtioPage {
      * @param ariaLabel on the given button
      */
     public HawtioPage clickButtonByAriaLabel(String ariaLabel) {
-        $(byXpath("//button[@aria-label='" + ariaLabel + "']")).shouldBe(enabled).click();
+        $(byXpath("//button[@aria-label='" + ariaLabel + "']")).shouldBe(visible).shouldBe(enabled).click();
         return this;
     }
 
