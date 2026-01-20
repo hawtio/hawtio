@@ -22,15 +22,6 @@ Feature: Checking the functionality of a Preferences tab
     Examples:
       |Connect      |
 
-  Scenario: Check that Home tab works
-    Given User clicks on "Preferences" option in hawtio drop-down menu
-    And User is on "Home" tab of Preferences page
-    When User toggles the show vertical navigation field
-    When User clicks on Reset button
-    And User confirms modal "reset-settings-modal" resetting with confirmation "You are about to reset all the Hawtio settings." and clicks reset button "[data-testid='reset-btn']"
-
-    Then User is presented with a successful alert message
-
   Scenario: Check that Console Logs tab works
     Given User clicks on "Preferences" option in hawtio drop-down menu
     And User is on "Console Logs" tab of Preferences page
@@ -38,6 +29,15 @@ Feature: Checking the functionality of a Preferences tab
     Then User adds child logger
     And User sees added child logger
     And User is able to delete child logger
+
+  @notOnline
+  Scenario: Check that Home tab works
+    Given User clicks on "Preferences" option in hawtio drop-down menu
+    And User is on "Home" tab of Preferences page
+    When User toggles the show vertical navigation field
+    When User clicks on Reset button
+    And User confirms modal "reset-settings-modal" resetting with confirmation "You are about to reset all the Hawtio settings." and clicks reset button "[data-testid='reset-btn']"
+    Then User is presented with a successful alert message
 
   @notOnline
   Scenario: Check that Connect tab works
@@ -50,15 +50,9 @@ Feature: Checking the functionality of a Preferences tab
     Then User confirms modal "clear-connections-modal" resetting with confirmation "You are about to clear all saved connection settings." and clicks reset button "[data-testid='clear-btn']"
     And User is presented with a successful alert message
 
-  @notHawtioNext @notJBang
+  @notOnline @notHawtioNext @notJBang
   Scenario: Check that Sample Plugin tab works 
     Given User clicks on "Preferences" option in hawtio drop-down menu
     And User is on "Sample Plugin" tab of Preferences page
     Then Content section has h2 title "Sample Plugin"
     And Content section has paragraph "Preferences view for the custom plugin."
-    
-
-
-
-
-

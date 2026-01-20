@@ -66,3 +66,4 @@ Feature: Checking the functionality of a Camel Specific Endpoint page.
     And User clicks on Camel "Browse" tab
     When User clicks on the message with "Hello Test" body
     Then Details of the message with "Hello Test" body are displayed
+    And User closes a Message details window
