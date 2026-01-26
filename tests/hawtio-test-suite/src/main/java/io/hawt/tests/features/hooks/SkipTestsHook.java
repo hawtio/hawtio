@@ -6,11 +6,15 @@ import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.setup.LoginLogout;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 import org.junit.jupiter.api.Assumptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 
 public class SkipTestsHook {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SkipTestsHook.class);
 
     @Before("@notHawtioNext")
     public void skipHawtioNextTests() {
@@ -48,16 +52,24 @@ public class SkipTestsHook {
     }
 
     @After("@throttling")
-    public void afterThrottling() {
-        if (TestConfiguration.useKeycloak()) {
+    public void afterThrottling(io.cucumber.java.Scenario scenario) {
+        // Only re-login if the test actually ran (not skipped, not using Keycloak)
+        boolean shouldReLogin = scenario.getStatus() != io.cucumber.java.Status.SKIPPED
+            && !TestConfiguration.useKeycloak()
+            && WebDriverRunner.hasWebDriverStarted();
+
+        if (!shouldReLogin) {
             return;
         }
-        while (WebDriverRunner.getWebDriver().getWindowHandles().size() != 1) {
-            Selenide.closeWindow();
-            Selenide.switchTo().window(0);
+
+        try {
+            while (WebDriverRunner.getWebDriver().getWindowHandles().size() != 1) {
+                Selenide.closeWindow();
+                Selenide.switchTo().window(0);
+            }
+            LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
+        } catch (Exception e) {
+            LOG.warn("Failed to re-login after throttling test", e);
         }
-        LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
     }
-
-
 }

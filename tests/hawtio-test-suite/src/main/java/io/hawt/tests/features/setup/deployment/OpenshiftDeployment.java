@@ -30,7 +30,12 @@ public class OpenshiftDeployment implements AppDeployment {
     public void stop() {
         if (TestConfiguration.openshiftNamespaceDelete()) {
             LOG.info("Undeploying Hawtio project {}", TestConfiguration.getOpenshiftNamespace());
-            OpenshiftClient.get().namespaces().withName(TestConfiguration.getOpenshiftNamespace()).delete();
+            LOG.info("Calling namespace delete...");
+            OpenshiftClient.get().namespaces()
+                .withName(TestConfiguration.getOpenshiftNamespace())
+                .withGracePeriod(0L)
+                .delete();
+            LOG.info("Namespace delete call returned");
         }
     }
 
