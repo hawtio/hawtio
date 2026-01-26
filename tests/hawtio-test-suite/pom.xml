@@ -14,8 +14,6 @@
   <properties>
     <image.name>hawtio-test-suite</image.name>
     <local-app>true</local-app>
-    <logback-classic-version>1.5.21</logback-classic-version>
-    <junit-platform-commons-version>1.13.4</junit-platform-commons-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.13.2</gson-version>
     <xtf.version>0.37</xtf.version>
@@ -55,12 +53,10 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>${logback-classic-version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-commons</artifactId>
-      <version>${junit-platform-commons-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.mylyn.github</groupId>
@@ -215,7 +211,7 @@
     <dependency>
       <groupId>com.github.dasniko</groupId>
       <artifactId>testcontainers-keycloak</artifactId>
-      <version>4.0.1</version>
+      <version>4.1.0</version>
     </dependency>
 
   </dependencies>

@@ -16,12 +16,14 @@
 
   <properties>
     <http5-version>5.3.1</http5-version>
-    <slf4j-version>2.0.9</slf4j-version>
-    <selenium-version>4.31.0</selenium-version>
-    <selenide-version>7.2.0</selenide-version>
-    <cucumber-version>7.22.1</cucumber-version>
-    <testcontainers-version>1.21.3</testcontainers-version>
+    <slf4j-version>2.0.17</slf4j-version>
+    <selenium-version>4.40.0</selenium-version>
+    <selenide-version>7.13.0</selenide-version>
+    <cucumber-version>7.33.0</cucumber-version>
+    <testcontainers-version>2.0.3</testcontainers-version>
     <awaitility-version>4.3.0</awaitility-version>
+    <logback-classic-version>1.5.25</logback-classic-version>
+    <junit-platform-commons-version>1.14.2</junit-platform-commons-version>
     <!-- Used for testing different versions of the Hawtio project then the current one - i.e. testing 4.0.0 with a SNAPSHOT version -->
     <hawtio.bom.version>${project.version}</hawtio.bom.version>
   </properties>
@@ -48,6 +50,67 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <!-- Explicit JUnit Jupiter version management to override Spring Boot BOM in child modules -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit5-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit5-version}</version>
+      </dependency>
+
+      <!-- Explicit Platform version management to override Spring Boot BOM in child modules -->
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-commons</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-engine</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-suite-api</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-suite-engine</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-suite-commons</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-suite</artifactId>
+        <version>${junit-platform-commons-version}</version>
+      </dependency>
+
+      <!-- Explicit logback version management to override Spring Boot BOM in child modules -->
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback-classic-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback-classic-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -59,6 +122,7 @@
         <configuration>
           <redirectTestOutputToFile>false</redirectTestOutputToFile>
           <forkedProcessTimeoutInSeconds>0</forkedProcessTimeoutInSeconds>
+          <forkedProcessExitTimeoutInSeconds>10</forkedProcessExitTimeoutInSeconds>
         </configuration>
       </plugin>
     </plugins>

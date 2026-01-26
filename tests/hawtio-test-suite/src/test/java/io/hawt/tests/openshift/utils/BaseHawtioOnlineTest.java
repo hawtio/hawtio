@@ -14,6 +14,7 @@ import com.codeborne.selenide.WebDriverRunner;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.hooks.DeployAppHook;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
+import io.hawt.tests.features.setup.WebDriver;
 import io.hawt.tests.features.setup.deployment.OpenshiftDeployment;
 
 @OpenshiftTest
@@ -28,6 +29,7 @@ public class BaseHawtioOnlineTest {
         openshiftDeployment = (OpenshiftDeployment) TestConfiguration.getAppDeploymentMethod();
         DeployAppHook.appSetup();
         openshiftDeployment.restartApp();
+        WebDriver.setup();
         Selenide.open(DeployAppHook.getBaseURL(), HawtioOnlineLoginPage.class)
             .login(TestConfiguration.getOpenshiftUsername(), TestConfiguration.getOpenshiftPassword());
     }
