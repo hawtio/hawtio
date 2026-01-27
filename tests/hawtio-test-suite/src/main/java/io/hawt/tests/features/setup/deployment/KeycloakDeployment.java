@@ -7,28 +7,34 @@ import io.hawt.tests.features.config.TestConfiguration;
 
 public class KeycloakDeployment {
 
-    private static KeycloakContainer container = new KeycloakContainer(TestConfiguration.getKeycloakImage())
-        .withRealmImportFile("hawtio-demo-realm.json");
+    private static KeycloakContainer container;
+
+    private static KeycloakContainer getContainer() {
+        if (container == null) {
+            container = new KeycloakContainer(TestConfiguration.getKeycloakImage()).withRealmImportFile("hawtio-demo-realm.json");
+        }
+        return container;
+    }
 
     public static void start() {
-        container.start();
+        getContainer().start();
     }
 
     public static void stop() {
-        if (container.isRunning()) {
+        if (container != null && container.isRunning()) {
             container.stop();
         }
     }
 
     public static String getIssuerURL() {
-        return container.getAuthServerUrl() + "/realms/hawtio-demo";
+        return getContainer().getAuthServerUrl() + "/realms/hawtio-demo";
     }
 
     public static Keycloak adminClient() {
-        return container.getKeycloakAdminClient();
+        return getContainer().getKeycloakAdminClient();
     }
 
     public static String getURL() {
-        return container.getAuthServerUrl();
+        return getContainer().getAuthServerUrl();
     }
 }

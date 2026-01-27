@@ -71,10 +71,10 @@ The deployment method is selected in this order, depending on available system p
 - when `-Dio.hawt.test.docker.image` is specified, [Testcontainers](https://testcontainers.com/) framework is used
   - ports 8080 (Quarkus) and 10000-10001 (Spring Boot) are exposed
   - it may be one of:
-    - `quay.io/hawtio/hawtio-quarkus-test-app:4.x-17`
-    - `quay.io/hawtio/hawtio-quarkus-test-app:4.x-21`
-    - `quay.io/hawtio/hawtio-springboot-test-app:4.x-17`
-    - `quay.io/hawtio/hawtio-springboot-test-app:4.x-21`
+    - `quay.io/hawtio/hawtio-quarkus-test-app:5.x-17`
+    - `quay.io/hawtio/hawtio-quarkus-test-app:5.x-21`
+    - `quay.io/hawtio/hawtio-springboot-test-app:5.x-17`
+    - `quay.io/hawtio/hawtio-springboot-test-app:5.x-21`
 - when tests also run in container (`-Dhawtio-container` is specified) the two above options are all we can use
 - when `-Dio.hawt.test.use.openshift=true` is specified, Hawtio Operator is used to deploy Hawtio application in available cluster
 - when `-Dio.hawt.test.app.path` is specified, we can point to Maven module (its `target/` directory after the application is built),
@@ -105,7 +105,7 @@ We may let the test start Hawtio application or point the test to an existing (a
     be detected automatically
 
 We can run the application being tested using containers (with `docker` or preferably `podman`):
-- `-Dio.hawt.test.docker.image` property should point to one of available quay.io images, for example `quay.io/hawtio/hawtio-springboot-test-app:4.x-17`
+- `-Dio.hawt.test.docker.image` property should point to one of available quay.io images, for example `quay.io/hawtio/hawtio-springboot-test-app:5.x-17`
 - `-Dio.hawt.test.runtime` and `-Dhawtio.url.suffix` properties should be detected based on the image name
 
 When using `podman` and do not have `docker` command available, we have to tell Testcontainers how to use it (because `docker` is expected):
@@ -177,7 +177,7 @@ mvn spring-boot:run -f tests/springboot
 mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:10001/actuator/jolokia -Dhawtio-next-ci=true
 ```
 
-In this setup, we first start a `webpack server` in a JS project - this may be both https://github.com/hawtio/hawtio/tree/4.x/console and
+In this setup, we first start a `webpack server` in a JS project - this may be both https://github.com/hawtio/hawtio/tree/5.x/console and
 https://github.com/hawtio/hawtio-next/tree/main/app!
 We also manually (could be in IDE) start a Spring Boot application.
 Finally we have to point Cucumber/Selenium tests to a running application (which has only the "Connect" tab available) and to pass
@@ -190,7 +190,7 @@ Even if the Spring Boot application itself runs Hawtio, we use Hawtio as served 
 ```console
 export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
 systemctl --user enable --now podman.socket
-podman run -ti --rm -p 10001:10001 quay.io/hawtio/hawtio-springboot-test-app:4.x-17
+podman run -ti --rm -p 10001:10001 quay.io/hawtio/hawtio-springboot-test-app:5.x-17
 mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio
 ```
 
@@ -202,7 +202,7 @@ remote Jolokia connection using "Connect" tab in Hawtio.
 DISABLE_WS=true yarn webpack server
 export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
 systemctl --user enable --now podman.socket
-podman run -ti --rm -p 10001:10001 quay.io/hawtio/hawtio-springboot-test-app:4.x-17
+podman run -ti --rm -p 10001:10001 quay.io/hawtio/hawtio-springboot-test-app:5.x-17
 mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:10001/actuator/jolokia -Dhawtio-next-ci=true
 ```
 
@@ -215,7 +215,7 @@ Finally, for completeness, here:
 ```console
 mvn spring-boot:run -f tests/springboot
 cd /tmp
-podman run --rm -ti --network host --shm-size="2g" quay.io/hawtio/hawtio-test-suite:4.x-17 -Dselenide.browser=firefox -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio
+podman run --rm -ti --network host --shm-size="2g" quay.io/hawtio/hawtio-test-suite:5.x-17 -Dselenide.browser=firefox -Dio.hawt.test.url=http://localhost:10001/actuator/hawtio
 ```
 
 Here we used simplest method to run Spring Boot Hawtio application without remote Jolokia Agent to be connected to. Any previously mentioned
@@ -260,7 +260,7 @@ java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar
 mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:8080/hawtio/jolokia -Dio.hawt.test.runtime=quarkus -Dhawtio-next-ci=true
 ```
 
-In this setup, we first start a `webpack server` in a JS project - this may be both https://github.com/hawtio/hawtio/tree/4.x/console and
+In this setup, we first start a `webpack server` in a JS project - this may be both https://github.com/hawtio/hawtio/tree/5.x/console and
 https://github.com/hawtio/hawtio-next/tree/main/app!
 We also manually (could be in IDE) start a Quarkus application.
 Finally we have to point Cucumber/Selenium tests to a running application (which has only the "Connect" tab available) and to pass
@@ -274,7 +274,7 @@ We don't need `-Pe2e-quarkus` profile, but we need `-Dio.hawt.test.runtime=quark
 ```console
 export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
 systemctl --user enable --now podman.socket
-podman run -ti --rm -p 8080:8080 quay.io/hawtio/hawtio-quarkus-test-app:4.x-17
+podman run -ti --rm -p 8080:8080 quay.io/hawtio/hawtio-quarkus-test-app:5.x-17
 mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:8080/hawtio -Dio.hawt.test.runtime=quarkus
 ```
 
@@ -286,7 +286,7 @@ remote Jolokia connection using "Connect" tab in Hawtio.
 DISABLE_WS=true yarn webpack server
 export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock
 systemctl --user enable --now podman.socket
-podman run -ti --rm -p 8080:8080 quay.io/hawtio/hawtio-quarkus-test-app:4.x-17
+podman run -ti --rm -p 8080:8080 quay.io/hawtio/hawtio-quarkus-test-app:5.x-17
 mvn verify -f tests/hawtio-test-suite -Dio.hawt.test.url=http://localhost:3000/hawtio -Dio.hawt.test.app.connect.url=http://localhost:8080/hawtio/jolokia -Dio.hawt.test.runtime=quarkus -Dhawtio-next-ci=true
 ```
 
@@ -299,7 +299,7 @@ Finally, for completeness, here:
 ```console
 java -jar tests/quarkus/target/quarkus-app/quarkus-run.jar
 cd /tmp
-podman run --rm -ti --network host --shm-size="2g" quay.io/hawtio/hawtio-test-suite:4.x-17 -Dselenide.browser=firefox -Dio.hawt.test.url=http://localhost:8080/hawtio -Dio.hawt.test.runtime=quarkus
+podman run --rm -ti --network host --shm-size="2g" quay.io/hawtio/hawtio-test-suite:5.x-17 -Dselenide.browser=firefox -Dio.hawt.test.url=http://localhost:8080/hawtio -Dio.hawt.test.runtime=quarkus
 ```
 
 Here we used simplest method to run Quarkus Hawtio application without remote Jolokia Agent to be connected to. Any previously mentioned

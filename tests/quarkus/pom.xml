@@ -30,13 +30,6 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>${junit5-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>com.redhat.quarkus.platform</groupId>
         <artifactId>quarkus-bom</artifactId>
         <version>${quarkus-version}</version>
