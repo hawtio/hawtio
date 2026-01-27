@@ -11,6 +11,7 @@ import com.codeborne.selenide.Selenide;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.features.pageobjects.pages.panel.help.HelpPage;
 
 public class HelpStepDefs {
@@ -28,6 +29,7 @@ public class HelpStepDefs {
 
     @Then("^User is redirected to the \"([^\"]*)\"$")
     public void userIsRedirectedToTheUrl(String testedUrl) {
+        WaitUtils.waitForPageLoad();
         assertTrue(url().contains(testedUrl));
     }
 
