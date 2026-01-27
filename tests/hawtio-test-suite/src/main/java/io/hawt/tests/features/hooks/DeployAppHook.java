@@ -1,14 +1,13 @@
 package io.hawt.tests.features.hooks;
 
 import org.junit.Assert;
-import org.junit.Assume;
 
-import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.cucumber.java.Before;
 import io.hawt.tests.features.config.TestConfiguration;
+import io.hawt.tests.features.openshift.OpenshiftClient;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.KeycloakDeployment;
 
@@ -34,12 +33,26 @@ public class DeployAppHook {
             app.start();
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                LOG.info("Cleaning up");
-                app.stop();
+                LOG.info("Starting Shutdown Hook Cleanup...");
+
+                if (app != null) {
+                    try {
+                        app.stop();
+                        LOG.info("App stopped");
+                    } catch (Exception e) {
+                        LOG.error("Error stopping app", e);
+                    }
+                }
 
                 if (TestConfiguration.useKeycloak()) {
                     KeycloakDeployment.stop();
                 }
+
+                if (TestConfiguration.useOpenshift()) {
+                    OpenshiftClient.closeClient();
+                }
+
+                LOG.info("Cleanup completed");
             }));
         } catch (Throwable e) {
             startupFailure = e;

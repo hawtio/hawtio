@@ -3,7 +3,6 @@ package io.hawt.tests.features.stepdefinitions.panel;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,12 +13,8 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class PreferencesStepDefs {
     private final PreferencesPage preferencesPage = new PreferencesPage();
-    private static final Logger LOG = LoggerFactory.getLogger(PreferencesStepDefs.class);
     private static final By CONNECT_MAX_DEPTH = By.id("jolokia-form-max-depth-input");
     private static final By CONNECT_MAX_SIZE_INPUT = By.id("jolokia-form-max-collection-size-input");
 
@@ -36,7 +31,7 @@ public class PreferencesStepDefs {
 
     @When("User toggles the show vertical navigation field")
     public void userTogglesTheField() {
-        $(By.cssSelector("main span.pf-v5-c-switch__toggle")).shouldBe(interactable).click();
+        $(By.cssSelector("main span.pf-v6-c-switch__toggle")).shouldBe(interactable).click();
     }
 
     @When("User clicks on Reset button")
@@ -52,20 +47,20 @@ public class PreferencesStepDefs {
             .shouldBe(visible)
             .shouldHave(text(expectedText));
         // Find and click the button within modal's footer
-        $(By.cssSelector(".pf-v5-c-modal-box__footer")).$(buttonClass).shouldBe(visible, enabled).click();
+        $(By.cssSelector(".pf-v6-c-modal-box__footer")).$(buttonClass).shouldBe(visible, enabled).click();
     }
 
     @Then("User is presented with a successful alert message")
     public void userIsPresentedWithASuccessfullAlertMessage() {
-        $(By.cssSelector("main .pf-v5-c-alert")).shouldBe(visible);
+        $(By.cssSelector("main .pf-v6-c-alert")).shouldBe(visible);
     }
 
 
     @When("User slides log level")
     public void userSlidesLogLevel() {
-        SelenideElement thumb = $("div.pf-v5-c-slider__thumb");
-        SelenideElement tickDebug = $("div.pf-v5-c-slider__step:nth-child(5) > div:nth-child(1)");
-        SelenideElement tickOff = $("div.pf-v5-c-slider__step:nth-child(1) > div:nth-child(1)");
+        SelenideElement thumb = $("div.pf-v6-c-slider__thumb");
+        SelenideElement tickDebug = $("div.pf-v6-c-slider__step:nth-child(5) > div:nth-child(1)");
+        SelenideElement tickOff = $("div.pf-v6-c-slider__step:nth-child(1) > div:nth-child(1)");
         Selenide.actions()
             .clickAndHold(thumb)
             .dragAndDrop(tickOff, tickDebug)
@@ -75,22 +70,21 @@ public class PreferencesStepDefs {
 
     @Then("User adds child logger")
     public void userAddsChildLogger() {
-        SelenideElement loggAddSvg = $("span.pf-v5-c-menu-toggle__controls:nth-child(2) > span:nth-child(1) > svg:nth-child(1)");
-        loggAddSvg.click();
-        final By childLogList = By.cssSelector(".pf-v5-c-menu__list");
-        $(childLogList).$(byText("hawtio-camel")).click();
+        preferencesPage.clickToggleButton("Add");
+        final By childLogList = By.cssSelector(".pf-v6-c-menu__list");
+        $(childLogList).shouldBe(visible).$(byText("hawtio-camel")).shouldBe(interactable).click();
     }
 
 
     @And("User sees added child logger")
     public void userSeesAddedChildLogger() {
-        $(".pf-v5-c-data-list__item-content").$(byText("hawtio-camel")).shouldBe(visible);
+        $(".pf-v6-c-data-list__item-content").$(byText("hawtio-camel")).shouldBe(visible);
     }
 
 
     @And("User is able to delete child logger")
     public void userIsAbleToDeleteChildLogger() {
-        $(".pf-v5-c-data-list__item-action > button:nth-child(1)").click();
+        $(".pf-v6-c-data-list__item-action > button:nth-child(1)").click();
     }
 
     @When("User changes Jolokia values")
@@ -105,7 +99,7 @@ public class PreferencesStepDefs {
 
     @And("User applies effects of Jolokia values")
     public void userAppliesEffectsOfJolokiaValues() {
-        $("button.pf-v5-c-button.pf-m-primary").click();
+        $("button.pf-v6-c-button.pf-m-primary").click();
     }
 
     @Then("Change stays after reload")
@@ -117,6 +111,6 @@ public class PreferencesStepDefs {
 
     @Then("^Content section has h2 title \"([^\"]*)\"$")
     public void contentSectionHasHTitle(String title) {
-        $("div .pf-v5-c-content h2").shouldHave(exactText(title));
+        $("div .pf-v6-c-content h2").shouldHave(exactText(title));
     }
 }

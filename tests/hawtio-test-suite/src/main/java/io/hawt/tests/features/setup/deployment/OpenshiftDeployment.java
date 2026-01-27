@@ -23,14 +23,19 @@ public class OpenshiftDeployment implements AppDeployment {
     public void start() {
         HawtioOnlineUtils.deployOperator();
         host = HawtioOnlineUtils.deployNamespacedHawtio(DEFAULT_HAWTIO_NAME, TestConfiguration.getOpenshiftNamespace());
-        appDeployment = HawtioOnlineUtils.deployApplication(DEFAULT_APP_NAME, TestConfiguration.getRuntime(), TestConfiguration.getOpenshiftNamespace(), "4.x-" + (System.getProperty("java.vm.specification.version", "17")));
+        appDeployment = HawtioOnlineUtils.deployApplication(DEFAULT_APP_NAME, TestConfiguration.getRuntime(), TestConfiguration.getOpenshiftNamespace(), "5.x-" + (System.getProperty("java.vm.specification.version", "17")));
     }
 
     @Override
     public void stop() {
         if (TestConfiguration.openshiftNamespaceDelete()) {
             LOG.info("Undeploying Hawtio project {}", TestConfiguration.getOpenshiftNamespace());
-            OpenshiftClient.get().namespaces().withName(TestConfiguration.getOpenshiftNamespace()).delete();
+            LOG.info("Calling namespace delete...");
+            OpenshiftClient.get().namespaces()
+                .withName(TestConfiguration.getOpenshiftNamespace())
+                .withGracePeriod(0L)
+                .delete();
+            LOG.info("Namespace delete call returned");
         }
     }
 

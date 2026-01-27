@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
+import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.hooks.DeployAppHook;
 import io.hawt.tests.features.pageobjects.pages.LoginPage;
 import io.hawt.tests.features.utils.ByUtils;
@@ -35,7 +36,7 @@ public class Panel {
             // Workaround for Windows machines - sometimes, the Logout button is not loaded properly
             if ($(ByUtils.byExactText("Log out")).is(not(interactable))) {
                 LOG.info("Logout by the direct logout URL");
-                open(DeployAppHook.getBaseURL() + "/auth/logout");
+                open(DeployAppHook.getBaseURL() +  TestConfiguration.getUrlSuffix() + "/auth/logout");
             } else {
                 LOG.info("Logout from the drop-down menu list");
                 $(ByUtils.byExactText("Log out")).shouldBe(interactable).click();
@@ -54,7 +55,7 @@ public class Panel {
 
 
     public void openHawtioDropDownMenu(String option) {
-        this.openDropDownMenu(".pf-v5-c-toolbar__group:nth-of-type(3)");
+        this.openDropDownMenu(".pf-v6-c-toolbar__group:nth-of-type(3)");
         $(byText(option)).shouldBe(interactable).click();
     }
 

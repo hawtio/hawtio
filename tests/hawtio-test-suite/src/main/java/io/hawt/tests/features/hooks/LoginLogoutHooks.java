@@ -1,7 +1,9 @@
 package io.hawt.tests.features.hooks;
 
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
 
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.setup.LoginLogout;
@@ -13,7 +15,7 @@ public class LoginLogoutHooks {
 
     @Before
     public static void before() {
-        if (!init) {
+        if (!init || !WebDriverRunner.hasWebDriverStarted()) {
             WebDriver.setup();
             LoginLogout.login(TestConfiguration.getAppUsername(), TestConfiguration.getAppPassword());
             init = true;
@@ -25,5 +27,17 @@ public class LoginLogoutHooks {
             }
         }
         LoginLogout.hawtioIsLoaded();
+    }
+
+    /**
+     * Closes the browser on the MAIN THREAD after ALL tests complete.
+     */
+    @AfterAll
+    public static void tearDownAll() {
+        if (WebDriverRunner.hasWebDriverStarted()) {
+            System.out.println("Tearing down WebDriver on main thread after all tests...");
+            Selenide.closeWebDriver();
+            System.out.println("WebDriver closed successfully");
+        }
     }
 }
