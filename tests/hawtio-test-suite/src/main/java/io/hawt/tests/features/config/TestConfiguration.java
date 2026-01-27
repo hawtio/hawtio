@@ -4,7 +4,7 @@ import org.junit.Assume;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

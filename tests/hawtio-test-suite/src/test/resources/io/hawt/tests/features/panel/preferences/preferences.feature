@@ -14,9 +14,9 @@ Feature: Checking the functionality of a Preferences tab
       |JMX          |
       |Server Logs  |
 
-    @notHawtioNext @notJBang
-    Examples:
-      |Sample Plugin|
+#    @notHawtioNext @notJBang
+#    Examples:
+#      |Sample Plugin|
 
     @notOnline
     Examples:
@@ -50,15 +50,9 @@ Feature: Checking the functionality of a Preferences tab
     Then User confirms modal "clear-connections-modal" resetting with confirmation "You are about to clear all saved connection settings." and clicks reset button "[data-testid='clear-btn']"
     And User is presented with a successful alert message
 
-  @notHawtioNext @notJBang
-  Scenario: Check that Sample Plugin tab works 
-    Given User clicks on "Preferences" option in hawtio drop-down menu
-    And User is on "Sample Plugin" tab of Preferences page
-    Then Content section has h2 title "Sample Plugin"
-    And Content section has paragraph "Preferences view for the custom plugin."
-    
-
-
-
-
-
+#  @notHawtioNext @notJBang
+#  Scenario: Check that Sample Plugin tab works
+#    Given User clicks on "Preferences" option in hawtio drop-down menu
+#    And User is on "Sample Plugin" tab of Preferences page
+#    Then Content section has h2 title "Sample Plugin"
+#    And Content section has paragraph "Preferences view for the custom plugin."

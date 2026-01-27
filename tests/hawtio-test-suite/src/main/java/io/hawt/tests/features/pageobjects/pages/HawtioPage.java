@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Condition.matchText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
@@ -45,6 +46,17 @@ public class HawtioPage {
      */
     public HawtioPage clickButton(String text) {
         $$(".pf-v6-c-button__text").findBy(exactText(text)).closest("button").shouldBe(clickable).click();
+        return this;
+    }
+
+    /**
+     * Click on a toggle button with a given text.
+     *
+     * @param text on the given toggle button
+     * @return this
+     */
+    public HawtioPage clickToggleButton(String text) {
+        $$(".pf-v6-c-menu-toggle__text").findBy(matchText(text.trim())).closest("button").shouldBe(interactable).click();
         return this;
     }
 

@@ -74,6 +74,23 @@ public class OpenshiftClient extends OpenShift {
     }
 
     /**
+     * Close the OpenShift client and release resources.
+     */
+    public static void closeClient() {
+        if (client != null) {
+            LOG.info("Closing OpenShift client");
+            try {
+                client.close();
+                LOG.info("OpenShift client closed successfully");
+            } catch (Exception e) {
+                LOG.warn("Error closing OpenShift client", e);
+            } finally {
+                client = null;
+            }
+        }
+    }
+
+    /**
      * Create namespace with given name.
      *
      * @param name of namespace to be created
