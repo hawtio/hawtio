@@ -75,10 +75,9 @@ public class PreferencesStepDefs {
 
     @Then("User adds child logger")
     public void userAddsChildLogger() {
-        SelenideElement loggAddSvg = $("span.pf-v5-c-menu-toggle__controls:nth-child(2) > span:nth-child(1) > svg:nth-child(1)");
-        loggAddSvg.click();
+        preferencesPage.clickToggleButton("Add");
         final By childLogList = By.cssSelector(".pf-v5-c-menu__list");
-        $(childLogList).$(byText("hawtio-camel")).click();
+        $(childLogList).shouldBe(visible).$(byText("hawtio-camel")).shouldBe(interactable).click();
     }
 
 

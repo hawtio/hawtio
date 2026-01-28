@@ -3,9 +3,11 @@ package io.hawt.tests.features.pageobjects.pages;
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Condition.matchText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 import org.openqa.selenium.By;
 
@@ -44,6 +46,17 @@ public class HawtioPage {
      */
     public HawtioPage clickButton(String text) {
         $(byXpath("//button[text()[normalize-space() = '" + text + "']]")).shouldBe(visible).shouldBe(enabled).click();
+        return this;
+    }
+
+    /**
+     * Click on a toggle button with a given text.
+     *
+     * @param text on the given toggle button
+     * @return this
+     */
+    public HawtioPage clickToggleButton(String text) {
+        $$(".pf-v5-c-menu-toggle__text").findBy(matchText(text.trim())).closest("button").shouldBe(interactable).click();
         return this;
     }
 
