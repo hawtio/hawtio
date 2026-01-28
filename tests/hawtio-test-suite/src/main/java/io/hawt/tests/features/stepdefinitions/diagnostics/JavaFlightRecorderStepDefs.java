@@ -21,6 +21,8 @@ import java.io.IOException;
 
 public class JavaFlightRecorderStepDefs {
 
+    private static final String CONFIGURATION_NAME = "test";
+
     @When("User starts recording")
     public void userStartsRecording() {
         $(By.cssSelector(".flight-recorder-button-divider>.pf-v5-c-action-list>button:first-child")).shouldBe(interactable).click();
@@ -33,18 +35,24 @@ public class JavaFlightRecorderStepDefs {
     }
 
     @When("User sets configuration")
-    public void userSetsConfiuration(String tabName) {
+    public void userSetsConfiguration() {
+        $(By.cssSelector(".flight-recorder-button-divider>.pf-v5-c-action-list>button:nth-child(3)")).shouldBe(interactable).click();
+
+        $(By.cssSelector("input[aria-label='Recording Name']")).shouldBe(interactable).val(CONFIGURATION_NAME);
     }
 
     @Then("The recording is a valid jfr file")
-    public void userConfirmsModalAndClicksResetButton(String modalTestId, String expectedText, String buttonClass) throws IOException, CouldNotLoadRecordingException {
+    public void theRecordingIsAValidJfrFile() throws IOException, CouldNotLoadRecordingException {
         File downloadedFile = $(By.cssSelector(".pf-v5-c-table pf-m-primary")).download();
         
         JfrLoaderToolkit.loadEvents(downloadedFile);
     }
 
     @Then("The recording has user configuration applied")
-    public void userIsPresentedWithASuccessfullAlertMessage() {
+    public void theRecordingHasUserConfigurationapplied() {
+        File downloadedFile = $(By.cssSelector(".pf-v5-c-table pf-m-primary")).download();
+
+        assert downloadedFile.getName() == CONFIGURATION_NAME;
     }
 
 }
