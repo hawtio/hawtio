@@ -40,7 +40,7 @@ public class CamelBrowse extends CamelPage {
     /**
      * Forward the selected message.
      *
-     * @param endpointURI where the message is forwared
+     * @param endpointURI where the message is forwarded
      */
     public void forwardSelectedMessage(String endpointURI) {
         clickButton("Forward");
@@ -67,5 +67,12 @@ public class CamelBrowse extends CamelPage {
      */
     public void detailsAreDisplayed(String message) {
         $(byTagName("pre")).shouldHave(exactText(message));
+    }
+
+    /**
+     * Close a message details window.
+     */
+    public void closeMessageDetailsWindow() {
+        clickButtonByAriaLabel("Close");
     }
 }

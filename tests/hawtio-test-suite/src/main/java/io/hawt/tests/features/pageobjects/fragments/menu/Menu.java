@@ -36,7 +36,8 @@ public class Menu {
         // Sometimes Selenide is faster than Hawtio and content is loaded properly
         emptyStateContent.shouldNot(exist, Duration.ofSeconds(10));
 
-        item.click();
+        // Wait for the navigation item to be available before clicking
+        item.should(exist).shouldBe(interactable).click();
         toggleLeftSideBarIfOverlaysCamelTree();
     }
 

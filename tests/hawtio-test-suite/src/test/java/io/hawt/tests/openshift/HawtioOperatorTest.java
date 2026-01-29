@@ -50,6 +50,7 @@ import io.hawt.tests.features.pageobjects.fragments.online.DiscoverTab;
 import io.hawt.tests.features.pageobjects.fragments.openshift.DeploymentEntry;
 import io.hawt.tests.features.pageobjects.pages.HawtioPage;
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
+import io.hawt.tests.features.pageobjects.pages.jmx.JmxPage;
 import io.hawt.tests.features.pageobjects.pages.openshift.HawtioOnlineLoginPage;
 import io.hawt.tests.features.setup.LoginLogout;
 import io.hawt.tests.openshift.utils.BaseHawtioOnlineTest;
@@ -58,6 +59,7 @@ import io.hawt.v2.Hawtio;
 import io.hawt.v2.HawtioSpec;
 import io.hawt.v2.hawtiospec.Auth;
 import io.hawt.v2.hawtiospec.Config;
+import io.hawt.v2.hawtiospec.Logging;
 import io.hawt.v2.hawtiospec.MetadataPropagation;
 import io.hawt.v2.hawtiospec.Nginx;
 import io.hawt.v2.hawtiospec.Rbac;
@@ -106,7 +108,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
             discoverTab.connectTo(podName);
 
-            WaitUtils.waitForPageLoad();
+            LoginLogout.hawtioIsLoaded();
 
             var hawtio = new HawtioPage();
             Assertions.assertThatCode(() -> {
@@ -142,7 +144,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
             discoverTab.connectTo(podName);
 
-            WaitUtils.waitForPageLoad();
+            LoginLogout.hawtioIsLoaded();
             var hawtio = new HawtioPage();
 
             hawtio.panel().openMenuItemUnderQuestionMarkDropDownMenu("About");
@@ -356,7 +358,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
             discoverTab.connectTo(podName);
 
-            WaitUtils.waitForPageLoad();
+            LoginLogout.hawtioIsLoaded();
             var hawtio = new HawtioPage();
 
             hawtio.menu().navigateTo("Camel");
@@ -379,6 +381,52 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             camelOperations.checkOperation("stop()", Condition.disabled);
             camelOperations.checkOperation("restart()", Condition.disabled);
             camelOperations.checkOperation("getTotalRoutes()", Condition.enabled);
+        });
+    }
+
+    @Test
+    public void testIpAddressMaskingEnabled() {
+        runTest(spec -> {
+            Logging logging = new Logging();
+            logging.setMaskIPAddresses("true");
+            spec.setLogging(logging);
+        }, sa -> {
+            var discoverTab = new DiscoverTab();
+            discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
+            discoverTab.connectTo(podName);
+
+            LoginLogout.hawtioIsLoaded();
+            var hawtio = new HawtioPage();
+            hawtio.menu().navigateTo("JMX");
+            final JmxPage jmxPage = new JmxPage();
+            jmxPage.tree().expandTree();
+
+            sa.assertThat(jmxPage.tree().areAllIpAddressesMasked())
+                .as("IP addresses should be masked as ***.***.***.**")
+                .isTrue();
+        });
+    }
+
+    @Test
+    public void testIpAddressMaskingDisabled() {
+        runTest(spec -> {
+            Logging logging = new Logging();
+            logging.setMaskIPAddresses("false");
+            spec.setLogging(logging);
+        }, sa -> {
+            var discoverTab = new DiscoverTab();
+            discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
+            discoverTab.connectTo(podName);
+
+            LoginLogout.hawtioIsLoaded();
+            var hawtio = new HawtioPage();
+            hawtio.menu().navigateTo("JMX");
+            final JmxPage jmxPage = new JmxPage();
+            jmxPage.tree().expandTree();
+
+            sa.assertThat(jmxPage.tree().areAllIpAddressesMasked())
+                .as("IP addresses should be unmasked showing actual IP addresses")
+                .isFalse();
         });
     }
 
