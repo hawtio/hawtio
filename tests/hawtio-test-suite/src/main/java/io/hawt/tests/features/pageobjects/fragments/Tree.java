@@ -1,11 +1,13 @@
 package io.hawt.tests.features.pageobjects.fragments;
 
 import static com.codeborne.selenide.CollectionCondition.allMatch;
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.interactable;
+import static com.codeborne.selenide.Condition.matchText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byAttribute;
 import static com.codeborne.selenide.Selectors.byClassName;
@@ -23,6 +25,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * Represents Tree menu in Hawtio (e.g. Camel, JMX).
@@ -139,5 +142,41 @@ public class Tree {
 
     private void assureLoaded() {
         $(By.className("pf-v6-c-tree-view__list")).should(exist, Duration.ofSeconds(10));
+    }
+
+    /**
+     * Verify if all IP addresses in the tree are currently masked with asterisks.
+     * Ensures all IPs are in a consistent state (all masked OR all unmasked).
+     *
+     * @return true if all IPs are masked (***.***.***.**), false if all IPs show actual numbers
+     * @throws AssertionError if IPs are in mixed state or not found
+     */
+    public boolean areAllIpAddressesMasked() {
+        final String anyIpPattern = "^(\\*{3}|\\d{1,3})\\.(\\*{3}|\\d{1,3})\\.(\\*{3}|\\d{1,3})\\.(\\*{3}|\\d{1,3})-.*$";
+        final String maskedIpPattern = "^\\*{3}\\.\\*{3}\\.\\*{3}\\.\\*{3}-.*$";
+        final String unmaskedIpPattern = "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}-.*$";
+
+        // Ensure tree and IP nodes exist
+        final ElementsCollection ipNodes = $$(".pf-v6-c-tree-view__node-text")
+            .as("Tree nodes")
+            .shouldHave(sizeGreaterThan(0))
+            .filter(matchText(anyIpPattern))
+            .as("IP connection nodes")
+            .shouldHave(sizeGreaterThan(0));
+
+        final List<String> ipTexts = ipNodes.texts();
+
+        // Check for consistent state
+        final boolean allMasked = ipTexts.stream().allMatch(text -> text.matches(maskedIpPattern));
+        final boolean allUnmasked = ipTexts.stream().allMatch(text -> text.matches(unmaskedIpPattern));
+
+        if (allMasked) return true;
+        if (allUnmasked) return false;
+
+        // Mixed state detected - fail with detailed error message
+        throw new AssertionError(
+            String.format("IP addresses are in inconsistent state. Expected all masked or all unmasked, but found mixed values: %s",
+                ipTexts)
+        );
     }
 }

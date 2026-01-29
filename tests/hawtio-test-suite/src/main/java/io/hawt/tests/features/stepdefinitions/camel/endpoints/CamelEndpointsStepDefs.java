@@ -68,4 +68,9 @@ public class CamelEndpointsStepDefs {
     public void detailsOfTheMessageWithBodAreDisplayed(String message) {
         camelBrowse.detailsAreDisplayed(message);
     }
+
+    @And("^User closes a Message details window$")
+    public void userClosesMessageDetailsWindow() {
+        camelBrowse.closeMessageDetailsWindow();
+    }
 }
