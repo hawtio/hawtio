@@ -9,13 +9,13 @@ public class Resources implements io.fabric8.kubernetes.api.model.KubernetesReso
      * Claims lists the names of resources, defined in spec.resourceClaims,
      * that are used by this container.
      *
-     * This is an alpha field and requires enabling the
+     * This field depends on the
      * DynamicResourceAllocation feature gate.
      *
      * This field is immutable. It can only be set for containers.
      */
     @com.fasterxml.jackson.annotation.JsonProperty("claims")
-    @com.fasterxml.jackson.annotation.JsonPropertyDescription("Claims lists the names of resources, defined in spec.resourceClaims,\nthat are used by this container.\n\nThis is an alpha field and requires enabling the\nDynamicResourceAllocation feature gate.\n\nThis field is immutable. It can only be set for containers.")
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("Claims lists the names of resources, defined in spec.resourceClaims,\nthat are used by this container.\n\nThis field depends on the\nDynamicResourceAllocation feature gate.\n\nThis field is immutable. It can only be set for containers.")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
     private java.util.List<io.hawt.v1alpha1.hawtiospec.resources.Claims> claims;
 

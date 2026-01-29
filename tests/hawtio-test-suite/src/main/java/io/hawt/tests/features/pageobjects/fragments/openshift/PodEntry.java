@@ -1,5 +1,6 @@
 package io.hawt.tests.features.pageobjects.fragments.openshift;
 
+import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Selenide.$;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -104,6 +105,6 @@ public class PodEntry {
     }
 
     public void connect() {
-        $(root).$(By.cssSelector(".pod-item-connect-button > button")).click();
+        $(root).$(By.cssSelector(".pod-item-connect-button > button")).shouldBe(interactable).click();
     }
 }
