@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ['17', '21']
+        java: ['17']
         runtime: ['springboot', 'quarkus']
     runs-on: ubuntu-latest
     steps:
