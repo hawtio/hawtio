@@ -4,6 +4,5 @@ cd /tmp
 jar xf /deployments/app/*.jar keycloak-hawtio.json
 sed -i s,http://localhost:18080,$KEYCLOAK_URL, keycloak-hawtio.json
 jar uf  /deployments/app/*.jar keycloak-hawtio.json
-java -Dquarkus.profile=keycloak -Dquarkus.launch.rebuild=true -jar ${JAVA_APP_JAR}
-echo "Running: java -jar ${JAVA_OPTS} -Dquarkus.oidc.auth-server-url=$KEYCLOAK_URL/realms/hawtio-demo ${JAVA_APP_JAR}"
-java -jar ${JAVA_OPTS} -Dquarkus.oidc.auth-server-url=$KEYCLOAK_URL/realms/hawtio-demo ${JAVA_APP_JAR}
+echo "Running: java ${JAVA_OPTS} -Dquarkus.profile=keycloak -Dquarkus.oidc.auth-server-url=$KEYCLOAK_URL/realms/hawtio-demo -jar ${JAVA_APP_JAR}"
+java ${JAVA_OPTS} -Dquarkus.profile=keycloak -Dquarkus.oidc.auth-server-url=$KEYCLOAK_URL/realms/hawtio-demo -jar ${JAVA_APP_JAR}
