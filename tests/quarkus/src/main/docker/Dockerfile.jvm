@@ -99,8 +99,15 @@ COPY --chown=185:0 ./start-keycloak.sh /deployments/
 
 RUN chmod +x /deployments/start-keycloak.sh
 
-WORKDIR /deployments
+# Fix for Quarkus 3.30.x parallel archive creator that hardcodes /zip-builder-files*
+# The parallel reaugmentation engine introduced in 3.29.x calls Files.createTempDirectory()
+# with path "/" and prefix "zip-builder-files", creating /zip-builder-files<random> at root.
+# We need to make root group-writable for user 185 to create these temp directories.
+USER root
+RUN chmod g+w /
 USER 185
+
+WORKDIR /deployments
 
 EXPOSE 8080
 
