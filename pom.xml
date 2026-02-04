@@ -47,7 +47,7 @@
     <!-- Camel -->
     <camel-spring-boot-version>4.17.0</camel-spring-boot-version>
     <!-- Jetty -->
-    <jetty12-version>12.1.4</jetty12-version>
+    <jetty12-version>12.1.6</jetty12-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.6</assertj-core-version>
