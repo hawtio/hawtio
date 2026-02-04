@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@hawtio/backend-middleware": "^1.0.8",
-    "@swc/core": "^1.15.8",
+    "@swc/core": "^1.15.11",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/react-router-dom": "^5.3.3",
