@@ -35,7 +35,8 @@ public class DockerDeployment implements AppDeployment {
     public void start() {
         LOG.info("Starting container {}", dockerImage);
 
-        final String jfrOpts = "-XX:+UnlockDiagnosticVMOptions " +
+        final String jfrOpts = "--add-modules=jdk.management.jfr " +
+            "-XX:+UnlockDiagnosticVMOptions " +
             "-XX:+EnableDynamicAgentLoading " +
             "-Dcom.sun.management.jmxremote " +
             "-Dcom.sun.management.jmxremote.port=1099 " +
