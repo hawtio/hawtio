@@ -35,17 +35,27 @@ public class DockerDeployment implements AppDeployment {
     public void start() {
         LOG.info("Starting container {}", dockerImage);
 
+        final String jfrOpts = "-XX:+UnlockDiagnosticVMOptions " +
+            "-XX:+EnableDynamicAgentLoading " +
+            "-Dcom.sun.management.jmxremote " +
+            "-Dcom.sun.management.jmxremote.port=1099 " +
+            "-Dcom.sun.management.jmxremote.rmi.port=1099 " +
+            "-Dcom.sun.management.jmxremote.authenticate=false " +
+            "-Dcom.sun.management.jmxremote.ssl=false " +
+            "-Djava.rmi.server.hostname=127.0.0.1";
+
+        String javaOpts;
+        if (this.dockerImage.contains("quarkus")) {
+            javaOpts = "-Dquarkus.http.host=0.0.0.0 " +
+                "-Djava.util.logging.manager=org.jboss.logmanager.LogManager " +
+                jfrOpts;
+        } else {
+            javaOpts = jfrOpts;
+        }
+
         container = new GenericContainer<>(DockerImageName.parse(dockerImage))
             .withExposedPorts(8080, 10000, 10001, 1099)
-            .withEnv("JDK_JAVA_OPTIONS",
-                "-XX:+UnlockDiagnosticVMOptions " +
-                "-XX:+EnableDynamicAgentLoading " +
-                "-Dcom.sun.management.jmxremote " +
-                "-Dcom.sun.management.jmxremote.port=1099 " +
-                "-Dcom.sun.management.jmxremote.rmi.port=1099 " +
-                "-Dcom.sun.management.jmxremote.authenticate=false " +
-                "-Dcom.sun.management.jmxremote.ssl=false " +
-                "-Djava.rmi.server.hostname=127.0.0.1")
+            .withEnv("JAVA_OPTS", javaOpts)
             .waitingFor(Wait.forLogMessage(".*Hello Camel!.*", 2));
 
         if (TestConfiguration.useKeycloak()) {
