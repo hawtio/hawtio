@@ -19,31 +19,29 @@ public class JavaFlightRecorderStepDefs {
 
     @When("User starts recording")
     public void userStartsRecording() {
-        $(By.cssSelector(".flight-recorder-button-divider .pf-v5-c-action-list button:first-child")).shouldBe(interactable).click();
+        $(By.cssSelector(".flight-recorder-button-divider .pf-v6-c-action-list button:first-child")).shouldBe(interactable).click();
         WaitUtils.wait(Duration.ofSeconds(1));
     }
 
     @When("User stops recording")
     public void userStopsRecording() {
-        $(By.cssSelector(".flight-recorder-button-divider .pf-v5-c-action-list button:nth-child(2)")).shouldBe(interactable).click();
+        $(By.cssSelector(".flight-recorder-button-divider .pf-v6-c-action-list button:nth-child(2)")).shouldBe(interactable).click();
     }
 
     @When("User sets configuration")
     public void userSetsConfiguration() {
-        $(By.cssSelector(".flight-recorder-button-divider .pf-v5-c-action-list button:nth-child(4)")).shouldBe(interactable).click();
+        $(By.cssSelector(".flight-recorder-button-divider .pf-v6-c-action-list button:nth-child(4)")).shouldBe(interactable).click();
         $(By.cssSelector("input")).shouldBe(interactable).val("test");
         $(By.cssSelector("button[aria-label='Close']")).click();
     }
 
     @Then("The recording is a valid jfr file")
     public void theRecordingIsAValidJfrFile() {
-        $(By.cssSelector(".pf-v5-c-table .pf-m-primary")).shouldBe(interactable);
+        $(By.cssSelector(".pf-v6-c-table .pf-v6-c-button")).shouldBe(interactable);
     }
 
     @Then("The recording has user configuration applied")
     public void theRecordingHasUserConfigurationapplied() {
-        $(By.cssSelector(".pf-v5-c-table .pf-m-primary")).shouldBe(interactable);
-
-        $(By.cssSelector(".pf-v5-c-table__tr td:nth-child(2)")).equals(CONFIGURATION_NAME);
+        $(By.cssSelector(".pf-v6-c-table__tr td:nth-child(2)")).equals(CONFIGURATION_NAME);
     }
 }
