@@ -9,6 +9,9 @@ import org.testcontainers.utility.DockerImageName;
 
 import io.hawt.tests.features.config.TestConfiguration;
 
+/**
+ * Docker-based deployment for Hawtio integration tests using Testcontainers.
+ */
 public class DockerDeployment implements AppDeployment {
 
     private final String dockerImage;
