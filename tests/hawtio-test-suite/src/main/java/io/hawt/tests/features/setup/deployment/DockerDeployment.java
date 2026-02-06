@@ -33,7 +33,16 @@ public class DockerDeployment implements AppDeployment {
         LOG.info("Starting container {}", dockerImage);
 
         container = new GenericContainer<>(DockerImageName.parse(dockerImage))
-            .withExposedPorts(8080, 10000, 10001)
+            .withExposedPorts(8080, 10000, 10001, 1099)
+            .withEnv("JAVA_TOOL_OPTIONS",
+                "-XX:+UnlockDiagnosticVMOptions " +
+                "-XX:+EnableDynamicAgentLoading " +
+                "-Dcom.sun.management.jmxremote " +
+                "-Dcom.sun.management.jmxremote.port=1099 " +
+                "-Dcom.sun.management.jmxremote.rmi.port=1099 " +
+                "-Dcom.sun.management.jmxremote.authenticate=false " +
+                "-Dcom.sun.management.jmxremote.ssl=false " +
+                "-Djava.rmi.server.hostname=localhost")
             .waitingFor(Wait.forLogMessage(".*Hello Camel!.*", 2));
 
         if (TestConfiguration.useKeycloak()) {
