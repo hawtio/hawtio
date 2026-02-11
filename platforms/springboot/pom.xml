@@ -62,7 +62,7 @@
     <!-- Jolokia -->
     <dependency>
       <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-support-spring</artifactId>
+      <artifactId>jolokia-support-springboot3</artifactId>
       <version>${jolokia-version}</version>
     </dependency>
 
