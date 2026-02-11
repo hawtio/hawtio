@@ -14,9 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
 import io.hawt.util.IOHelper;
+import org.jolokia.core.service.serializer.SerializeOptions;
 import org.jolokia.json.parser.JSONParser;
 import org.jolokia.json.parser.ParseException;
-import org.jolokia.server.core.service.serializer.SerializeOptions;
 import org.jolokia.service.serializer.JolokiaSerializer;
 import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
