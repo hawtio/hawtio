@@ -4,7 +4,7 @@ FROM ${IMAGE}:${JAVA_VERSION}
 
 ENV LANGUAGE='en_US:en'
 
-COPY --chown=185 target/hawtio-tests-springboot-4.3.0-SNAPSHOT.jar /deployments/hawtio-springboot.jar
+COPY --chown=185 target/hawtio-tests-springboot-4.4.0-SNAPSHOT.jar /deployments/hawtio-springboot.jar
 
 EXPOSE 8080 10001 10000
 USER 185
