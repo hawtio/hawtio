@@ -19,7 +19,6 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    needs: build
     strategy:
       fail-fast: false
       matrix:
@@ -31,18 +30,53 @@ jobs:
     env:
       REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        if: github.event_name == 'pull_request_target'
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
+      - name: Checkout code
+        uses: actions/checkout@v6
+        if: github.event_name == 'push'
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.java }}
+          cache: "maven"
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.6.0
-      - name: Download images
-        uses: actions/cache/restore@v4
-        with:
-          path: /tmp/images
-          key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Load images
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Maven projects
         run: |
-          for i in /tmp/images/*.tar; do
-            docker load --input $i
-          done
+          # Phase 1: Build entire project to ensure all modules are fresh
+          mvn --batch-mode --no-transfer-progress install -DskipTests
+          # Phase 2: Build test modules with e2e profile to create app artifacts
+          mvn --batch-mode --no-transfer-progress install -DskipTests \
+            -Pe2e -pl :hawtio-tests-${{matrix.runtime}} -am
+      - name: Build hawtio-test-suite image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: tests/hawtio-test-suite/Dockerfile
+          build-args: |
+            JAVA_VERSION=${{ matrix.java }}
+          tags: hawtio-test-suite:${{ matrix.java }}
+          load: true
+          cache-from: type=gha,scope=hawtio-test-suite-${{ matrix.java }}
+          cache-to: type=gha,mode=max,scope=hawtio-test-suite-${{ matrix.java }}
+      - name: Build hawtio-${{ matrix.runtime }}-app image
+        uses: docker/build-push-action@v6
+        with:
+          context: tests/${{ matrix.runtime }}
+          file: tests/${{ matrix.runtime }}/Dockerfile
+          build-args: |
+            JAVA_VERSION=${{ matrix.java }}
+          tags: hawtio-${{ matrix.runtime }}-app:${{ matrix.java }}
+          load: true
+          cache-from: type=gha,scope=${{ matrix.runtime }}-app-${{ matrix.java }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.runtime }}-app-${{ matrix.java }}
       - name: ${{ matrix.runtime }} E2E test (Java ${{ matrix.java }})
         id: test
         run: |
@@ -74,44 +108,6 @@ jobs:
             ${{ env.REPORT_DIR }}/build/reports/tests/*.png
             ${{ env.REPORT_DIR }}/*.log
             ${{ env.REPORT_DIR }}/cucumber-reports/*
-
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        java: ["17"]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        if: github.event_name == 'pull_request_target'
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-      - name: Checkout code
-        uses: actions/checkout@v5
-        if: github.event_name == 'push'
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ matrix.java }}
-          cache: "maven"
-      - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.6.0
-      - name: Build
-        run: |
-          mvn --batch-mode --no-transfer-progress install -DskipTests -Pe2e -Pdocker-testsuite -Ptests-docker -Dhawtio-container -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am
-      - name: Export docker images
-        run: |
-          mkdir -p /tmp/images/
-          docker save hawtio-test-suite:${{ matrix.java }} > /tmp/images/hawtio-test-suite-${{ matrix.java }}.tar
-          docker save hawtio-quarkus-app:${{ matrix.java }} > /tmp/images/hawtio-quarkus-app-${{ matrix.java }}.tar
-          docker save hawtio-springboot-app:${{ matrix.java }} > /tmp/images/hawtio-springboot-app-${{ matrix.java }}.tar
-      - name: Cache images
-        uses: actions/cache/save@v4
-        with:
-          path: /tmp/images
-          key: e2e-docker-images-${{ matrix.java }}-${{ github.run_id }}-${{ github.run_attempt }}
 
   publish-results:
     runs-on: ubuntu-latest
