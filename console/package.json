@@ -10,7 +10,7 @@
     "replace-version": "replace __HAWTIO_VERSION_PLACEHOLDER__"
   },
   "dependencies": {
-    "@hawtio/react": "^2.0.0-dev.0",
+    "@hawtio/react": "^2.0.0-dev.1",
     "@patternfly/react-charts": "^8.4.0",
     "@patternfly/react-code-editor": "^6.4.0",
     "@patternfly/react-core": "^6.4.0",
