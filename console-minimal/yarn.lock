@@ -605,17 +605,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_10@npm:@hawtio/camel-model@~4.10.7":
-  version: 4.10.7
-  resolution: "@hawtio/camel-model@npm:4.10.7"
-  checksum: 10/c60c544acb327669a3d4dd0314f110c7e5072ad673bc1901d3775ca90b71782d27a57c4d645e50ed8ddbb994cb99cbf85f29999b926125ae11a4de46bd190d6a
+"@hawtio/camel-model-v4_10@npm:@hawtio/camel-model@~4.10.8":
+  version: 4.10.9
+  resolution: "@hawtio/camel-model@npm:4.10.9"
+  checksum: 10/db4b5376908b5901d716d8295473b2d6fdf88bfc27c00d5e330ac5ea35e503a0d28c1ed52ecb87b002ed0a9bc6f88c873e264d3d98f952bc51003462d56d00f1
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_14@npm:@hawtio/camel-model@~4.14.1":
-  version: 4.14.1
-  resolution: "@hawtio/camel-model@npm:4.14.1"
-  checksum: 10/e07fde41092cfa465776bf9f5eca0863e5244460bd7e9a265aa9ab286f48cf2ac214e2006a8251d46f59ce232785e791858369f624ccf7b9a4c3e5def4ee6446
+"@hawtio/camel-model-v4_14@npm:@hawtio/camel-model@~4.14.4":
+  version: 4.14.5
+  resolution: "@hawtio/camel-model@npm:4.14.5"
+  checksum: 10/cb877801c2d613493b417d4933f577ae911dfcce67cf02e8725617498e5cabc9f734537d88699df3c1ea01ff5c06562a779f4c45a272fa99c559d7e77a6cabcf
   languageName: node
   linkType: hard
 
@@ -624,7 +624,7 @@ __metadata:
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^2.0.0-dev.0"
+    "@hawtio/react": "npm:^2.0.0-dev.1"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -656,20 +656,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^2.0.0-dev.0":
-  version: 2.0.0-dev.0
-  resolution: "@hawtio/react@npm:2.0.0-dev.0"
+"@hawtio/react@npm:^2.0.0-dev.1":
+  version: 2.0.0-dev.1
+  resolution: "@hawtio/react@npm:2.0.0-dev.1"
   dependencies:
-    "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.7"
-    "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.1"
-    "@jolokia.js/simple": "npm:^2.4.2"
+    "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.8"
+    "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.4"
+    "@jolokia.js/simple": "npm:^2.5.0"
     "@module-federation/utilities": "npm:^3.1.77"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.5.1"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.7.1"
     dagre: "npm:^0.8.5"
     dompurify: "npm:^3.3.1"
     eventemitter3: "npm:^5.0.1"
-    jolokia.js: "npm:^2.4.2"
+    jolokia.js: "npm:^2.5.0"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
     keycloak-js: "npm:^26.2.1"
@@ -692,7 +692,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/f17c28932bc2195f335514ab3a2a7fb00d3659c628cfcc5e91623f7162064cf46c6202cc4e9f39f89ed344a96985a6ab078ecfcc3935f074e68242179678f33c
+  checksum: 10/870912e554589fd6b90cc52566a22708a3dca8d9e9b99a0ca986c299cc6d0ace6ac9b4f5e06772ccbf94cfc2938067f25596b652d931089bb59b8fa191915a08
   languageName: node
   linkType: hard
 
@@ -1005,12 +1005,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jolokia.js/simple@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "@jolokia.js/simple@npm:2.4.2"
+"@jolokia.js/simple@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@jolokia.js/simple@npm:2.5.0"
   dependencies:
-    jolokia.js: "npm:2.4.2"
-  checksum: 10/ed20a02f96935b171e0d6bcd8dcc171b829bb8245e18a9ff64c60a419f3e1bd85abfdbe060319b428806306b8b82eeab06872fcf6667428350277d2cb5df5df9
+    jolokia.js: "npm:2.5.0"
+  checksum: 10/fe119f484bdbcc5bf7802cfec1f0a178f2c2b9ceef17fdfd60c3898061fc5b1b912d35808c394ef0fee0a05fa0355cba0ebff7150493921c4ec8f9ad25d28145
   languageName: node
   linkType: hard
 
@@ -1617,10 +1617,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.5.1"
-  checksum: 10/ef165659485a21806ba67bd54f870b9798a1c50a4f1728441651e0802bf5f8c6d416e3526a5e141f47a50a94c66beafd39acfead96938754fba467ade84d2c42
+"@thumbmarkjs/thumbmarkjs@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.7.1"
+  checksum: 10/41b154604ea1053bff278d040cc6e6aec224cfb5d626080f4458cd0db0e251abc5b95eae9a257c0c3f2bc661b85c40e17b78eae85ba867d08d26ff3de27a17e2
   languageName: node
   linkType: hard
 
@@ -6038,10 +6038,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:2.4.2, jolokia.js@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "jolokia.js@npm:2.4.2"
-  checksum: 10/7a266d855bf9e1c8e5da34aee5a9fc9c1398832e23bbf90f7334f30d1f917a02d5f94cf72a706f8e59bea3e0818b9b16bf5f002022fb2014f9176bc13b31942d
+"jolokia.js@npm:2.5.0, jolokia.js@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "jolokia.js@npm:2.5.0"
+  checksum: 10/218c689b8fe0412bd652d18134f5634f14cd8d939c00bc787581eae5105b0b5fb83a7e0c6a06a883674e5059941ddf8a2e38ddad33a2711cf781002be9b9e722
   languageName: node
   linkType: hard
 
