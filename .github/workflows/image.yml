@@ -3,7 +3,8 @@ name: Build Images
 on:
   push:
     branches:
-      - 5.x
+      - main
+      - 4.x
     paths-ignore:
       - "**.md"
   workflow_dispatch:

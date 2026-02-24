@@ -3,12 +3,14 @@ name: Lint
 on:
   pull_request:
     branches:
-      - 5.x
+      - main
+      - 4.x
     paths-ignore:
       - '**.md'
   push:
     branches:
-      - 5.x
+      - main
+      - 4.x
     paths-ignore:
       - '**.md'
 
