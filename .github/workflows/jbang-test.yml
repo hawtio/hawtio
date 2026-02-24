@@ -3,13 +3,12 @@ name: JBang Test
 on:
   pull_request_target:
     branches:
-      - 4.x
+      - 4.x-redhat
     paths-ignore:
       - "**.md"
   push:
     branches:
-      - 3.x
-      - 4.x
+      - 4.x-redhat
     paths-ignore:
       - "**.md"
 
@@ -49,7 +48,7 @@ jobs:
       - name: Setup JBang
         uses: jbangdev/setup-jbang@main
       - name: Install Camel app
-        run: | 
+        run: |
           jbang trust add https://github.com/apache/camel/
           jbang --quiet app install camel@apache/camel
       - name: Start Camel Hawtio
