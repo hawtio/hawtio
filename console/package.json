@@ -38,7 +38,7 @@
     "replace": "^1.2.2",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
-    "swc-loader": "^0.2.6",
+    "swc-loader": "^0.2.7",
     "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
