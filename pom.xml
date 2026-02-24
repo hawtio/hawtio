@@ -38,6 +38,7 @@
     <!-- Versions for major components -->
     <!-- Jolokia -->
     <jolokia-version>2.5.0</jolokia-version>
+    <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
     <quarkus-version>3.30.8</quarkus-version>
     <!-- Spring -->
