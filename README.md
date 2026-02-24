@@ -1,7 +1,7 @@
 ![hawtio][logo]
 
-[![Test](https://github.com/hawtio/hawtio/actions/workflows/test.yml/badge.svg?branch=5.x)](https://github.com/hawtio/hawtio/actions/workflows/test.yml)
-[![E2E Test](https://github.com/hawtio/hawtio/actions/workflows/e2e_test.yml/badge.svg?branch=5.x)](https://github.com/hawtio/hawtio/actions/workflows/e2e_test.yml)
+[![Test](https://github.com/hawtio/hawtio/actions/workflows/test.yml/badge.svg)](https://github.com/hawtio/hawtio/actions/workflows/test.yml)
+[![E2E Test](https://github.com/hawtio/hawtio/actions/workflows/e2e_test.yml/badge.svg)](https://github.com/hawtio/hawtio/actions/workflows/e2e_test.yml)
 
 ## Introduction
 
