@@ -639,7 +639,7 @@ __metadata:
     body-parser: "npm:^2.2.2"
     copy-webpack-plugin: "npm:^13.0.1"
     css-loader: "npm:^7.1.4"
-    html-webpack-plugin: "npm:^5.6.5"
+    html-webpack-plugin: "npm:^5.6.6"
     jest: "npm:^30.2.0"
     monaco-editor: "npm:~0.52.2"
     monaco-editor-webpack-plugin: "npm:^7.1.1"
@@ -5233,9 +5233,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-webpack-plugin@npm:^5.6.5":
-  version: 5.6.5
-  resolution: "html-webpack-plugin@npm:5.6.5"
+"html-webpack-plugin@npm:^5.6.6":
+  version: 5.6.6
+  resolution: "html-webpack-plugin@npm:5.6.6"
   dependencies:
     "@types/html-minifier-terser": "npm:^6.0.0"
     html-minifier-terser: "npm:^6.0.2"
@@ -5250,7 +5250,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10/89e84f6ede068242348b2c2f09da67bf39a6b22d14399eaf16e399be05a4e2bb1f3f1c71ec03b7193aed96ebe2cf61d45a70565408b271661f7ea8635b237701
+  checksum: 10/819ebee079466029a771236fdadcbcfe0aaf110eac1b74c0983a0318a7f99f3c69adcf1d617e218769a8c8e96ea17de2df30759bd950ec391d0c5676d480894e
   languageName: node
   linkType: hard
 
