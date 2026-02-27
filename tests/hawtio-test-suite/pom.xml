@@ -284,6 +284,7 @@
                   <build>
                     <dockerFile>${basedir}/Dockerfile</dockerFile>
                     <contextDir>${session.executionRootDirectory}</contextDir>
+                    <noCache>true</noCache>
                   </build>
                 </image>
               </images>
