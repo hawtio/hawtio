@@ -9,6 +9,9 @@ import org.testcontainers.utility.DockerImageName;
 
 import io.hawt.tests.features.config.TestConfiguration;
 
+/**
+ * Docker-based deployment for Hawtio integration tests using Testcontainers.
+ */
 public class DockerDeployment implements AppDeployment {
 
     private final String dockerImage;
@@ -35,6 +38,12 @@ public class DockerDeployment implements AppDeployment {
         container = new GenericContainer<>(DockerImageName.parse(dockerImage))
             .withExposedPorts(8080, 10000, 10001)
             .waitingFor(Wait.forLogMessage(".*Hello Camel!.*", 2));
+
+        if (this.dockerImage.contains("quarkus")) {
+            container.withEnv("JAVA_OPTS",
+                "-Dquarkus.http.host=0.0.0.0 " +
+                "-Djava.util.logging.manager=org.jboss.logmanager.LogManager");
+        }
 
         if (TestConfiguration.useKeycloak()) {
             KeycloakDeployment.start();
