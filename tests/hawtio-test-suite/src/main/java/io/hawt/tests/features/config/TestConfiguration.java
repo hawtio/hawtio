@@ -286,4 +286,17 @@ public class TestConfiguration {
     public static String getNeedleForLogs() {
         return isSpringboot() ? "Started SpringBootService" : "(SampleCamel) started";
     }
+
+    /**
+     * Check if running in GitHub Actions e2e workflow with pre-built Docker images.
+     *
+     * @return true if in GHA Docker environment (not JBang)
+     */
+    public static boolean isGhaDockerEnv() {
+        boolean isGitHubActions = Boolean.parseBoolean(System.getenv("GITHUB_ACTIONS"));
+        boolean isJBang = System.getProperty("hawtio-jbang-ci") != null;
+        boolean usesDockerImage = hasProperty(APP_DOCKER_IMAGE);
+
+        return isGitHubActions && usesDockerImage && !isJBang;
+    }
 }
