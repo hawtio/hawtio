@@ -50,6 +50,11 @@ public class SkipTestsHook {
         Assumptions.assumeFalse(TestConfiguration.useKeycloak());
     }
 
+    @Before("@requiresJFR")
+    public void skipJFRTestsInGitHubActionsE2E() {
+        Assumptions.assumeFalse(TestConfiguration.isGhaDockerEnv(), "Skipping JFR test: JFR is not enabled in pre-built Docker images used in GitHub Actions e2e workflow");
+    }
+
     @After("@throttling")
     public void afterThrottling(io.cucumber.java.Scenario scenario) {
         if (scenario.getStatus() != io.cucumber.java.Status.SKIPPED && !TestConfiguration.useKeycloak() && WebDriverRunner.hasWebDriverStarted()) {
