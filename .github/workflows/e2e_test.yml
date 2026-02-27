@@ -89,6 +89,7 @@ jobs:
             extra_args='-Dio.hawt.test.use.keycloak=true'
           fi
           docker run --rm \
+          -e GITHUB_ACTIONS=true \
           -v /var/run/docker.sock:/var/run/docker.sock \
           -v $PWD/$REPORT_DIR:/workspace/tests/hawtio-test-suite/target \
           -v $PWD/$REPORT_DIR/build:/workspace/tests/hawtio-test-suite/build/ \
