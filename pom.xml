@@ -46,7 +46,7 @@
     <spring-version>6.2.16</spring-version>
     <spring-boot-version>3.5.9</spring-boot-version>
     <!-- Camel -->
-    <camel-spring-boot-version>4.17.0</camel-spring-boot-version>
+    <camel-spring-boot-version>4.18.0</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.4</jetty12-version>
 
