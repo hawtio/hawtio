@@ -51,7 +51,7 @@
     <jetty12-version>12.1.4</jetty12-version>
 
     <!-- Other dependencies -->
-    <assertj-core-version>3.27.6</assertj-core-version>
+    <assertj-core-version>3.27.7</assertj-core-version>
     <caffeine-version>3.2.2</caffeine-version>
     <commons-codec-version>1.21.0</commons-codec-version>
     <commons-io-version>2.20.0</commons-io-version>
