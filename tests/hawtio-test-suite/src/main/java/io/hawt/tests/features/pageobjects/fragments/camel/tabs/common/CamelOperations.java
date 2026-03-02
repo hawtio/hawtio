@@ -1,6 +1,7 @@
 package io.hawt.tests.features.pageobjects.fragments.camel.tabs.common;
 
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
+import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.clickable;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.exist;
@@ -36,7 +37,7 @@ public class CamelOperations extends CamelPage {
 
         ensureRowExpanded(row);
 
-        row.$(EXECUTE_BUTTON_SELECTOR).shouldBe(clickable).click();
+        row.$(EXECUTE_BUTTON_SELECTOR).shouldBe(visible).shouldBe(clickable).click();
     }
 
     /**
@@ -46,7 +47,7 @@ public class CamelOperations extends CamelPage {
      * @param result expected result of an operation
      */
     public void checkResultOfExecutedOperation(String method, String result) {
-        getOperationRow(method).$(RESULT_PRE_SELECTOR).shouldHave(exactText(result));
+        getOperationRow(method).$(RESULT_PRE_SELECTOR).shouldBe(visible).shouldHave(exactText(result));
     }
 
     /**
@@ -56,7 +57,7 @@ public class CamelOperations extends CamelPage {
      * @return result of the operation as String
      */
     public String getResultOfExecutedOperation(String method) {
-        return getOperationRow(method).$(RESULT_PRE_SELECTOR).getText();
+        return getOperationRow(method).$(RESULT_PRE_SELECTOR).shouldBe(visible).getText();
     }
 
     public void checkOperation(String method, WebElementCondition condition) {
@@ -78,6 +79,7 @@ public class CamelOperations extends CamelPage {
 
         if ("false".equals(toggleBtn.getAttribute("aria-expanded"))) {
             toggleBtn.click();
+            toggleBtn.shouldHave(attribute("aria-expanded", "true"));
         }
     }
 }
