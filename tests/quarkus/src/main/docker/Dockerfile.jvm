@@ -81,6 +81,8 @@ FROM ${IMAGE}:${JAVA_VERSION}
 
 ENV LANGUAGE='en_US:en'
 
+# Install zip utilities needed for Keycloak config patching
+RUN apt-get update && apt-get install -y zip unzip && rm -rf /var/lib/apt/lists/*
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
 COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
