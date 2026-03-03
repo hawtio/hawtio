@@ -25,10 +25,14 @@ jobs:
       fail-fast: false
       matrix:
         java: ["17"]
-        runtime: ["quarkus", "springboot", "quarkus-keycloak"]
+        runtime: ["quarkus", "springboot"]
+        auth: ["standard", "keycloak"]
         browser: ["firefox"] # chrome disabled because of https://github.com/hawtio/hawtio-next/issues/478
+        exclude:
+          - runtime: springboot
+            auth: keycloak
     env:
-      REPORT_DIR: results-${{matrix.runtime}}-${{matrix.java}}-${{matrix.browser}}
+      REPORT_DIR: results-${{matrix.runtime}}-${{matrix.auth}}-${{matrix.java}}-${{matrix.browser}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -48,13 +52,18 @@ jobs:
         uses: docker/setup-qemu-action@v3.6.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Set module name
+        id: runtime
+        run: |
+          # Module name is simply the runtime (auth is a separate configuration dimension)
+          echo "module=${{matrix.runtime}}" >> $GITHUB_ENV
       - name: Build Maven projects
         run: |
           # Phase 1: Build entire project to ensure all modules are fresh
           mvn --batch-mode --no-transfer-progress install -DskipTests
           # Phase 2: Build test modules with e2e profile to create app artifacts
           mvn --batch-mode --no-transfer-progress install -DskipTests \
-            -Pe2e -pl :hawtio-tests-${{matrix.runtime}} -am
+            -Pe2e -pl :hawtio-tests-${{ env.module }} -am
       - name: Build hawtio-test-suite image
         uses: docker/build-push-action@v6
         with:
@@ -66,24 +75,22 @@ jobs:
           load: true
           cache-from: type=gha,scope=hawtio-test-suite-${{ matrix.java }}
           cache-to: type=gha,mode=max,scope=hawtio-test-suite-${{ matrix.java }}
-      - name: Build hawtio-${{ matrix.runtime }}-app image
+      - name: Build hawtio-${{ env.module }}-app image
         uses: docker/build-push-action@v6
         with:
-          context: tests/${{ matrix.runtime }}
-          file: tests/${{ matrix.runtime }}/Dockerfile
+          context: tests/${{ env.module }}
+          file: tests/${{ env.module }}/Dockerfile
           build-args: |
             JAVA_VERSION=${{ matrix.java }}
-          tags: hawtio-${{ matrix.runtime }}-app:${{ matrix.java }}
+          tags: hawtio-${{ env.module }}-app:${{ matrix.java }}
           load: true
-          cache-from: type=gha,scope=${{ matrix.runtime }}-app-${{ matrix.java }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.runtime }}-app-${{ matrix.java }}
-      - name: ${{ matrix.runtime }} E2E test (Java ${{ matrix.java }})
+          cache-from: type=gha,scope=${{ env.module }}-app-${{ matrix.java }}
+          cache-to: type=gha,mode=max,scope=${{ env.module }}-app-${{ matrix.java }}
+      - name: ${{ matrix.runtime }}-${{ matrix.auth }} E2E test (Java ${{ matrix.java }})
         id: test
         run: |
-          runtime=${{matrix.runtime}}
           extra_args=''
-          if [[ $runtime =~ "-keycloak" ]]; then
-            runtime=${runtime%-keycloak}
+          if [[ "${{ matrix.auth }}" == "keycloak" ]]; then
             extra_args='-Dio.hawt.test.use.keycloak=true'
           fi
           docker run --rm \
@@ -91,13 +98,13 @@ jobs:
           -v $PWD/$REPORT_DIR:/workspace/tests/hawtio-test-suite/target \
           -v $PWD/$REPORT_DIR/build:/workspace/tests/hawtio-test-suite/build/ \
           --shm-size="2g" \
-            hawtio-test-suite:${{ matrix.java }} -Pe2e-${runtime} -Dselenide.browser=${{ matrix.browser }} \
-            -Dio.hawt.test.docker.image=hawtio-${runtime}-app:${{ matrix.java }} $extra_args
+            hawtio-test-suite:${{ matrix.java }} -Pe2e-${{ matrix.runtime }} -Dselenide.browser=${{ matrix.browser }} \
+            -Dio.hawt.test.docker.image=hawtio-${{ matrix.runtime }}-app:${{ matrix.java }} $extra_args
       - name: Archive test artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: "test-results-${{ matrix.runtime }}-java-${{ matrix.java }}-${{ matrix.browser }}"
+          name: "test-results-${{ matrix.runtime }}-${{ matrix.auth }}-java-${{ matrix.java }}-${{ matrix.browser }}"
           path: |
             ${{ env.REPORT_DIR }}/build/reports/tests/*.png
             ${{ env.REPORT_DIR }}/*.log
