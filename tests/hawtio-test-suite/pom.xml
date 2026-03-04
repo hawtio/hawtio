@@ -16,7 +16,7 @@
     <local-app>true</local-app>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <gson-version>2.13.2</gson-version>
-    <xtf.version>0.37</xtf.version>
+    <xtf.version>1.0</xtf.version>
   </properties>
 
   <dependencyManagement>

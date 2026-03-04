@@ -26,38 +26,45 @@ public class OpenshiftClient extends OpenShift {
     }
 
     private static OpenshiftClient createInstance() {
-        OpenShiftConfigBuilder configBuilder;
+        OpenShiftConfig openShiftConfig;
 
         if (TestConfiguration.getOpenshiftUrl() != null) {
-            configBuilder = new OpenShiftConfigBuilder()
+            openShiftConfig = new OpenShiftConfigBuilder()
                 .withMasterUrl(TestConfiguration.getOpenshiftUrl())
                 .withUsername(TestConfiguration.getOpenshiftUsername())
-                .withPassword(TestConfiguration.getOpenshiftPassword());
+                .withPassword(TestConfiguration.getOpenshiftPassword())
+                .withNamespace(TestConfiguration.getOpenshiftNamespace())
+                .withBuildTimeout(60_000L)
+                .withRequestTimeout(120_000)
+                .withConnectionTimeout(120_000)
+                .withTrustCerts(true)
+                .build();
         } else if (TestConfiguration.openshiftKubeconfig() != null) {
             try {
-                configBuilder = new OpenShiftConfigBuilder(
-                    new OpenShiftConfig(Config.fromKubeconfig(IOUtils.toString(TestConfiguration.openshiftKubeconfig().toUri(), "UTF-8"))));
+                Config config = Config.fromKubeconfig(IOUtils.toString(TestConfiguration.openshiftKubeconfig().toUri(), "UTF-8"));
+                openShiftConfig = new OpenShiftConfig(config);
+                openShiftConfig.setNamespace(TestConfiguration.getOpenshiftNamespace());
+                openShiftConfig.setBuildTimeout(60_000L);
+                openShiftConfig.setRequestTimeout(120_000);
+                openShiftConfig.setConnectionTimeout(120_000);
+                openShiftConfig.setTrustCerts(true);
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read kubeconfig", e);
             }
         } else {
             LOG.info("Auto-configuring openshift client");
-            configBuilder = new OpenShiftConfigBuilder(new OpenShiftConfig(Config.autoConfigure(null)));
+            Config config = Config.autoConfigure(null);
+            openShiftConfig = new OpenShiftConfig(config);
+            openShiftConfig.setNamespace(TestConfiguration.getOpenshiftNamespace());
+            openShiftConfig.setBuildTimeout(60_000L);
+            openShiftConfig.setRequestTimeout(120_000);
+            openShiftConfig.setConnectionTimeout(120_000);
+            openShiftConfig.setTrustCerts(true);
         }
 
-        String namespace = TestConfiguration.getOpenshiftNamespace();
+        LOG.info("Using cluster {}", openShiftConfig.getMasterUrl());
 
-        configBuilder
-            .withNamespace(namespace)
-//            .withHttpsProxy(TestConfiguration.openshiftHttpsProxy())
-            .withBuildTimeout(60_000L)
-            .withRequestTimeout(120_000)
-            .withConnectionTimeout(120_000)
-            .withTrustCerts(true);
-
-        LOG.info("Using cluster {}", configBuilder.getMasterUrl());
-
-        return new OpenshiftClient(configBuilder.build());
+        return new OpenshiftClient(openShiftConfig);
     }
 
     private static OpenshiftClient init() {
