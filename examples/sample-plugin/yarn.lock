@@ -608,9 +608,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^2.0.0-dev.3":
-  version: 2.0.0-dev.3
-  resolution: "@hawtio/react@npm:2.0.0-dev.3"
+"@hawtio/react@npm:^2.0.0-pre.0":
+  version: 2.0.0-pre.0
+  resolution: "@hawtio/react@npm:2.0.0-pre.0"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
     "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.0"
@@ -644,7 +644,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/4a27322b2a7fa6cb6786544cd05c021db6e9bd8b13daad6613a07e33ae5b94aeb97944600c8b54c1a503df225b8a207f35925e92d8e2f963e18ed2536979dfd4
+  checksum: 10/cf4beb82caf99b7d59c7aaf94d00e28c8c71ed4db90f02bd9f8078f06c2ef01bf7f42049af8f873f5514e62e6c841c8ef4734061420ebf8026a092245903c62c
   languageName: node
   linkType: hard
 
@@ -4850,7 +4850,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^2.0.0-dev.3"
+    "@hawtio/react": "npm:^2.0.0-pre.0"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
