@@ -45,6 +45,8 @@
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring-version>6.2.16</spring-version>
     <spring-boot-version>3.5.9</spring-boot-version>
+    <spring7-version>7.0.5</spring7-version>
+    <spring-boot4-version>4.0.3</spring-boot4-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.18.0</camel-spring-boot-version>
     <!-- Jetty -->
@@ -66,6 +68,7 @@
     <nimbusds-jose-version>10.5</nimbusds-jose-version>
     <picocli-version>4.7.7</picocli-version>
     <servlet-api-version>5.0.0</servlet-api-version>
+    <servlet-api61-version>6.1.0</servlet-api61-version>
     <!-- Pin SLF4J version until https://issues.apache.org/jira/browse/CAMEL-20598 is resolved at SLF4J -->
     <slf4j-version>2.0.11</slf4j-version>
 
@@ -107,6 +110,7 @@
     <module>examples/springboot-log4j2</module>
     <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>
+    <module>examples/springboot4</module>
     <module>examples/war-plugin</module>
     <module>hawtio-jbang</module>
     <module>hawtio-plugin-mbean</module>
@@ -117,6 +121,7 @@
     <module>platforms/quarkus</module>
     <module>platforms/springboot</module>
     <module>platforms/springboot-security</module>
+    <module>platforms/springboot4</module>
     <module>plugins/hawtio-connect</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>

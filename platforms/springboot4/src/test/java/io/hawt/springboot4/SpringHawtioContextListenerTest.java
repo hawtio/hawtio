@@ -1,0 +1,29 @@
+package io.hawt.springboot4;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+
+import io.hawt.system.ConfigManager;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+public class SpringHawtioContextListenerTest {
+
+    @Test
+    public void testContextInitialized() {
+        final ConfigManager configManager = Mockito.mock(ConfigManager.class);
+        final ServletContextEvent event = Mockito.mock(ServletContextEvent.class);
+        final ServletContext ctx = Mockito.mock(ServletContext.class);
+
+        Mockito.when(event.getServletContext()).thenReturn(ctx);
+        Mockito.when(ctx.getAttribute(ConfigManager.CONFIG_MANAGER)).thenReturn(configManager);
+
+        final SpringHawtioContextListener underTest = new SpringHawtioContextListener(
+            configManager, "foobar");
+        underTest.contextInitialized(event);
+
+        Mockito.verify(ctx).setAttribute("ConfigManager", configManager);
+        Mockito.verify(ctx).setAttribute("hawtioServletPath", "foobar");
+    }
+
+}
