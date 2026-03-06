@@ -22,8 +22,8 @@ public class ThrottlingStepDefs {
     private static final Logger LOG = LoggerFactory.getLogger(ThrottlingStepDefs.class);
     private final LoginPage loginPage = new LoginPage();
     private final ConnectPage connectPage = new ConnectPage();
-    private static final By WARNING = By.cssSelector(".pf-v5-c-helper-text__item-text");
-    private static final By CONNECT_PAGE_ALERT = By.cssSelector(".pf-v5-c-alert__title");
+    private static final By WARNING = By.cssSelector(".pf-v6-c-helper-text__item-text");
+    private static final By CONNECT_PAGE_ALERT = By.cssSelector(".pf-v6-c-alert__title");
 
     @Given("User is on Login page")
     public void userIsOnLoginPage() {

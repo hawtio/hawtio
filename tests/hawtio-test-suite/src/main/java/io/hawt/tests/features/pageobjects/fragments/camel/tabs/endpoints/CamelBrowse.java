@@ -1,5 +1,6 @@
 package io.hawt.tests.features.pageobjects.fragments.camel.tabs.endpoints;
 
+import static com.codeborne.selenide.Condition.clickable;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.visible;
@@ -10,10 +11,14 @@ import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
 
+import com.codeborne.selenide.SelenideElement;
+
 /**
  * Represents Browse Tab page in Camel Endpoints.
  */
 public class CamelBrowse extends CamelPage {
+    private static final SelenideElement FORWARD_MESSAGE_MODAL_SELECTOR = $(byAttribute("aria-label", "forward-message-modal"));
+
     /**
      * Checks that the message is visible in the list.
      *
@@ -39,11 +44,11 @@ public class CamelBrowse extends CamelPage {
      */
     public void forwardSelectedMessage(String endpointURI) {
         clickButton("Forward");
-        $(byXpath("//div[contains(@class, 'modal')]//input[@aria-label='Search input']")).shouldBe(enabled).click();
+        FORWARD_MESSAGE_MODAL_SELECTOR.$(byAttribute("aria-label", "Search input")).shouldBe(enabled).click();
         $(byTagAndText("p", endpointURI)).shouldBe(visible).click();
-        $(byXpath("//div[contains(@class, 'modal')]//button[text()='Forward']")).shouldBe(enabled).click();
+        FORWARD_MESSAGE_MODAL_SELECTOR.$(byTagAndText("span", "Forward")).shouldBe(clickable).click();
         successfulAlertMessage().closeAlertMessage();
-        $(byAttribute("aria-label", "Close")).shouldBe(visible).click();
+        $(byAttribute("aria-label", "Close")).shouldBe(clickable).click();
     }
 
     /**

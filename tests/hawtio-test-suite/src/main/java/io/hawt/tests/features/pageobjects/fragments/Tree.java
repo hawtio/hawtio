@@ -141,7 +141,7 @@ public class Tree {
     }
 
     private void assureLoaded() {
-        $(By.className("pf-v5-c-tree-view__list")).should(exist, Duration.ofSeconds(10));
+        $(By.className("pf-v6-c-tree-view__list")).should(exist, Duration.ofSeconds(10));
     }
 
     /**
@@ -157,7 +157,7 @@ public class Tree {
         final String unmaskedIpPattern = "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}-.*$";
 
         // Ensure tree and IP nodes exist
-        final ElementsCollection ipNodes = $$(".pf-v5-c-tree-view__node-text")
+        final ElementsCollection ipNodes = $$(".pf-v6-c-tree-view__node-text")
             .as("Tree nodes")
             .shouldHave(sizeGreaterThan(0))
             .filter(matchText(anyIpPattern))

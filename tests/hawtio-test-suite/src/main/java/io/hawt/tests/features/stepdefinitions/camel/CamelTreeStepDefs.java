@@ -15,36 +15,36 @@ public class CamelTreeStepDefs {
 
     @And("^User is on Camel Contexts$")
     public void userIsOnCamelContexts() {
-        camelPage.tree().selectSpecificItemByExactId(folder("org.apache.camel") + "-" + folder("CamelContexts"));
+        camelPage.tree().selectSpecificItemByExactId("org.apache.camel" + "-" + folder("CamelContexts"));
     }
 
     @And("^User is on Camel \"([^\"]*)\" context$")
     public void userIsOnCamelContext(String context) {
-        camelPage.tree().selectSpecificItem(folder("CamelContexts") + "-" + folder(context));
+        camelPage.tree().selectSpecificItem("CamelContexts" + "-" + folder(context));
     }
 
     @And("^User is on Camel \"([^\"]*)\" folder of \"([^\"]*)\" context$")
     public void userIsOnCamelEndpointsPage(String folder, String context) {
         camelPage.tree()
             .expandSpecificFolder(Tree.class, folder(context))
-            .selectSpecificItem(folder(context) + "-" + folder(folder));
+            .selectSpecificItem(context + "-" + folder(folder));
     }
 
     @And("^User is on Camel \"([^\"]*)\" item of \"([^\"]*)\" folder of \"([^\"]*)\" context$")
     public void userIsOnCamelItemOfFolderOfContext(String item, String folder, String context) {
         camelPage.tree()
             .expandSpecificFolder(Tree.class, folder(context))
-            .expandSpecificFolder(Tree.class, folder(context) + "-" + folder(folder))
-            .selectSpecificItem(folder(context) + "-" + folder(folder) + "-" + item);
+            .expandSpecificFolder(Tree.class, context + "-" + folder(folder))
+            .selectSpecificItem(context + "-" + folder + "-" + item);
     }
 
     @And("^User is on Camel \"([^\"]*)\" item of \"([^\"]*)\" group of \"([^\"]*)\" folder of \"([^\"]*)\" context$")
     public void userIsOnCamelItemOfGroupOfFolderOfContext(String item, String group, String folder, String context) {
         camelPage.tree()
             .expandSpecificFolder(Tree.class, folder(context))
-            .expandSpecificFolder(Tree.class, folder(context) + "-" + folder(folder))
-            .expandSpecificFolder(Tree.class, folder(context) + "-" + folder(folder) + "-" + folder(group))
-            .selectSpecificItem(folder(context) + "-" + folder(folder) + "-" + folder(group) + "-" + item);
+            .expandSpecificFolder(Tree.class, context + "-" + folder(folder))
+            .expandSpecificFolder(Tree.class, context + "-" + folder + "-" + folder(group))
+            .selectSpecificItem(context + "-" + folder + "-" + group + "-" + item);
     }
 
     @When("^User expands Camel tree$")

@@ -26,10 +26,10 @@ public class DiscoverTab {
 
     private static final By SEARCH_INPUT = By.cssSelector("#search-filter-input input[type=\"text\"]");
     private static final By SEARCH_DROPDOWN_BUTTON = By.cssSelector("button[aria-label=\"Options menu\"]");
-    private static final By DISCOVER_TABS = By.className("pf-v5-c-tabs__list");
+    private static final By DISCOVER_TABS = By.className("pf-v6-c-tabs__list");
 
     public static final boolean REPLICA_SET_WORKAROUND = true;
-    public static final By ACTIVE_DEPLOYMENT_LIST = By.cssSelector(".pf-v5-c-tab-content:not([hidden])");
+    public static final By ACTIVE_DEPLOYMENT_LIST = By.cssSelector(".pf-v6-c-tab-content:not([hidden])");
 
     public void connectTo(String name) {
         waitForPageLoaded();

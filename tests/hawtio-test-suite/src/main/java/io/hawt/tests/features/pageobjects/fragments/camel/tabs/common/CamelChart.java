@@ -58,7 +58,7 @@ public class CamelChart extends CamelPage {
      * @param attribute to be watched
      */
     public void watch(String attribute) {
-        $(byXpath("//div[contains(@class, 'pf-m-chosen')]//span[@class='pf-v5-c-dual-list-selector__item-toggle-icon']")).shouldBe(enabled).click();
+        $(byXpath("//div[contains(@class, 'pf-m-chosen')]//span[@class='pf-v6-c-dual-list-selector__item-toggle-icon']")).shouldBe(enabled).click();
         $(byXpath("//span[text()='" + attribute + "']/preceding-sibling::span/input")).shouldBe(enabled).click();
         $(byXpath("//button[@aria-label='Remove selected']")).shouldBe(enabled).click();
     }
@@ -99,7 +99,7 @@ public class CamelChart extends CamelPage {
      * @return list of attributes
      */
     private ElementsCollection getTitles() {
-        return $$(byXpath("//div[@class='pf-v5-c-card__header-main']/h3")).shouldHave(sizeGreaterThan(0));
+        return $$(byXpath("//div[@class='pf-v6-c-card__header-main']/h3")).shouldHave(sizeGreaterThan(0));
     }
 
     /**

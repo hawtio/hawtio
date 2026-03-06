@@ -37,8 +37,7 @@ public class Menu {
         emptyStateContent.shouldNot(exist, Duration.ofSeconds(10));
 
         // Wait for the navigation item to be available before clicking
-        item.should(exist).shouldBe(interactable);
-        item.click();
+        item.should(exist).shouldBe(interactable).click();
         toggleLeftSideBarIfOverlaysCamelTree();
     }
 

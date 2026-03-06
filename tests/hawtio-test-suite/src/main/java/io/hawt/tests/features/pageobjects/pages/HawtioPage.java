@@ -1,7 +1,11 @@
 package io.hawt.tests.features.pageobjects.pages;
 
+import io.hawt.tests.features.pageobjects.fragments.Panel;
+import io.hawt.tests.features.pageobjects.fragments.menu.Menu;
+import static com.codeborne.selenide.Condition.clickable;
 import static com.codeborne.selenide.Condition.cssClass;
 import static com.codeborne.selenide.Condition.enabled;
+import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.matchText;
 import static com.codeborne.selenide.Condition.visible;
@@ -12,9 +16,6 @@ import static com.codeborne.selenide.Selenide.$$;
 import org.openqa.selenium.By;
 
 import com.codeborne.selenide.SelenideElement;
-
-import io.hawt.tests.features.pageobjects.fragments.Panel;
-import io.hawt.tests.features.pageobjects.fragments.menu.Menu;
 
 /**
  * Represents Hawtio page with common methods.
@@ -45,7 +46,7 @@ public class HawtioPage {
      * @param text on the given button
      */
     public HawtioPage clickButton(String text) {
-        $(byXpath("//button[text()[normalize-space() = '" + text + "']]")).shouldBe(visible).shouldBe(enabled).click();
+        $$(".pf-v6-c-button__text").findBy(exactText(text)).closest("button").shouldBe(visible).shouldBe(enabled).click();
         return this;
     }
 
@@ -56,7 +57,7 @@ public class HawtioPage {
      * @return this
      */
     public HawtioPage clickToggleButton(String text) {
-        $$(".pf-v5-c-menu-toggle__text").findBy(matchText(text.trim())).closest("button").shouldBe(interactable).click();
+        $$(".pf-v6-c-menu-toggle__text").findBy(matchText(text.trim())).closest("button").shouldBe(visible).shouldBe(enabled).click();
         return this;
     }
 
@@ -66,7 +67,7 @@ public class HawtioPage {
      * @param ariaLabel on the given button
      */
     public HawtioPage clickButtonByAriaLabel(String ariaLabel) {
-        $(byXpath("//button[@aria-label='" + ariaLabel + "']")).shouldBe(visible).shouldBe(enabled).click();
+        $("button[aria-label='" + ariaLabel + "']").shouldBe(clickable).click();
         return this;
     }
 
@@ -76,7 +77,7 @@ public class HawtioPage {
      * @return this
      */
     public HawtioPage successfulAlertMessage() {
-        $(byXpath("//div[contains(@class, 'pf-v5-c-alert pf-m-success')]")).shouldBe(interactable);
+        $(byXpath("//div[contains(@class, 'pf-v6-c-alert pf-m-success')]")).shouldBe(interactable);
         return this;
     }
 
@@ -86,7 +87,7 @@ public class HawtioPage {
      * @return this
      */
     public HawtioPage unsuccessfulAlertMessage() {
-        $(byXpath("//div[contains(@class, 'pf-v5-c-alert pf-m-danger')]")).shouldBe(interactable);
+        $(byXpath("//div[contains(@class, 'pf-v6-c-alert pf-m-danger')]")).shouldBe(interactable);
         return this;
     }
 
@@ -94,7 +95,7 @@ public class HawtioPage {
      * Close an alert message.
      */
     public void closeAlertMessage() {
-        $(byXpath("//div[contains(@class, 'pf-v5-c-alert')]//button[contains(@aria-label, 'Close')]")).shouldBe(enabled).click();
+        $(byXpath("//div[contains(@class, 'pf-v6-c-alert')]//button[contains(@aria-label, 'Close')]")).shouldBe(enabled).click();
     }
 
     /**
@@ -112,7 +113,7 @@ public class HawtioPage {
     }
 
     public SelenideElement getLogo() {
-        return $(HEADER_SELECTOR).$(By.className("pf-v5-c-brand"));
+        return $(HEADER_SELECTOR).$(By.className("pf-v6-c-brand"));
     }
 
     public String getAppName() {

@@ -10,11 +10,11 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class PreferencesPage extends HawtioPage {
     public void switchTab(String tab) {
-        $(By.cssSelector("main nav.pf-v5-c-nav")).$(ByUtils.byExactText(tab)).shouldBe(interactable).click();
-        $(".pf-v5-c-page__main-section").shouldNotBe(empty);
+        $(By.cssSelector("main nav.pf-v6-c-nav")).$(ByUtils.byExactText(tab)).shouldBe(interactable).click();
+        $(".pf-v6-c-page__main-section").shouldNotBe(empty);
     }
 
     public void checkContent() {
-        $("div .pf-v5-c-form").shouldNotBe(empty);
+        $("div .pf-v6-c-form").shouldNotBe(empty);
     }
 }
