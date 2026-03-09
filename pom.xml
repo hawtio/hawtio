@@ -41,10 +41,11 @@
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
     <quarkus-version>3.32.1</quarkus-version>
-    <!-- Spring -->
-    <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
+    <!-- Spring Boot 3 -->
     <spring-version>6.2.16</spring-version>
     <spring-boot-version>3.5.9</spring-boot-version>
+    <!-- Spring Boot 4 -->
+    <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring7-version>7.0.5</spring7-version>
     <spring-boot4-version>4.0.3</spring-boot4-version>
     <!-- Camel -->
@@ -120,6 +121,7 @@
     <module>platforms/springboot</module>
     <module>platforms/springboot-security</module>
     <module>platforms/springboot4</module>
+    <module>platforms/springboot4-security</module>
     <module>plugins/hawtio-connect</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
