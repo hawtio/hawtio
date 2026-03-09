@@ -57,3 +57,21 @@ Feature: Checking the functionality of a Preferences tab
 #    And User is on "Sample Plugin" tab of Preferences page
 #    Then Content section has h2 title "Sample Plugin"
 #    And Content section has paragraph "Preferences view for the custom plugin."
+
+  Scenario: Check that Camel tab works
+    Given User clicks on "Preferences" option in hawtio drop-down menu
+    And User is on "Camel" tab of Preferences page
+    When User changes Camel values
+    Then Camel change stays after reload
+
+  Scenario: Check that Server Logs tab works
+    Given User clicks on "Preferences" option in hawtio drop-down menu
+    And User is on "Server Logs" tab of Preferences page
+    When User changes Server Logs values
+    Then Server Logs change stays after reload
+
+  Scenario: Check that JMX tab works
+    Given User clicks on "Preferences" option in hawtio drop-down menu
+    And User is on "JMX" tab of Preferences page
+    When User views JMX preference options
+    Then JMX preferences are loaded correctly

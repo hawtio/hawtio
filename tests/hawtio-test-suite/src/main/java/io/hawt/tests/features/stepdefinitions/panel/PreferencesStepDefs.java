@@ -8,6 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.hawt.tests.features.pageobjects.pages.preferences.PreferencesPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
@@ -17,7 +18,9 @@ public class PreferencesStepDefs {
     private final PreferencesPage preferencesPage = new PreferencesPage();
     private static final By CONNECT_MAX_DEPTH = By.id("jolokia-form-max-depth-input");
     private static final By CONNECT_MAX_SIZE_INPUT = By.id("jolokia-form-max-collection-size-input");
-
+    private static final By CAMEL_MAX_LABEL_WIDTH = By.id("camel-form-maximum-label-width-input");
+    private static final By SERVER_LOGS_CACHE_SIZE = By.id("logs-form-log-cache-size-input");
+    private static final By JMX_SERIALIZE_LONG = By.id("serialize-long-to-string-input");
 
     @When("^User is on \"([^\"]*)\" tab of Preferences page$")
     public void userIsOnTabOfPreferencesPage(String tabName) {
@@ -108,6 +111,38 @@ public class PreferencesStepDefs {
         $(CONNECT_MAX_DEPTH).shouldBe(value("7"));
         $(CONNECT_MAX_SIZE_INPUT).shouldBe(value("50000"));
     }
+
+    @When("User changes Camel values")
+    public void userChangesCamelValues() {
+        $(CAMEL_MAX_LABEL_WIDTH).shouldBe(visible).clear();
+        $(CAMEL_MAX_LABEL_WIDTH).sendKeys("40", Keys.ENTER);
+    }
+    @Then("Camel change stays after reload")
+    public void camelChangeStaysAfterReload() {
+        WebDriverRunner.getWebDriver().navigate().refresh();
+        $(CAMEL_MAX_LABEL_WIDTH).shouldBe(value("40"));
+    }
+
+    @When("User changes Server Logs values")
+    public void userChangesServerLogsValues() {
+        $(SERVER_LOGS_CACHE_SIZE).shouldBe(visible).clear();
+        $(SERVER_LOGS_CACHE_SIZE).sendKeys("1000", Keys.ENTER);
+    }
+    @Then("Server Logs change stays after reload")
+    public void serverLogsChangeStaysAfterReload() {
+        WebDriverRunner.getWebDriver().navigate().refresh();
+        $(SERVER_LOGS_CACHE_SIZE).shouldBe(value("1000"));
+    }
+
+    @When("User views JMX preference options")
+    public void userViewsJmxPreferenceOptions() {
+        $(JMX_SERIALIZE_LONG).shouldBe(visible).click();
+    }
+    @Then("JMX preferences are loaded correctly")
+    public void jmxPreferencesAreLoadedCorrectly() {
+        WebDriverRunner.getWebDriver().navigate().refresh();
+        $(JMX_SERIALIZE_LONG).shouldBe(visible);
+    }    
 
     @Then("^Content section has h2 title \"([^\"]*)\"$")
     public void contentSectionHasHTitle(String title) {
