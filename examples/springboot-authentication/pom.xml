@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot-authentication</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Spring Boot 3.x process with authentication</description>
+  <description>Hawtio :: Sample Spring Boot 4.x process with authentication</description>
   <packaging>jar</packaging>
 
   <dependencyManagement>
@@ -26,9 +26,16 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.redhat.camel.springboot.platform</groupId>
-        <artifactId>camel-spring-boot-bom</artifactId>
-        <version>${camel-spring-boot-version}</version>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring7-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot4-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -55,7 +62,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-undertow</artifactId>
+      <artifactId>spring-boot-starter-jetty</artifactId>
     </dependency>
     <dependency>
       <groupId>jakarta.annotation</groupId>
@@ -68,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-springboot</artifactId>
+      <artifactId>hawtio-springboot4</artifactId>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
@@ -81,7 +88,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <configuration>
           <mainClass>io.hawt.example.spring.boot.SampleAuthenticationSpringBootService</mainClass>
         </configuration>
