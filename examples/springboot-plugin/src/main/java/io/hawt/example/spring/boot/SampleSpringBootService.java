@@ -1,6 +1,6 @@
 package io.hawt.example.spring.boot;
 
-import io.hawt.springboot.HawtioPlugin;
+import io.hawt.springboot4.HawtioPlugin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +16,7 @@ public class SampleSpringBootService {
      * Loading a sample plugin.
      */
     @Bean
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public HawtioPlugin samplePlugin() {
         /*
          * These are the parameters required to load a remote Hawtio plugin (a.k.a. Module Federation remote module):
