@@ -608,9 +608,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^2.0.0-pre.0":
-  version: 2.0.0-pre.0
-  resolution: "@hawtio/react@npm:2.0.0-pre.0"
+"@hawtio/react@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@hawtio/react@npm:2.0.0"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
     "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.0"
@@ -619,7 +619,7 @@ __metadata:
     "@monaco-editor/react": "npm:^4.6.0"
     "@thumbmarkjs/thumbmarkjs": "npm:^1.7.4"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.3.1"
+    dompurify: "npm:^3.3.2"
     eventemitter3: "npm:^5.0.4"
     jolokia.js: "npm:^2.5.0"
     js-logger: "npm:^1.6.1"
@@ -644,7 +644,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/cf4beb82caf99b7d59c7aaf94d00e28c8c71ed4db90f02bd9f8078f06c2ef01bf7f42049af8f873f5514e62e6c841c8ef4734061420ebf8026a092245903c62c
+  checksum: 10/d3c4e75775a1fec9e48a738afbefcbf03a9cbe11adab7dae64f42cf53a4e98952627752890ec88fcd7530169367da3faefacaef1ca51d13255737a6b6460ff61
   languageName: node
   linkType: hard
 
@@ -4063,7 +4063,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.1":
+"dompurify@npm:^3.3.2":
   version: 3.3.2
   resolution: "dompurify@npm:3.3.2"
   dependencies:
@@ -4850,7 +4850,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^2.0.0-pre.0"
+    "@hawtio/react": "npm:^2.0.0"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
