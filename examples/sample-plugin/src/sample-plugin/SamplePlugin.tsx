@@ -1,8 +1,8 @@
-import { PageSection, PageSectionVariants, Content } from '@patternfly/react-core'
+import { Content, PageSection } from '@patternfly/react-core'
 import React from 'react'
 
 export const SamplePlugin: React.FunctionComponent = () => (
-  <PageSection variant={PageSectionVariants.default}>
+  <PageSection hasBodyWrapper={false}>
     <Content>
       <Content component='h1'>Sample Plugin</Content>
       <Content component='p'>This is a sample Hawtio plugin that is discovered dynamically at runtime.</Content>

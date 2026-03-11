@@ -1,13 +1,11 @@
-import { CardBody, Text, TextContent } from '@patternfly/react-core'
+import { CardBody, Content } from '@patternfly/react-core'
 import React from 'react'
 
 export const SamplePreferences: React.FunctionComponent = () => {
   return (
     <CardBody>
-      <TextContent>
-        <Text component='h2'>Sample Plugin</Text>
-        <Text component='p'>Preferences view for the custom plugin.</Text>
-      </TextContent>
+      <Content component='h2'>Sample Plugin</Content>
+      <Content component='p'>Preferences view for the custom plugin.</Content>
     </CardBody>
   )
 }
