@@ -8,6 +8,7 @@ import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoute
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoutes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelSource;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelTrace;
+import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelProfile;
 
 public class CamelRoutesStepDefs {
     private final CamelDebug camelDebug = new CamelDebug();
@@ -16,6 +17,7 @@ public class CamelRoutesStepDefs {
     private final CamelSource camelSource = new CamelSource();
     private final CamelProperties camelProperties = new CamelProperties();
     private final CamelTrace camelTrace = new CamelTrace();
+    private final CamelProfile camelProfile = new CamelProfile();
 
     @When("^User clicks on Delete button in dropdown in routes table$")
     public void userClicksOnDeleteButtonRoutesTable() {
@@ -117,5 +119,32 @@ public class CamelRoutesStepDefs {
     @Then("^Tracing not shows diagram$")
     public void traceDiagramIsNotShown() {
         camelTrace.traceDiagramIsNotShown();
+    }
+
+    @When("^User opens Profile tab$")
+    public void userOpensProfileTab() {
+    if (camelProfile.profileTabExists()) {
+        camelProfile.openProfileTab();
+    }
+    }
+
+    @Then("^Profile table is shown$")
+    public void profileTableIsShown() {
+    if (camelProfile.profileTableIsShown()) {
+        camelProfile.verifyProfileTableHasData();
+    }   
+    }
+
+    @Then("^Profile table contains columns: \"([^\"]*)\"$")
+    public void profileTableContainsColumns(String columns) {
+        if (camelProfile.profileTableIsShown()) {
+            String[] columnIds = columns.split(",\\s*");
+            camelProfile.verifyColumns(columnIds);
+        }
+    }
+
+    @Then("^Profile table is not shown$")
+    public void profileTableIsNotShown() {
+        camelProfile.profileTableIsNotShown();
     }
 }
