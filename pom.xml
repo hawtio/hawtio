@@ -40,10 +40,10 @@
     <jolokia-version>2.5.1</jolokia-version>
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
-    <quarkus-version>3.32.1</quarkus-version>
+    <quarkus-version>3.32.3</quarkus-version>
     <!-- Spring Boot 3 -->
     <spring-version>6.2.16</spring-version>
-    <spring-boot-version>3.5.9</spring-boot-version>
+    <spring-boot-version>3.5.11</spring-boot-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring7-version>7.0.5</spring7-version>
@@ -51,7 +51,7 @@
     <!-- Camel -->
     <camel-spring-boot-version>4.18.0</camel-spring-boot-version>
     <!-- Jetty -->
-    <jetty12-version>12.1.6</jetty12-version>
+    <jetty12-version>12.1.7</jetty12-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.7</assertj-core-version>
