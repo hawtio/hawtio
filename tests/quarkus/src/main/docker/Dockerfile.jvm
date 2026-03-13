@@ -81,21 +81,39 @@ FROM ${IMAGE}:${JAVA_VERSION}
 
 ENV LANGUAGE='en_US:en'
 
+# Ensure /deployments is writable for the mutable-jar rebuild process
+RUN mkdir -p /deployments/tmp && \
+    chown -R 185:0 /deployments && \
+    chmod -R 775 /deployments
 
+# Symlink for internal tool compatibility
+RUN ln -s /deployments/ /quarkus-app && chmod -R a+rw /quarkus-app
+
+# Copy the mutable-jar structure
 # We make four distinct layers so if there are application changes the library layers can be re-used
-COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
-COPY --chown=185 target/quarkus-app/*.jar /deployments/
-COPY --chown=185 target/quarkus-app/app/ /deployments/app/
-COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
-COPY --chown=185 ./start-keycloak.sh /deployments/
+COPY --chown=185:0 target/quarkus-app/lib/ /deployments/lib/
+COPY --chown=185:0 target/quarkus-app/*.jar /deployments/
+COPY --chown=185:0 target/quarkus-app/app/ /deployments/app/
+COPY --chown=185:0 target/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --chown=185:0 ./start-keycloak.sh /deployments/
 
-#Needed for quarkus rebuild inside container for some reason
-RUN ln -s /deployments/ /quarkus-app && chmod -R a+rw /quarkus-app && chown -R 185:185 /deployments
+RUN chmod +x /deployments/start-keycloak.sh
+
+# Fix for Quarkus 3.30.x parallel archive creator that hardcodes /zip-builder-files*
+# The parallel reaugmentation engine introduced in 3.29.x calls Files.createTempDirectory()
+# with path "/" and prefix "zip-builder-files", creating /zip-builder-files<random> at root.
+# We need to make root group-writable for user 185 to create these temp directories.
+USER root
+RUN chmod g+w /
+USER 185
+
+WORKDIR /deployments
 
 EXPOSE 8080
-USER 185
+
+# Standard Quarkus 3.x JVM settings
 ENV AB_JOLOKIA_OFF=""
-ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Djava.io.tmpdir=/deployments/tmp"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
 CMD java ${JAVA_OPTS} -jar ${JAVA_APP_JAR}
