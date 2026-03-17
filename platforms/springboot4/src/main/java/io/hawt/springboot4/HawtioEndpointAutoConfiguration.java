@@ -3,6 +3,7 @@ package io.hawt.springboot4;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.endpoint.expose.EndpointExposure;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
@@ -88,7 +89,7 @@ public class HawtioEndpointAutoConfiguration {
      *
      * @param webEndpointProperties
      * @param serverProperties
-     * @param managementServerProperties
+     * @param managementServerPropertiesProvider
      * @param dispatcherServletPath
      * @return
      */
@@ -102,8 +103,13 @@ public class HawtioEndpointAutoConfiguration {
     public EndpointPathResolver hawtioEndpointPathResolver(
         WebEndpointProperties webEndpointProperties,
         ServerProperties serverProperties,
-        ManagementServerProperties managementServerProperties,
+        ObjectProvider<ManagementServerProperties> managementServerPropertiesProvider,
         DispatcherServletPath dispatcherServletPath) {
+
+        // In SB 4, ManagementServerProperties is not automatically provided
+        // unless the "management.server." properties are explicitly set
+        ManagementServerProperties managementServerProperties =
+            managementServerPropertiesProvider.getIfAvailable(ManagementServerProperties::new);
         return new EndpointPathResolver(webEndpointProperties, serverProperties, managementServerProperties, dispatcherServletPath);
     }
 
