@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>hawtio-quarkus-parent</artifactId>
-    <version>5.1-SNAPSHOT</version>
+    <version>5.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
