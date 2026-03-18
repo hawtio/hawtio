@@ -1,6 +1,7 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import io.hawt.web.ServletHelpers;
+import org.jolokia.json.JSONWriter;
 
 /**
  * Returns the username associated with the current session, if any
@@ -28,7 +30,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!authConfiguration.isEnabled()) {
-            ServletHelpers.sendJSONResponse(response, wrapQuote(DEFAULT_USER));
+            ServletHelpers.sendJSONResponse(response, toJsonString(DEFAULT_USER));
             return;
         }
 
@@ -37,11 +39,13 @@ public class UserServlet extends HttpServlet {
             ServletHelpers.doForbidden(response);
             return;
         }
-        ServletHelpers.sendJSONResponse(response, wrapQuote(username));
+        ServletHelpers.sendJSONResponse(response, toJsonString(username));
     }
 
-    private String wrapQuote(String str) {
-        return "\"" + str + "\"";
+    private String toJsonString(String str) throws IOException {
+        var json = new StringWriter();
+        JSONWriter.serialize(str, json);
+        return json.toString();
     }
 
     protected String getUsername(HttpServletRequest request, HttpServletResponse response) {
