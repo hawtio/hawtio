@@ -119,3 +119,17 @@ Feature: Checking the functionality of Camel Specific Route page.
     When User starts tracing
     Then Tracing shows trace
     And Tracing shows diagram
+
+  Scenario: Open Camel Profile tab and verify table is displayed
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    When User opens Profile tab
+    Then Profile table is shown
+
+  Scenario: Verify columns in Profile table
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    When User opens Profile tab
+    Then Profile table contains columns: "ID, Count, Last, Delta, Mean, Min, Max, Total, Self"
+
+
