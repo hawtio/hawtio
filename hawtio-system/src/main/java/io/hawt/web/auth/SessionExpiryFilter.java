@@ -39,8 +39,6 @@ public class SessionExpiryFilter implements Filter {
 
     public static final String ATTRIBUTE_LAST_ACCESS = "LastAccess";
 
-    private static final List<String> IGNORED_PATHS = List.of("jolokia", "proxy");
-
     private AuthenticationConfiguration authConfiguration;
     private int pathIndex;
 
@@ -128,11 +126,8 @@ public class SessionExpiryFilter implements Filter {
         }
 
         LOG.debug("SubContext: {}", subContext);
-        if (IGNORED_PATHS.contains(subContext) && session.getAttribute(ATTRIBUTE_LAST_ACCESS) != null) {
-            LOG.debug("Not updating LastAccess");
-        } else {
-            updateLastAccess(session, now);
-        }
+
+        updateLastAccess(session, now);
 
         chain.doFilter(request, response);
     }
