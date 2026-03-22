@@ -183,7 +183,7 @@ public class HawtioManagementConfiguration {
     public FilterRegistrationBean<SessionExpiryFilter> sessionExpiryFilter() {
         final FilterRegistrationBean<SessionExpiryFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new SessionExpiryFilter());
-        filter.addUrlPatterns(hawtioPath + "/*");
+        filter.addUrlPatterns(hawtioPath + "/refresh");
         return filter;
     }
 
