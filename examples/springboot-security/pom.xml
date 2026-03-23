@@ -6,28 +6,28 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot-security</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Spring Boot 3.x process with Spring Security</description>
+  <description>Hawtio :: Sample Spring Boot 4.x process with Spring Security</description>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>${spring-version}</version>
+        <version>${spring7-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -46,22 +46,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-undertow</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>io.undertow</groupId>
-          <artifactId>undertow-websockets-jsr</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -75,11 +59,11 @@
     <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-springboot</artifactId>
+      <artifactId>hawtio-springboot4</artifactId>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-springboot-security</artifactId>
+      <artifactId>hawtio-springboot4-security</artifactId>
     </dependency>
   </dependencies>
 
@@ -88,7 +72,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <configuration>
           <mainClass>io.hawt.example.spring.boot.SampleSecuritySpringBootService</mainClass>
           <jvmArguments>
@@ -108,7 +92,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.10.0</version>
         <executions>
           <execution>
             <id>copy</id>

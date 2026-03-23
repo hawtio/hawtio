@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>5.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hawtio-bom</artifactId>
@@ -83,6 +83,11 @@
       <dependency>
         <groupId>io.hawt</groupId>
         <artifactId>hawtio-springboot4</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-springboot4-security</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

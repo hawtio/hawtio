@@ -11,7 +11,7 @@
   <groupId>io.hawt</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  <version>5.0-SNAPSHOT</version>
+  <version>5.1-SNAPSHOT</version>
   <name>hawtio-java-project</name>
   <description>Hawtio :: project</description>
   <url>https://hawt.io/</url>
@@ -40,17 +40,18 @@
     <jolokia-version>2.5.1</jolokia-version>
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
-    <quarkus-version>3.32.1</quarkus-version>
-    <!-- Spring -->
+    <quarkus-version>3.32.3</quarkus-version>
+    <!-- Spring Boot 3 -->
+    <spring-version>6.2.17</spring-version>
+    <spring-boot-version>3.5.12</spring-boot-version>
+    <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring-version>6.2.16</spring-version>
-    <spring-boot-version>3.5.9</spring-boot-version>
-    <spring7-version>7.0.5</spring7-version>
-    <spring-boot4-version>4.0.3</spring-boot4-version>
+    <spring7-version>7.0.6</spring7-version>
+    <spring-boot4-version>4.0.4</spring-boot4-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.18.0</camel-spring-boot-version>
     <!-- Jetty -->
-    <jetty12-version>12.1.4</jetty12-version>
+    <jetty12-version>12.1.7</jetty12-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.7</assertj-core-version>
@@ -86,11 +87,9 @@
     <maven-clean-plugin-version>3.5.0</maven-clean-plugin-version>
     <maven-compiler-plugin-version>3.14.1</maven-compiler-plugin-version>
     <maven-dependency-plugin-version>3.10.0</maven-dependency-plugin-version>
-    <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
     <maven-failsafe-plugin-version>3.5.4</maven-failsafe-plugin-version>
     <maven-release-plugin-version>3.3.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-    <!-- Do not use 3.5.3: https://issues.apache.org/jira/browse/SUREFIRE-2299 -->
     <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
     <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
   </properties>
@@ -122,6 +121,7 @@
     <module>platforms/springboot</module>
     <module>platforms/springboot-security</module>
     <module>platforms/springboot4</module>
+    <module>platforms/springboot4-security</module>
     <module>plugins/hawtio-connect</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
     <module>plugins/hawtio-log-logback</module>
