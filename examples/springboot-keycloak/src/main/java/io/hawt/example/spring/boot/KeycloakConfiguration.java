@@ -2,13 +2,13 @@ package io.hawt.example.spring.boot;
 
 import java.io.IOException;
 import java.util.function.Supplier;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import io.hawt.springboot.EndpointPathResolver;
+import io.hawt.springboot4.EndpointPathResolver;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +24,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -37,14 +36,14 @@ public class KeycloakConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         String hawtioPath = endpointPath.resolve("hawtio");
 
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(antMatcher(hawtioPath + "/css/**")).permitAll()
-                .requestMatchers(antMatcher(hawtioPath + "/fonts/**")).permitAll()
-                .requestMatchers(antMatcher(hawtioPath + "/img/**")).permitAll()
+                .requestMatchers(hawtioPath + "/css/**").permitAll()
+                .requestMatchers(hawtioPath + "/fonts/**").permitAll()
+                .requestMatchers(hawtioPath + "/img/**").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Client(withDefaults())
@@ -62,7 +61,7 @@ public class KeycloakConfiguration {
         private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
 
         @Override
-        public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
+        public void handle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Supplier<CsrfToken> csrfToken) {
             /*
              * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
              * the CsrfToken when it is rendered in the response body.
@@ -82,7 +81,7 @@ public class KeycloakConfiguration {
     static class CsrfCookieFilter extends OncePerRequestFilter {
 
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
             CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
             // Render the token value to a cookie by causing the deferred token to be loaded

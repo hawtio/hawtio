@@ -39,5 +39,8 @@ node_modules
 !.yarn/versions
 **/build/**
 
+# @patternfly/pf-codemods
+.cache_*
+
 # snyk
 .dccache

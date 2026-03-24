@@ -1,3 +1,3 @@
-## Spring Boot Sample plugin
+## Hawtio Sample plugin
 
-Help documentation for Spring Boot Sample plugin.
+Help documentation for Hawtio Sample plugin.
