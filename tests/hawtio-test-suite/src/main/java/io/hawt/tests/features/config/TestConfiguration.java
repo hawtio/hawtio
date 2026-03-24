@@ -62,6 +62,7 @@ public class TestConfiguration {
     public static final String OPENSHIFT_NAMESPACE = "io.hawt.test.openshift.namespace";
     public static final String OPENSHIFT_KUBECONFIG = "io.hawt.test.openshift.kubeconfig";
     public static final String OPENSHIFT_NAMESPACE_DELETE = "io.hawt.test.openshift.namespace.delete";
+    public static final String OPENSHIFT_OPERATOR_CLEAN = "io.hawt.test.openshift.operator.clean";
     public static final String HAWTIO_ONLINE_IMAGE_REPOSITORY = "io.hawt.test.online.image.repository";
     public static final String HAWTIO_ONLINE_GATEWAY_IMAGE_REPOSITORY = "io.hawt.test.online.gateway.image.repository";
     public static final String OPENSHIFT_INDEX_IMAGE = "io.hawt.test.openshift.index.image";
@@ -251,6 +252,9 @@ public class TestConfiguration {
         return getBoolean(OPENSHIFT_NAMESPACE_DELETE, true);
     }
 
+    public static boolean openshiftOperatorClean() {
+        return getBoolean(OPENSHIFT_OPERATOR_CLEAN, true);
+    }
 
     public static String getCamelKCatalog() {
         return getProperty(CAMEL_K_CATALOG, "redhat-operators");

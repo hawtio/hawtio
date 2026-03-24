@@ -1,7 +1,7 @@
 package io.hawt.v2.hawtiospec;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({"clientBodyBufferSize","proxyBuffers","subrequestOutputBufferSize"})
+@com.fasterxml.jackson.annotation.JsonPropertyOrder({"clientBodyBufferSize","masterBurstSize","proxyBuffers","subrequestOutputBufferSize"})
 @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 public class Nginx implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
@@ -19,6 +19,26 @@ public class Nginx implements io.fabric8.kubernetes.api.model.KubernetesResource
 
     public void setClientBodyBufferSize(String clientBodyBufferSize) {
         this.clientBodyBufferSize = clientBodyBufferSize;
+    }
+
+    /**
+     * Defines the maximum number of concurrent requests to the master cluster,
+     * allowed to exceed the rate limit immediately. Must be sized to handle the
+     * "thundering herd" of API calls when Hawtio initializes in Cluster Mode
+     * (e.g., loading 1000+ pods across all namespaces).
+     * Defaults to `5000`.
+     */
+    @com.fasterxml.jackson.annotation.JsonProperty("masterBurstSize")
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("Defines the maximum number of concurrent requests to the master cluster,\nallowed to exceed the rate limit immediately. Must be sized to handle the\n\"thundering herd\" of API calls when Hawtio initializes in Cluster Mode\n(e.g., loading 1000+ pods across all namespaces).\nDefaults to `5000`.")
+    @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
+    private String masterBurstSize;
+
+    public String getMasterBurstSize() {
+        return masterBurstSize;
+    }
+
+    public void setMasterBurstSize(String masterBurstSize) {
+        this.masterBurstSize = masterBurstSize;
     }
 
     /**

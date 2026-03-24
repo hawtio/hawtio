@@ -1,4 +1,4 @@
-@requiresJFR
+@requiresJFR @notOnline
 Feature: Java Flight Recorder
 
   Scenario: Check that a recording can be made

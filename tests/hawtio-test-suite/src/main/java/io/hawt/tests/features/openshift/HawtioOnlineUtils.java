@@ -40,6 +40,9 @@ public class HawtioOnlineUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(HawtioOnlineUtils.class);
 
+    // Track if cluster-wide operator is already deployed (deployed once to openshift-operators)
+    private static boolean operatorDeployed = false;
+
     private static final ResourceDefinitionContext INTEGRATION_PLATFORM_CRD = new ResourceDefinitionContext.Builder()
         .withGroup("camel.apache.org")
         .withVersion("v2")
@@ -207,8 +210,12 @@ public class HawtioOnlineUtils {
     }
 
     public static String createSubscription(final CatalogSource catalog, String packageManifestName) {
+        final String operatorNamespace = "openshift-operators";
         final OpenShiftOperatorHubAPIGroupDSL operatorhub = OpenshiftClient.get().operatorHub();
+        // PackageManifests must be queried in the same namespace as the CatalogSource
+        final String catalogNamespace = catalog.getMetadata().getNamespace();
         final PackageManifest packageManifest = WaitUtils.withRetry(() -> operatorhub.packageManifests()
+                .inNamespace(catalogNamespace)
                 .withLabel("catalog", catalog.getMetadata().getName())
                 .list()
                 .getItems()
@@ -223,19 +230,27 @@ public class HawtioOnlineUtils {
         final String startingCSV = packageManifest.getStatus().getChannels().stream()
             .filter(channel -> channel.getName().equals(defaultChannel)).findFirst().get().getCurrentCSV();
 
-        operatorhub.operatorGroups().createOrReplace(new OperatorGroupBuilder()
-            .editOrNewMetadata()
-            .withName("hawtio-operator-og")
-            .endMetadata()
-            .editOrNewSpec()
-            .addToTargetNamespaces(TestConfiguration.getOpenshiftNamespace())
-            .endSpec()
-            .build());
+        // Check if OperatorGroup already exists (openshift-operators has global-operators by default)
+        // Creating duplicate OperatorGroups prevents InstallPlan creation
+        if (operatorhub.operatorGroups().inNamespace(operatorNamespace).list().getItems().isEmpty()) {
+            LOG.info("Creating OperatorGroup in {}", operatorNamespace);
+            operatorhub.operatorGroups().inNamespace(operatorNamespace).createOrReplace(new OperatorGroupBuilder()
+                .editOrNewMetadata()
+                .withName("hawtio-operator-og")
+                .withNamespace(operatorNamespace)
+                .endMetadata()
+                .editOrNewSpec()
+                .endSpec()
+                .build());
+        } else {
+            LOG.info("OperatorGroup already exists in {}, skipping creation", operatorNamespace);
+        }
 
         final String subscriptionName = packageManifest.getMetadata().getName();
-        operatorhub.subscriptions().createOrReplace(new SubscriptionBuilder()
+        operatorhub.subscriptions().inNamespace(operatorNamespace).createOrReplace(new SubscriptionBuilder()
             .editOrNewMetadata()
             .withName(subscriptionName)
+            .withNamespace(operatorNamespace)
             .endMetadata()
             .editOrNewSpec()
             .withChannel(defaultChannel)
@@ -249,26 +264,52 @@ public class HawtioOnlineUtils {
 
         //@formatter:on
         WaitUtils.waitFor(() -> {
-            var ip = operatorhub.subscriptions().withName(subscriptionName).get().getStatus().getInstallPlanRef();
+            var ip = operatorhub.subscriptions().inNamespace(operatorNamespace).withName(subscriptionName).get().getStatus().getInstallPlanRef();
             if (ip == null) {
                 return false;
             }
 
-            return operatorhub.installPlans().withName(ip.getName()).get()
+            return operatorhub.installPlans().inNamespace(operatorNamespace).withName(ip.getName()).get()
                 .getStatus().getPhase().equals("Complete");
-        }, "Waiting for the installplan to finish", Duration.ofMinutes(3));
+        }, "Waiting for the installplan to finish", Duration.ofMinutes(10));
 
         return startingCSV;
     }
 
     public static void deployOperator() {
+        // Operator is cluster-wide and should only be deployed once per JVM
+        if (operatorDeployed) {
+            LOG.info("Hawtio operator already deployed in this test run, skipping");
+            return;
+        }
+
+        final String operatorNamespace = "openshift-operators";
         final OpenShiftOperatorHubAPIGroupDSL operatorhub = OpenshiftClient.get().operatorHub();
+
+        // Check if operator already exists from previous test run
+        boolean operatorExists = operatorhub.subscriptions().inNamespace(operatorNamespace)
+            .withName("red-hat-hawtio-operator").get() != null;
+
+        if (operatorExists) {
+            if (TestConfiguration.openshiftOperatorClean()) {
+                LOG.info("Existing operator found, removing for clean deployment (set -Dio.hawt.test.openshift.operator.clean=false to reuse)");
+                cleanupOperatorResources();
+            } else {
+                LOG.info("Existing operator found, reusing existing operator");
+                operatorDeployed = true;
+                return;
+            }
+        }
+
+        // Deploy cluster-wide operator to openshift-operators namespace
+        LOG.info("Deploying Hawtio operator to openshift-operators namespace");
         CatalogSource catalog = null;
         if (TestConfiguration.getIndexImage() != null) {
             //@formatter:off
-            operatorhub.catalogSources().createOrReplace(new CatalogSourceBuilder()
+            operatorhub.catalogSources().inNamespace(operatorNamespace).createOrReplace(new CatalogSourceBuilder()
                     .editOrNewMetadata()
                         .withName("hawtio-catalog")
+                        .withNamespace(operatorNamespace)
                     .endMetadata()
                     .editOrNewSpec()
                         .withImage(TestConfiguration.getIndexImage())
@@ -276,14 +317,14 @@ public class HawtioOnlineUtils {
                     .endSpec()
                 .build());
 
-            WaitUtils.waitFor(() -> operatorhub.catalogSources().withName("hawtio-catalog")
+            WaitUtils.waitFor(() -> operatorhub.catalogSources().inNamespace(operatorNamespace).withName("hawtio-catalog")
                 .get()
                 .getStatus()
                 .getConnectionState()
                 .getLastObservedState()
                 .equalsIgnoreCase("READY"),
                 "Waiting for the catalog to get ready", Duration.ofMinutes(2));
-            catalog = operatorhub.catalogSources().withName("hawtio-catalog").get();
+            catalog = operatorhub.catalogSources().inNamespace(operatorNamespace).withName("hawtio-catalog").get();
         } else {
             catalog = operatorhub.catalogSources().inNamespace("openshift-marketplace").withName("redhat-operators").get();
         }
@@ -291,23 +332,107 @@ public class HawtioOnlineUtils {
 
         if (TestConfiguration.getHawtioOnlineGatewayImageRepository() != null || TestConfiguration.getHawtioOnlineImageRepository() != null) {
             WaitUtils.withRetry(() -> {
-                final ClusterServiceVersion csv = operatorhub.clusterServiceVersions().withName(startingCSV).get();
+                final ClusterServiceVersion csv = operatorhub.clusterServiceVersions().inNamespace(operatorNamespace).withName(startingCSV).get();
+                var envVars = csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv();
+
+                // Only add env vars if they don't already exist (from previous deployment)
                 if (TestConfiguration.getHawtioOnlineImageRepository() != null) {
-                    csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
-                        .add(new EnvVar("IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineImageRepository(), null));
+                    boolean exists = envVars.stream().anyMatch(env -> "IMAGE_REPOSITORY".equals(env.getName()));
+                    if (!exists) {
+                        envVars.add(new EnvVar("IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineImageRepository(), null));
+                    }
                 }
                 if (TestConfiguration.getHawtioOnlineGatewayImageRepository() != null) {
-
-                    csv.getSpec().getInstall().getSpec().getDeployments().get(0).getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
-                        .add(new EnvVar("GATEWAY_IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineGatewayImageRepository(), null));
+                    boolean exists = envVars.stream().anyMatch(env -> "GATEWAY_IMAGE_REPOSITORY".equals(env.getName()));
+                    if (!exists) {
+                        envVars.add(new EnvVar("GATEWAY_IMAGE_REPOSITORY", TestConfiguration.getHawtioOnlineGatewayImageRepository(), null));
+                    }
                 }
-                operatorhub.clusterServiceVersions().withName(startingCSV).patch(csv);
+                operatorhub.clusterServiceVersions().inNamespace(operatorNamespace).withName(startingCSV).patch(csv);
             }, 5, Duration.ofSeconds(5));
 
-            WaitUtils.waitFor(() -> OpenshiftClient.get().pods().withLabel("name", "hawtio-operator").list().getItems().stream().anyMatch(pod ->
+            WaitUtils.waitFor(() -> OpenshiftClient.get().pods().inNamespace(operatorNamespace).withLabel("name", "hawtio-operator").list().getItems().stream().anyMatch(pod ->
                     pod.getSpec().getContainers().stream().anyMatch(container -> container.getEnv().stream().anyMatch(envVar -> envVar.getName().equalsIgnoreCase("IMAGE_REPOSITORY") || envVar.getName().equalsIgnoreCase("GATEWAY_IMAGE_REPOSITORY"))) &&
                         pod.getStatus().getPhase().equalsIgnoreCase("Running")),
                 "Waiting for the CSV patch to get applied to the operator pod", Duration.ofMinutes(2));
+        }
+
+        operatorDeployed = true;
+        LOG.info("Hawtio operator successfully deployed to openshift-operators");
+    }
+
+    /**
+     * Performs the actual operator resource deletion.
+     * @param waitForCompletion if true, waits for resources to be fully removed
+     */
+    private static void deleteOperatorResources(boolean waitForCompletion) {
+        final String operatorNamespace = "openshift-operators";
+        final OpenShiftOperatorHubAPIGroupDSL operatorhub = OpenshiftClient.get().operatorHub();
+
+        // Delete subscription first
+        operatorhub.subscriptions().inNamespace(operatorNamespace)
+            .withName("red-hat-hawtio-operator").delete();
+        LOG.info("Deleted subscription");
+
+        // Delete CSV to prevent orphaned CSV issues
+        operatorhub.clusterServiceVersions().inNamespace(operatorNamespace)
+            .withLabel("operators.coreos.com/red-hat-hawtio-operator.openshift-operators")
+            .delete();
+        LOG.info("Deleted CSV");
+
+        // Delete custom catalog if it exists
+        if (TestConfiguration.getIndexImage() != null) {
+            operatorhub.catalogSources().inNamespace(operatorNamespace)
+                .withName("hawtio-catalog").delete();
+            LOG.info("Deleted custom catalog");
+        }
+
+        // Wait for resources to be fully removed if requested
+        if (waitForCompletion) {
+            WaitUtils.waitFor(() ->
+                operatorhub.subscriptions().inNamespace(operatorNamespace)
+                    .withName("red-hat-hawtio-operator").get() == null,
+                "Waiting for operator cleanup to complete", Duration.ofMinutes(5));
+        }
+    }
+
+    /**
+     * Cleanup operator resources from a previous test run.
+     * This is called when an existing operator is detected and clean mode is enabled.
+     */
+    private static void cleanupOperatorResources() {
+        LOG.info("Cleaning up existing operator resources from previous run");
+        try {
+            deleteOperatorResources(true);
+            LOG.info("Operator resources cleanup completed");
+        } catch (Exception e) {
+            LOG.error("Error during operator resource cleanup", e);
+            throw new RuntimeException("Failed to cleanup operator resources", e);
+        }
+    }
+
+    /**
+     * Cleanup operator at the end of test run (called from shutdown hook).
+     */
+    public static void cleanupOperator() {
+        if (!operatorDeployed) {
+            LOG.info("Operator was not deployed, skipping cleanup");
+            return;
+        }
+
+        // Respect the namespace delete setting - if keeping namespace, also keep operator
+        if (!TestConfiguration.openshiftNamespaceDelete()) {
+            LOG.info("Namespace deletion disabled (io.hawt.test.openshift.namespace.delete=false), keeping operator for debugging");
+            return;
+        }
+
+        LOG.info("Cleaning up Hawtio operator from openshift-operators");
+        try {
+            deleteOperatorResources(false);
+            operatorDeployed = false;
+            LOG.info("Operator cleanup completed");
+        } catch (Exception e) {
+            LOG.error("Error during operator cleanup", e);
         }
     }
 
@@ -318,8 +443,12 @@ public class HawtioOnlineUtils {
         WaitUtils.waitFor(() -> {
             final Resource<Hawtio> resource = OpenshiftClient.get().resources(Hawtio.class)
                 .withName(hawtio.getMetadata().getName());
-            return resource.isReady() && resource.get().getStatus().getPhase().name().equalsIgnoreCase("Deployed") &&
-                resource.get().getStatus().getURL() != null;
+            final Hawtio hawtioResource = resource.get();
+            return resource.isReady() &&
+                hawtioResource.getStatus() != null &&
+                hawtioResource.getStatus().getPhase() != null &&
+                hawtioResource.getStatus().getPhase().name().equalsIgnoreCase("Deployed") &&
+                hawtioResource.getStatus().getURL() != null;
         }, "Waiting for hawtio deployment to succeed", Duration.ofMinutes(2));
 
         return OpenshiftClient.get().resources(Hawtio.class).withName(hawtio.getMetadata().getName()).get().getStatus()
