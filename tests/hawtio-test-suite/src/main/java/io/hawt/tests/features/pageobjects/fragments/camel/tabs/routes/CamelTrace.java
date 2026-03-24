@@ -20,7 +20,7 @@ public class CamelTrace extends CamelPage {
      * Starts tracing. Will ensure that it starts even if it was running before.
      */
     public void startTracing() {
-        if (!traceTableIsShown()) {
+        if (buttonExists("Start Tracing")) {
             clickButton("Start Tracing");
         }
     }
@@ -29,7 +29,7 @@ public class CamelTrace extends CamelPage {
      * Stop tracing. Will ensure that it stops even if it wasn't running before.
      */
     public void stopTracing() {
-        if (traceTableIsShown()) {
+        if (buttonExists("Stop Tracing")) {
             clickButton("Stop Tracing");
         }
     }

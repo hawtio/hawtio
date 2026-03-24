@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import io.cucumber.java.Before;
 import io.hawt.tests.features.config.TestConfiguration;
+import io.hawt.tests.features.openshift.HawtioOnlineUtils;
 import io.hawt.tests.features.openshift.OpenshiftClient;
 import io.hawt.tests.features.setup.deployment.AppDeployment;
 import io.hawt.tests.features.setup.deployment.KeycloakDeployment;
@@ -49,6 +50,11 @@ public class DeployAppHook {
                 }
 
                 if (TestConfiguration.useOpenshift()) {
+                    try {
+                        HawtioOnlineUtils.cleanupOperator();
+                    } catch (Exception e) {
+                        LOG.error("Error cleaning up operator", e);
+                    }
                     OpenshiftClient.closeClient();
                 }
 
