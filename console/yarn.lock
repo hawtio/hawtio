@@ -605,17 +605,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_10@npm:@hawtio/camel-model@~4.10.7":
-  version: 4.10.7
-  resolution: "@hawtio/camel-model@npm:4.10.7"
-  checksum: 10/c60c544acb327669a3d4dd0314f110c7e5072ad673bc1901d3775ca90b71782d27a57c4d645e50ed8ddbb994cb99cbf85f29999b926125ae11a4de46bd190d6a
+"@hawtio/camel-model-v4_14@npm:@hawtio/camel-model@~4.14.5":
+  version: 4.14.5
+  resolution: "@hawtio/camel-model@npm:4.14.5"
+  checksum: 10/cb877801c2d613493b417d4933f577ae911dfcce67cf02e8725617498e5cabc9f734537d88699df3c1ea01ff5c06562a779f4c45a272fa99c559d7e77a6cabcf
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_14@npm:@hawtio/camel-model@~4.14.1":
-  version: 4.14.1
-  resolution: "@hawtio/camel-model@npm:4.14.1"
-  checksum: 10/e07fde41092cfa465776bf9f5eca0863e5244460bd7e9a265aa9ab286f48cf2ac214e2006a8251d46f59ce232785e791858369f624ccf7b9a4c3e5def4ee6446
+"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.0":
+  version: 4.18.0
+  resolution: "@hawtio/camel-model@npm:4.18.0"
+  checksum: 10/090915fd8e88f501294fd8fb008dbe2ed7084c0552149a5d9dba48d3984b67810db6ca128a9b60524d2f5add333935a827471232e8b325c196c432fc5dbc5a0a
   languageName: node
   linkType: hard
 
@@ -624,7 +624,7 @@ __metadata:
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^1.12.0"
+    "@hawtio/react": "npm:^1.13.0"
     "@patternfly/react-charts": "npm:^7.4.9"
     "@patternfly/react-code-editor": "npm:^5.4.18"
     "@patternfly/react-core": "npm:^5.4.14"
@@ -656,24 +656,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "@hawtio/react@npm:1.12.0"
+"@hawtio/react@npm:^1.13.0":
+  version: 1.13.0
+  resolution: "@hawtio/react@npm:1.13.0"
   dependencies:
-    "@hawtio/camel-model-v4_10": "npm:@hawtio/camel-model@~4.10.7"
-    "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.1"
+    "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
+    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.0"
     "@jolokia.js/simple": "npm:^2.4.2"
-    "@module-federation/utilities": "npm:^3.1.77"
+    "@module-federation/utilities": "npm:^3.1.83"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.5.1"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.7.0"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.3.0"
-    eventemitter3: "npm:^5.0.1"
-    jolokia.js: "npm:^2.4.2"
+    dompurify: "npm:^3.3.2"
+    eventemitter3: "npm:^5.0.4"
+    jolokia.js: "npm:^2.5.0"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
-    keycloak-js: "npm:^26.2.1"
-    oauth4webapi: "npm:^3.8.3"
+    keycloak-js: "npm:^26.2.3"
+    oauth4webapi: "npm:^3.8.4"
     react-markdown: "npm:^10.1.0"
     react-split: "npm:^2.0.14"
     reactflow: "npm:^11.11.4"
@@ -691,7 +691,7 @@ __metadata:
     react: ^17 || ^18
     react-dom: ^17 || ^18
     react-router-dom: ^6.30
-  checksum: 10/a13d08d2f8b499fd2d448eeec6b4d0cb81f6fbd699e26e4e2ea0133e598b8d47ebd749d1ee41670305490df83f32b9d1b25f0b41bd71d4977ca5f8bd85c56be0
+  checksum: 10/bc50a1d2f39c5dd052b83e04dbb530ee2d08f3c97e90040b48127c875aec2cf3f62d82d76c775a0a5cfe90a98ffae495d505d0e53aeede6e9f11ce87ffa8f849
   languageName: node
   linkType: hard
 
@@ -1114,18 +1114,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@module-federation/sdk@npm:0.21.6":
-  version: 0.21.6
-  resolution: "@module-federation/sdk@npm:0.21.6"
-  checksum: 10/effc4aa932e2f06742bda8f02aaec84e138f5512b50f18c38b051490020b20d3d8edf7ece853fccffc1f78a0b43dec78e69bf02150e7e2801d5ce03c3ee367b9
+"@module-federation/sdk@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@module-federation/sdk@npm:2.0.0"
+  checksum: 10/748d58797966cac8f820bf25803487a9b5317761af98bad1f3fc4756b80751b7b69145cc46590ce1afc1a12992a68bf29878f794fdcb99e48999187042486174
   languageName: node
   linkType: hard
 
-"@module-federation/utilities@npm:^3.1.77":
-  version: 3.1.77
-  resolution: "@module-federation/utilities@npm:3.1.77"
+"@module-federation/utilities@npm:3.1.83":
+  version: 3.1.83
+  resolution: "@module-federation/utilities@npm:3.1.83"
   dependencies:
-    "@module-federation/sdk": "npm:0.21.6"
+    "@module-federation/sdk": "npm:2.0.0"
   peerDependencies:
     react: ^16 || ^17 || ^18
     react-dom: ^16 || ^17 || ^18
@@ -1137,7 +1137,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/a5440155d4588c4c0c7bde84299b740926c4648e0a6729778b4ceaf4bca7d0a17a35cae56e670da02bd54dbbf6a9a3d7e11eae54c05d3d9e06255e571f7227f4
+  checksum: 10/a12aa7161f290685db589c461d4137a5f9dba3d3cd239482fcfa723dda7ff120c389cd78a0d0bc0cf67e93b36f552a471939155f2a6022574abfe5493f6f78c7
   languageName: node
   linkType: hard
 
@@ -1730,10 +1730,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.5.1"
-  checksum: 10/ef165659485a21806ba67bd54f870b9798a1c50a4f1728441651e0802bf5f8c6d416e3526a5e141f47a50a94c66beafd39acfead96938754fba467ade84d2c42
+"@thumbmarkjs/thumbmarkjs@npm:^1.7.0":
+  version: 1.7.6
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.7.6"
+  checksum: 10/22a5cb513f46eec0dd72ef1f9a2726ec76234084f94463614262cf54a319f6bbff2fcfda03217cc42aec3f7e32d2166284cdf85fcd8840ac421e8ec0505c40ba
   languageName: node
   linkType: hard
 
@@ -4239,15 +4239,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "dompurify@npm:3.3.0"
+"dompurify@npm:^3.3.2":
+  version: 3.3.3
+  resolution: "dompurify@npm:3.3.3"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/d8782b10a0454344476936c91038d06c9450b3e3ada2ceb8f722525e6b54e64d847939b9f35bf385facd4139f0a2eaf7f5553efce351f8e9295620570875f002
+  checksum: 10/4cc9c539ed7136d46c6577613b8e20871c2b6165db01dfbd2a3c11c75f9e339c496ac6519a1c3190115def8cadae3720bef0417fc43fa28802c7407bab174da9
   languageName: node
   linkType: hard
 
@@ -4545,10 +4545,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "eventemitter3@npm:5.0.1"
-  checksum: 10/ac6423ec31124629c84c7077eed1e6987f6d66c31cf43c6fcbf6c87791d56317ce808d9ead483652436df171b526fc7220eccdc9f3225df334e81582c3cf7dd5
+"eventemitter3@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "eventemitter3@npm:5.0.4"
+  checksum: 10/54f5c8c543650d65f92d03dbef1bb73a682a920490c44699ad8f863a6b19bbca42fb7409aa09ca09cb98a44149d9a7bc1dffd55ca88a740bd928c7be0ad666a0
   languageName: node
   linkType: hard
 
@@ -6190,10 +6190,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:2.4.2, jolokia.js@npm:^2.4.2":
+"jolokia.js@npm:2.4.2":
   version: 2.4.2
   resolution: "jolokia.js@npm:2.4.2"
   checksum: 10/7a266d855bf9e1c8e5da34aee5a9fc9c1398832e23bbf90f7334f30d1f917a02d5f94cf72a706f8e59bea3e0818b9b16bf5f002022fb2014f9176bc13b31942d
+  languageName: node
+  linkType: hard
+
+"jolokia.js@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "jolokia.js@npm:2.5.0"
+  checksum: 10/218c689b8fe0412bd652d18134f5634f14cd8d939c00bc787581eae5105b0b5fb83a7e0c6a06a883674e5059941ddf8a2e38ddad33a2711cf781002be9b9e722
   languageName: node
   linkType: hard
 
@@ -6276,10 +6283,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keycloak-js@npm:^26.2.1":
-  version: 26.2.1
-  resolution: "keycloak-js@npm:26.2.1"
-  checksum: 10/7aa07eaeb2f540f4af9665ef55f57bed4187de9cca81e2970ced44effe30bf7980a8f37462628acf974d57cb6568396bd36592fe5cc2fc99c7e3f56141257a12
+"keycloak-js@npm:^26.2.3":
+  version: 26.2.3
+  resolution: "keycloak-js@npm:26.2.3"
+  checksum: 10/8718782ee0a3bde35c76fbe7fcb35d4456f4fa50628ef3fe5d69a9ed301a26ce5a7d8f6912614d65a46145d9cf19d2858ba11a5eda52d4654850bef6457f261c
   languageName: node
   linkType: hard
 
@@ -7216,10 +7223,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^3.8.3":
-  version: 3.8.3
-  resolution: "oauth4webapi@npm:3.8.3"
-  checksum: 10/8cd3209bef3f556d083da509c79a53880fd401be36c4bba18fecb3bc89f588baee4310eeb489a34e349d4a420cea52a934e61d483b828020eeefa28a109a7cf0
+"oauth4webapi@npm:^3.8.4":
+  version: 3.8.5
+  resolution: "oauth4webapi@npm:3.8.5"
+  checksum: 10/5c39d4dbd95b795438e79444a1d710631b3f8311e8b8913150b385b5815857b32f617a49d4869a4476b2318f614adfbc9d19510360df198719973f6f69a2e75b
   languageName: node
   linkType: hard
 
