@@ -8,7 +8,7 @@ import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoute
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoutes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelSource;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelTrace;
-import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelProfile;
+import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.*;
 
 public class CamelRoutesStepDefs {
     private final CamelDebug camelDebug = new CamelDebug();
@@ -121,30 +121,19 @@ public class CamelRoutesStepDefs {
         camelTrace.traceDiagramIsNotShown();
     }
 
-    @When("^User opens Profile tab$")
-    public void userOpensProfileTab() {
-    if (camelProfile.profileTabExists()) {
-        camelProfile.openProfileTab();
-    }
+    @Then("^Camel Profile column \"([^\"]*)\" is not empty$")
+    public void camelProfileColumnIsNotEmpty(String column) {
+        camelProfile.columnIsNotEmpty(column);
     }
 
-    @Then("^Profile table is shown$")
-    public void profileTableIsShown() {
-    if (camelProfile.profileTableIsShown()) {
-        camelProfile.verifyProfileTableHasData();
-    }   
+    @Then("^Camel Profile column \"([^\"]*)\" has integer values$")
+    public void camelProfileColumnHasIntegerValues(String column) {
+        camelProfile.columnHasIntegerValues(column);
     }
 
-    @Then("^Profile table contains columns: \"([^\"]*)\"$")
-    public void profileTableContainsColumns(String columns) {
-        if (camelProfile.profileTableIsShown()) {
-            String[] columnIds = columns.split(",\\s*");
-            camelProfile.verifyColumns(columnIds);
-        }
-    }
-
-    @Then("^Profile table is not shown$")
-    public void profileTableIsNotShown() {
-        camelProfile.profileTableIsNotShown();
+    @Then("^Camel Profile column \"([^\"]*)\" has values \"([^\"]*)\"$")
+    public void camelProfileColumnHasValues(String column, String values) {
+        camelProfile.columnHasValues(column, values);
     }
 }
+

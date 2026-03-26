@@ -120,16 +120,48 @@ Feature: Checking the functionality of Camel Specific Route page.
     Then Tracing shows trace
     And Tracing shows diagram
 
-  Scenario: Open Camel Profile tab and verify table is displayed
+  Scenario Outline: Verify Profile columns are not empty
     Given User is on "Camel" page
     And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
-    When User opens Profile tab
-    Then Profile table is shown
+    When User clicks on Camel "Profile" tab
+    Then Camel Profile column "<column>" is not empty
+    
+    Examples:
+      | column | 
+      | ID     | 
+      | Count  |                                                                    
+      | Last   |                                                                    
+      | Delta  |                                                                    
+      | Mean   |                                                                    
+      | Min    |                                                                              
+      | Max    |                                                                    
+      | Total  |                                                                    
+      | Self   | 
 
-  Scenario: Verify columns in Profile table
+  Scenario Outline: Verify Profile numeric columns contain integer values
     Given User is on "Camel" page
     And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
-    When User opens Profile tab
-    Then Profile table contains columns: "ID, Count, Last, Delta, Mean, Min, Max, Total, Self"
+    When User clicks on Camel "Profile" tab
+    Then Camel Profile column "<column>" has values "<values>"
 
+    Examples:
+      | column | values   |
+      | Count  |          |
+      | Last   |          |
+      | Delta  |          |
+      | Mean   |          |
+      | Min    |          |
+      | Max    |          |
+      | Total  |          |
+      | Self   |          |
+
+  Scenario Outline: Verify Profile ID column values
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Profile" tab
+    Then Camel Profile column "<column>" has values "<values>"
+
+    Examples:
+      | column | values                                                             |
+      | ID     | setBody2,subject1Route,subject2Route,interval1Route,interval2Route |
 
