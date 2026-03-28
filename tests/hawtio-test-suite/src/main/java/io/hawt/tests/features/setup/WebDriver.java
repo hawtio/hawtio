@@ -35,12 +35,16 @@ public class WebDriver {
             ChromeOptions options = new ChromeOptions();
             options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false, "profile.password_manager_leak_detection", false));
             options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
+            // Disable BiDi to prevent OutOfMemoryError from massive console log capture
+            options.setCapability("webSocketUrl", false);
             Configuration.browserCapabilities = options;
         } else {
             FirefoxOptions options = new FirefoxOptions();
             options.addPreference("network.proxy.allow_hijacking_localhost", false);
             //Trust the docker internal network
             options.addPreference("dom.securecontext.allowlist", "172.17.0.1");
+            // Disable BiDi to prevent OutOfMemoryError from massive console log capture
+            options.setCapability("webSocketUrl", false);
             Configuration.browserCapabilities = options;
         }
         Configuration.headless = TestConfiguration.browserHeadless();
