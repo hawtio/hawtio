@@ -8,7 +8,8 @@ import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoute
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelRoutes;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelSource;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelTrace;
-import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.*;
+import io.hawt.tests.features.pageobjects.fragments.camel.tabs.routes.CamelProfile;
+import io.hawt.tests.features.pageobjects.fragments.Table;
 
 public class CamelRoutesStepDefs {
     private final CamelDebug camelDebug = new CamelDebug();
@@ -18,6 +19,7 @@ public class CamelRoutesStepDefs {
     private final CamelProperties camelProperties = new CamelProperties();
     private final CamelTrace camelTrace = new CamelTrace();
     private final CamelProfile camelProfile = new CamelProfile();
+    private final Table table = new Table();
 
     @When("^User clicks on Delete button in dropdown in routes table$")
     public void userClicksOnDeleteButtonRoutesTable() {
@@ -123,7 +125,7 @@ public class CamelRoutesStepDefs {
 
     @Then("^Camel Profile column \"([^\"]*)\" is not empty$")
     public void camelProfileColumnIsNotEmpty(String column) {
-        camelProfile.columnIsNotEmpty(column);
+        table.checkColumnIsNotEmpty(column);
     }
 
     @Then("^Camel Profile column \"([^\"]*)\" has integer values$")
@@ -136,4 +138,3 @@ public class CamelRoutesStepDefs {
         camelProfile.columnHasValues(column, values);
     }
 }
-

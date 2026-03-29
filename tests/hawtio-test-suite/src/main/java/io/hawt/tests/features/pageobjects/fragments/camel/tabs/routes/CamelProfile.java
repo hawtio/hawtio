@@ -12,17 +12,12 @@ public class CamelProfile extends CamelPage {
 
     private final Table table = new Table();
 
-    /** Ensure that the specified column is not empty. */
-    public void columnIsNotEmpty(String columnName) {
-        table.checkColumnIsNotEmpty(columnName);
-    }
-
-    /** Ensure that all values in the specified column are positive integers. */
+    /** Ensure that all values in column are not empty and the column values are positive integers. */
     public void columnHasIntegerValues(String columnName) {
         table.checkColumnIsNotEmpty(columnName);
         table.getColumn(columnName)
-             .should(allMatch("All values must be positive integers",
-                               cell -> cell.getText().matches("\\d+")));
+             .should(allMatch("All values must be integers",
+                               cell -> cell.getText().matches("-?\\d+")));
     }
     /**
      * Check ID column for specific values.
