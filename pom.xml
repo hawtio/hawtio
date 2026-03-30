@@ -44,11 +44,11 @@
     <quarkus-extension-version>3.27.0.redhat-00001</quarkus-extension-version>
     <!-- Spring Boot 3 -->
     <spring-version>6.2.17</spring-version>
-    <spring-boot-version>3.5.12</spring-boot-version>
+    <spring-boot-version>3.5.13</spring-boot-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring7-version>7.0.6</spring7-version>
-    <spring-boot4-version>4.0.4</spring-boot4-version>
+    <spring-boot4-version>4.0.5</spring-boot4-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
     <camel-spring-boot-version>4.14.1.redhat-00011</camel-spring-boot-version>
