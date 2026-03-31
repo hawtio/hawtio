@@ -12,11 +12,13 @@ COPY --from=firefoxImage / /
 
 COPY --from=chromeImage / /
 
-WORKDIR hawtio-test-suite
+WORKDIR /workspace
 COPY ./ ./
 RUN mvn dependency:go-offline -Pe2e -pl :hawtio-test-suite -am -P!local-test-app-dependency
 RUN mvn clean install -Pe2e -DskipTests=true -pl :hawtio-test-suite -am -P!local-test-app-dependency
 
 RUN chown root /home/seluser/
 
-ENTRYPOINT ["bash" , "./tests/hawtio-test-suite/container_entrypoint.sh"]
+WORKDIR /workspace/tests/hawtio-test-suite
+
+ENTRYPOINT ["bash" , "./container_entrypoint.sh"]

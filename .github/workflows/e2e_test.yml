@@ -94,8 +94,8 @@ jobs:
           docker run --rm \
           -e GITHUB_ACTIONS=true \
           -v /var/run/docker.sock:/var/run/docker.sock \
-          -v $PWD/$REPORT_DIR:/hawtio-test-suite/tests/hawtio-test-suite/target \
-          -v $PWD/$REPORT_DIR/build:/hawtio-test-suite/tests/hawtio-test-suite/build/ \
+          -v $PWD/$REPORT_DIR:/workspace/tests/hawtio-test-suite/target \
+          -v $PWD/$REPORT_DIR/build:/workspace/tests/hawtio-test-suite/build/ \
           --shm-size="2g" \
             hawtio-test-suite:${{ matrix.java }} -Pe2e-${{ matrix.runtime }} -Dselenide.browser=${{ matrix.browser }} \
             -Dio.hawt.test.docker.image=hawtio-${{ matrix.runtime }}-app:${{ matrix.java }} $extra_args
@@ -119,7 +119,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Archive failed test reports
         uses: actions/upload-artifact/merge@v4
         if: always()

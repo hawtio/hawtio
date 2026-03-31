@@ -11,4 +11,4 @@ USER 185
 ENV AB_JOLOKIA_OFF=""
 ENV JAVA_APP_JAR="/deployments/hawtio-springboot.jar"
 
-CMD java -jar ${JAVA_OPTS} ${JAVA_APP_JAR}
+CMD java ${JAVA_OPTS} -jar ${JAVA_APP_JAR}

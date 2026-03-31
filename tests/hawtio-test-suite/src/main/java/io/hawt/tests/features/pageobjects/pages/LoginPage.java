@@ -11,6 +11,7 @@ import static com.codeborne.selenide.Condition.editable;
 import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
@@ -21,7 +22,7 @@ public class LoginPage {
     private final static SelenideElement loginInput = $("#pf-login-username-id");
     private final static SelenideElement passwordInput = $("#pf-login-password-id");
     private final static SelenideElement loginButton = $("button[type='submit']");
-
+    private final static SelenideElement keycloakButton = $(byText("Keycloak"));
 
     /**
      * Login to hawtio as given user with given password.
@@ -48,5 +49,12 @@ public class LoginPage {
         loginInput.shouldBe(editable).should(exist);
         passwordInput.shouldBe(editable);
         loginButton.shouldBe(enabled);
+    }
+
+    /**
+     * Click the Keycloak identity provider button to redirect to Keycloak login
+     */
+    public void clickKeycloakButton() {
+        keycloakButton.shouldBe(visible).shouldBe(enabled).click();
     }
 }
