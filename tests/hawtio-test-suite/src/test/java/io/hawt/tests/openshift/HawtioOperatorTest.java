@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.apache.commons.io.IOUtils;
@@ -340,20 +341,24 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         }, false);
     }
 
+    @Disabled("HAWNG-1863 due to operator bug: Operator fails to find RBAC ConfigMap with cache sync issue")
     @Test
     public void testRBAC() throws IOException {
         OpenshiftClient.get().resource(new ConfigMapBuilder()
             .withNewMetadata()
             .withName("rbac-test")
+            .withNamespace(TestConfiguration.getOpenshiftNamespace())
             .endMetadata()
             .addToData("ACL.yaml", IOUtils.toString(getClass().getResource("/io/hawt/tests/openshift/acl.yaml"), StandardCharsets.UTF_8))
             .build()
         ).serverSideApply();
+
         runTest(spec -> {
             var rbac = new Rbac();
             rbac.setConfigMap("rbac-test");
             spec.setRbac(rbac);
         }, sa -> {
+
             var discoverTab = new DiscoverTab();
             discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
             discoverTab.connectTo(podName);

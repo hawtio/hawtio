@@ -51,6 +51,16 @@ public class HawtioPage {
     }
 
     /**
+     * Return if a button with a given text exists.
+     *
+     * @param text on the given button
+     * @return boolean whether the button exists
+     */
+    public boolean buttonExists(String text) {
+        return $$(".pf-v6-c-button__text").findBy(exactText(text)).closest("button").exists();
+    }
+
+    /**
      * Click on a toggle button with a given text.
      *
      * @param text on the given toggle button

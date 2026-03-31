@@ -68,7 +68,9 @@ public class LoginLogout {
     }
 
     private static void keycloakLogin(String username, String password) {
-        Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/connect");
+        LoginPage loginPage = Selenide.open(DeployAppHook.getBaseURL() + TestConfiguration.getUrlSuffix() + "/connect", LoginPage.class);
+        loginPage.clickKeycloakButton();
+
         Selenide.$(By.id("username")).sendKeys(username);
         Selenide.$(By.id("password")).sendKeys(password);
 
