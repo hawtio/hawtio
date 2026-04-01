@@ -8,11 +8,16 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [ main, 5.x, 4.x ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.branch }}
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
