@@ -39,7 +39,7 @@
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
     "swc-loader": "^0.2.7",
-    "webpack": "^5.105.3",
+    "webpack": "^5.105.4",
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3"
   },
