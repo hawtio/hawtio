@@ -39,15 +39,15 @@
     <!-- Jolokia -->
     <jolokia-version>2.4.2</jolokia-version>
     <!-- Quarkus -->
-    <quarkus-version>3.27.0.redhat-00002</quarkus-version>
-    <quarkus-extension-version>3.27.0.redhat-00001</quarkus-extension-version>
+    <quarkus-version>3.27.2.redhat-00002</quarkus-version>
+    <quarkus-extension-version>3.27.2.redhat-00001</quarkus-extension-version>
     <!-- Spring -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring-version>6.2.12</spring-version>
-    <spring-boot-version>3.5.7</spring-boot-version>
+    <spring-version>6.2.17</spring-version>
+    <spring-boot-version>3.5.11</spring-boot-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
-    <camel-spring-boot-version>4.14.1.redhat-00011</camel-spring-boot-version>
+    <camel-spring-boot-version>4.14.4.redhat-00010</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.3</jetty12-version>
 
