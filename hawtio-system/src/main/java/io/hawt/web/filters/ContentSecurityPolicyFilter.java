@@ -6,9 +6,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +29,14 @@ import org.slf4j.LoggerFactory;
 public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContentSecurityPolicyFilter.class);
+
+    public static final String CONNECT_SRC = "http.csp.connectSrc";
+    @SuppressWarnings("unused")
+    public static final String HAWTIO_CONNECT_SRC = "hawtio." + CONNECT_SRC;
+
+    public static final String SCRIPT_SRC = "http.csp.scriptSrc";
+    @SuppressWarnings("unused")
+    public static final String HAWTIO_SCRIPT_SRC = "hawtio." + SCRIPT_SRC;
 
     private String policy = "";
 
@@ -104,6 +112,10 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
             }
         }
 
+        // Apply user configuration
+        applySystemProperty(CONNECT_SRC, connectSrc);
+        applySystemProperty(SCRIPT_SRC, scriptSrc);
+
         StringBuilder builder = new StringBuilder();
         addPolicy(builder, "default-src", defaultSrc);
         addPolicy(builder, "script-src", scriptSrc);
@@ -123,6 +135,18 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
         policy = builder.toString().trim();
         policy = policy.substring(0, policy.length() - 1);
+    }
+
+    private void applySystemProperty(String property, List<String> value) {
+        String config = getConfigParameter(property);
+        if (config == null || config.isEmpty()) {
+            return;
+        }
+
+        Arrays.stream(config.split(","))
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .forEach(value::add);
     }
 
     private void addPolicy(StringBuilder builder, String name, List<String> sources) {
