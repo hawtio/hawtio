@@ -11,6 +11,7 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         branch: [ 4.x-redhat, 4.3.x-redhat ]
         modules: [ console, console-minimal, examples/sample-plugin ]
