@@ -26,4 +26,4 @@ jobs:
           cache: 'maven'
       - name: Audit
         run: |
-          mvn --batch-mode --no-transfer-progress install -pl :hawtio-console-assembly,:hawtio-example-sample-plugin
+          mvn --batch-mode --no-transfer-progress install -pl :hawtio-console-assembly,:hawtio-console-minimal-assembly,:hawtio-example-sample-plugin
