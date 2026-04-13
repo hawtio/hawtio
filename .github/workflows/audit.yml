@@ -9,8 +9,9 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        branch: [ main, 5.x, 4.x ]
+        branch: [ main, 4.x ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
