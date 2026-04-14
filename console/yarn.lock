@@ -612,10 +612,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.0":
-  version: 4.18.0
-  resolution: "@hawtio/camel-model@npm:4.18.0"
-  checksum: 10/090915fd8e88f501294fd8fb008dbe2ed7084c0552149a5d9dba48d3984b67810db6ca128a9b60524d2f5add333935a827471232e8b325c196c432fc5dbc5a0a
+"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.1":
+  version: 4.18.1
+  resolution: "@hawtio/camel-model@npm:4.18.1"
+  checksum: 10/04ad3639e68e887a1b74f4f7ea080e5b01fc8de4182eb935698b51cd89b585a4150bd1d5e727f59c5ad19455d24bc3a39c2f63a4f8fc51cc316a0c5d2de3439a
   languageName: node
   linkType: hard
 
@@ -624,7 +624,7 @@ __metadata:
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^2.0.0"
+    "@hawtio/react": "npm:^2.0.1"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -656,18 +656,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@hawtio/react@npm:2.0.0"
+"@hawtio/react@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@hawtio/react@npm:2.0.1"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
-    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.0"
+    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.1"
     "@jolokia.js/simple": "npm:^2.5.0"
     "@module-federation/utilities": "npm:^3.1.77"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.7.4"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.7.7"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.3.2"
+    dompurify: "npm:^3.3.3"
     eventemitter3: "npm:^5.0.4"
     jolokia.js: "npm:^2.5.0"
     js-logger: "npm:^1.6.1"
@@ -679,7 +679,7 @@ __metadata:
     reactflow: "npm:^11.11.4"
     superstruct: "npm:^2.0.2"
     victory: "npm:^37.3.6"
-    xml-formatter: "npm:^3.6.7"
+    xml-formatter: "npm:^3.7.0"
   peerDependencies:
     "@patternfly/react-charts": ^8
     "@patternfly/react-code-editor": ^6
@@ -692,7 +692,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/d3c4e75775a1fec9e48a738afbefcbf03a9cbe11adab7dae64f42cf53a4e98952627752890ec88fcd7530169367da3faefacaef1ca51d13255737a6b6460ff61
+  checksum: 10/d60632705c0549a70f852a58b001589dccbd4ae4ab16d2b7fc3885cec2fe53053a15a68ce73659ac16b6f38796983cccfaddaf012eab8aee321adb7a328a3b52
   languageName: node
   linkType: hard
 
@@ -1787,10 +1787,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.7.4":
-  version: 1.7.4
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.7.4"
-  checksum: 10/1319947d78755865cd0f98e0ac040f370d271fe1e835283aa30c3d4eadc4b4a09d59da361b2e45b895e40b2e163082661f2bff1718a446cbc9a17e4889e6eff1
+"@thumbmarkjs/thumbmarkjs@npm:^1.7.7":
+  version: 1.8.0
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.8.0"
+  checksum: 10/297ba3bc528597ce2bf9c66b70c757baf9c0ef7b1a07dc15db8ee58da8eda7e371c1f0fa629457d1bd626459bf9a70487dc36f20f41afef3199bb41484448b82
   languageName: node
   linkType: hard
 
@@ -4270,15 +4270,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.2":
-  version: 3.3.2
-  resolution: "dompurify@npm:3.3.2"
+"dompurify@npm:^3.3.3":
+  version: 3.4.0
+  resolution: "dompurify@npm:3.4.0"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/3ca02559677ce6d9583a500f21ffbb6b9e88f1af99f69fa0d0d9442cddbac98810588c869f8b435addb5115492d6e49870024bca322169b941bafedb99c7f281
+  checksum: 10/ead40b78ec51cd451f2c74fada4233ee0afeafdbab54af2f4a4bd5d4d138ac04d0d85140e79f533803ecfd1c3758edc1176087039c1e7217824f9794a9d34d2c
   languageName: node
   linkType: hard
 
@@ -10044,12 +10044,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml-formatter@npm:^3.6.7":
-  version: 3.6.7
-  resolution: "xml-formatter@npm:3.6.7"
+"xml-formatter@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "xml-formatter@npm:3.7.0"
   dependencies:
     xml-parser-xo: "npm:^4.1.5"
-  checksum: 10/0bd9955ab43b60e0bbf55d092761f27dbe4a9871cc60554cc07f67d31a2ae50423d207b2d8f408aad7c5fb7651cc54cba325056b9ac7abcb5df246fc9826a8e3
+  checksum: 10/8ddbd08e483d2a93a59c4a6f8b4845230bdea184f0e2d356d1dd11833738d2107cf43fae213f7ab8bb650da388916224887a1e846778bf3afbee9d3bbf05383a
   languageName: node
   linkType: hard
 
