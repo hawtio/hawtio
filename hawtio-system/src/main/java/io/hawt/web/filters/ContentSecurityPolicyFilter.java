@@ -31,15 +31,12 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
     private static final Logger LOG = LoggerFactory.getLogger(ContentSecurityPolicyFilter.class);
 
     public static final String CONNECT_SRC = "http.csp.connectSrc";
-    @SuppressWarnings("unused")
     public static final String HAWTIO_CONNECT_SRC = "hawtio." + CONNECT_SRC;
 
     public static final String SCRIPT_SRC = "http.csp.scriptSrc";
-    @SuppressWarnings("unused")
     public static final String HAWTIO_SCRIPT_SRC = "hawtio." + SCRIPT_SRC;
 
     public static final String SCRIPT_SRC_ELEM = "http.csp.scriptSrcElem";
-    @SuppressWarnings("unused")
     public static final String HAWTIO_SCRIPT_SRC_ELEM = "hawtio." + SCRIPT_SRC_ELEM;
 
     private String policy = "";

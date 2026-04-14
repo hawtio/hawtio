@@ -61,6 +61,13 @@ import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_KEYCLOAK_ENABL
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
 import static io.hawt.web.auth.keycloak.KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
+import static io.hawt.web.filters.CORSFilter.HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN;
+import static io.hawt.web.filters.CORSFilter.HAWTIO_ENABLE_CORS;
+import static io.hawt.web.filters.ContentSecurityPolicyFilter.HAWTIO_CONNECT_SRC;
+import static io.hawt.web.filters.ContentSecurityPolicyFilter.HAWTIO_SCRIPT_SRC;
+import static io.hawt.web.filters.ContentSecurityPolicyFilter.HAWTIO_SCRIPT_SRC_ELEM;
+import static io.hawt.web.filters.HttpHeaderFilter.HAWTIO_ALLOW_X_FRAME_SAME_ORIGIN;
+import static io.hawt.web.filters.ReferrerPolicyFilter.HAWTIO_REFERRER_POLICY;
 import static io.hawt.web.proxy.ProxyServlet.HAWTIO_DISABLE_PROXY;
 import static io.hawt.web.proxy.ProxyServlet.HAWTIO_LOCAL_ADDRESS_PROBING;
 import static io.hawt.web.proxy.ProxyServlet.HAWTIO_PROXY_ALLOWLIST;
@@ -165,7 +172,7 @@ public class HawtioProcessor {
 
                 FilterBuildItem.Builder builder = FilterBuildItem.builder(filterMetaData.getFilterName(), getClassName(filterClass));
                 if (filterClass.equals(BaseTagHrefFilter.class.getName())
-                        || filterClass.equals(ClientRouteRedirectFilter.class.getName())) {
+                    || filterClass.equals(ClientRouteRedirectFilter.class.getName())) {
                     builder.addInitParam(PARAM_APPLICATION_CONTEXT_PATH, DEFAULT_CONTEXT_PATH);
                 }
 
@@ -235,6 +242,26 @@ public class HawtioProcessor {
 
         config.sessionTimeout()
             .map(sessionTimeout -> new SystemPropertyBuildItem(HAWTIO_SESSION_TIMEOUT, sessionTimeout.toString()))
+            .ifPresent(systemProperties::produce);
+
+        // hawtio.http
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_ENABLE_CORS, config.http().enableCORS().toString()));
+        config.http().accessControlAllowOrigin()
+            .map(accessControlAllowOrigin -> new SystemPropertyBuildItem(HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN, accessControlAllowOrigin))
+            .ifPresent(systemProperties::produce);
+        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_ALLOW_X_FRAME_SAME_ORIGIN, config.http().allowXFrameSameOrigin().toString()));
+        config.http().referrerPolicy()
+            .map(referrerPolicy -> new SystemPropertyBuildItem(HAWTIO_REFERRER_POLICY, referrerPolicy))
+            .ifPresent(systemProperties::produce);
+        // hawtio.http.csp
+        config.http().csp().connectSrc()
+            .map(connectSrc -> new SystemPropertyBuildItem(HAWTIO_CONNECT_SRC, String.join(",", connectSrc)))
+            .ifPresent(systemProperties::produce);
+        config.http().csp().scriptSrc()
+            .map(scriptSrc -> new SystemPropertyBuildItem(HAWTIO_SCRIPT_SRC, String.join(",", scriptSrc)))
+            .ifPresent(systemProperties::produce);
+        config.http().csp().scriptSrcElem()
+            .map(scriptSrcElem -> new SystemPropertyBuildItem(HAWTIO_SCRIPT_SRC_ELEM, String.join(",", scriptSrcElem)))
             .ifPresent(systemProperties::produce);
     }
 
