@@ -38,6 +38,10 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
     @SuppressWarnings("unused")
     public static final String HAWTIO_SCRIPT_SRC = "hawtio." + SCRIPT_SRC;
 
+    public static final String SCRIPT_SRC_ELEM = "http.csp.scriptSrcElem";
+    @SuppressWarnings("unused")
+    public static final String HAWTIO_SCRIPT_SRC_ELEM = "hawtio." + SCRIPT_SRC_ELEM;
+
     private String policy = "";
 
     @Override
@@ -115,6 +119,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         // Apply user configuration
         applySystemProperty(CONNECT_SRC, connectSrc);
         applySystemProperty(SCRIPT_SRC, scriptSrc);
+        applySystemProperty(SCRIPT_SRC_ELEM, scriptSrcElem);
 
         StringBuilder builder = new StringBuilder();
         addPolicy(builder, "default-src", defaultSrc);
