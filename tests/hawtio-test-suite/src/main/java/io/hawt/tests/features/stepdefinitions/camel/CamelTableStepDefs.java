@@ -6,6 +6,7 @@ import static com.codeborne.selenide.Condition.text;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.util.List;
 import io.hawt.tests.features.pageobjects.fragments.Table;
 import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
 
@@ -54,4 +55,16 @@ public class CamelTableStepDefs {
     public void camelItemIsNotInCamelTable(String item, String search) {
         table.getColumn(search).shouldHave(sizeGreaterThanOrEqual(1)).findBy(text(item)).shouldNot(exist);
     }
+
+    @Then("^Camel table \"([^\"]*)\" column contains these values:$")
+    public void columnContainsValues(String columnName, List<String> expectedValues) {
+        for (String value : expectedValues) {
+            table.checkColumnHasValue(columnName, value);
+        }
+    }
+
+    @Then("^Camel table \"([^\"]*)\" column has integer values$")
+    public void columnHasIntegerValues(String columnName) {
+        table.checkColumnHasIntegerValues(columnName);
+    }    
 }
