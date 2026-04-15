@@ -608,23 +608,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@hawtio/react@npm:2.0.2"
+"@hawtio/react@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@hawtio/react@npm:2.1.0"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
     "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.1"
     "@jolokia.js/simple": "npm:^2.5.0"
     "@module-federation/utilities": "npm:^3.1.77"
     "@monaco-editor/react": "npm:^4.6.0"
-    "@thumbmarkjs/thumbmarkjs": "npm:^1.7.7"
+    "@thumbmarkjs/thumbmarkjs": "npm:^1.8.1"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.3.3"
+    dompurify: "npm:^3.4.1"
     eventemitter3: "npm:^5.0.4"
     jolokia.js: "npm:^2.5.0"
     js-logger: "npm:^1.6.1"
     jwt-decode: "npm:^4.0.0"
-    keycloak-js: "npm:^26.2.3"
+    keycloak-js: "npm:^26.2.4"
     oauth4webapi: "npm:^3.8.5"
     react-markdown: "npm:^10.1.0"
     react-split: "npm:^2.0.14"
@@ -644,7 +644,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/6f9a51cd2bb6244f8fe77488f281035953beee285bd02c9f750e18f6560b209ed6bdbd8a5603fff8e5c6ddae282d1ea6415c5f5f4ec6a7afb9317bc738b4afef
+  checksum: 10/0c5d1b7da8172f9e6b6722323ee046207cef0cf3dd45bd7d5f0a4a0d420172e9197106ae30dd3f281bdaca887149b02e2e4d9fa0556c3e3a56265bb21048561b
   languageName: node
   linkType: hard
 
@@ -1739,10 +1739,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thumbmarkjs/thumbmarkjs@npm:^1.7.7":
-  version: 1.8.0
-  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.8.0"
-  checksum: 10/297ba3bc528597ce2bf9c66b70c757baf9c0ef7b1a07dc15db8ee58da8eda7e371c1f0fa629457d1bd626459bf9a70487dc36f20f41afef3199bb41484448b82
+"@thumbmarkjs/thumbmarkjs@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "@thumbmarkjs/thumbmarkjs@npm:1.8.1"
+  checksum: 10/474468cc4fb582a169960f3db420151905203b875247b7f5c05313a89529764639a719e115766ed1edc3bd726985da3fc30941583a0e0b2960a22cab1cd1f719
   languageName: node
   linkType: hard
 
@@ -4048,15 +4048,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.3":
-  version: 3.4.0
-  resolution: "dompurify@npm:3.4.0"
+"dompurify@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "dompurify@npm:3.4.1"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/ead40b78ec51cd451f2c74fada4233ee0afeafdbab54af2f4a4bd5d4d138ac04d0d85140e79f533803ecfd1c3758edc1176087039c1e7217824f9794a9d34d2c
+  checksum: 10/dcaf945376eff2a61841b205501b163b2c8ae9afe7251e68276b561d9fcf943cefc67e2631fdeae080b52a8b37c96e6beb7e6ae80ad8a83692ff67965dd6b4db
   languageName: node
   linkType: hard
 
@@ -4835,7 +4835,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^2.0.2"
+    "@hawtio/react": "npm:^2.1.0"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -5980,10 +5980,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keycloak-js@npm:^26.2.3":
-  version: 26.2.3
-  resolution: "keycloak-js@npm:26.2.3"
-  checksum: 10/8718782ee0a3bde35c76fbe7fcb35d4456f4fa50628ef3fe5d69a9ed301a26ce5a7d8f6912614d65a46145d9cf19d2858ba11a5eda52d4654850bef6457f261c
+"keycloak-js@npm:^26.2.4":
+  version: 26.2.4
+  resolution: "keycloak-js@npm:26.2.4"
+  checksum: 10/d12e595486160267b18d845e6587303298d38488161a9aaa4679a530315404078bdedf74d3e01f7472585f80983ce65b4b49fc323ceade2329e36c1507dc606c
   languageName: node
   linkType: hard
 
