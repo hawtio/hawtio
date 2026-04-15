@@ -119,3 +119,51 @@ Feature: Checking the functionality of Camel Specific Route page.
     When User starts tracing
     Then Tracing shows trace
     And Tracing shows diagram
+
+  Scenario Outline: Verify Profile columns are not empty
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Profile" tab
+    Then Camel table "<column>" column is not empty
+
+    Examples: Profile columns to validate non-empty values
+      | column |
+      | ID     |
+      | Count  |
+      | Last   |
+      | Delta  |
+      | Mean   |
+      | Min    |
+      | Max    |
+      | Total  |
+      | Self   |
+
+  Scenario Outline: Verify Profile numeric columns contain integer values
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Profile" tab
+    Then Camel table "<column>" column is not empty
+    And Camel table "<column>" column has integer values
+
+    Examples: Numeric Profile columns
+      | column |
+      | Count  |
+      | Last   |
+      | Delta  |
+      | Mean   |
+      | Min    |
+      | Max    |
+      | Total  |
+      | Self   |
+
+  Scenario: Verify Profile column values
+    Given User is on "Camel" page
+    And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Profile" tab
+    And Camel table "ID" column contains these values:
+      | setBody2       |
+      | subject1Route  |
+      | subject2Route  |
+      | interval1Route |
+      | interval2Route |
+

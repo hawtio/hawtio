@@ -11,6 +11,7 @@ import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.CollectionCondition.allMatch; 
 
 import org.openqa.selenium.NotFoundException;
 
@@ -88,6 +89,14 @@ public class Table {
     public void checkColumnHasValue(String headerName, String value) {
         getColumn(headerName).findBy(exactText(value)).shouldBe(visible);
     }
+
+    /**
+     * Check that all values in a specific column are integers.
+     * @param headerName column to be checked
+    */
+    public void checkColumnHasIntegerValues(String headerName) {
+        getColumn(headerName).should(allMatch( "All values must be integers", cell -> cell.getText().matches("-?\\d+")));
+    } 
 
     /**
      * Sort Attributes ascending and descending accordingly.
