@@ -75,6 +75,82 @@ public interface HawtioConfig {
     Boolean disableProxy();
 
     /**
+     * Hawtio HTTP configurations
+     */
+    Http http();
+
+    interface Http {
+        /**
+         * Whether CORS filter is enabled and checks for permitted Origin HTTP header values.
+         */
+        @WithDefault("false")
+        Boolean enableCORS();
+
+        /**
+         * When hawtio.http.enableCORS option is enabled, Hawtio responds to CORS pre-flight requests with CORS headers.
+         * This option allows to set the value returned in Access-Control-Allow-Origin response header.
+         */
+        @WithDefault("*")
+        Optional<String> accessControlAllowOrigin();
+
+        /**
+         * <p>
+         * When set to true, Hawtio sends response headers:
+         * </p>
+         * <code>
+         * X-Frame-Options: SAMEORIGIN
+         * Content-Security-Policy: ...; frame-ancestors 'self'
+         * </code>
+         * <p>
+         * otherwise (by default) Hawtio sends
+         * </p>
+         * <code>
+         * X-Frame-Options: DENY
+         * Content-Security-Policy: ...; frame-ancestors 'none'
+         * </code>
+         */
+        @WithDefault("false")
+        Boolean allowXFrameSameOrigin();
+
+        /**
+         * What value Hawtio sends with Referrer-Policy response header.
+         */
+        @WithDefault("strict-origin")
+        Optional<String> referrerPolicy();
+
+        /**
+         * Hawtio HTTP CSP configurations
+         */
+        Csp csp();
+
+        interface Csp {
+            /**
+             * (Optional) Source list of custom connect-src directive that users can add to the default Content-Security-Policy
+             * response header sent by Hawtio.
+             * Specify a comma-separated list of allowed sources to connect if a specific plugin requires access to external
+             * resources.
+             */
+            Optional<List<String>> connectSrc();
+
+            /**
+             * (Optional) Source list of custom script-src directive that users can add to the default Content-Security-Policy
+             * response header sent by Hawtio.
+             * Specify a comma-separated list of allowed sources for scripting if a specific plugin requires loading external
+             * scripts.
+             */
+            Optional<List<String>> scriptSrc();
+
+            /**
+             * (Optional) Source list of custom script-src-elem directive that users can add to the default Content-Security-Policy
+             * response header sent by Hawtio.
+             * Specify a comma-separated list of allowed sources for scripting if a specific plugin requires loading external
+             * scripts.
+             */
+            Optional<List<String>> scriptSrcElem();
+        }
+    }
+
+    /**
      * Map of custom Hawtio plugin configurations
      */
     @WithName("plugin")

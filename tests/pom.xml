@@ -15,12 +15,12 @@
   <packaging>pom</packaging>
 
   <properties>
-    <http5-version>5.4.1</http5-version>
+    <http5-version>5.4.2</http5-version>
     <slf4j-version>2.0.17</slf4j-version>
     <selenium-version>4.40.0</selenium-version>
     <selenide-version>7.13.0</selenide-version>
     <cucumber-version>7.33.0</cucumber-version>
-    <testcontainers-version>2.0.3</testcontainers-version>
+    <testcontainers-version>2.0.4</testcontainers-version>
     <awaitility-version>4.3.0</awaitility-version>
     <logback-classic-version>1.5.32</logback-classic-version>
     <junit-platform-commons-version>1.14.2</junit-platform-commons-version>

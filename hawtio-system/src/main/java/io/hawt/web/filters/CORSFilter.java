@@ -22,11 +22,9 @@ public class CORSFilter extends HttpHeaderFilter {
     private static final Logger LOG = LoggerFactory.getLogger(CORSFilter.class);
 
     public static final String ENABLE_CORS = "http.enableCORS";
-    @SuppressWarnings("unused")
     public static final String HAWTIO_ENABLE_CORS = "hawtio." + ENABLE_CORS;
 
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "http.accessControlAllowOrigin";
-    @SuppressWarnings("unused")
     public static final String HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN = "hawtio." + ACCESS_CONTROL_ALLOW_ORIGIN;
 
     private boolean enabled = false;

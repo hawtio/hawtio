@@ -198,7 +198,7 @@
     <dependency>
       <groupId>com.github.docker-java</groupId>
       <artifactId>docker-java</artifactId>
-      <version>3.6.0</version>
+      <version>3.7.1</version>
     </dependency>
 
     <!-- Used by the generated CRD classes -->

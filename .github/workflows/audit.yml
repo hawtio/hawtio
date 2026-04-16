@@ -4,19 +4,26 @@ on:
   schedule:
     # Run it every Sunday
     - cron: '0 0 * * 0'
+  workflow_dispatch:
 
 jobs:
   audit:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: [ main, 4.x ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.branch }}
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 17
           cache: 'maven'
       - name: Audit
         run: |
-          mvn --batch-mode --no-transfer-progress install -pl :hawtio-console-assembly,:hawtio-example-sample-plugin
+          mvn --batch-mode --no-transfer-progress install -pl :hawtio-console-assembly,:hawtio-console-minimal-assembly,:hawtio-example-sample-plugin

@@ -1,0 +1,49 @@
+name: Audit Downstream Branches
+
+on:
+  schedule:
+    # Run it every Sunday
+    - cron: '0 0 * * 0'
+  # Allow manual run if necessary
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: [ 4.x-redhat, 4.3.x-redhat ]
+        modules: [ console, console-minimal, examples/sample-plugin ]
+    # Navigates into the module directory for all 'run' steps
+    defaults:
+      run:
+        working-directory: ${{ matrix.modules }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.branch }}
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Enable yarn v4
+        run: |
+          corepack enable
+          yarn -v
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          # actions/cache runs from root, so manually prefix the module path
+          path: ${{ matrix.modules }}/${{ steps.yarn-cache-dir-path.outputs.dir }}
+          # include module name in the key to prevent cache collisions between modules
+          key: ${{ runner.os }}-yarn-${{ matrix.modules }}-${{ hashFiles(format('{0}/yarn.lock', matrix.modules)) }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-${{ matrix.modules }}-
+      - name: Audit
+        run: yarn npm audit --all

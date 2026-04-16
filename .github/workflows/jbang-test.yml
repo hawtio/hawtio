@@ -38,7 +38,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: "maven"
       - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.6.0
+        uses: docker/setup-qemu-action@v4
       - name: Build Hawtio
         run: |
           mvn --batch-mode --no-transfer-progress install -DskipTests

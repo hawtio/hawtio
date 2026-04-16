@@ -47,9 +47,9 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: "maven"
       - name: Docker Setup QEMU
-        uses: docker/setup-qemu-action@v3.6.0
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Set module name
         id: runtime
         run: |
@@ -63,7 +63,7 @@ jobs:
           mvn --batch-mode --no-transfer-progress install -DskipTests \
             -Pe2e -pl :hawtio-tests-${{ env.module }} -am
       - name: Build hawtio-test-suite image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: tests/hawtio-test-suite/Dockerfile
@@ -74,7 +74,7 @@ jobs:
           cache-from: type=gha,scope=hawtio-test-suite-${{ matrix.java }}
           cache-to: type=gha,mode=max,scope=hawtio-test-suite-${{ matrix.java }}
       - name: Build hawtio-${{ env.module }}-app image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: tests/${{ env.module }}
           file: tests/${{ env.module }}/Dockerfile

@@ -44,11 +44,11 @@
     <quarkus-extension-version>3.27.0.redhat-00001</quarkus-extension-version>
     <!-- Spring Boot 3 -->
     <spring-version>6.2.17</spring-version>
-    <spring-boot-version>3.5.12</spring-boot-version>
+    <spring-boot-version>3.5.13</spring-boot-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
     <spring7-version>7.0.6</spring7-version>
-    <spring-boot4-version>4.0.4</spring-boot4-version>
+    <spring-boot4-version>4.0.5</spring-boot4-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
     <camel-spring-boot-version>4.14.1.redhat-00011</camel-spring-boot-version>
@@ -57,16 +57,16 @@
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.7</assertj-core-version>
-    <caffeine-version>3.2.2</caffeine-version>
+    <caffeine-version>3.2.3</caffeine-version>
     <commons-codec-version>1.21.0</commons-codec-version>
-    <commons-io-version>2.20.0</commons-io-version>
+    <commons-io-version>2.21.0</commons-io-version>
     <commons-logging-version>1.3.5</commons-logging-version>
     <hamcrest-version>3.0</hamcrest-version>
     <httpcore-version>4.4.16</httpcore-version>
     <httpclient-version>4.5.14</httpclient-version>
     <jackson-version>2.19.2</jackson-version>
     <junit5-version>5.14.3</junit5-version>
-    <log4j2-version>2.25.3</log4j2-version>
+    <log4j2-version>2.25.4</log4j2-version>
     <mockito-core-version>5.20.0</mockito-core-version>
     <nimbusds-jose-version>10.5</nimbusds-jose-version>
     <picocli-version>4.7.7</picocli-version>
@@ -81,19 +81,19 @@
 
     <!-- Maven plugins -->
     <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
-    <central-publishing-maven-plugin-version>0.8.0</central-publishing-maven-plugin-version>
+    <central-publishing-maven-plugin-version>0.10.0</central-publishing-maven-plugin-version>
     <docker-plugin-version>0.48.1</docker-plugin-version>
     <exec-maven-plugin-version>3.6.3</exec-maven-plugin-version>
     <frontend-maven-plugin-version>2.0.0</frontend-maven-plugin-version>
     <maven-antrun-plugin-version>3.2.0</maven-antrun-plugin-version>
     <maven-clean-plugin-version>3.5.0</maven-clean-plugin-version>
-    <maven-compiler-plugin-version>3.14.1</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.15.0</maven-compiler-plugin-version>
     <maven-dependency-plugin-version>3.10.0</maven-dependency-plugin-version>
     <maven-failsafe-plugin-version>3.5.4</maven-failsafe-plugin-version>
     <maven-release-plugin-version>3.3.1</maven-release-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-    <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
-    <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
+    <maven-surefire-plugin-version>3.5.5</maven-surefire-plugin-version>
+    <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
   </properties>
 
   <modules>
