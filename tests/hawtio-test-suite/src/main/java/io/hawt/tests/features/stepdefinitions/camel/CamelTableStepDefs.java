@@ -29,7 +29,7 @@ public class CamelTableStepDefs {
         table.checkKeyAndValuePairs(key, value);
     }
 
-    @Then("^Attributes table is sorted \"([^\"]*)\" by \"([^\"]*)\"$")
+    @Then("^Camel table is sorted \"([^\"]*)\" by \"([^\"]*)\"$")
     public void theTableIsSortedOrderOptionByHeaderName(String desiredOrder, String headerName) {
         table.sortAttributes(desiredOrder, headerName);
     }
@@ -66,5 +66,10 @@ public class CamelTableStepDefs {
     @Then("^Camel table \"([^\"]*)\" column has integer values$")
     public void columnHasIntegerValues(String columnName) {
         table.checkColumnHasIntegerValues(columnName);
+    }    
+
+    @And("^User filters values by \"([^\"]*)\" and searches \"([^\"]*)\"$")
+    public void userFiltersValuesAndSearches(String filterType, String value) {
+        table.addFilter(filterType, value);
     }    
 }

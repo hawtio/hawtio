@@ -16,7 +16,7 @@ Feature: Checking the functionality of Camel Specific Route page.
     Given User is on "Camel" page
     And User is on Camel "simple" item of "default" group of "routes" folder of "SampleCamel" context
     When User clicks on Camel "Attributes" tab
-    Then Attributes table is sorted "<desiredOrder>" by "<headerName>"
+    Then Camel table is sorted "<desiredOrder>" by "<headerName>"
 
     Examples: Order options and Header names
       | desiredOrder | headerName |
