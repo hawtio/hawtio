@@ -7,6 +7,8 @@ import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
@@ -15,9 +17,13 @@ import static com.codeborne.selenide.CollectionCondition.allMatch;
 
 import org.openqa.selenium.NotFoundException;
 
+import io.hawt.tests.features.pageobjects.pages.HawtioPage;
+import io.hawt.tests.features.pageobjects.pages.camel.CamelPage;
+
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +31,8 @@ import java.util.List;
  * Represent a common Table used in Hawtio with common methods.
  */
 public class Table {
+    private final HawtioPage hawtioPage = new HawtioPage();
+
     /**
      * Get row of table.
      *
@@ -99,33 +107,86 @@ public class Table {
     } 
 
     /**
+     * Check existing filters and applies a new search.
+     * @param filter the category to select (e.g., "URL", "Route ID")
+     * @param value the search string
+     */    
+
+    public void addFilter(String filter, String value) {
+        clearFilter();
+        selectFilter(filter);
+        searchFor(value);
+        hawtioPage.clickButton("Add Filter");    
+    }
+
+    /**
+     * Clears existing filters if the button is visible and enabled.
+     */
+    public void clearFilter() {
+        final SelenideElement clearFilterButton = $(byTagAndText("button", "Clear all filters"));
+        if (clearFilterButton.is(visible)) {
+            hawtioPage.clickButtonByTagAndText("button", "Clear all filters");
+        }
+    }
+
+    /**
+     * Opens the category dropdown and selects the filter type.
+     */
+    public void selectFilter(String filter) {
+        hawtioPage.clickButtonByDataTestId("attribute-select-toggle");
+        $$(".pf-v6-c-menu button, .pf-v6-c-dropdown button")
+            .findBy(exactText(filter))
+            .shouldBe(visible, enabled)
+            .click();
+    }
+
+    /**
+     * Enters search text into the search input.
+     */
+    public void searchFor(String value) {
+        final SelenideElement searchInput = $("input[aria-label='Search input']").shouldBe(visible);
+        searchInput.clear();
+        searchInput.setValue(value).pressEnter();
+    }    
+
+    /**
      * Sort Attributes ascending and descending accordingly.
      *
      * @param desiredOrder how to sort the attributes
      * @param headerName   column to be sorted out
      */
     public void sortAttributes(String desiredOrder, String headerName) {
-        final SelenideElement header = $(byTagAndText("span", headerName)).shouldBe(visible);
+        final SelenideElement header = $$("th").findBy(text(headerName)).$("span").shouldBe(visible);
         final String currentOrder = header.ancestor("th").getAttribute("aria-sort");
-        ElementsCollection attributeColumn = $$(byXpath("//td[1]")).shouldBe(sizeGreaterThanOrEqual(1));
 
-        // Get a current list of attributes
-        List<String> expectedList = attributeColumn.texts();
+        // Click to achieve desired order if needed
+        if (!desiredOrder.equals(currentOrder)) {
+            header.click();
+            String newOrder = header.ancestor("th").getAttribute("aria-sort");
+            
+            // Handle three-state toggles (None -> Ascending -> Descending)
+            if ("descending".equals(desiredOrder) && "ascending".equals(newOrder)) {
+                header.click();
+            }
+        }
 
-        // Sort the current list of attributes to be compared with a list in Hawtio UI
+        // Verify the header shows correct sort state
+        header.ancestor("th").shouldHave(attribute("aria-sort", desiredOrder));
+
+        // Fetch the sorted column data (after UI has updated)
+        int colIndex = getColumnsPosition(headerName);
+        ElementsCollection attributeColumn = $$(byXpath("//tbody/tr/td[" + colIndex + "]"))
+                .shouldBe(sizeGreaterThanOrEqual(1));
+
+        // Create expected sorted list from current values
+        List<String> expectedList = new ArrayList<>(attributeColumn.texts());
         if ("ascending".equals(desiredOrder)) {
             Collections.sort(expectedList);
         } else {
-            Collections.reverse(expectedList);
+            Collections.sort(expectedList, Collections.reverseOrder());
         }
 
-        // Sort the list of attributes in Hawtio UI if the order differs
-        if (!desiredOrder.equals(currentOrder)) {
-            header.click();
-        }
-
-        // Ensure the order is correct and the attributes lists match each other
-        header.ancestor("th").shouldHave(attribute("aria-sort", desiredOrder));
+        // Verify UI matches expected sort
         attributeColumn.shouldHave(exactTextsCaseSensitive(expectedList));
     }
 }
