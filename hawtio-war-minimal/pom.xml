@@ -26,7 +26,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- mandatory core hawito modules -->
+    <!-- mandatory core hawtio modules -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-system</artifactId>
