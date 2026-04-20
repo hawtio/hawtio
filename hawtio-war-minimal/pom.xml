@@ -13,7 +13,7 @@
   <description>Hawtio :: Web Console</description>
 
   <properties>
-    <finalName>hawtio</finalName>
+    <finalName>hawtio-minimal</finalName>
   </properties>
 
   <dependencies>
@@ -56,7 +56,7 @@
 
   <build>
     <!-- we do not want version in the WAR name -->
-    <finalName>hawtio-minimal</finalName>
+    <finalName>${finalName}</finalName>
 
     <plugins>
       <!-- Add hawtio minimal console resources to the WAR -->
