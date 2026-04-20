@@ -10,6 +10,7 @@ import static com.codeborne.selenide.Condition.interactable;
 import static com.codeborne.selenide.Condition.matchText;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byXpath;
+import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -129,4 +130,20 @@ public class HawtioPage {
     public String getAppName() {
         return $(HEADER_SELECTOR).$(By.tagName("h1")).text();
     }
+
+    /**
+     * Click on a button using a specific tag and text.
+     */
+    public HawtioPage clickButtonByTagAndText(String tag, String text) {
+        $(byTagAndText(tag, text)).shouldBe(visible, enabled).click();
+        return this;
+    }
+
+    /**
+     * Click on an element using its data-testid attribute.
+     */
+    public HawtioPage clickButtonByDataTestId(String testId) {
+        $("[data-testid='" + testId + "']").shouldBe(visible, enabled).click();
+        return this;
+    }    
 }

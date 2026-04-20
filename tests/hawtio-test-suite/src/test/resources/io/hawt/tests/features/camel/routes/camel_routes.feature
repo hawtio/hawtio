@@ -78,3 +78,31 @@ Feature: Checking the functionality of Camel Routes page.
     And User is on Camel "routes" folder of "SampleCamel" context
     When User clicks on Camel "Source" tab
     Then Route source code is presented
+
+  Scenario Outline: Endpoints table is sorted correctly
+    Given User is on "Camel" page
+    And User is on Camel "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Endpoints (in/out)" tab
+    Then Camel table is sorted "<desiredOrder>" by "<headerName>"
+
+    Examples: Order options and Header names
+      | desiredOrder | headerName |
+      | ascending    | URL        |
+      | descending   | URL        |
+      | ascending    | Route ID   |
+      | descending   | Route ID   |
+      | ascending    | Direction  |
+      | descending   | Direction  |
+
+  Scenario Outline: Verify endpoint filtering
+    Given User is on "Camel" page
+    And User is on Camel "routes" folder of "SampleCamel" context
+    When User clicks on Camel "Endpoints (in/out)" tab
+    When User filters values by "<filterType>" and searches "<value>"
+    Then Camel table "<column>" column has "<value>" value
+
+    Examples: Endpoint filter combinations
+      | filterType | value                                        | column    |
+      | URL        | quartz://simple?trigger.repeatInterval=10000 | URL       |
+      | Route ID   | simple                                       | Route ID  |
+      | Direction  | in                                           | Direction |
