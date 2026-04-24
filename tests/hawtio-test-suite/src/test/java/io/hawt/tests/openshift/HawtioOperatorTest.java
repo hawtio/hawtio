@@ -461,6 +461,66 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         }, false);
     }
 
+    @Test
+    public void testCRUpdatePreservesAllFields() {
+        // Regression test for operator cache issue where updates would remove fields
+        HawtioOnlineTestUtils.withCleanup(() -> {
+            hawtio = HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+                TestConfiguration.getOpenshiftNamespace(),
+                h -> {
+                    h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
+                    h.getSpec().setReplicas(1);
+                    // Intentionally not setting logging configuration initially
+                });
+
+            // Deploy initial CR without logging configuration
+            HawtioOnlineUtils.deployHawtioCR(hawtio);
+
+            // Update CR to add logging configuration with all properties
+            HawtioOnlineUtils.patchHawtioResource(hawtio.getMetadata().getName(), updatedHawtio -> {
+                Logging logging = new Logging();
+                logging.setOnlineLogLevel("info");
+                logging.setGatewayLogLevel("debug");
+                logging.setMaskIPAddresses("true");
+                updatedHawtio.getSpec().setLogging(logging);
+            });
+
+            // Wait for update to be processed
+            WaitUtils.waitFor(() -> {
+                Hawtio h = OpenshiftClient.get().resources(Hawtio.class).withName(hawtio.getMetadata().getName()).get();
+                return h.getSpec().getLogging() != null && h.getSpec().getLogging().getOnlineLogLevel() != null;
+            }, "Waiting for CR update to be applied", Duration.ofSeconds(30));
+
+            // Verify all logging properties are preserved after update
+            SoftAssertions sa = new SoftAssertions();
+            Hawtio updatedHawtio = OpenshiftClient.get().resources(Hawtio.class).withName(hawtio.getMetadata().getName()).get();
+
+            sa.assertThat(updatedHawtio.getSpec().getLogging())
+                .as("Logging configuration should be present")
+                .isNotNull();
+
+            sa.assertThat(updatedHawtio.getSpec().getLogging().getOnlineLogLevel())
+                .as("Online log level should be preserved")
+                .isEqualTo("info");
+
+            sa.assertThat(updatedHawtio.getSpec().getLogging().getGatewayLogLevel())
+                .as("Gateway log level should be preserved")
+                .isEqualTo("debug");
+
+            sa.assertThat(updatedHawtio.getSpec().getLogging().getMaskIPAddresses())
+                .as("Mask IP addresses setting should be preserved")
+                .isEqualTo("true");
+
+            sa.assertThat(updatedHawtio.getSpec().getReplicas())
+                .as("Original replica count should be preserved")
+                .isEqualTo(1);
+
+            sa.assertAll();
+        }, () -> {
+            HawtioOnlineUtils.deleteHawtio(hawtio);
+        });
+    }
+
     private static void runTest(Consumer<HawtioSpec> consumer, Consumer<SoftAssertions> testFunction) {
         runTest(consumer, testFunction, true);
     }
