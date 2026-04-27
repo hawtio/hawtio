@@ -42,16 +42,16 @@
     <!-- Quarkus -->
     <quarkus-version>3.32.3</quarkus-version>
     <!-- Spring Boot 3 -->
-    <spring-version>6.2.17</spring-version>
-    <spring-boot-version>3.5.13</spring-boot-version>
+    <spring-version>6.2.18</spring-version>
+    <spring-boot-version>3.5.14</spring-boot-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring7-version>7.0.6</spring7-version>
-    <spring-boot4-version>4.0.5</spring-boot4-version>
+    <spring7-version>7.0.7</spring7-version>
+    <spring-boot4-version>4.0.6</spring-boot4-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.18.0</camel-spring-boot-version>
     <!-- Jetty -->
-    <jetty12-version>12.1.7</jetty12-version>
+    <jetty12-version>12.1.8</jetty12-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.7</assertj-core-version>
