@@ -40,7 +40,7 @@
     <jolokia-version>2.5.1</jolokia-version>
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
-    <quarkus-version>3.32.3</quarkus-version>
+    <quarkus-version>3.34.6</quarkus-version>
     <!-- Spring Boot 3 -->
     <spring-version>6.2.18</spring-version>
     <spring-boot-version>3.5.14</spring-boot-version>
