@@ -1,11 +1,13 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.Callable;
 
 import javax.security.auth.Subject;
 
+import io.hawt.system.security.LegacySubjectAccess;
+import io.hawt.system.security.ModernSubjectAccess;
+import io.hawt.system.security.SubjectAccess;
 import io.hawt.web.ForbiddenReason;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -40,6 +42,16 @@ public class AuthenticationFilter implements Filter {
      * {@code /actuator/hawtio}).
      */
     private int pathIndex;
+
+    private SubjectAccess subjectAccess;
+
+    public AuthenticationFilter() {
+        try {
+            this.subjectAccess = new ModernSubjectAccess();
+        } catch (UnsupportedOperationException e) {
+            this.subjectAccess = new LegacySubjectAccess();
+        }
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -161,13 +173,13 @@ public class AuthenticationFilter implements Filter {
         return proxyMode;
     }
 
-    private static void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {
+    private void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {
         try {
-            Subject.doAs(subject, (PrivilegedExceptionAction<Object>) () -> {
+            subjectAccess.callAs(subject, (Callable<Void>) () -> {
                 chain.doFilter(request, response);
                 return null;
             });
-        } catch (PrivilegedActionException e) {
+        } catch (Exception e) {
             LOG.info("Failed to handle {} due to:", ((HttpServletRequest) request).getRequestURI(), e.getCause());
         }
     }
