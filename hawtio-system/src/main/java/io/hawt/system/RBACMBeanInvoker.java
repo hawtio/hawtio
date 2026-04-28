@@ -16,8 +16,6 @@
 package io.hawt.system;
 
 import java.lang.management.ManagementFactory;
-import java.security.AccessControlContext;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +34,9 @@ import javax.security.auth.Subject;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import io.hawt.system.security.LegacySubjectAccess;
+import io.hawt.system.security.ModernSubjectAccess;
+import io.hawt.system.security.SubjectAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,8 @@ public class RBACMBeanInvoker {
 
     protected LoadingCache<CanInvokeKey, Boolean> canInvokeCache;
     protected LoadingCache<ObjectName, Map<String, MBeanAttributeInfo>> mbeanInfoCache;
+
+    private SubjectAccess subjectAccess;
 
     protected static class CanInvokeKey {
         protected String username;
@@ -105,6 +108,12 @@ public class RBACMBeanInvoker {
     public RBACMBeanInvoker() {
         initSecurityMBean();
         initCaches();
+
+        try {
+            this.subjectAccess = new ModernSubjectAccess();
+        } catch (UnsupportedOperationException e) {
+            this.subjectAccess = new LegacySubjectAccess();
+        }
     }
 
     protected void initSecurityMBean() {
@@ -197,8 +206,7 @@ public class RBACMBeanInvoker {
             return true;
         }
 
-        AccessControlContext acc = AccessController.getContext();
-        Subject subject = Subject.getSubject(acc);
+        Subject subject = this.subjectAccess.currentSubject();
         try {
             if (subject != null) {
                 String username = AuthHelpers.getUsername(subject);
