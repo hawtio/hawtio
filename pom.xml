@@ -49,7 +49,7 @@
     <spring7-version>7.0.7</spring7-version>
     <spring-boot4-version>4.0.6</spring-boot4-version>
     <!-- Camel -->
-    <camel-spring-boot-version>4.18.0</camel-spring-boot-version>
+    <camel-spring-boot-version>4.20.0</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.8</jetty12-version>
 
