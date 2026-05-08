@@ -40,8 +40,8 @@
     <jolokia-version>2.6.0</jolokia-version>
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
-    <quarkus-version>3.27.0.redhat-00002</quarkus-version>
-    <quarkus-extension-version>3.27.0.redhat-00001</quarkus-extension-version>
+    <quarkus-version>3.33.1.temporary-redhat-00003</quarkus-version>
+    <quarkus-extension-version>3.33.1.temporary-redhat-00002</quarkus-extension-version>
     <!-- Spring Boot 3 -->
     <spring-version>6.2.18</spring-version>
     <spring-boot-version>3.5.14</spring-boot-version>
@@ -51,7 +51,7 @@
     <spring-boot4-version>4.0.6</spring-boot4-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
-    <camel-spring-boot-version>4.14.1.redhat-00011</camel-spring-boot-version>
+    <camel-spring-boot-version>4.18.1.redhat-00013</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.8</jetty12-version>
 
