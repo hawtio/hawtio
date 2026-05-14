@@ -2,7 +2,7 @@
   "branding": {
     "appName": "Hawtio Sample Quarkus 3.x Application",
     "appLogoUrl": "img/hawtio-logo.svg",
-    "companyLogoUrl": "img/hawtio-logo.svg",
+    "appLogoDarkModeUrl": "img/hawtio-logo-darkmode.svg",
     "css": "css/app.css",
     "favicon": "img/favicon.ico"
   },
@@ -27,8 +27,9 @@
     "title": "Hawtio Sample Quarkus 3.x Application",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "(c) 2023 Hawtio team",
-    "imgSrc": "img/hawtio-logo.svg"
+    "copyright": "(c) 2026 Hawtio team",
+    "imgSrc": "img/hawtio-logo.svg",
+    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg"
   },
   "disabledRoutes": []
 }

@@ -1,8 +1,8 @@
-{
+ {
   "branding": {
-    "appName": "Hawtio Spring Boot 3 Authentication Example",
+    "appName": "Hawtio Spring Boot 4 Authentication Example",
     "appLogoUrl": "img/hawtio-logo.svg",
-    "companyLogoUrl": "img/hawtio-logo.svg",
+    "appLogoDarkModeUrl": "img/hawtio-logo-darkmode.svg",
     "css": "css/app.css",
     "favicon": "img/favicon.ico"
   },
@@ -24,11 +24,14 @@
     ]
   },
   "about": {
-    "title": "Hawtio Spring Boot 3 Authentication Example",
+    "title": "Hawtio Spring Boot 4 Authentication Example",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "(c) 2023 Hawtio team",
-    "imgSrc": "img/hawtio-logo.svg"
+    "backgroundImgSrc": "img/background.svg",
+    "backgroundDarkModeImgSrc": "img/background-darkmode.svg",
+    "copyright": "(c) 2026 Hawtio team",
+    "imgSrc": "img/hawtio-logo.svg",
+    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg"
   },
   "disabledRoutes": []
 }

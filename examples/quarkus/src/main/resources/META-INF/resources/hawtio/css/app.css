@@ -1,25 +1,29 @@
 /* You can customise the styles of your application here. */
 
 /* Change the background image for Login page and About modal */
-.pf-c-login, .pf-c-about-modal-box__hero {
-  background-image: url("../img/background.svg") !important;
+/* About modal background overrides the values from hawtconfig.json */
+.pf-v6-c-background-image, .pf-v6-c-about-modal-box {
+  background-image: url(../img/background.svg) !important;
+  /* if overriding Patternfly variable, remember about var+url() rules: https://drafts.csswg.org/css-variables/#syntax */
+  /*--pf-v6-c-background-image--BackgroundImage: url(img/background.svg) !important;*/
+  background-size: cover;
+}
+:where(.pf-v6-theme-dark) .pf-v6-c-background-image, :where(.pf-v6-theme-dark) .pf-v6-c-about-modal-box {
+  background-image: url(../img/background-darkmode.svg) !important;
+  /* if overriding Patternfly variable, remember about var+url() rules: https://drafts.csswg.org/css-variables/#syntax */
+  /*--pf-v6-c-background-image--BackgroundImage: url(img/background-darkmode.svg) !important;*/
   background-size: cover;
 }
 
 /* Example of global style overrides:
 :root {
-  --pf-global--primary-color--100: #b21054;
-  --pf-global--primary-color--200: #b24e78;
-  --pf-global--primary-color--light-100: #b24e78;
-  --pf-global--primary-color--dark-100: #b21054;
-  --pf-global--active-color--100: #b21054;
-  --pf-global--active-color--200: #b24e78;
-  --pf-global--active-color--300: #b24e78;
-  --pf-global--active-color--400: #b24e78;
-  --pf-global--link--Color: #b21054;
-  --pf-global--link--Color--hover: #b24e78;
-  --pf-v5-global--primary-color--100: #b21054;
-  --pf-v5-global--primary-color--200: #b24e78;
-  --pf-v5-global--link--Color: var(--pf-v5-global--danger-color--100);
+  --pf-t--global--text--color--100: #b21054;
+  --pf-t--global--text--color--200: #b24e78;
+  --pf-t--global--dark--text--color--100: #ff224e;
+  --pf-t--global--dark--text--color--200: #ff9aaf;
+  --pf-t--global--text--color--link--100: #b21054;
+  --pf-t--global--text--color--link--200: #d23678;
+  --pf-t--global--dark--text--color--link--100: #f9d8de;
+  --pf-t--global--dark--text--color--link--200: #ffecf0;
 }
 */
