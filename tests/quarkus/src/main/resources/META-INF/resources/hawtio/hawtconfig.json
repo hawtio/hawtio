@@ -1,8 +1,8 @@
 {
   "branding": {
     "appName": "Hawtio Sample Quarkus 3.x Application",
-    "appLogoUrl": "img/hawtio-logo.svg",
-    "companyLogoUrl": "img/hawtio-logo.svg",
+    "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
+    "appLogoDarkModeUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
     "css": "css/app.css",
     "favicon": "img/favicon.ico"
   },
@@ -17,7 +17,8 @@
   "about": {
     "title": "Hawtio Management Console",
     "description": "A Hawtio reimplementation based on TypeScript + React.",
-    "imgSrc": "hawtio-logo.svg",
+    "imgSrc": "img/hawtio-logo.svg",
+    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg",
     "productInfo": [
       { "name": "ABC", "value": "1.2.3" },
       { "name": "XYZ", "value": "7.8.9" }

@@ -50,7 +50,7 @@ module.exports = (_, args) => {
             },
             '@hawtio/react': {
               singleton: true,
-              requiredVersion: '~1.10.0',
+              requiredVersion: dependencies['@hawtio/react'],
             },
             '@patternfly/react-core': {
               singleton: true,

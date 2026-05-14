@@ -1,7 +1,26 @@
-/* You can customise the styles of your application here. */
-
-/* Change the background image for Login page and About modal */
-.pf-v5-c-login, .pf-v5-c-about-modal-box {
-  background-image: url("../img/background.svg") !important;
+.pf-v6-c-background-image, .pf-v6-c-about-modal-box {
+  background-image: url(../img/background.svg) !important;
   background-size: cover;
 }
+:where(.pf-v6-theme-dark) .pf-v6-c-background-image, :where(.pf-v6-theme-dark) .pf-v6-c-about-modal-box {
+  background-image: url(../img/background-darkmode.svg) !important;
+  background-size: cover;
+}
+
+#hawtio-header-brand {
+  /* adjusted to the width of the logo */
+  width: 40px;
+}
+
+/* Example of global style overrides:
+:root {
+  --pf-t--global--text--color--100: #b21054;
+  --pf-t--global--text--color--200: #b24e78;
+  --pf-t--global--dark--text--color--100: #ff224e;
+  --pf-t--global--dark--text--color--200: #ff9aaf;
+  --pf-t--global--text--color--link--100: #b21054;
+  --pf-t--global--text--color--link--200: #d23678;
+  --pf-t--global--dark--text--color--link--100: #f9d8de;
+  --pf-t--global--dark--text--color--link--200: #ffecf0;
+}
+*/

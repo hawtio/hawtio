@@ -3,7 +3,7 @@
     "appName": "Hawtio Sample Quarkus 3.x Application",
     "showAppName": true,
     "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
-    "companyLogoUrl": "img/Logo-RedHat-A-Reverse-RGB.png",
+    "appLogoDarkModeUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
     "css": "css/app.css",
     "favicon": "img/favicon.ico"
   },
@@ -29,7 +29,8 @@
     "productInfo": [],
     "additionalInfo": "",
     "copyright": "© Hawtio project & Red Hat",
-    "imgSrc": "img/Logo-RedHat-A-Reverse-RGB.png"
+    "imgSrc": "img/Logo-RedHat.png",
+    "imgDarkModeSrc": "img/Logo-RedHat-darkmode.png"
   },
   "disabledRoutes": []
 }

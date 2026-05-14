@@ -3,8 +3,8 @@
     "appName": "Red Hat build of Hawtio",
     "showAppName": true,
     "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
-    "companyLogoUrl": "img/Logo-RedHat-A-Reverse-RGB.png",
-    "css": "branding-redhat.css",
+    "appLogoDarkModeUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
+    "css": "css/branding-redhat.css",
     "favicon": ""
   },
   "login": {
@@ -17,7 +17,9 @@
     "additionalInfo": "",
     "copyright": "© Hawtio project & Red Hat",
     "imgSrc": "img/Logo-RedHat-A-Reverse-RGB.png",
-    "backgroundImgSrc": "img/background-inverted.svg"
+    "imgDarkModeSrc": "img/Logo-RedHat-A-Reverse-RGB.png",
+    "backgroundImgSrc": "img/background.svg",
+    "backgroundDarkModeImgSrc": "img/background-darkmode.svg"
   },
   "disabledRoutes": []
 }
