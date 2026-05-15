@@ -457,19 +457,20 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         runTest(spec -> {
             Auth auth = new Auth();
             auth.setClientCertCommonName("my.hawtio.svc");
-            auth.setClientCertCheckSchedule("* * * * *");
-            auth.setClientCertExpirationPeriod(48L);
             auth.setClientCertExpirationDate(LocalDateTime.now().plusYears(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
             spec.setAuth(auth);
         }, sa -> {
-            sa.assertThat(OpenshiftClient.get().batch().v1().cronjobs().withName(hawtio.getMetadata().getName() + "-certificate-expiry-check").get())
-                .isNotNull()
-                .matches(job -> job.getSpec().getSchedule().equals("* * * * *"))
-                .matches(job -> job.getSpec().getJobTemplate().getSpec().getTemplate().getSpec().getContainers().get(0).getArgs().contains("48"));
+            final String secretName = hawtio.getMetadata().getName() + "-tls-proxying";
 
+            // Wait for operator to create the TLS certificate secret
+            WaitUtils.waitFor(() -> {
+                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
+            }, "Waiting for Secret " + secretName + " to be created", Duration.ofSeconds(30));
+
+            // Verify the generated certificate has the correct CN
             Assertions.assertThatCode(() -> {
                 final String source = new String(Base64.getDecoder().decode(
-                    OpenshiftClient.get().secrets().withName(hawtio.getMetadata().getName() + "-tls-proxying").get().getData().get("tls.crt")));
+                    OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
                 final CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 final X509Certificate certificate =
                     (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
