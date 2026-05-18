@@ -624,7 +624,7 @@ __metadata:
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.0.8"
-    "@hawtio/react": "npm:^2.2.1"
+    "@hawtio/react": "npm:^2.2.2"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -656,9 +656,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "@hawtio/react@npm:2.2.1"
+"@hawtio/react@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@hawtio/react@npm:2.2.2"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
     "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.1"
@@ -692,7 +692,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/20f2c8d9706760a9eb3313257ff616498cc9df35fe5578995d31f6a38007578167e72b298a9b44383cedb1a89418eb7ec76a149735480efc310913447598459f
+  checksum: 10/8c4aeb87f99385633381815d8c7d816de98ec9681b51e62dcaec8e1f7eb03b4031d501e5b1949a9eb64dfc4f78e2e2d6a534b5273df1effa96c7d9aba23a4a60
   languageName: node
   linkType: hard
 
