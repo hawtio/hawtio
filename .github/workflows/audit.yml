@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branch: [ main, 4.x ]
+        branch: [ main ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
