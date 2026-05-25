@@ -77,7 +77,7 @@ public class DiscoverTab {
     public void selectNamespace(String namespace) {
         waitForPageLoaded();
         final SelenideElement namespaceTab = $(DISCOVER_TABS).$(ByUtils.byPartialText(namespace));
-        namespaceTab.should(exist, Duration.ofSeconds(10));
+        namespaceTab.should(exist, Duration.ofSeconds(60)); // Increased timeout for cluster discovery
         if (namespaceTab.is(Condition.interactable)) {
             namespaceTab.click();
         }
