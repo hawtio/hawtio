@@ -114,7 +114,7 @@ public class OidcLoginModule implements LoginModule {
 
     @Override
     public boolean commit() {
-        if (parsedToken == null) {
+        if (parsedToken == null || parsedToken.getJwt() == null) {
             return false;
         }
 
@@ -122,6 +122,9 @@ public class OidcLoginModule implements LoginModule {
         Class<?> userClass = oidcConfiguration.getUserClass();
         try {
             String userIdClaimField = oidcConfiguration.getUserPath();
+            if (parsedToken.getJwt().getJWTClaimsSet() == null) {
+                return false;
+            }
             String userId = parsedToken.getJwt().getJWTClaimsSet().getClaimAsString(userIdClaimField);
             Constructor<?> ctr = userClass.getConstructor(String.class);
             this.subject.getPrincipals().add((Principal) ctr.newInstance(userId));
