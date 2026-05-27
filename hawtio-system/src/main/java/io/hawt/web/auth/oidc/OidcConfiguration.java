@@ -432,9 +432,7 @@ public class OidcConfiguration extends Configuration {
     private void buildConfiguration(Properties props) throws IOException {
         JSONObject json = new JSONObject();
         json.put("method", "oidc");
-        if (providerURL != null) {
-            json.put("provider", providerURL.toString());
-        }
+        json.put("provider", providerURL.toString());
         json.put("client_id", clientId);
         if (responseMode != null) {
             json.put("response_mode", responseMode.asValue());
@@ -711,7 +709,10 @@ public class OidcConfiguration extends Configuration {
     public String[] extractRoles(ValidAccessToken parsedToken) {
         Set<String> roles = new LinkedHashSet<>();
         try {
-            Map<String, Object> claims = parsedToken.getJwt().getJWTClaimsSet().toJSONObject();
+            Map<String, Object> claims = new HashMap<>();
+            if (parsedToken.getJwt() != null && parsedToken.getJwt().getJWTClaimsSet() != null) {
+                claims.putAll(parsedToken.getJwt().getJWTClaimsSet().toJSONObject());
+            }
 
             String[] path = this.getRolesPath();
             for (int s = 0; s < path.length; s++) {
