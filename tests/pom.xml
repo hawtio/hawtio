@@ -23,7 +23,7 @@
     <testcontainers-version>2.0.5</testcontainers-version>
     <awaitility-version>4.3.0</awaitility-version>
     <logback-classic-version>1.5.32</logback-classic-version>
-    <junit-platform-commons-version>1.14.2</junit-platform-commons-version>
+    <junit-platform-commons-version>1.14.4</junit-platform-commons-version>
     <!-- Used for testing different versions of the Hawtio project then the current one - i.e. testing 4.0.0 with a SNAPSHOT version -->
     <hawtio.bom.version>${project.version}</hawtio.bom.version>
   </properties>
