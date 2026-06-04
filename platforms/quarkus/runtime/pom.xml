@@ -103,7 +103,7 @@
             <configuration>
               <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
               <conditionalDevDependencies>
-                <artifact>io.quarkus:quarkus-devui-deployment:${quarkus-version}</artifact>
+                <artifact>io.quarkus:quarkus-devui-deployment:${quarkus-extension-version}</artifact>
               </conditionalDevDependencies>
             </configuration>
           </execution>
