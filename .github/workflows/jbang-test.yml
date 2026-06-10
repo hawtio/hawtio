@@ -14,6 +14,9 @@ on:
     paths-ignore:
       - "**.md"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     env:
@@ -30,9 +33,12 @@ jobs:
         if: github.event_name == 'pull_request_target'
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"
+          persist-credentials: false
       - name: Checkout code
         uses: actions/checkout@v6
         if: github.event_name == 'push'
+        with:
+          persist-credentials: false
       - name: Set up Java
         uses: actions/setup-java@v5
         with:

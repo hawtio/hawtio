@@ -14,6 +14,9 @@ env:
   PLATFORMS_TEST_APP: linux/amd64,linux/ppc64le,linux/s390x,linux/arm64
   PLATFORMS_TEST_SUITE: linux/amd64
 
+permissions:
+  contents: read
+
 jobs:
   build:
     if: github.repository_owner == 'hawtio'
@@ -26,6 +29,8 @@ jobs:
       # --- Checkout code ---
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       # --- Set up Java ---
       - name: Set up Java
         uses: actions/setup-java@v5
