@@ -335,7 +335,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     }
 
     @Test
-    public void testRBAC() throws IOException {
+    public void testCustomRBAC() throws IOException {
         final String configMapName = "rbac-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
         final String namespace = TestConfiguration.getOpenshiftNamespace();
 
@@ -404,6 +404,42 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                 .withName(configMapName)
                 .delete();
         }
+    }
+
+    @Test
+    public void testDefaultRBAC() throws IOException {
+        runTest(spec -> {
+            var rbac = new Rbac();
+            spec.setRbac(rbac);
+        }, sa -> {
+            var discoverTab = new DiscoverTab();
+            discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
+            discoverTab.connectTo(podName);
+
+            WaitUtils.waitForPageLoad();
+            var hawtio = new HawtioPage();
+
+            hawtio.menu().navigateTo("Camel");
+            final CamelPage camelPage = new CamelPage();
+
+            camelPage.tree().selectSpecificItem("CamelContexts-SampleCamel-folder");
+            camelPage.openTab("Operations");
+
+            final CamelOperations camelOperations = new CamelOperations();
+            camelOperations.checkOperation("stop()", Condition.enabled);
+            camelOperations.checkOperation("getTotalRoutes()", Condition.enabled);
+
+            hawtio.panel().logout();
+            new HawtioOnlineLoginPage().login("viewer", "viewer");
+
+            LoginLogout.hawtioIsLoaded();
+            camelPage.tree().selectSpecificItem("CamelContexts-SampleCamel-folder");
+            camelPage.openTab("Operations");
+
+            camelOperations.checkOperation("stop()", Condition.disabled);
+            camelOperations.checkOperation("restart()", Condition.disabled);
+            camelOperations.checkOperation("getTotalRoutes()", Condition.enabled);
+        });
     }
 
     @Test

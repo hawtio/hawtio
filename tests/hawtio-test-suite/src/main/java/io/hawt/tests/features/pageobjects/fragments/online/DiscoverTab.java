@@ -77,7 +77,7 @@ public class DiscoverTab {
     public void selectNamespace(String namespace) {
         waitForPageLoaded();
         final SelenideElement namespaceTab = $(DISCOVER_TABS).$(ByUtils.byPartialText(namespace));
-        namespaceTab.should(exist, Duration.ofSeconds(60)); // Increased timeout for cluster discovery
+        namespaceTab.should(exist, Duration.ofSeconds(120)); // Increased timeout for cluster discovery
         if (namespaceTab.is(Condition.interactable)) {
             namespaceTab.click();
         }
@@ -118,5 +118,6 @@ public class DiscoverTab {
     private void waitForPageLoaded() {
         $(ByUtils.byDataTestId("loading")).shouldNot(exist, Duration.ofSeconds(30));
         $(ACTIVE_DEPLOYMENT_LIST).should(exist, Duration.ofSeconds(30));
+        $(DISCOVER_TABS).should(exist, Duration.ofSeconds(30));
     }
 }
