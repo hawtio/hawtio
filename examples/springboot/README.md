@@ -1,6 +1,6 @@
-# Hawtio Spring Boot 3 Example
+# Hawtio Spring Boot 4 Example
 
-This sample application shows how to run Hawtio with Spring Boot 3.
+This sample application shows how to run Hawtio with Spring Boot 4.
 
 ## How to run
 
