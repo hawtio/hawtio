@@ -109,7 +109,6 @@
     <module>examples/springboot-log4j2</module>
     <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>
-    <module>examples/springboot4</module>
     <module>examples/war-plugin</module>
     <module>hawtio-jbang</module>
     <module>hawtio-plugin-mbean</module>
