@@ -1,7 +1,7 @@
 name: JBang Test
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
       - 4.x
@@ -30,13 +30,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-        if: github.event_name == 'pull_request_target'
-        with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-          persist-credentials: false
-      - name: Checkout code
-        uses: actions/checkout@v6
-        if: github.event_name == 'push'
         with:
           persist-credentials: false
       - name: Set up Java
