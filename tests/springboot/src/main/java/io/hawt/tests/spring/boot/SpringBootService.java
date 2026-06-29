@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import jakarta.annotation.PostConstruct;
 
-import io.hawt.springboot.HawtioPlugin;
+import io.hawt.springboot4.HawtioPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
