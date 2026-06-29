@@ -141,6 +141,7 @@ jobs:
           files: |
             **/Cucumber.xml
           json_file: results.json
+          comment_mode: off
       - name: Install xmllint
         run: sudo apt-get install -y xmlstarlet jq
       - name: Generate summary
