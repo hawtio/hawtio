@@ -48,8 +48,11 @@ public class KeycloakServlet extends ConfigurationServlet {
         super.init();
 
         keycloakEnabled = authConfiguration.isKeycloakEnabled();
-        LOG.info("Keycloak integration is {}", keycloakEnabled ? "enabled" : "disabled");
-        if (!keycloakEnabled) {
+
+        if (keycloakEnabled) {
+            LOG.info("Keycloak integration is enabled");
+        } else {
+            LOG.debug("Keycloak integration is disabled");
             return;
         }
 
