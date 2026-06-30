@@ -118,8 +118,11 @@ public class ProxyServlet extends HttpServlet {
         ConfigManager config = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
 
         enabled = !config.getBoolean(DISABLE_PROXY, false);
-        if (!enabled) {
-            LOG.info("Proxy servlet is disabled");
+
+        if (enabled) {
+            LOG.info("Proxy servlet is enabled");
+        } else {
+            LOG.debug("Proxy servlet is disabled");
             // proxy servlet is disabled so won't run any further initialisation
             return;
         }
