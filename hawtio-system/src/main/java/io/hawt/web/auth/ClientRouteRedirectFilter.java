@@ -89,7 +89,7 @@ public class ClientRouteRedirectFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
         timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
-        LOG.info("Hawtio ClientRouteRedirectFilter is using {} sec. HttpSession timeout", timeout);
+        LOG.info("Hawtio is using an HTTP session timeout of {} seconds", timeout);
 
         Object unsecured = filterConfig.getServletContext().getAttribute(ATTRIBUTE_UNSECURED_PATHS);
         if (unsecured != null) {
