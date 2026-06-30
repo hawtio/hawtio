@@ -86,9 +86,12 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
         boolean keycloakEnabled = authConfiguration.isKeycloakEnabled();
 
         oidcEnabled = authConfiguration.isOidcEnabled();
-        LOG.info("OpenID Connection integration is {}", oidcEnabled ? "enabled" : "disabled");
+
         if (oidcEnabled) {
             oidcConfiguration = authConfiguration.getOidcConfiguration();
+            LOG.info("OpenID Connection integration is enabled");
+        } else {
+            LOG.debug("OpenID Connection integration is disabled");
         }
 
         // this servlet also shows general configuration (supported authentication methods), so we need some
