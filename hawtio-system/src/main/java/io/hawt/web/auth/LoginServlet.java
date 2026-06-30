@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
     public void init() {
         authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
         timeout = AuthSessionHelpers.getSessionTimeout(getServletContext());
-        LOG.info("Hawtio login is using {} sec. HttpSession timeout", timeout);
+        LOG.debug("Hawtio is using an HTTP session timeout of {} seconds", timeout);
     }
 
     /**
