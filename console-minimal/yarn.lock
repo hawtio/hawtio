@@ -557,7 +557,7 @@ __metadata:
   resolution: "@hawtio/console-minimal-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.1.0"
-    "@hawtio/react": "npm:^2.3.0-pre.0"
+    "@hawtio/react": "npm:^2.3.0-pre.1"
     "@patternfly/react-charts": "npm:^8.4.0"
     "@patternfly/react-code-editor": "npm:^6.4.0"
     "@patternfly/react-core": "npm:^6.4.0"
@@ -589,9 +589,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^2.3.0-pre.0":
-  version: 2.3.0-pre.0
-  resolution: "@hawtio/react@npm:2.3.0-pre.0"
+"@hawtio/react@npm:^2.3.0-pre.1":
+  version: 2.3.0-pre.1
+  resolution: "@hawtio/react@npm:2.3.0-pre.1"
   dependencies:
     "@hawtio/camel-model-v4_14": "npm:@hawtio/camel-model@~4.14.5"
     "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.1"
@@ -600,7 +600,7 @@ __metadata:
     "@monaco-editor/react": "npm:^4.6.0"
     "@thumbmarkjs/thumbmarkjs": "npm:^1.9.1"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.4.8"
+    dompurify: "npm:^3.4.9"
     eventemitter3: "npm:^5.0.4"
     jolokia.js: "npm:^2.6.0"
     js-logger: "npm:^1.6.1"
@@ -625,7 +625,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router-dom: ^6.30
-  checksum: 10/9f95b5fb617d0ee4ffde42301ae9edeb151c69e1bcadfb9599f4842c118a41c67dbe9f8c533401909c4b2406c8c393b0a832838d895772c5e8953f82f7e4c63f
+  checksum: 10/0af64c750f74912ff1dfa4c9baeb71dcee8b52e6643f5e38077344f2ef97e452caa239be297f0dba27ab9e5edf9b5877bcec40ba66146da107c66b38612989cb
   languageName: node
   linkType: hard
 
@@ -2143,14 +2143,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/estree@npm:*":
-  version: 1.0.6
-  resolution: "@types/estree@npm:1.0.6"
-  checksum: 10/9d35d475095199c23e05b431bcdd1f6fec7380612aed068b14b2a08aa70494de8a9026765a5a91b1073f636fb0368f6d8973f518a31391d519e20c59388ed88d
+"@types/estree@npm:*, @types/estree@npm:^1.0.0":
+  version: 1.0.9
+  resolution: "@types/estree@npm:1.0.9"
+  checksum: 10/16aabfa703b5bdac83f719b07ce92a11b2d3c9b8628eacc92889d8af46cab2d78fc45c7b5378de383d0500585cea5c2f79125eeddfe5fbc6bd6a27eb0c8ccee5
   languageName: node
   linkType: hard
 
-"@types/estree@npm:^1.0.0, @types/estree@npm:^1.0.8":
+"@types/estree@npm:^1.0.8":
   version: 1.0.8
   resolution: "@types/estree@npm:1.0.8"
   checksum: 10/25a4c16a6752538ffde2826c2cc0c6491d90e69cd6187bef4a006dd2c3c45469f049e643d7e516c515f21484dc3d48fd5c870be158a5beb72f5baf3dc43e4099
@@ -2505,7 +2505,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ungap/structured-clone@npm:^1.0.0, @ungap/structured-clone@npm:^1.3.0":
+"@ungap/structured-clone@npm:^1.0.0":
+  version: 1.3.2
+  resolution: "@ungap/structured-clone@npm:1.3.2"
+  checksum: 10/e31518037b406845124fe039aaa859ea8dad6ee892fe2140af8300e09f5dabc304534ec84ff522e5420f9665fe6160492bb008d205fbe2e288ba28f862f912c9
+  languageName: node
+  linkType: hard
+
+"@ungap/structured-clone@npm:^1.3.0":
   version: 1.3.0
   resolution: "@ungap/structured-clone@npm:1.3.0"
   checksum: 10/80d6910946f2b1552a2406650051c91bbd1f24a6bf854354203d84fe2714b3e8ce4618f49cc3410494173a1c1e8e9777372fe68dce74bd45faf0a7a1a6ccf448
@@ -4180,7 +4187,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.4.8":
+"dompurify@npm:^3.4.9":
   version: 3.4.11
   resolution: "dompurify@npm:3.4.11"
   dependencies:
@@ -5331,10 +5338,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inline-style-parser@npm:0.2.4":
-  version: 0.2.4
-  resolution: "inline-style-parser@npm:0.2.4"
-  checksum: 10/80814479d1f3c9cbd102f9de4cd6558cf43cc2e48640e81c4371c3634f1e8b6dfeb2f21063cfa31d46cc83e834c20cd59ed9eeed9bfd45ef5bc02187ad941faf
+"inline-style-parser@npm:0.2.7":
+  version: 0.2.7
+  resolution: "inline-style-parser@npm:0.2.7"
+  checksum: 10/cdfe719bd694b53bfbad20a645a9a4dda89c3ff56ee2b95945ad4eea86c541501f49f852d23bc2f73cd8127b6b62ea9027f697838e323a7f7d0d9b760e27a632
   languageName: node
   linkType: hard
 
@@ -6330,8 +6337,8 @@ __metadata:
   linkType: hard
 
 "mdast-util-from-markdown@npm:^2.0.0":
-  version: 2.0.2
-  resolution: "mdast-util-from-markdown@npm:2.0.2"
+  version: 2.0.3
+  resolution: "mdast-util-from-markdown@npm:2.0.3"
   dependencies:
     "@types/mdast": "npm:^4.0.0"
     "@types/unist": "npm:^3.0.0"
@@ -6345,7 +6352,7 @@ __metadata:
     micromark-util-symbol: "npm:^2.0.0"
     micromark-util-types: "npm:^2.0.0"
     unist-util-stringify-position: "npm:^4.0.0"
-  checksum: 10/69b207913fbcc0469f8c59d922af4d5509b79e809d77c9bd4781543a907fe2ecc8e6433ce0707066a27b117b13f38af3aae4f2d085e18ebd2d3ad5f1a5647902
+  checksum: 10/96f2bfb3b240c3d20a57db5d215faed795abf495c65ca2a4d61c0cf796011bc980619aa032d7984b05b67c15edc0eccd12a004a848952d3a598d108cf14901ab
   languageName: node
   linkType: hard
 
@@ -7537,9 +7544,9 @@ __metadata:
   linkType: hard
 
 "property-information@npm:^7.0.0":
-  version: 7.1.0
-  resolution: "property-information@npm:7.1.0"
-  checksum: 10/896d38a52ad7170de73f832d277c69e76a9605d941ebb3f0d6e56271414a7fdf95ff6d2819e68036b8a0c7d2d4d88bf1d4a5765c032cb19c2343567ee3a14b15
+  version: 7.2.0
+  resolution: "property-information@npm:7.2.0"
+  checksum: 10/3e2919470164287dc69bc8da2c6365f674a6bd84dd670eb339af24576b0210d87edd3b7c461bf04d699d8444e94bfe9b6656c5fed3504cc277f8d72b12c8f5c1
   languageName: node
   linkType: hard
 
@@ -8664,20 +8671,20 @@ __metadata:
   linkType: hard
 
 "style-to-js@npm:^1.0.0":
-  version: 1.1.17
-  resolution: "style-to-js@npm:1.1.17"
+  version: 1.1.21
+  resolution: "style-to-js@npm:1.1.21"
   dependencies:
-    style-to-object: "npm:1.0.9"
-  checksum: 10/431f2fca8a55a61939a83ff0f58638e2996621ad93a97cf93f2be5115f411330d4e506ccf18621bd45607ec161546b763bb6961ad08238ad939b6261ff377230
+    style-to-object: "npm:1.0.14"
+  checksum: 10/5e30b4c52ed4e0294324adab2a43a0438b5495a77a72a6b1258637eebfc4dc8e0614f5ac7bf38a2f514879b3b448215d01fecf1f8d7468b8b95d90bed1d05d57
   languageName: node
   linkType: hard
 
-"style-to-object@npm:1.0.9":
-  version: 1.0.9
-  resolution: "style-to-object@npm:1.0.9"
+"style-to-object@npm:1.0.14":
+  version: 1.0.14
+  resolution: "style-to-object@npm:1.0.14"
   dependencies:
-    inline-style-parser: "npm:0.2.4"
-  checksum: 10/fd0c131a83103fe4025afd8e0fd90c605054d485ad80f2ab402e7afa79f482f4b05fff40b6aa661cb1b835e5c56bb0644dc38cbf9b3d2982fc552435db3dae50
+    inline-style-parser: "npm:0.2.7"
+  checksum: 10/06b86a5cf435dafac908d19082842983f9052d8cf3682915b1bd9251e3fe9b8065dbd2aef060dc5dfa0fa2ee24d717b587a5205f571513a10f30e3947f9d28ff
   languageName: node
   linkType: hard
 
@@ -9030,11 +9037,11 @@ __metadata:
   linkType: hard
 
 "unist-util-is@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "unist-util-is@npm:6.0.0"
+  version: 6.0.1
+  resolution: "unist-util-is@npm:6.0.1"
   dependencies:
     "@types/unist": "npm:^3.0.0"
-  checksum: 10/edd6a93fb2255addf4b9eeb304c1da63c62179aef793169dd64ab955cf2f6814885fe25f95f8105893e3562dead348af535718d7a84333826e0491c04bf42511
+  checksum: 10/dc3ebfb481f097863ae3674c440add6fe2d51a4cfcd565b13fb759c8a2eaefb71903a619b385e892c2ad6db6a5b60d068dfc5592b6dd57f4b60180082b3136d6
   languageName: node
   linkType: hard
 
@@ -9057,23 +9064,23 @@ __metadata:
   linkType: hard
 
 "unist-util-visit-parents@npm:^6.0.0":
-  version: 6.0.1
-  resolution: "unist-util-visit-parents@npm:6.0.1"
+  version: 6.0.2
+  resolution: "unist-util-visit-parents@npm:6.0.2"
   dependencies:
     "@types/unist": "npm:^3.0.0"
     unist-util-is: "npm:^6.0.0"
-  checksum: 10/645b3cbc5e923bc692b1eb1a9ca17bffc5aabc25e6090ff3f1489bff8effd1890b28f7a09dc853cb6a7fa0da8581bfebc9b670a68b53c4c086cb9610dfd37701
+  checksum: 10/aa16e97e45bd1d641e1f933d2fb3bf0800865350eaeb5cc0317ab511075480fb4ac5e2a55f57dd72d27311e8ba29fd23908848bd83479849c626be1f7dabcae5
   languageName: node
   linkType: hard
 
 "unist-util-visit@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "unist-util-visit@npm:5.0.0"
+  version: 5.1.0
+  resolution: "unist-util-visit@npm:5.1.0"
   dependencies:
     "@types/unist": "npm:^3.0.0"
     unist-util-is: "npm:^6.0.0"
     unist-util-visit-parents: "npm:^6.0.0"
-  checksum: 10/f2bbde23641e9ade7640358c06ddeec0f38342322eb8e7819d9ee380b0f859d25d084dde22bf63db0280b3b2f36575f15aa1d6c23acf276c91c2493cf799e3b0
+  checksum: 10/340fc1929062d21156200284105caad79cc188bd98f285b60aba887492a70e6e6cadbc7e383a68909c7e0fdd83f855cb9f4184ad8e5aa153eb2d810445aea8e5
   languageName: node
   linkType: hard
 
