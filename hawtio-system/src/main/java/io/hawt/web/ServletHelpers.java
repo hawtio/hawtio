@@ -36,7 +36,7 @@ public class ServletHelpers {
     private static final JolokiaSerializer SERIALIZER = new JolokiaSerializer();
 
     public static void doForbidden(HttpServletResponse response) {
-        doForbidden(response, ForbiddenReason.NONE);
+        doForbidden(response, ForbiddenReason.FORBIDDEN);
     }
 
     public static void doForbidden(HttpServletResponse response, ForbiddenReason reason) {
@@ -47,6 +47,21 @@ public class ServletHelpers {
             response.flushBuffer();
         } catch (IOException ioe) {
             LOG.debug("Failed to send forbidden response: {}", ioe.toString());
+        }
+    }
+
+    public static void doUnauthorized(HttpServletResponse response) {
+        doForbidden(response, ForbiddenReason.NOT_AUTHORIZED);
+    }
+
+    public static void doUnauthorized(HttpServletResponse response, ForbiddenReason reason) {
+        try {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setHeader(HEADER_HAWTIO_FORBIDDEN_REASON, reason.name());
+            response.setContentLength(0);
+            response.flushBuffer();
+        } catch (IOException ioe) {
+            LOG.debug("Failed to send unauthorized response: {}", ioe.toString());
         }
     }
 

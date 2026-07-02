@@ -8,7 +8,8 @@ public class AuthenticateResult {
         AUTHORIZED,
         NOT_AUTHORIZED,
         NO_CREDENTIALS,
-        THROTTLED
+        THROTTLED,
+        FORBIDDEN
     }
 
     public static AuthenticateResult authorized() {
