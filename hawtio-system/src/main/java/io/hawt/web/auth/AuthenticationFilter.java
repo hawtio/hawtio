@@ -144,7 +144,7 @@ public class AuthenticationFilter implements Filter {
             // request was already executed using the authenticated subject in executeAs(), nothing more to do
             break;
         case NOT_AUTHORIZED:
-            ServletHelpers.doForbidden(httpResponse);
+            ServletHelpers.doUnauthorized(httpResponse);
             break;
         case NO_CREDENTIALS:
             if (authConfiguration.isNoCredentials401()) {
@@ -154,6 +154,9 @@ public class AuthenticationFilter implements Filter {
                 // return forbidden 403 so the browser login does not popup
                 ServletHelpers.doForbidden(httpResponse);
             }
+            break;
+        case FORBIDDEN:
+            ServletHelpers.doForbidden(httpResponse);
             break;
         case THROTTLED:
             ServletHelpers.doTooManyRequests(httpResponse, result.getRetryAfter());
