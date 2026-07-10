@@ -60,7 +60,7 @@ public class NamespacedDiscoveryTest extends BaseHawtioOnlineTest {
 
     @Test
     public void testNamespacedModeIgnoresOtherNamespaceApps() {
-        final String namespace = "hawtio-discover-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String namespace = "hawtio-discover-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String deploymentName = "hawtio-discover-test";
         HawtioOnlineTestUtils.withCleanup(() -> {
             OpenshiftClient.get().createNamespace(namespace);

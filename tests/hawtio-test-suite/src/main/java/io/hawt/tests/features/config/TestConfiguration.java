@@ -237,7 +237,7 @@ public class TestConfiguration {
 
     public static String getOpenshiftNamespace() {
         if (getOptionalProperty(OPENSHIFT_NAMESPACE).isEmpty()) {
-            System.setProperty(OPENSHIFT_NAMESPACE, NAMESPACE_PREFIX + RandomStringUtils.randomAlphabetic(5).toLowerCase());
+            System.setProperty(OPENSHIFT_NAMESPACE, NAMESPACE_PREFIX + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase());
         }
 
         return getRequiredProperty(OPENSHIFT_NAMESPACE);
