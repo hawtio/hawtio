@@ -46,8 +46,8 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      */
     @Test
     public void testAllNamespacesReconciliation() {
-        final String namespace1 = "hawtio-ns-alpha-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        final String namespace2 = "hawtio-ns-omega-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String namespace1 = "hawtio-ns-alpha-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        final String namespace2 = "hawtio-ns-omega-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String crName1 = "hawtio-cr-alpha";
         final String crName2 = "hawtio-cr-omega";
 
@@ -111,7 +111,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      */
     @Test
     public void testOwnNamespaceIsolation() {
-        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String crNameInOperatorNs = "hawtio-cr-own-ns";
         final String crNameIgnored = "hawtio-cr-ignored";
 
@@ -195,8 +195,8 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      */
     @Test
     public void testSingleNamespaceMode() {
-        final String watchedNamespace = "hawtio-watched-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String watchedNamespace = "hawtio-watched-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String crNameInOperatorNs = "hawtio-operator-ns";
         final String crNameInWatchedNs = "hawtio-watched-ns";
         final String crNameInIgnoredNs = "hawtio-ignored-ns";

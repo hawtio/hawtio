@@ -46,7 +46,7 @@ public class ClusterDiscoveryTest extends BaseHawtioOnlineTest {
 
     @Test
     public void testClusterModeDiscoversCrossNamespaceApps() {
-        final String namespace = "e2e-discover-namespace-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String namespace = "e2e-discover-namespace-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         HawtioOnlineTestUtils.withCleanup(() -> {
             OpenshiftClient.get().createNamespace(namespace);

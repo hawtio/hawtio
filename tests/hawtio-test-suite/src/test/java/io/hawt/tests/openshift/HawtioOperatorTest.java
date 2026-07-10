@@ -79,7 +79,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     @BeforeAll
     public static void setupApp() {
-        String name = "camel-app-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        String name = "camel-app-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         deployment = HawtioOnlineUtils.deployApplication(name, "springboot", TestConfiguration.getOpenshiftNamespace(), "5.x-" + (System.getProperty("java.vm.specification.version", "21")));
         podName = OpenshiftClient.get().pods().withLabel("app", name).list().getItems().get(0).getMetadata().getName();
     }
@@ -198,7 +198,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     @Test
     public void testProjectSelector() {
-        final String namespace = "selector-tests-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String namespace = "selector-tests-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         OpenshiftClient.get()
             .resource(new NamespaceBuilder().withNewMetadata().withName(namespace).addToLabels("myLabel", namespace).endMetadata().build()).create();
@@ -258,7 +258,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         HawtioOnlineTestUtils.withCleanup(() -> {
 
             hawtio =
-                HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+                HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
                     TestConfiguration.getOpenshiftNamespace(),
                     h -> {
                         h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
@@ -336,7 +336,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     @Test
     public void testCustomRBAC() throws IOException {
-        final String configMapName = "rbac-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String configMapName = "rbac-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String namespace = TestConfiguration.getOpenshiftNamespace();
 
         try {
@@ -663,7 +663,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     public void testCRUpdatePreservesAllFields() {
         // Regression test for operator cache issue where updates would remove fields
         HawtioOnlineTestUtils.withCleanup(() -> {
-            hawtio = HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+            hawtio = HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
                 TestConfiguration.getOpenshiftNamespace(),
                 h -> {
                     h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
@@ -741,7 +741,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     private static void runTest(Consumer<HawtioSpec> consumer, Consumer<SoftAssertions> testFunction, boolean startBrowser) {
         hawtio =
-            HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+            HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
                 TestConfiguration.getOpenshiftNamespace(),
                 h -> {
                     h.getSpec().setType(HawtioSpec.Type.NAMESPACE);

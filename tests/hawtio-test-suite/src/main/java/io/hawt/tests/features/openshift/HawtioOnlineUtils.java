@@ -101,7 +101,7 @@ public class HawtioOnlineUtils {
                         .addToAnnotations(annotations)
                         .addToLabels("app", name)
                         //Used to differentiate the pod hash of the Replica Sets
-                        .addToLabels("randomId", RandomStringUtils.randomAlphabetic(5))
+                        .addToLabels("randomId", RandomStringUtils.secure().nextAlphabetic(5))
                     .endMetadata()
                     .editOrNewSpec()
                         .addNewContainer()
