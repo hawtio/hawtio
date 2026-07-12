@@ -71,7 +71,7 @@ public class HawtioSpringBootEndpointIT extends HawtioSpringBootTestCommon {
             WebTestClient client = getTestClient(context);
 
             client.get().uri(properties.getJolokiaPath(false)).exchange()
-                .expectStatus().isForbidden();
+                .expectStatus().isUnauthorized();
 
             client.get().uri(properties.getHawtioPath(false) + "/").exchange()
                 .expectStatus().isFound()
@@ -81,7 +81,7 @@ public class HawtioSpringBootEndpointIT extends HawtioSpringBootTestCommon {
                 .expectStatus().isOk();
 
             client.get().uri(properties.getHawtioJolokiaPath(false)).exchange()
-                .expectStatus().isForbidden();
+                .expectStatus().isUnauthorized();
         });
     }
 
