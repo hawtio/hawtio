@@ -303,10 +303,10 @@
         <configuration>
           <skipTests>${skipTests}</skipTests>
           <rerunFailingTestsCount>3</rerunFailingTestsCount>
-          <systemProperties>
+          <systemPropertyVariables>
             <io.hawt.test.runtime>${test-runtime}</io.hawt.test.runtime>
             <io.hawt.test.url.suffix>${hawtio.url.suffix}</io.hawt.test.url.suffix>
-          </systemProperties>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
