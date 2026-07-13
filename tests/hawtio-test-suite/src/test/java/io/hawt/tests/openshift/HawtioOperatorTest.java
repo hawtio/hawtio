@@ -510,7 +510,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                 final CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 final X509Certificate certificate =
                     (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectDN().getName()).isEqualTo("CN=my.hawtio.svc");
+                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=my.hawtio.svc");
             }).doesNotThrowAnyException();
         }, false);
     }
@@ -566,7 +566,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                 final CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 final X509Certificate certificate =
                     (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectDN().getName()).isEqualTo("CN=overflow-test.test.svc");
+                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=overflow-test.test.svc");
             }).doesNotThrowAnyException();
         }, false);
     }
@@ -614,7 +614,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                 final CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 final X509Certificate certificate =
                     (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectDN().getName()).isEqualTo("CN=recreate-test.test.svc");
+                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=recreate-test.test.svc");
             }).doesNotThrowAnyException();
         }, false);
     }
@@ -654,7 +654,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                 final CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 final X509Certificate certificate =
                     (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectDN().getName()).isEqualTo("CN=schedule-test.test.svc");
+                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=schedule-test.test.svc");
             }).doesNotThrowAnyException();
         }, false);
     }
