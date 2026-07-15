@@ -132,7 +132,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             Hawtio hawtioIgnored = HawtioOnlineUtils.withBaseHawtio(crNameIgnored, ignoredNamespace, h -> {
                 h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
             });
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).create(hawtioIgnored);
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).resource(hawtioIgnored).create();
 
             // Wait for the CR to be created (verify it exists in etcd)
             WaitUtils.waitFor(() -> {
@@ -215,7 +215,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             Hawtio crInOperatorNs = HawtioOnlineUtils.withBaseHawtio(crNameInOperatorNs, OPERATOR_NAMESPACE, h -> {
                 h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
             });
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(OPERATOR_NAMESPACE).create(crInOperatorNs);
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(OPERATOR_NAMESPACE).resource(crInOperatorNs).create();
 
             // Wait for CR in operator namespace to be created
             WaitUtils.waitFor(() -> {
@@ -234,7 +234,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             Hawtio crInIgnoredNs = HawtioOnlineUtils.withBaseHawtio(crNameInIgnoredNs, ignoredNamespace, h -> {
                 h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
             });
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).create(crInIgnoredNs);
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).resource(crInIgnoredNs).create();
 
             // Wait for CR in ignored namespace to be created
             WaitUtils.waitFor(() -> {
