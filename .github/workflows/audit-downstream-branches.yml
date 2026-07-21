@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branch: [ 4.x-redhat, 4.3.x-redhat ]
+        branch: [ 4.x-redhat, 4.4.x-redhat ]
         modules: [ console, console-minimal, examples/sample-plugin ]
     # Navigates into the module directory for all 'run' steps
     defaults:
