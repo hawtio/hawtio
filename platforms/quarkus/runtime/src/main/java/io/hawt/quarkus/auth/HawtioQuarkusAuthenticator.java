@@ -44,7 +44,7 @@ public class HawtioQuarkusAuthenticator {
             .filter(AuthenticationThrottler.Attempt::isBlocked)
             .orElse(null);
         if (attempt != null) {
-            LOG.debug("Authentication throttled: {}", attempt);
+            LOG.warn("Authentication throttled: {}", attempt);
             return AuthenticateResult.throttled(attempt.retryAfter());
         }
 
@@ -56,7 +56,8 @@ public class HawtioQuarkusAuthenticator {
             List<String> roleConfig = authConfiguration.getRoles();
             // Verify the allowed roles matches with those specified in Quarkus security config
             if (!verifyRole(identity, roleConfig)) {
-                return AuthenticateResult.notAuthorized();
+                LOG.warn("Login failed due to role mismatch for user: {}", username);
+                return AuthenticateResult.forbidden();
             }
             throttler.ifPresent(t -> t.reset(username));
             return AuthenticateResult.authorized();

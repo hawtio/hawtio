@@ -8,7 +8,8 @@ public class AuthenticateResult {
         AUTHORIZED,
         NOT_AUTHORIZED,
         NO_CREDENTIALS,
-        THROTTLED
+        THROTTLED,
+        FORBIDDEN
     }
 
     public static AuthenticateResult authorized() {
@@ -17,6 +18,10 @@ public class AuthenticateResult {
 
     public static AuthenticateResult notAuthorized() {
         return new AuthenticateResult(Type.NOT_AUTHORIZED);
+    }
+
+    public static AuthenticateResult forbidden() {
+        return new AuthenticateResult(Type.FORBIDDEN);
     }
 
     public static AuthenticateResult noCredentials() {

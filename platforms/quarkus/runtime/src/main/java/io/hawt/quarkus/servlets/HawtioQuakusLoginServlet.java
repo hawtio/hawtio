@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
 import io.hawt.system.AuthenticateResult;
+import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.AuthSessionHelpers;
 import io.hawt.web.auth.LoginServlet;
@@ -43,12 +44,17 @@ public class HawtioQuakusLoginServlet extends LoginServlet {
         AuthenticateResult result = authenticator.authenticate(authConfiguration, username, password);
         switch (result.getType()) {
         case AUTHORIZED:
-            LOG.info("Logging in user: {}", username);
             AuthSessionHelpers.setup(request.getSession(true), new Subject(), username, timeout);
+            LOG.info("Logging in user: {}", username);
+            break;
+        case FORBIDDEN:
+            ServletHelpers.doForbidden(response);
             break;
         case NOT_AUTHORIZED:
+            ServletHelpers.doUnauthorized(response);
+            break;
         case NO_CREDENTIALS:
-            ServletHelpers.doForbidden(response);
+            ServletHelpers.doUnauthorized(response);
             break;
         case THROTTLED:
             ServletHelpers.doTooManyRequests(response, result.getRetryAfter());
