@@ -15,7 +15,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
@@ -214,48 +213,56 @@ public class Authenticator {
             return AuthenticateResult.throttled(attempt.retryAfter());
         }
 
+        Subject subject = new Subject();
+        AuthenticateResult authResult = doAuthenticate(subject);
+
+        if (authResult.getType() == AuthenticateResult.Type.AUTHORIZED) {
+            throttler.ifPresent(t -> t.reset(username));
+            if (callback != null) {
+                try {
+                    callback.accept(subject);
+                } catch (Exception ex) {
+                    LOG.warn("Failed to execute privileged action:", ex);
+                }
+            }
+        } else {
+            throttler.ifPresent(t -> t.increase(username));
+        }
+
+        return authResult;
+    }
+
+
+    protected AuthenticateResult doAuthenticate(Subject subject) {
         String realm = authConfiguration.getRealm();
         List<String> roles = authConfiguration.getRoles();
         List<Class<Principal>> rolePrincipalClasses = authConfiguration.getRolePrincipalClasses();
         Configuration configuration = authConfiguration.getConfiguration();
-
-        Subject subject = new Subject();
 
         try {
             LOG.debug("doAuthenticate[realm={}, roles={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
                 realm, String.join(", ", roles), rolePrincipalClasses, configuration, username, "******");
 
             login(subject, realm, configuration);
-            if (!checkRoles(subject, roles, rolePrincipalClasses)) {
-                LOG.warn("Login failed due to role mismatch for user: {}", username);
-                throttler.ifPresent(t -> t.increase(username));
+            if (checkRoles(subject, roles, rolePrincipalClasses)) {
+                return AuthenticateResult.authorized();
+            } else {
+                LOG.debug("Login failed due to role mismatch for user: {}", username);
                 return AuthenticateResult.forbidden();
             }
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
-            throttler.ifPresent(t -> t.increase(username));
             return AuthenticateResult.notAuthorized();
         } catch (LoginException e) {
             LOG.warn("Login failed due to: {}", e.getMessage());
-            throttler.ifPresent(t -> t.increase(username));
             LOG.debug("Failed stacktrace:", e);
             return AuthenticateResult.notAuthorized();
         } catch (Exception e) {
             LOG.error("Unexpected error during authentication: {}", e);
-            throttler.ifPresent(t -> t.increase(username));
+            LOG.debug("Failed stacktrace:", e);
             return AuthenticateResult.notAuthorized();
         }
 
-        if (callback != null) {
-            try {
-                callback.accept(subject);
-            } catch (Exception ex) {
-                LOG.warn("Failed to execute privileged action:", ex);
-            }
-        }
-
-        throttler.ifPresent(t -> t.reset(username));
-        return AuthenticateResult.authorized();
     }
 
     protected void login(Subject subject, String realm, Configuration configuration) throws LoginException {
