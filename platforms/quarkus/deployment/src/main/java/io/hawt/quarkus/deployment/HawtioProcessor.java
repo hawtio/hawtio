@@ -15,8 +15,8 @@ import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
 import io.hawt.quarkus.auth.SessionConfigurationServletExtension;
 import io.hawt.quarkus.filters.HawtioQuarkusAuthenticationFilter;
 import io.hawt.quarkus.filters.HawtioQuarkusClientRouteRedirectFilter;
-import io.hawt.quarkus.servlets.HawtioQuakusLoginServlet;
-import io.hawt.quarkus.servlets.HawtioQuakusLogoutServlet;
+import io.hawt.quarkus.servlets.HawtioQuarkusLoginServlet;
+import io.hawt.quarkus.servlets.HawtioQuarkusLogoutServlet;
 import io.hawt.web.auth.AuthenticationFilter;
 import io.hawt.web.auth.ClientRouteRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
@@ -89,8 +89,8 @@ public class HawtioProcessor {
     private static final Set<String> DISALLOWED_LISTENERS = Collections.emptySet();
 
     private static final Map<String, String> WEB_XML_OVERRIDES = Map.of(
-        LoginServlet.class.getName(), HawtioQuakusLoginServlet.class.getName(),
-        LogoutServlet.class.getName(), HawtioQuakusLogoutServlet.class.getName(),
+        LoginServlet.class.getName(), HawtioQuarkusLoginServlet.class.getName(),
+        LogoutServlet.class.getName(), HawtioQuarkusLogoutServlet.class.getName(),
         ClientRouteRedirectFilter.class.getName(), HawtioQuarkusClientRouteRedirectFilter.class.getName(),
         AuthenticationFilter.class.getName(), HawtioQuarkusAuthenticationFilter.class.getName()
     );

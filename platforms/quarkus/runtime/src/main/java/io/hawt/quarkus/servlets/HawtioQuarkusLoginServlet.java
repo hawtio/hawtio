@@ -19,9 +19,9 @@ import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HawtioQuakusLoginServlet extends LoginServlet {
+public class HawtioQuarkusLoginServlet extends LoginServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HawtioQuakusLoginServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusLoginServlet.class);
 
     private HawtioQuarkusAuthenticator authenticator;
 
