@@ -4894,7 +4894,7 @@ __metadata:
     style-loader: "npm:^4.0.0"
     swc-loader: "npm:^0.2.7"
     webpack: "npm:^5.108.3"
-    webpack-cli: "npm:^7.2.1"
+    webpack-cli: "npm:^7.2.2"
     webpack-dev-server: "npm:^6.0.0"
   languageName: unknown
   linkType: soft
@@ -9099,9 +9099,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^7.2.1":
-  version: 7.2.1
-  resolution: "webpack-cli@npm:7.2.1"
+"webpack-cli@npm:^7.2.2":
+  version: 7.2.2
+  resolution: "webpack-cli@npm:7.2.2"
   dependencies:
     "@discoveryjs/json-ext": "npm:^1.1.0"
     commander: "npm:^14.0.3"
@@ -9131,7 +9131,7 @@ __metadata:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 10/0dd3e550549b5b5a693621f5f26b5621a0344bce195d977882aa97ad6c3262d056d637b9b140ae52608b72958d4b15c89458e1b73da087cef3bcec9bd7994711
+  checksum: 10/c010aabe502e2c1caa1fa7ea42ce4b107b96e47ed5b2b3761283ef1c9bd508b3f51e6cce7365833346a85ae0dd50419160c2be0001f37d83a950269073e738a7
   languageName: node
   linkType: hard
 
