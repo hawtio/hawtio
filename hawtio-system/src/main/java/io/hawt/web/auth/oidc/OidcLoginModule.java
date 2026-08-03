@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -148,6 +149,22 @@ public class OidcLoginModule implements LoginModule {
             return false;
         }
 
+        if (LOG.isDebugEnabled()) {
+            String userId = null;
+            Set<String> roles = new TreeSet<>();
+            for (Principal principal : subject.getPrincipals()) {
+                if (principal.getClass() == userClass) {
+                    userId = principal.getName();
+                }
+                if (principal.getClass() == roleClass) {
+                    roles.add(principal.getName());
+                }
+            }
+            if (userId != null) {
+                LOG.debug("Authenticated user ID: {}, roles: {}", userId, String.join(",", roles));
+            }
+        }
+
         return true;
     }
 
@@ -167,7 +184,27 @@ public class OidcLoginModule implements LoginModule {
             subject.getPrivateCredentials().clear();
 
             subject.getPrincipals().removeIf(p ->
-                    oidcConfiguration.getRoleClass().isAssignableFrom(p.getClass()) || RolePrincipal.class == p.getClass());
+                    oidcConfiguration.getRoleClass().isAssignableFrom(p.getClass())
+                            || oidcConfiguration.getUserClass().isAssignableFrom(p.getClass())
+                            || RolePrincipal.class == p.getClass());
+
+
+            if (LOG.isDebugEnabled()) {
+                String userId = null;
+                Set<String> roles = new TreeSet<>();
+                for (Principal principal : subject.getPrincipals()) {
+                    if (principal.getClass() == oidcConfiguration.getUserClass()) {
+                        userId = principal.getName();
+                    }
+                    if (principal.getClass() == oidcConfiguration.getRoleClass()) {
+                        roles.add(principal.getName());
+                    }
+                }
+                if (userId != null) {
+                    LOG.debug("Logged out user ID: {}, roles: {}", userId, String.join(",", roles));
+                }
+            }
+
             return true;
         }
         return false;
