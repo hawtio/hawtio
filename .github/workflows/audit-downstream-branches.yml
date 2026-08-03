@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branch: [ 4.x-redhat, 4.4.x-redhat ]
+        branch: [ kariuwu-notify-audit ]
         modules: [ console, console-minimal, examples/sample-plugin ]
     # Navigates into the module directory for all 'run' steps
     defaults:
@@ -50,4 +50,58 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-${{ matrix.modules }}-
       - name: Audit
-        run: yarn npm audit --all --severity high --environment production
+        run: yarn npm audit --all --environment production
+  notify-team:
+    runs-on: ubuntu-latest
+    needs: [ audit ]
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    steps:
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚨 Audit Pipeline Failed",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Repository:*\n`${{ github.repository }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Triggered by:*\n`${{ github.actor }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "🔍 View Run",
+                        "emoji": true
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                      "style": "danger"
+                    }
+                  ]
+                }
+              ]
+            }
