@@ -70,8 +70,7 @@
     <picocli-version>4.7.7</picocli-version>
     <servlet-api-version>5.0.0</servlet-api-version>
     <servlet-api61-version>6.1.0</servlet-api61-version>
-    <!-- Pin SLF4J version until https://issues.apache.org/jira/browse/CAMEL-20598 is resolved at SLF4J -->
-    <slf4j-version>2.0.11</slf4j-version>
+    <slf4j-version>2.0.18</slf4j-version>
 
     <!-- Used for maven-frontend-plugin -->
     <node-version>v22.15.1</node-version>
