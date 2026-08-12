@@ -75,10 +75,10 @@ public class WebDriver {
         });
         Path seleniumFolder = optFolder.resolve("selenium");
         Arrays.stream(seleniumFolder.toFile().list()).filter(f -> f.startsWith("chromedriver")).findFirst()
-                .ifPresent(path -> {
-                    System.setProperty("webdriver.chrome.driver",
-                            seleniumFolder.resolve(path).toAbsolutePath().toString());
-                });
+            .ifPresent(path -> {
+                System.setProperty("webdriver.chrome.driver",
+                    seleniumFolder.resolve(path).toAbsolutePath().toString());
+            });
     }
 
     /**
