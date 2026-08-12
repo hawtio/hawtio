@@ -16,7 +16,7 @@
 
   <properties>
     <http5-version>5.4.3</http5-version>
-    <slf4j-version>2.0.18</slf4j-version>
+    <slf4j-version>2.0.11</slf4j-version>
     <selenium-version>4.40.0</selenium-version>
     <selenide-version>7.13.0</selenide-version>
     <cucumber-version>7.34.6</cucumber-version>
