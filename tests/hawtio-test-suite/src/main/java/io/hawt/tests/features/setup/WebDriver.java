@@ -3,7 +3,6 @@ package io.hawt.tests.features.setup;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.GeckoDriverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,33 +23,45 @@ public class WebDriver {
      * Set up a web driver.
      */
     public static void setup() {
-        LOG.info("Setting up a web browser options");
+        LOG.info("Setting up web browser options");
         if (TestConfiguration.isRunningInContainer()) {
             setupDriverPaths();
             System.setProperty(GeckoDriverService.GECKO_DRIVER_LOG_PROPERTY, "target/driver.log");
             System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "target/driver.log");
         }
         System.setProperty("hawtio.proxyWhitelist", "localhost, 127.0.0.1");
-        if (Configuration.browser.equals("chrome")) {
+
+        if (Configuration.browser.equalsIgnoreCase("chrome")) {
             ChromeOptions options = new ChromeOptions();
-            options.setExperimentalOption("prefs", ImmutableMap.of("credentials_enable_service", false, "profile.password_manager_enabled", false, "profile.password_manager_leak_detection", false));
-            options.addArguments("--proxy-bypass-list=\"<-loopback>\"");
+            options.setExperimentalOption("prefs", ImmutableMap.of(
+                "credentials_enable_service", false,
+                "profile.password_manager_enabled", false,
+                "profile.password_manager_leak_detection", false
+            ));
+
+            options.addArguments("--proxy-bypass-list=<-loopback>");
+            options.addArguments("--no-sandbox");
+
+            options.addArguments("--disable-dev-shm-usage");               // Prevents shared-memory crashes in Docker
+            options.addArguments("--disable-gpu");                         // Avoids rendering glitches in headless/Linux
+            options.addArguments("--disable-search-engine-choice-screen"); // Disables Chrome first-run popups
+
             // Disable BiDi to prevent OutOfMemoryError from massive console log capture
             options.setCapability("webSocketUrl", false);
             Configuration.browserCapabilities = options;
         } else {
             FirefoxOptions options = new FirefoxOptions();
             options.addPreference("network.proxy.allow_hijacking_localhost", false);
-            //Trust the docker internal network
+            // Trust the docker internal network
             options.addPreference("dom.securecontext.allowlist", "172.17.0.1");
             // Disable BiDi to prevent OutOfMemoryError from massive console log capture
             options.setCapability("webSocketUrl", false);
             Configuration.browserCapabilities = options;
         }
+
         Configuration.headless = TestConfiguration.browserHeadless();
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 20000;
-
     }
 
     /**
@@ -64,10 +75,10 @@ public class WebDriver {
         });
         Path seleniumFolder = optFolder.resolve("selenium");
         Arrays.stream(seleniumFolder.toFile().list()).filter(f -> f.startsWith("chromedriver")).findFirst()
-                .ifPresent(path -> {
-                    System.setProperty("webdriver.chrome.driver",
-                            seleniumFolder.resolve(path).toAbsolutePath().toString());
-                });
+            .ifPresent(path -> {
+                System.setProperty("webdriver.chrome.driver",
+                    seleniumFolder.resolve(path).toAbsolutePath().toString());
+            });
     }
 
     /**
