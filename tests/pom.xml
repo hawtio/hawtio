@@ -36,6 +36,15 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Explicit Selenium version management to override versions in child modules -->
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-bom</artifactId>
+        <version>${selenium-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
