@@ -103,8 +103,10 @@
     <module>examples/quarkus-keycloak</module>
     <module>examples/sample-plugin</module>
     <module>examples/springboot</module>
+    <module>examples/springboot-observability</module>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot-keycloak</module>
+    <module>examples/quarkus-observability</module>
     <module>examples/springboot-log4j2</module>
     <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>

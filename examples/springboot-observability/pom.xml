@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>5.3-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <groupId>io.hawt.examples</groupId>
+  <artifactId>hawtio-example-springboot-observability</artifactId>
+  <name>${project.artifactId}</name>
+  <description>Hawtio :: Sample Spring Boot 4.x process with Camel Observability Services</description>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring7-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot4-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-bom</artifactId>
+        <version>${camel-spring-boot-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Spring Boot -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <!-- Hawtio -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot4</artifactId>
+    </dependency>
+    <!--
+      Include hawtio-log-logback if you want to use Logs plugin with Spring Boot.
+      Currently only Logback is supported.
+    -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-log-logback</artifactId>
+    </dependency>
+
+    <!-- Camel -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-stream-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-quartz-starter</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Camel Observability Services-->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-observability-services-starter</artifactId>
+    </dependency>
+
+    <!--
+      This dependency is mandatory for enabling Camel management
+      via JMX / Hawtio.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-management-starter</artifactId>
+    </dependency>
+    <!--
+      This dependency is required for viewing Camel routes source XML.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-spring-boot-xml-starter</artifactId>
+    </dependency>
+    <!--
+      To enable Camel plugin debugging feature, add this dependency.
+    -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-debug-starter</artifactId>
+    </dependency>
+    <!--
+      This dependency provides a dedicated "cache key provider", so Hawtio with Camel works much faster in the browser
+    -->
+    <dependency>
+      <groupId>org.jolokia.integration</groupId>
+      <artifactId>jolokia-integration-camel</artifactId>
+      <version>${jolokia-integration-version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot4-version}</version>
+        <configuration>
+          <mainClass>io.hawt.example.spring.boot.SampleSpringBootService</mainClass>
+          <jvmArguments>
+            -javaagent:./target/dependency/jmx_prometheus_javaagent.jar=10002:./jmx-exporter.yml
+          </jvmArguments>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Downloads the Prometheus JMX exporter Java agent -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.10.0</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>io.prometheus.jmx</groupId>
+              <artifactId>jmx_prometheus_javaagent</artifactId>
+              <version>0.3.1</version>
+              <type>jar</type>
+              <destFileName>jmx_prometheus_javaagent.jar</destFileName>
+            </artifactItem>
+          </artifactItems>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
