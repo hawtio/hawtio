@@ -95,6 +95,12 @@
       <artifactId>camel-quarkus-debug</artifactId>
     </dependency>
 
+    <!-- Camel Observability Services -->
+    <dependency>
+      <groupId>org.apache.camel.quarkus</groupId>
+      <artifactId>camel-quarkus-observability-services</artifactId>
+    </dependency>
+
     <!-- Quarkus -->
     <dependency>
       <groupId>io.quarkus</groupId>

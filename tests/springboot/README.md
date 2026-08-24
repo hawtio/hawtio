@@ -20,3 +20,12 @@ Hawtio is exposed at the [Actuator](https://docs.spring.io/spring-boot/docs/late
 
 The actual application is running on port 10000 (`server.port` in `application.properties`).
 By default, authentication is enabled with username `hawtio` & password `hawtio`.
+
+## Camel Observability
+
+This application includes `camel-observability-services-starter` which exposes the following endpoints on the management port (10001):
+
+- `/actuator/health` — startup probe endpoint
+- `/actuator/health/live` — liveness probe endpoint
+- `/actuator/health/ready` — readiness probe endpoint
+- `/actuator/metrics` — metrics exposed as in Micrometer Prometheus Registry

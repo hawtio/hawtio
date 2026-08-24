@@ -36,7 +36,7 @@ public class DockerDeployment implements AppDeployment {
         LOG.info("Starting container {}", dockerImage);
 
         container = new GenericContainer<>(DockerImageName.parse(dockerImage))
-            .withExposedPorts(8080, 10000, 10001)
+            .withExposedPorts(8080, 9876, 10000, 10001)
             .waitingFor(Wait.forLogMessage(".*Hello Camel!.*", 2));
 
         if (this.dockerImage.contains("quarkus")) {
