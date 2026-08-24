@@ -11,14 +11,14 @@
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/hawtio-example-quarkus-legacy-jar
+# docker run -i --rm -p 8080:8080 -p 9876:9876 quarkus/hawtio-example-quarkus-legacy-jar
 #
 # If you want to include the debug port into your docker image
-# you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5005
+# you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5005 9876
 #
 # Then run the container using :
 #
-# docker run -i --rm -p 8080:8080 quarkus/hawtio-example-quarkus-legacy-jar
+# docker run -i --rm -p 8080:8080 -p 9876:9876 quarkus/hawtio-example-quarkus-legacy-jar
 #
 # This image uses the `run-java.sh` script to run the application.
 # This scripts computes the command line to execute your Java application, and
@@ -83,7 +83,7 @@ ENV LANGUAGE='en_US:en'
 COPY target/lib/* /deployments/lib/
 COPY target/*-runner.jar /deployments/quarkus-run.jar
 
-EXPOSE 8080
+EXPOSE 8080 9876
 USER 185
 ENV AB_JOLOKIA_OFF=""
 ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"

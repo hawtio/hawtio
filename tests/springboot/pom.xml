@@ -169,6 +169,12 @@
       <artifactId>camel-debug-starter</artifactId>
     </dependency>
 
+    <!-- Camel Observability Services -->
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-observability-services-starter</artifactId>
+    </dependency>
+
     <!--
       Hawtio example plugin project
       Since static resources are packaged under META-INF/resources in the JAR,
