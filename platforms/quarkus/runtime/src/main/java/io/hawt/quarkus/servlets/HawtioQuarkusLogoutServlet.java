@@ -12,7 +12,7 @@ import io.hawt.web.auth.LogoutServlet;
 import io.hawt.web.auth.Redirector;
 import io.quarkus.arc.Arc;
 
-public class HawtioQuakusLogoutServlet extends LogoutServlet {
+public class HawtioQuarkusLogoutServlet extends LogoutServlet {
 
     @Override
     public void init() {
