@@ -21,11 +21,11 @@
     "monaco-editor": "~0.56.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.4"
+    "react-router": "^7.18.2"
   },
   "devDependencies": {
     "@hawtio/backend-middleware": "^1.1.0",
-    "@swc/core": "^1.15.47",
+    "@swc/core": "^1.15.4",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/react-router-dom": "^5.3.3",
