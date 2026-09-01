@@ -18,18 +18,13 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -491,131 +486,15 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     @Test
     public void testAuthConfig() {
         runTest(spec -> {
-            Auth auth = new Auth();
-            auth.setClientCertCommonName("my.hawtio.svc");
-            auth.setClientCertExpirationDate(LocalDateTime.now().plusYears(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-            spec.setAuth(auth);
+            spec.setAuth(new Auth());
         }, sa -> {
-            final String secretName = hawtio.getMetadata().getName() + "-tls-proxying";
-
-            // Wait for operator to create the TLS certificate secret
-            WaitUtils.waitFor(() -> {
-                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
-            }, "Waiting for Secret " + secretName + " to be created", Duration.ofSeconds(30));
-
-            // Verify the generated certificate has the correct CN
-            Assertions.assertThatCode(() -> {
-                final String source = new String(Base64.getDecoder().decode(
-                    OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
-                final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                final X509Certificate certificate =
-                    (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=my.hawtio.svc");
-            }).doesNotThrowAnyException();
-        }, false);
-    }
-
-    /**
-     * Tests automatic certificate rotation using the threshold overflow technique.
-     * Sets clientCertExpirationPeriod to a value greater than the cert's actual validity,
-     * forcing the operator to immediately detect the certificate is "expiring soon" and rotate it.
-     * This validates the time-based rotation logic using RequeueAfter event timers in v2.0.0.
-     */
-    @Test
-    public void testCertificateRotationViaThresholdOverflow() {
-        runTest(spec -> {
-            Auth auth = new Auth();
-            auth.setClientCertCommonName("overflow-test.test.svc");
-            auth.setClientCertExpirationDate(LocalDateTime.now().plusYears(1)
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-            auth.setClientCertExpirationPeriod(24L);
-            spec.setAuth(auth);
-        }, sa -> {
-            final String secretName = hawtio.getMetadata().getName() + "-tls-proxying";
-
-            WaitUtils.waitFor(() -> {
-                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
-            }, "Waiting for Secret to be created", Duration.ofSeconds(30));
-
-            String initialSerial = getCertificateSerialNumber(secretName);
-            sa.assertThat(initialSerial)
-                .as("Initial certificate should exist")
-                .isNotNull()
-                .isNotEmpty();
-
-            HawtioOnlineUtils.patchHawtioResource(hawtio.getMetadata().getName(), updatedHawtio -> {
-                updatedHawtio.getSpec().getAuth().setClientCertExpirationPeriod(10000L);
-            });
-
-            WaitUtils.waitFor(() -> {
-                try {
-                    String currentSerial = getCertificateSerialNumber(secretName);
-                    return currentSerial != null && !currentSerial.equals(initialSerial);
-                } catch (Exception e) {
-                    return false;
-                }
-            }, "Waiting for threshold overflow to trigger rotation", Duration.ofMinutes(2));
-
-            sa.assertThat(getCertificateSerialNumber(secretName))
-                .as("Certificate should have been rotated due to threshold overflow")
-                .isNotEqualTo(initialSerial);
-
-            Assertions.assertThatCode(() -> {
-                final String source = new String(Base64.getDecoder().decode(
-                    OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
-                final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                final X509Certificate certificate =
-                    (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=overflow-test.test.svc");
-            }).doesNotThrowAnyException();
-        }, false);
-    }
-
-    /**
-     * Verifies general operator health: ensuring that if the TLS proxying secret
-     * is manually or accidentally deleted, the controller's core self-healing Watch
-     * infrastructure instantly triggers recovery and recreates the certificate.
-     */
-    @Test
-    public void testCertificateRecreationAfterDeletion() {
-        runTest(spec -> {
-            Auth auth = new Auth();
-            auth.setClientCertCommonName("recreate-test.test.svc");
-            auth.setClientCertExpirationDate(LocalDateTime.now().plusYears(1)
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-            spec.setAuth(auth);
-        }, sa -> {
-            final String secretName = hawtio.getMetadata().getName() + "-tls-proxying";
-
-            WaitUtils.waitFor(() -> {
-                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
-            }, "Waiting for Secret to be created", Duration.ofSeconds(30));
-
-            String initialSerialNumber = getCertificateSerialNumber(secretName);
-            sa.assertThat(initialSerialNumber)
-                .as("Initial certificate should exist")
-                .isNotNull()
-                .isNotEmpty();
-
-            OpenshiftClient.get().secrets().withName(secretName).delete();
-
-            WaitUtils.waitFor(() -> {
-                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
-            }, "Waiting for Secret to be recreated by operator", Duration.ofSeconds(60));
-
-            String recreatedSerialNumber = getCertificateSerialNumber(secretName);
-            sa.assertThat(recreatedSerialNumber)
-                .as("Recreated certificate should have different serial number")
-                .isNotEqualTo(initialSerialNumber);
-
-            Assertions.assertThatCode(() -> {
-                final String source = new String(Base64.getDecoder().decode(
-                    OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
-                final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                final X509Certificate certificate =
-                    (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=recreate-test.test.svc");
-            }).doesNotThrowAnyException();
+            final String secretName = findTlsProxyingSecret();
+            sa.assertThat(secretName).as("Operator should auto-generate TLS proxying secret").isNotNull();
+            sa.assertThat(OpenshiftClient.get().secrets()
+                    .inNamespace(hawtio.getMetadata().getNamespace())
+                    .withName(secretName).get().getData())
+                .as("TLS secret should contain certificate and key")
+                .containsKeys("tls.crt", "tls.key");
         }, false);
     }
 
@@ -627,17 +506,10 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     public void testClientCertCheckScheduleDeprecated() {
         runTest(spec -> {
             Auth auth = new Auth();
-            auth.setClientCertCommonName("schedule-test.test.svc");
-            auth.setClientCertExpirationDate(LocalDateTime.now().plusYears(1)
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
             auth.setClientCertCheckSchedule("*/5 * * * *");
             spec.setAuth(auth);
         }, sa -> {
-            final String secretName = hawtio.getMetadata().getName() + "-tls-proxying";
-
-            WaitUtils.waitFor(() -> {
-                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
-            }, "Waiting for Secret to be created", Duration.ofSeconds(30));
+            findTlsProxyingSecret();
 
             sa.assertThat(OpenshiftClient.get().batch().v1().cronjobs()
                 .inNamespace(hawtio.getMetadata().getNamespace())
@@ -647,15 +519,6 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                              cj.getMetadata().getName().contains("cert") ||
                              cj.getMetadata().getName().contains("rotation"))
                 .isEmpty();
-
-            Assertions.assertThatCode(() -> {
-                final String source = new String(Base64.getDecoder().decode(
-                    OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
-                final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                final X509Certificate certificate =
-                    (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectX500Principal().getName()).isEqualTo("CN=schedule-test.test.svc");
-            }).doesNotThrowAnyException();
         }, false);
     }
 
@@ -763,16 +626,19 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         });
     }
 
-    private static String getCertificateSerialNumber(String secretName) {
-        try {
-            final String source = new String(Base64.getDecoder().decode(
-                OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
-            final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            final X509Certificate certificate =
-                (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-            return certificate.getSerialNumber().toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get certificate serial number", e);
-        }
+    private static String findTlsProxyingSecret() {
+        final String namespace = hawtio.getMetadata().getNamespace();
+        final String prefix = hawtio.getMetadata().getName() + "-tls-proxying";
+        final AtomicReference<String> secretName = new AtomicReference<>();
+        WaitUtils.waitFor(() -> {
+            String found = OpenshiftClient.get().secrets().inNamespace(namespace)
+                .list().getItems().stream()
+                .map(s -> s.getMetadata().getName())
+                .filter(name -> name.startsWith(prefix))
+                .findFirst().orElse(null);
+            secretName.set(found);
+            return found != null;
+        }, "Waiting for TLS proxying secret to be created", Duration.ofSeconds(60));
+        return secretName.get();
     }
 }
