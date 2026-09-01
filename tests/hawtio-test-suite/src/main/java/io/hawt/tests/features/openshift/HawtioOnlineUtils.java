@@ -444,16 +444,16 @@ public class HawtioOnlineUtils {
         OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).resource(hawtio).createOr(op -> op.update());
 
         WaitUtils.waitFor(() -> {
-            final Resource<Hawtio> resource = OpenshiftClient.get().resources(Hawtio.class)
+            final Hawtio hawtioResource = OpenshiftClient.get().resources(Hawtio.class)
                 .inNamespace(namespace)
-                .withName(hawtioCrName);
-            final Hawtio hawtioResource = resource.get();
-            return resource.isReady() &&
+                .withName(hawtioCrName)
+                .get();
+            return hawtioResource != null &&
                 hawtioResource.getStatus() != null &&
                 hawtioResource.getStatus().getPhase() != null &&
                 hawtioResource.getStatus().getPhase().name().equalsIgnoreCase("Deployed") &&
                 hawtioResource.getStatus().getURL() != null;
-        }, "Waiting for hawtio deployment to succeed", Duration.ofMinutes(2));
+        }, "Waiting for hawtio deployment to succeed", Duration.ofMinutes(5));
 
         return OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).withName(hawtioCrName).get().getStatus().getURL();
     }
