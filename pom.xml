@@ -46,8 +46,8 @@
     <spring-boot-version>3.5.15</spring-boot-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring7-version>7.0.8</spring7-version>
-    <spring-boot4-version>4.1.0</spring-boot4-version>
+    <spring7-version>7.0.9</spring7-version>
+    <spring-boot4-version>4.1.1</spring-boot4-version>
     <!-- Camel -->
     <camel-spring-boot-version>4.22.0</camel-spring-boot-version>
     <!-- Jetty -->
