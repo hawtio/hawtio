@@ -54,6 +54,10 @@ public class WebDriver {
             options.addPreference("network.proxy.allow_hijacking_localhost", false);
             // Trust the docker internal network
             options.addPreference("dom.securecontext.allowlist", "172.17.0.1");
+            // Disable Firefox insecure form submission warning dialogs
+            options.addPreference("security.warn_submit_secure_to_insecure", false);
+            options.addPreference("security.warn_submit_insecure", false);
+            options.addPreference("security.warn_submit_insecure.show_once", false);
             // Disable BiDi to prevent OutOfMemoryError from massive console log capture
             options.setCapability("webSocketUrl", false);
             Configuration.browserCapabilities = options;
