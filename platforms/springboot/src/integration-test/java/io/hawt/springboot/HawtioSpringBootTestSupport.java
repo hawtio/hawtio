@@ -77,7 +77,12 @@ public class HawtioSpringBootTestSupport {
             .expectBody()
             .consumeWith(result -> {
                 String body = new String(Objects.requireNonNull(result.getResponseBody()), StandardCharsets.UTF_8);
-                Assertions.assertThat(body).contains("<base href=\"" + properties.getHawtioPath(isCustomManagementPortConfigured) + "/\">");
+                String hawtioPath = properties.getHawtioPath(isCustomManagementPortConfigured);
+                // The format can be either quoted or unquoted depending on the webpack version
+                Assertions.assertThat(body).containsAnyOf(
+                    "<base href=\"" + hawtioPath + "/\">",
+                    "<base href=" + hawtioPath + "/>"
+                );
             });
     }
 
