@@ -139,6 +139,9 @@ module.exports = (_, args) => {
           '@thumbmarkjs/thumbmarkjs': path.join(__dirname, './node_modules/@thumbmarkjs/thumbmarkjs/dist/thumbmark.esm.js'),
         },
       },
+      optimization: {
+        runtimeChunk: 'single',
+      },
       ignoreWarnings: [
         // For suppressing sourcemap warnings coming from some dependencies
         /Failed to parse source map/,
