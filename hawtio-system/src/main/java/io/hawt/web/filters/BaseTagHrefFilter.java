@@ -114,11 +114,11 @@ public class BaseTagHrefFilter implements Filter {
                         baseToReplace = original.substring(baseIdx + 1, original.indexOf('\'', baseIdx + 1));
                     } else {
                         // no delimiter (<base href=/hawtio>)
-                        int end = baseIdx + 1;
+                        int end = baseIdx;
                         while (!Character.isWhitespace(array[end]) && array[end] != '>') {
                             end++;
                         }
-                        baseToReplace = original.substring(baseIdx + 1, end);
+                        baseToReplace = original.substring(baseIdx, end);
                     }
                     break;
                 }
