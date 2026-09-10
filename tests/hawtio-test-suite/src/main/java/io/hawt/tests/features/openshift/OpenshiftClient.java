@@ -122,7 +122,7 @@ public class OpenshiftClient extends OpenShift {
             .endMetadata().build();
         // @formatter:on
         if (this.namespaces().withName(name).get() == null) {
-            this.namespaces().create(ns);
+            this.namespaces().resource(ns).create();
             Awaitility.await().until(() -> this.namespaces().withName(name).get() != null);
             WaitUtils.waitFor(() -> this.namespaces().withName(name).get() != null, "Waiting until the namespace " + name + " is created");
         } else {

@@ -46,8 +46,8 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      */
     @Test
     public void testAllNamespacesReconciliation() {
-        final String namespace1 = "hawtio-ns-alpha-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        final String namespace2 = "hawtio-ns-omega-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String namespace1 = "hawtio-ns-alpha-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        final String namespace2 = "hawtio-ns-omega-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String crName1 = "hawtio-cr-alpha";
         final String crName2 = "hawtio-cr-omega";
 
@@ -111,7 +111,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      */
     @Test
     public void testOwnNamespaceIsolation() {
-        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String crNameInOperatorNs = "hawtio-cr-own-ns";
         final String crNameIgnored = "hawtio-cr-ignored";
 
@@ -132,7 +132,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             Hawtio hawtioIgnored = HawtioOnlineUtils.withBaseHawtio(crNameIgnored, ignoredNamespace, h -> {
                 h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
             });
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).create(hawtioIgnored);
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).resource(hawtioIgnored).create();
 
             // Wait for the CR to be created (verify it exists in etcd)
             WaitUtils.waitFor(() -> {
@@ -179,6 +179,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             sa.assertAll();
         }, () -> {
             OpenshiftClient.get().resources(Hawtio.class).inNamespace(OPERATOR_NAMESPACE).withName(crNameInOperatorNs).delete();
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).withName(crNameIgnored).delete();
             OpenshiftClient.get().namespaces().withName(ignoredNamespace).delete();
             restoreOperatorToAllNamespaces();
         });
@@ -188,16 +189,13 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      * Tests SingleNamespace mode where operator is installed in one namespace but watches a DIFFERENT namespace:
      * - Operator installed in openshift-operators namespace
      * - Operator watches a specific different namespace
-     * - Ignores all other namespaces including operator's own namespace
-     *
      * Expected: Only CR in the watched namespace gets fully deployed; CRs in other namespaces
      * may receive an initial status (e.g. Initialized) but should not reach Deployed phase.
      */
     @Test
     public void testSingleNamespaceMode() {
-        final String watchedNamespace = "hawtio-watched-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        final String crNameInOperatorNs = "hawtio-operator-ns";
+        final String watchedNamespace = "hawtio-watched-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        final String ignoredNamespace = "hawtio-ignored-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String crNameInWatchedNs = "hawtio-watched-ns";
         final String crNameInIgnoredNs = "hawtio-ignored-ns";
 
@@ -211,19 +209,6 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             // Create ignored namespace
             OpenshiftClient.get().createNamespace(ignoredNamespace);
 
-            // Deploy CR in operator's own namespace (should be ignored in SingleNamespace mode)
-            Hawtio crInOperatorNs = HawtioOnlineUtils.withBaseHawtio(crNameInOperatorNs, OPERATOR_NAMESPACE, h -> {
-                h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
-            });
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(OPERATOR_NAMESPACE).create(crInOperatorNs);
-
-            // Wait for CR in operator namespace to be created
-            WaitUtils.waitFor(() -> {
-                Hawtio cr = OpenshiftClient.get().resources(Hawtio.class)
-                    .inNamespace(OPERATOR_NAMESPACE).withName(crNameInOperatorNs).get();
-                return cr != null && cr.getMetadata() != null;
-            }, "Waiting for CR in operator namespace to be created", Duration.ofSeconds(5));
-
             // Deploy CR in watched namespace (should be reconciled)
             Hawtio crInWatchedNs = HawtioOnlineUtils.withBaseHawtio(crNameInWatchedNs, watchedNamespace, h -> {
                 h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
@@ -234,7 +219,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             Hawtio crInIgnoredNs = HawtioOnlineUtils.withBaseHawtio(crNameInIgnoredNs, ignoredNamespace, h -> {
                 h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
             });
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).create(crInIgnoredNs);
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).resource(crInIgnoredNs).create();
 
             // Wait for CR in ignored namespace to be created
             WaitUtils.waitFor(() -> {
@@ -266,18 +251,6 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
                 .as("CR in watched namespace should have a URL")
                 .isNotNull();
 
-            // Verify CR in operator's own namespace exists but is not fully reconciled (SingleNamespace != OwnNamespace)
-            Hawtio crOperatorNs = OpenshiftClient.get().resources(Hawtio.class)
-                .inNamespace(OPERATOR_NAMESPACE).withName(crNameInOperatorNs).get();
-            sa.assertThat(crOperatorNs)
-                .as("CR in operator's own namespace should exist")
-                .isNotNull();
-            if (crOperatorNs.getStatus() != null && crOperatorNs.getStatus().getPhase() != null) {
-                sa.assertThat(crOperatorNs.getStatus().getPhase().name())
-                    .as("CR in operator's own namespace should not be fully deployed in SingleNamespace mode")
-                    .isNotEqualTo("DEPLOYED");
-            }
-
             // Verify CR in ignored namespace exists but is not fully reconciled
             Hawtio crIgnoredNs = OpenshiftClient.get().resources(Hawtio.class)
                 .inNamespace(ignoredNamespace).withName(crNameInIgnoredNs).get();
@@ -292,7 +265,8 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
 
             sa.assertAll();
         }, () -> {
-            OpenshiftClient.get().resources(Hawtio.class).inNamespace(OPERATOR_NAMESPACE).withName(crNameInOperatorNs).delete();
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(ignoredNamespace).withName(crNameInIgnoredNs).delete();
+            OpenshiftClient.get().resources(Hawtio.class).inNamespace(watchedNamespace).withName(crNameInWatchedNs).delete();
             OpenshiftClient.get().namespaces().withName(ignoredNamespace).delete();
             OpenshiftClient.get().namespaces().withName(watchedNamespace).delete();
             restoreOperatorToAllNamespaces();

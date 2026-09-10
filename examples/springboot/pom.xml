@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Spring Boot 3.x process</description>
+  <description>Hawtio :: Sample Spring Boot 4.x process</description>
 
   <dependencyManagement>
     <dependencies>
@@ -39,22 +39,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-undertow</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>io.undertow</groupId>
-          <artifactId>undertow-websockets-jsr</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -64,7 +48,7 @@
     <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-springboot</artifactId>
+      <artifactId>hawtio-springboot4</artifactId>
     </dependency>
     <!--
       Include hawtio-log-logback if you want to use Logs plugin with Spring Boot.
@@ -87,6 +71,12 @@
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-quartz-starter</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!--
       This dependency is mandatory for enabling Camel management
@@ -125,7 +115,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <configuration>
           <mainClass>io.hawt.example.spring.boot.SampleSpringBootService</mainClass>
           <jvmArguments>

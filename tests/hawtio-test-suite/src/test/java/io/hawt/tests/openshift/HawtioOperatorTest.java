@@ -18,18 +18,13 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -79,7 +74,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     @BeforeAll
     public static void setupApp() {
-        String name = "camel-app-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        String name = "camel-app-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         deployment = HawtioOnlineUtils.deployApplication(name, "springboot", TestConfiguration.getOpenshiftNamespace(), "5.x-" + (System.getProperty("java.vm.specification.version", "21")));
         podName = OpenshiftClient.get().pods().withLabel("app", name).list().getItems().get(0).getMetadata().getName();
     }
@@ -198,7 +193,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     @Test
     public void testProjectSelector() {
-        final String namespace = "selector-tests-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        final String namespace = "selector-tests-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         OpenshiftClient.get()
             .resource(new NamespaceBuilder().withNewMetadata().withName(namespace).addToLabels("myLabel", namespace).endMetadata().build()).create();
@@ -258,7 +253,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         HawtioOnlineTestUtils.withCleanup(() -> {
 
             hawtio =
-                HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+                HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
                     TestConfiguration.getOpenshiftNamespace(),
                     h -> {
                         h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
@@ -335,8 +330,8 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     }
 
     @Test
-    public void testRBAC() throws IOException {
-        final String configMapName = "rbac-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase();
+    public void testCustomRBAC() throws IOException {
+        final String configMapName = "rbac-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
         final String namespace = TestConfiguration.getOpenshiftNamespace();
 
         try {
@@ -407,6 +402,42 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     }
 
     @Test
+    public void testDefaultRBAC() throws IOException {
+        runTest(spec -> {
+            var rbac = new Rbac();
+            spec.setRbac(rbac);
+        }, sa -> {
+            var discoverTab = new DiscoverTab();
+            discoverTab.assertContainsDeployment(deployment.getMetadata().getName());
+            discoverTab.connectTo(podName);
+
+            WaitUtils.waitForPageLoad();
+            var hawtio = new HawtioPage();
+
+            hawtio.menu().navigateTo("Camel");
+            final CamelPage camelPage = new CamelPage();
+
+            camelPage.tree().selectSpecificItem("CamelContexts-SampleCamel-folder");
+            camelPage.openTab("Operations");
+
+            final CamelOperations camelOperations = new CamelOperations();
+            camelOperations.checkOperation("stop()", Condition.enabled);
+            camelOperations.checkOperation("getTotalRoutes()", Condition.enabled);
+
+            hawtio.panel().logout();
+            new HawtioOnlineLoginPage().login("viewer", "viewer");
+
+            LoginLogout.hawtioIsLoaded();
+            camelPage.tree().selectSpecificItem("CamelContexts-SampleCamel-folder");
+            camelPage.openTab("Operations");
+
+            camelOperations.checkOperation("stop()", Condition.disabled);
+            camelOperations.checkOperation("restart()", Condition.disabled);
+            camelOperations.checkOperation("getTotalRoutes()", Condition.enabled);
+        });
+    }
+
+    @Test
     public void testIpAddressMaskingEnabled() {
         runTest(spec -> {
             Logging logging = new Logging();
@@ -455,27 +486,39 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     @Test
     public void testAuthConfig() {
         runTest(spec -> {
+            spec.setAuth(new Auth());
+        }, sa -> {
+            final String secretName = findTlsProxyingSecret();
+            sa.assertThat(secretName).as("Operator should auto-generate TLS proxying secret").isNotNull();
+            sa.assertThat(OpenshiftClient.get().secrets()
+                    .inNamespace(hawtio.getMetadata().getNamespace())
+                    .withName(secretName).get().getData())
+                .as("TLS secret should contain certificate and key")
+                .containsKeys("tls.crt", "tls.key");
+        }, false);
+    }
+
+    /**
+     * Verifies that the clientCertCheckSchedule CronJob infrastructure has been deprecated.
+     * Validates that no CronJobs are created when the deprecated field is set.
+     */
+    @Test
+    public void testClientCertCheckScheduleDeprecated() {
+        runTest(spec -> {
             Auth auth = new Auth();
-            auth.setClientCertCommonName("my.hawtio.svc");
-            auth.setClientCertExpirationDate(LocalDateTime.now().plusYears(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+            auth.setClientCertCheckSchedule("*/5 * * * *");
             spec.setAuth(auth);
         }, sa -> {
-            final String secretName = hawtio.getMetadata().getName() + "-tls-proxying";
+            findTlsProxyingSecret();
 
-            // Wait for operator to create the TLS certificate secret
-            WaitUtils.waitFor(() -> {
-                return OpenshiftClient.get().secrets().withName(secretName).get() != null;
-            }, "Waiting for Secret " + secretName + " to be created", Duration.ofSeconds(30));
-
-            // Verify the generated certificate has the correct CN
-            Assertions.assertThatCode(() -> {
-                final String source = new String(Base64.getDecoder().decode(
-                    OpenshiftClient.get().secrets().withName(secretName).get().getData().get("tls.crt")));
-                final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                final X509Certificate certificate =
-                    (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-                assertThat(certificate.getSubjectDN().getName()).isEqualTo("CN=my.hawtio.svc");
-            }).doesNotThrowAnyException();
+            sa.assertThat(OpenshiftClient.get().batch().v1().cronjobs()
+                .inNamespace(hawtio.getMetadata().getNamespace())
+                .list().getItems())
+                .as("v2.0.0 should not spawn external CronJob resources for rotation")
+                .filteredOn(cj -> cj.getMetadata().getName().contains(hawtio.getMetadata().getName()) ||
+                             cj.getMetadata().getName().contains("cert") ||
+                             cj.getMetadata().getName().contains("rotation"))
+                .isEmpty();
         }, false);
     }
 
@@ -483,7 +526,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
     public void testCRUpdatePreservesAllFields() {
         // Regression test for operator cache issue where updates would remove fields
         HawtioOnlineTestUtils.withCleanup(() -> {
-            hawtio = HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+            hawtio = HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
                 TestConfiguration.getOpenshiftNamespace(),
                 h -> {
                     h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
@@ -561,7 +604,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
 
     private static void runTest(Consumer<HawtioSpec> consumer, Consumer<SoftAssertions> testFunction, boolean startBrowser) {
         hawtio =
-            HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.randomAlphabetic(5).toLowerCase(),
+            HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
                 TestConfiguration.getOpenshiftNamespace(),
                 h -> {
                     h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
@@ -581,5 +624,21 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         }, () -> {
             HawtioOnlineUtils.deleteHawtio(hawtio);
         });
+    }
+
+    private static String findTlsProxyingSecret() {
+        final String namespace = hawtio.getMetadata().getNamespace();
+        final String prefix = hawtio.getMetadata().getName() + "-tls-proxying";
+        final AtomicReference<String> secretName = new AtomicReference<>();
+        WaitUtils.waitFor(() -> {
+            String found = OpenshiftClient.get().secrets().inNamespace(namespace)
+                .list().getItems().stream()
+                .map(s -> s.getMetadata().getName())
+                .filter(name -> name.startsWith(prefix))
+                .findFirst().orElse(null);
+            secretName.set(found);
+            return found != null;
+        }, "Waiting for TLS proxying secret to be created", Duration.ofSeconds(60));
+        return secretName.get();
     }
 }

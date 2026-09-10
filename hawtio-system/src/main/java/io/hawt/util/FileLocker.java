@@ -14,8 +14,10 @@ public class FileLocker {
      * the lock has been created; otherwise it returns null
      */
     public static FileLocker getLock(File lockFile) {
-        lockFile.getParentFile().mkdirs();
-        if (!lockFile.exists()) {
+        if (lockFile != null && lockFile.getParentFile() != null) {
+            lockFile.getParentFile().mkdirs();
+        }
+        if (lockFile != null && !lockFile.exists()) {
             try {
                 IOHelper.write(lockFile, "I have the lock!");
                 lockFile.deleteOnExit();
@@ -38,7 +40,7 @@ public class FileLocker {
     }
 
     public void destroy() {
-        if (lockFile.exists()) {
+        if (lockFile != null && lockFile.exists()) {
             lockFile.delete();
         }
     }

@@ -6,11 +6,11 @@ package io.hawt.v2.hawtiospec;
 public class Auth implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
     /**
-     * CronJob schedule that defines how often the expiry of the certificate will be checked.
-     * Client rotation isn't enabled if the schedule isn't set.
+     * Deprecated: ClientCertCheckSchedule is ignored in v2.0.0. The Operator now
+     * uses native Kubernetes event timers to schedule certificate rotation.
      */
     @com.fasterxml.jackson.annotation.JsonProperty("clientCertCheckSchedule")
-    @com.fasterxml.jackson.annotation.JsonPropertyDescription("CronJob schedule that defines how often the expiry of the certificate will be checked.\nClient rotation isn't enabled if the schedule isn't set.")
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("Deprecated: ClientCertCheckSchedule is ignored in v2.0.0. The Operator now\nuses native Kubernetes event timers to schedule certificate rotation.")
     @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
     private String clientCertCheckSchedule;
 

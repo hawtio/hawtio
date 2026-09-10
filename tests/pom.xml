@@ -15,15 +15,15 @@
   <packaging>pom</packaging>
 
   <properties>
-    <http5-version>5.4.2</http5-version>
-    <slf4j-version>2.0.17</slf4j-version>
-    <selenium-version>4.40.0</selenium-version>
-    <selenide-version>7.13.0</selenide-version>
-    <cucumber-version>7.33.0</cucumber-version>
+    <http5-version>5.4.3</http5-version>
+    <slf4j-version>2.0.11</slf4j-version>
+    <selenium-version>4.48.0</selenium-version>
+    <selenide-version>7.17.0</selenide-version>
+    <cucumber-version>7.34.7</cucumber-version>
     <testcontainers-version>2.0.5</testcontainers-version>
     <awaitility-version>4.3.0</awaitility-version>
-    <logback-classic-version>1.5.32</logback-classic-version>
-    <junit-platform-commons-version>1.14.2</junit-platform-commons-version>
+    <logback-classic-version>1.6.3</logback-classic-version>
+    <junit-platform-commons-version>1.14.4</junit-platform-commons-version>
     <!-- Used for testing different versions of the Hawtio project then the current one - i.e. testing 4.0.0 with a SNAPSHOT version -->
     <hawtio.bom.version>${project.version}</hawtio.bom.version>
   </properties>
@@ -36,6 +36,15 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Explicit Selenium version management to override versions in child modules -->
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-bom</artifactId>
+        <version>${selenium-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>

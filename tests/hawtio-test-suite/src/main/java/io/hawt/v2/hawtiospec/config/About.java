@@ -1,7 +1,7 @@
 package io.hawt.v2.hawtiospec.config;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({"additionalInfo","backgroundImgSrc","copyright","imgDarkModeSrc","imgSrc","productInfo","title"})
+@com.fasterxml.jackson.annotation.JsonPropertyOrder({"additionalInfo","backgroundDarkModeImgSrc","backgroundImgSrc","copyright","imgDarkModeSrc","imgSrc","productInfo","title"})
 @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 public class About implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
@@ -20,6 +20,22 @@ public class About implements io.fabric8.kubernetes.api.model.KubernetesResource
 
     public void setAdditionalInfo(String additionalInfo) {
         this.additionalInfo = additionalInfo;
+    }
+
+    /**
+     * The background image to display in dark mode on the About dialog
+     */
+    @com.fasterxml.jackson.annotation.JsonProperty("backgroundDarkModeImgSrc")
+    @com.fasterxml.jackson.annotation.JsonPropertyDescription("The background image to display in dark mode on the About dialog")
+    @com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
+    private String backgroundDarkModeImgSrc;
+
+    public String getBackgroundDarkModeImgSrc() {
+        return backgroundDarkModeImgSrc;
+    }
+
+    public void setBackgroundDarkModeImgSrc(String backgroundDarkModeImgSrc) {
+        this.backgroundDarkModeImgSrc = backgroundDarkModeImgSrc;
     }
 
     /**

@@ -44,9 +44,9 @@ module.exports = (_, args) => {
               singleton: true,
               requiredVersion: dependencies['react-dom'],
             },
-            'react-router-dom': {
+            'react-router': {
               singleton: true,
-              requiredVersion: dependencies['react-router-dom'],
+              requiredVersion: dependencies['react-router'],
             },
             '@hawtio/react': {
               singleton: true,
@@ -138,6 +138,9 @@ module.exports = (_, args) => {
         alias: {
           '@thumbmarkjs/thumbmarkjs': path.join(__dirname, './node_modules/@thumbmarkjs/thumbmarkjs/dist/thumbmark.esm.js'),
         },
+      },
+      optimization: {
+        runtimeChunk: 'single',
       },
       ignoreWarnings: [
         // For suppressing sourcemap warnings coming from some dependencies

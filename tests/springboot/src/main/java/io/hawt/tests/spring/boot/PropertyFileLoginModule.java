@@ -46,7 +46,7 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
             Resource config = resourceFactory.newResource(filename);
 
             propertyUserStore.setConfig(config);
-            propertyUserStore.setHotReload(hotReload);
+            propertyUserStore.setReloadInterval(hotReload ? 1 : 0);
 
             final PropertyUserStore prev = PROPERTY_USERSTORES.putIfAbsent(filename, propertyUserStore);
             if (prev == null) {

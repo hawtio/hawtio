@@ -101,7 +101,7 @@ public class HawtioOnlineUtils {
                         .addToAnnotations(annotations)
                         .addToLabels("app", name)
                         //Used to differentiate the pod hash of the Replica Sets
-                        .addToLabels("randomId", RandomStringUtils.randomAlphabetic(5))
+                        .addToLabels("randomId", RandomStringUtils.secure().nextAlphabetic(5))
                     .endMetadata()
                     .editOrNewSpec()
                         .addNewContainer()
@@ -115,7 +115,7 @@ public class HawtioOnlineUtils {
                 .endTemplate()
             .endSpec();
 
-        final Deployment deployment = OpenshiftClient.get().apps().deployments().createOrReplace(deploymentBuilder.build());
+        final Deployment deployment = OpenshiftClient.get().apps().deployments().resource(deploymentBuilder.build()).createOr(op -> op.update());
         //@formatter:on
 
         WaitUtils.waitFor(() -> {
@@ -234,20 +234,20 @@ public class HawtioOnlineUtils {
         // Creating duplicate OperatorGroups prevents InstallPlan creation
         if (operatorhub.operatorGroups().inNamespace(operatorNamespace).list().getItems().isEmpty()) {
             LOG.info("Creating OperatorGroup in {}", operatorNamespace);
-            operatorhub.operatorGroups().inNamespace(operatorNamespace).createOrReplace(new OperatorGroupBuilder()
+            operatorhub.operatorGroups().inNamespace(operatorNamespace).resource(new OperatorGroupBuilder()
                 .editOrNewMetadata()
                 .withName("hawtio-operator-og")
                 .withNamespace(operatorNamespace)
                 .endMetadata()
                 .editOrNewSpec()
                 .endSpec()
-                .build());
+                .build()).createOr(op -> op.update());
         } else {
             LOG.info("OperatorGroup already exists in {}, skipping creation", operatorNamespace);
         }
 
         final String subscriptionName = packageManifest.getMetadata().getName();
-        operatorhub.subscriptions().inNamespace(operatorNamespace).createOrReplace(new SubscriptionBuilder()
+        operatorhub.subscriptions().inNamespace(operatorNamespace).resource(new SubscriptionBuilder()
             .editOrNewMetadata()
             .withName(subscriptionName)
             .withNamespace(operatorNamespace)
@@ -260,7 +260,7 @@ public class HawtioOnlineUtils {
             .withSourceNamespace(catalog.getMetadata().getNamespace())
             .withStartingCSV(startingCSV)
             .endSpec()
-            .build());
+            .build()).createOr(op -> op.update());
 
         //@formatter:on
         WaitUtils.waitFor(() -> {
@@ -306,7 +306,7 @@ public class HawtioOnlineUtils {
         CatalogSource catalog = null;
         if (TestConfiguration.getIndexImage() != null) {
             //@formatter:off
-            operatorhub.catalogSources().inNamespace(operatorNamespace).createOrReplace(new CatalogSourceBuilder()
+            operatorhub.catalogSources().inNamespace(operatorNamespace).resource(new CatalogSourceBuilder()
                     .editOrNewMetadata()
                         .withName("hawtio-catalog")
                         .withNamespace(operatorNamespace)
@@ -315,7 +315,7 @@ public class HawtioOnlineUtils {
                         .withImage(TestConfiguration.getIndexImage())
                         .withSourceType("grpc")
                     .endSpec()
-                .build());
+                .build()).createOr(op -> op.update());
 
             WaitUtils.waitFor(() -> operatorhub.catalogSources().inNamespace(operatorNamespace).withName("hawtio-catalog")
                 .get()
@@ -441,19 +441,19 @@ public class HawtioOnlineUtils {
         final String hawtioCrName = hawtio.getMetadata().getName();
         hawtio.getMetadata().getFinalizers().clear();
 
-        OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).createOrReplace(hawtio);
+        OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).resource(hawtio).createOr(op -> op.update());
 
         WaitUtils.waitFor(() -> {
-            final Resource<Hawtio> resource = OpenshiftClient.get().resources(Hawtio.class)
+            final Hawtio hawtioResource = OpenshiftClient.get().resources(Hawtio.class)
                 .inNamespace(namespace)
-                .withName(hawtioCrName);
-            final Hawtio hawtioResource = resource.get();
-            return resource.isReady() &&
+                .withName(hawtioCrName)
+                .get();
+            return hawtioResource != null &&
                 hawtioResource.getStatus() != null &&
                 hawtioResource.getStatus().getPhase() != null &&
                 hawtioResource.getStatus().getPhase().name().equalsIgnoreCase("Deployed") &&
                 hawtioResource.getStatus().getURL() != null;
-        }, "Waiting for hawtio deployment to succeed", Duration.ofMinutes(2));
+        }, "Waiting for hawtio deployment to succeed", Duration.ofMinutes(5));
 
         return OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).withName(hawtioCrName).get().getStatus().getURL();
     }

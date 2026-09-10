@@ -74,7 +74,7 @@ public class TomcatUsersLoginModule implements LoginModule {
             callbackHandler.handle(callbacks);
             String username = ((NameCallback) callbacks[0]).getName();
             char[] tmpPassword = ((PasswordCallback) callbacks[1]).getPassword();
-            String password = new String(tmpPassword);
+            String password = new String(tmpPassword == null ? new char[0] : tmpPassword);
             ((PasswordCallback) callbacks[1]).clearPassword();
 
             LOG.debug("Getting user details for username {}", username);

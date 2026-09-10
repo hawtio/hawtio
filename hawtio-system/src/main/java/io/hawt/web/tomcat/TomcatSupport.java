@@ -18,6 +18,10 @@ package io.hawt.web.tomcat;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -26,6 +30,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +68,9 @@ public class TomcatSupport {
     private long ts = -1L;
 
     private final Map<String, TomcatUser> users = new HashMap<>();
+
+    private MethodHandle replacement = null;
+    private Object tomcatSpecificPropertySources = null;
 
     /**
      * Create {@link TomcatSupport} object passing a {@link java.security.MessageDigest} algorithm and a location
@@ -138,6 +146,31 @@ public class TomcatSupport {
         }
         file = location;
 
+        // checking property replacement support
+        // see org.apache.tomcat.util.digester.Digester
+        String sources = System.getProperty("org.apache.tomcat.util.digester.PROPERTY_SOURCE");
+        if (sources == null || !sources.trim().isEmpty()) {
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            try {
+                Class<?> digesterClass = lookup.findClass("org.apache.tomcat.util.digester.Digester");
+                Class<?> propertySourceArrayClass = lookup.findClass("[Lorg.apache.tomcat.util.IntrospectionUtils$PropertySource;");
+                Class<?> introspectionUtilsClass = lookup.findClass("org.apache.tomcat.util.IntrospectionUtils");
+                Field propertySourcesField = digesterClass.getDeclaredField("propertySources");
+                propertySourcesField.setAccessible(true);
+                Object propertySources = propertySourcesField.get(null);
+
+                MethodHandle replaceProperties = lookup.findStatic(introspectionUtilsClass, "replaceProperties",
+                        MethodType.methodType(String.class, new Class<?>[] {
+                                String.class, Hashtable.class, propertySourceArrayClass, ClassLoader.class
+                        }));
+                if (replaceProperties != null) {
+                    this.replacement = replaceProperties;
+                    this.tomcatSpecificPropertySources = propertySources;
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException ignored) {
+            }
+        }
+
         reloadUsersIfNeeded();
     }
 
@@ -169,8 +202,8 @@ public class TomcatSupport {
                     Node groupItem = node.getAttributes().getNamedItem("groupname");
                     Node rolesItem = node.getAttributes().getNamedItem("roles");
                     if (groupItem != null) {
-                        String nGroup = groupItem.getNodeValue();
-                        String nRoles = rolesItem == null ? "" : rolesItem.getNodeValue();
+                        String nGroup = resolve(groupItem.getNodeValue());
+                        String nRoles = resolve(rolesItem == null ? "" : rolesItem.getNodeValue());
                         groupRoles.put(nGroup, Arrays.asList(nRoles.split("\\s*,\\s*")));
                     }
                 }
@@ -186,10 +219,10 @@ public class TomcatSupport {
                     if (userItem == null || passwordItem == null) {
                         continue;
                     }
-                    String nUsername = userItem.getNodeValue();
-                    String nPassword = passwordItem.getNodeValue();
-                    String nRoles = rolesItem == null ? "" : rolesItem.getNodeValue();
-                    String nGroups = groupsItem == null ? "" : groupsItem.getNodeValue();
+                    String nUsername = resolve(userItem.getNodeValue());
+                    String nPassword = resolve(passwordItem.getNodeValue());
+                    String nRoles = resolve(rolesItem == null ? "" : rolesItem.getNodeValue());
+                    String nGroups = resolve(groupsItem == null ? "" : groupsItem.getNodeValue());
                     Set<String> mergedRoles = new HashSet<>(Arrays.asList(nRoles.split("\\s*,\\s*")));
                     Arrays.asList(nGroups.split("\\s*,\\s*")).forEach(g -> {
                         if (groupRoles.containsKey(g)) {
@@ -201,6 +234,24 @@ public class TomcatSupport {
             } catch (ParserConfigurationException | IOException | SAXException e) {
                 LOG.warn("Can't parse XML with Tomcat user database: {}", e.getMessage(), e);
             }
+        }
+    }
+
+    /**
+     * Interpolate the value according to
+     * <a href="https://tomcat.apache.org/tomcat-11.0-doc/config/systemprops.html#Property_replacements">
+     *     Tomcat Property replacements</a>
+     * @param value
+     * @return
+     */
+    private String resolve(String value) {
+        if (replacement == null || value == null || value.trim().isEmpty() || !value.contains("${")) {
+            return value;
+        }
+        try {
+            return (String) replacement.invoke(value, null, tomcatSpecificPropertySources, this.getClass().getClassLoader());
+        } catch (Throwable e) {
+            return value;
         }
     }
 
@@ -290,7 +341,7 @@ public class TomcatSupport {
                     this.password = split[0].toCharArray();
                 } else if (split.length == 3) {
                     if (noDigest) {
-                        throw new IllegalArgumentException("No digest algorithm was specified, but the password uses salt and iteraction count parameters");
+                        throw new IllegalArgumentException("No digest algorithm was specified, but the password uses salt and iteration count parameters");
                     }
                     // see:
                     // $ bin/digest.sh -a SHA1 asd

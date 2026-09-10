@@ -23,7 +23,7 @@
   </appender>
   <root level="INFO">
     <appender-ref ref="CUCUMBER-LOG"/>
-    <appender-ref ref="STDOUT-WARNING"/>
+    <appender-ref ref="STDOUT-WARNINGS"/>
   </root>
   <logger name="io.hawt">
     <appender-ref ref="STDOUT" />
