@@ -11,6 +11,21 @@ Guidelines for AI coding agents working on this repository.
 - UI framework: [PatternFly v6](https://www.patternfly.org/)
 - Commit style: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (`feat:`, `fix:`, `chore:`, etc.)
 
+## Branch Strategy
+
+| Branch | Purpose |
+| --- | --- |
+| `main` | Primary development branch; targets the next community release |
+| `4.x` | Branch for the 4.x community release line (not maintained) |
+| `4.x-redhat` | Branch for developing the next 4.x release of Red Hat products |
+| `4.*.x-redhat` (e.g. `4.4.x-redhat`) | Patch/maintenance branches for specific Red Hat product versions |
+
+### Workflow guidelines
+
+- New features and bug fixes go to `main`.
+- Periodically sync `4.x-redhat` with `main` by cherry-picking commits from `main`.
+- `4.*.x-redhat` branches are backported from `main` or `4.x-redhat` only when necessary.
+
 ## Project Structure
 
 This repository assembles the standalone Hawtio distribution by combining the React frontend from [hawtio/hawtio-react](https://github.com/hawtio/hawtio-react) with a Java backend. Changes to the UI must be made in that repo and published as a new `@hawtio/react` npm package before being consumed here.
