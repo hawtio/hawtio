@@ -26,7 +26,7 @@ public class CamelAttributeDetailsPanel extends CamelPage {
      */
     public CamelAttributeDetailsPanel checkValue(String key, String value) {
         attributeForm.find(byText(key)).should(exist).shouldBe(interactable);
-        attributeForm.find(byValue(value)).should(exist).shouldBe(interactable);
+        attributeForm.find(byText(value)).should(exist).shouldBe(interactable);
         return this;
     }
 
