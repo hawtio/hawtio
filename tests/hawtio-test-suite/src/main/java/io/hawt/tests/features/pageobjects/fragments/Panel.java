@@ -49,13 +49,13 @@ public class Panel {
      * Open desired menu item from the drop-down menu under the question mark.
      */
     public void openMenuItemUnderQuestionMarkDropDownMenu(String option) {
-        this.openDropDownMenu(".pf-v6-c-toolbar__group:nth-of-type(2)");
+        this.openDropDownMenu(".pf-v6-c-toolbar__group:nth-of-type(3)");
         $(byText(option)).shouldBe(interactable).click();
     }
 
 
     public void openHawtioDropDownMenu(String option) {
-        this.openDropDownMenu(".pf-v6-c-toolbar__group:nth-of-type(3)");
+        this.openDropDownMenu(".pf-v6-c-toolbar__group:nth-of-type(4)");
         $(byText(option)).shouldBe(interactable).click();
     }
 
