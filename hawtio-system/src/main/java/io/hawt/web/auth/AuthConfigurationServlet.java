@@ -136,7 +136,7 @@ public class AuthConfigurationServlet extends ConfigurationServlet {
                 //  - io.hawt.quarkus.servlets.HawtioQuarkusLoginServlet
                 // which means proper form authentication
                 // But for Quarkus it's tricky, because there's no JAAS at all and when keycloak is enabled,
-                // io.hawt.quarkus.servlets.HawtioQuakusLoginServlet and io.hawt.quarkus.auth.HawtioQuarkusAuthenticator
+                // io.hawt.quarkus.servlets.HawtioQuarkusLoginServlet and io.hawt.quarkus.auth.HawtioQuarkusAuthenticator
                 // will simply fail because there's no proper identity and we get:
                 // java.lang.IllegalArgumentException: No IdentityProviders were registered to handle
                 // AuthenticationRequest io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest
