@@ -578,7 +578,7 @@ __metadata:
     monaco-editor-webpack-plugin: "npm:^7.1.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-router: "npm:^7.18.2"
+    react-router: "npm:^7.18.4"
     replace: "npm:^1.2.2"
     source-map-loader: "npm:^5.0.0"
     style-loader: "npm:^4.0.0"
@@ -7731,9 +7731,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:^7.18.2":
-  version: 7.18.2
-  resolution: "react-router@npm:7.18.2"
+"react-router@npm:^7.18.4":
+  version: 7.18.4
+  resolution: "react-router@npm:7.18.4"
   dependencies:
     cookie: "npm:^1.0.1"
     set-cookie-parser: "npm:^2.6.0"
@@ -7743,7 +7743,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 10/e68aa655e5ec2d4143f66ab3b745c50b8588152d89e4ec66c099625357c6a16dfaee5a7e963a9f4f9fbe0adaa37cf9731d63a108a2c4abfaa00124a06da16c24
+  checksum: 10/2c4c6e23a38fe5994b126d55590f6dbfe810d47939b765cd7af97b4b26a16c3dab20c1b048811e05dc74bc93787a3d0c3fc5f29df19fd0732059cccc6bf7180a
   languageName: node
   linkType: hard
 
