@@ -66,7 +66,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <arguments>replace-version ${project.version} ./build/static -r</arguments>
+              <arguments>replace-version ${project.version} ./build/static/js/*.js</arguments>
             </configuration>
           </execution>
         </executions>
