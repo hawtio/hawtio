@@ -17,7 +17,9 @@
     "additionalInfo": "",
     "copyright": "",
     "imgSrc": "img/hawtio-logo.svg",
-    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg"
+    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg",
+    "backgroundImgSrc": "img/pf-background.svg",
+    "backgroundDarkModeImgSrc": "img/pf-background-darkmode.svg"
   },
   "disabledRoutes": []
 }
