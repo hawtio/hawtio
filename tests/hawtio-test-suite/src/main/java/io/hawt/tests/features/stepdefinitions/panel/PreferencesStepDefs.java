@@ -82,7 +82,10 @@ public class PreferencesStepDefs {
 
     @And("User sees added child logger")
     public void userSeesAddedChildLogger() {
-        $$(".pf-v6-c-form__label-text").findBy(exactText("hawtio-camel")).shouldBe(visible);
+        $("#logs-child-logger-list")
+            .$$(".pf-v6-c-data-list__item-content b")
+            .findBy(exactText("hawtio-camel"))
+            .shouldBe(visible);
     }
 
 
