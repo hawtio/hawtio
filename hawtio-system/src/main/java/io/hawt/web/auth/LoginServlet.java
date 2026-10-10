@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
+import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
 import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
@@ -80,7 +81,12 @@ public class LoginServlet extends HttpServlet {
                 // response was sent using the authenticated subject, nothing more to do
                 break;
             case NOT_AUTHORIZED:
+                ServletHelpers.doUnauthorized(response);
+                break;
             case NO_CREDENTIALS:
+                ServletHelpers.doUnauthorized(response);
+                break;
+            case FORBIDDEN:
                 ServletHelpers.doForbidden(response);
                 break;
             case THROTTLED:

@@ -58,7 +58,7 @@ public class HawtioQuarkusAuthenticationEnabledTest {
             .body("{\"username\": \"foo\", \"password\": \"bar\"}")
             .post("/hawtio/auth/login")
             .then()
-            .statusCode(403);
+            .statusCode(401);
     }
 
     @Test
