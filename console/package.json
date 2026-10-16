@@ -10,11 +10,12 @@
     "replace-version": "node ./scripts/replace-version.mjs"
   },
   "dependencies": {
-    "@hawtio/react": "^2.4.0-pre.0",
+    "@hawtio/react": "^2.4.0-pre.1",
     "@patternfly/patternfly": "^6.6.1",
     "@patternfly/react-charts": "^8.6.1",
     "@patternfly/react-code-editor": "^6.6.2",
     "@patternfly/react-core": "^6.6.2",
+    "@patternfly/react-icons": "^6.6.1",
     "@patternfly/react-styles": "^6.6.1",
     "@patternfly/react-table": "^6.6.2",
     "@patternfly/react-tokens": "^6.6.1",

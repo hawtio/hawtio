@@ -538,10 +538,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.4":
-  version: 4.18.4
-  resolution: "@hawtio/camel-model@npm:4.18.4"
-  checksum: 10/c2b4ee215b75302249ebd34d2c1187d99ff056fbdb7c4ba59f68e37374dd2df2ccf42f84997dfa2ac62a62797dcdb7a75fd32de5c40d2fe60c9bf44b361a7e6b
+"@hawtio/camel-model-v4_18@npm:@hawtio/camel-model@~4.18.5":
+  version: 4.18.5
+  resolution: "@hawtio/camel-model@npm:4.18.5"
+  checksum: 10/57820fc80c2dfee0a039d883b06f4d07032b5d6f7abb56b58e49bf2254b3a8d2ed023b7321414a33f97c64e8d2b8e25fced92ccc9bb3a410947d14af2d99147f
   languageName: node
   linkType: hard
 
@@ -557,11 +557,12 @@ __metadata:
   resolution: "@hawtio/console-assembly@workspace:."
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.1.0"
-    "@hawtio/react": "npm:^2.4.0-pre.0"
+    "@hawtio/react": "npm:^2.4.0-pre.1"
     "@patternfly/patternfly": "npm:^6.6.1"
     "@patternfly/react-charts": "npm:^8.6.1"
     "@patternfly/react-code-editor": "npm:^6.6.2"
     "@patternfly/react-core": "npm:^6.6.2"
+    "@patternfly/react-icons": "npm:^6.6.1"
     "@patternfly/react-styles": "npm:^6.6.1"
     "@patternfly/react-table": "npm:^6.6.2"
     "@patternfly/react-tokens": "npm:^6.6.1"
@@ -587,11 +588,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^2.4.0-pre.0":
-  version: 2.4.0-pre.0
-  resolution: "@hawtio/react@npm:2.4.0-pre.0"
+"@hawtio/react@npm:^2.4.0-pre.1":
+  version: 2.4.0-pre.1
+  resolution: "@hawtio/react@npm:2.4.0-pre.1"
   dependencies:
-    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.4"
+    "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.5"
     "@hawtio/camel-model-v4_22": "npm:@hawtio/camel-model@~4.22.1"
     "@jolokia.js/simple": "npm:^2.6.1"
     "@module-federation/utilities": "npm:^3.1.83"
@@ -623,7 +624,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router: ^7
-  checksum: 10/b4a36db1704af9af2ba801b933c47a5fc72cdc27d560279280e59ae7cf7fc042299c8a16488c74eb087d4a80ae4f8323c10678b38ee156f08667c5dfaac238b9
+  checksum: 10/e179b747194c5832b1dc969d63bd4a4043c1131e25c90c2333ce0dbf7ad09de9168087cb523402113a189fdfa6adf81b8c11afeb264f114dac541897c4779f89
   languageName: node
   linkType: hard
 
