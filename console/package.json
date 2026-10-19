@@ -7,7 +7,7 @@
     "start": "webpack serve --mode development",
     "build": "webpack --mode production",
     "test": "jest --passWithNoTests",
-    "replace-version": "node ./scripts/replace-version.mjs"
+    "replace-version": "node ./scripts/replace-version.mjs $npm_package_version ./build/static/js/*.js"
   },
   "dependencies": {
     "@hawtio/react": "^2.4.0-pre.1",
