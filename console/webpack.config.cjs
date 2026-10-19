@@ -12,6 +12,10 @@ const outputPath = path.resolve(__dirname, 'build')
 
 const port = 3001
 
+// there's a problem with node_modules/@patternfly/react-icons/dist/esm/package.json which is almost empty
+// (a bug in Patternfly distro?)
+delete dependencies['@patternfly/react-icons']
+
 module.exports = (_, args) => {
   const isProduction = args.mode === 'production'
   return [
