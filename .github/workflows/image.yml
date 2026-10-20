@@ -50,14 +50,10 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
-      # --- Install dependencies ---
-      - name: Install Maven dependencies
-        run: |
-          mvn ${MVN_ARGS} install -DskipTests
       # --- Build and push auth-enabled images ---
       - name: Build auth-enabled JARs
         run: |
-          mvn ${MVN_ARGS} install -DskipTests -Pe2e -pl :hawtio-test-suite,:hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=true
+          mvn ${MVN_ARGS} clean install -DskipTests -DskipITs -Pe2e -Dhawtio.authenticationEnabled=true
       - name: Build and push multi-arch auth-enabled images
         env:
           REF_NAME: ${{ github.ref_name }}
@@ -75,7 +71,7 @@ jobs:
       # --- Build and push auth-disabled images ---
       - name: Build auth-disabled JARs
         run: |
-          mvn ${MVN_ARGS} install -DskipTests -Pe2e -pl :hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=false
+          mvn ${MVN_ARGS} install -DskipTests -DskipITs -Pe2e -pl :hawtio-tests-quarkus,:hawtio-tests-springboot -am -Dhawtio.authenticationEnabled=false
       - name: Build and push multi-arch auth-disabled images
         env:
           REF_NAME: ${{ github.ref_name }}
