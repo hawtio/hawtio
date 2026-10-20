@@ -58,11 +58,7 @@ jobs:
           echo "module=${{matrix.runtime}}" >> $GITHUB_ENV
       - name: Build Maven projects
         run: |
-          # Phase 1: Build entire project to ensure all modules are fresh
-          mvn --batch-mode --no-transfer-progress install -DskipTests
-          # Phase 2: Build test modules with e2e profile to create app artifacts
-          mvn --batch-mode --no-transfer-progress install -DskipTests \
-            -Pe2e -pl :hawtio-tests-${{ env.module }} -am
+          mvn --batch-mode --no-transfer-progress clean install -DskipTests -DskipITs -Pe2e
       - name: Build hawtio-test-suite image
         uses: docker/build-push-action@v7
         with:
