@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import io.hawt.quarkus.auth.HawtioQuarkusAuthenticator;
 import io.hawt.system.AuthenticateResult;
+import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.AuthSessionHelpers;
 import io.hawt.web.auth.LoginServlet;
@@ -18,9 +19,9 @@ import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HawtioQuakusLoginServlet extends LoginServlet {
+public class HawtioQuarkusLoginServlet extends LoginServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HawtioQuakusLoginServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HawtioQuarkusLoginServlet.class);
 
     private HawtioQuarkusAuthenticator authenticator;
 
@@ -46,9 +47,14 @@ public class HawtioQuakusLoginServlet extends LoginServlet {
             LOG.info("Logging in user: {}", username);
             AuthSessionHelpers.setup(request.getSession(true), new Subject(), username, timeout);
             break;
-        case NOT_AUTHORIZED:
-        case NO_CREDENTIALS:
+        case FORBIDDEN:
             ServletHelpers.doForbidden(response);
+            break;
+        case NOT_AUTHORIZED:
+            ServletHelpers.doUnauthorized(response);
+            break;
+        case NO_CREDENTIALS:
+            ServletHelpers.doUnauthorized(response);
             break;
         case THROTTLED:
             ServletHelpers.doTooManyRequests(response, result.getRetryAfter());

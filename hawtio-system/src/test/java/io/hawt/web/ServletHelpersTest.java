@@ -76,7 +76,7 @@ public class ServletHelpersTest {
         ServletHelpers.doForbidden(httpResponse);
         verify(httpResponse).setStatus(HttpServletResponse.SC_FORBIDDEN);
         verify(httpResponse).setContentLength(0);
-        verify(httpResponse).setHeader(HEADER_HAWTIO_FORBIDDEN_REASON, ForbiddenReason.NONE.name());
+        verify(httpResponse).setHeader(HEADER_HAWTIO_FORBIDDEN_REASON, ForbiddenReason.FORBIDDEN.name());
         verify(httpResponse).flushBuffer();
     }
 
