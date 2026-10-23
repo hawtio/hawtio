@@ -24,7 +24,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,7 @@ import io.fabric8.kubernetes.client.dsl.PodResource;
 import io.hawt.tests.features.config.TestConfiguration;
 import io.hawt.tests.features.openshift.HawtioOnlineUtils;
 import io.hawt.tests.features.openshift.OpenshiftClient;
+import io.hawt.tests.features.openshift.OperatorUtils;
 import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.features.pageobjects.fragments.about.AboutModalWindow;
 import io.hawt.tests.features.pageobjects.fragments.camel.tabs.common.CamelOperations;
@@ -66,6 +66,8 @@ import io.hawt.v2.hawtiospec.config.about.ProductInfo;
 import io.hawt.v2.hawtiospec.config.online.ConsoleLink;
 
 public class HawtioOperatorTest extends BaseHawtioOnlineTest {
+
+    private static final String CERTIFICATE_EXPIRY_PERIOD_ENV = "CERTIFICATE_EXPIRY_PERIOD";
 
     private static Deployment deployment;
     private static String podName;
@@ -488,13 +490,14 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         runTest(spec -> {
             spec.setAuth(new Auth());
         }, sa -> {
-            final String secretName = findTlsProxyingSecret();
+            final String secretName = HawtioOnlineUtils.findProxyingSecret(hawtio.getMetadata().getNamespace(), hawtio.getMetadata().getName());
             sa.assertThat(secretName).as("Operator should auto-generate TLS proxying secret").isNotNull();
+            // Assert on the key set only so a failure message never prints the secret values (e.g. tls.key).
             sa.assertThat(OpenshiftClient.get().secrets()
                     .inNamespace(hawtio.getMetadata().getNamespace())
-                    .withName(secretName).get().getData())
+                    .withName(secretName).get().getData().keySet())
                 .as("TLS secret should contain certificate and key")
-                .containsKeys("tls.crt", "tls.key");
+                .contains("tls.crt", "tls.key");
         }, false);
     }
 
@@ -509,7 +512,7 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
             auth.setClientCertCheckSchedule("*/5 * * * *");
             spec.setAuth(auth);
         }, sa -> {
-            findTlsProxyingSecret();
+            HawtioOnlineUtils.findProxyingSecret(hawtio.getMetadata().getNamespace(), hawtio.getMetadata().getName());
 
             sa.assertThat(OpenshiftClient.get().batch().v1().cronjobs()
                 .inNamespace(hawtio.getMetadata().getNamespace())
@@ -520,6 +523,64 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
                              cj.getMetadata().getName().contains("rotation"))
                 .isEmpty();
         }, false);
+    }
+
+    /**
+     * Verifies that the proxy-certificate expiry period is customized through the Operator's own
+     * CERTIFICATE_EXPIRY_PERIOD environment variable. By default no override is present and the
+     * Operator applies its default of 24 hours; once set, the Operator honors the value and
+     * continues to wholly manage the proxy-certificate lifecycle. The override is removed again in
+     * cleanup so the Operator returns to its default expiry period.
+     */
+    @Test
+    public void testCertificateExpiryPeriodConfiguredViaOperatorEnv() {
+        final String customExpiryPeriod = "48h";
+        final long expectedHours = 48;
+        hawtio = HawtioOnlineUtils.withBaseHawtio("operator-test-" + RandomStringUtils.secure().nextAlphabetic(5).toLowerCase(),
+            TestConfiguration.getOpenshiftNamespace(),
+            h -> {
+                h.getSpec().setType(HawtioSpec.Type.NAMESPACE);
+                h.getSpec().setAuth(new Auth());
+            });
+
+        HawtioOnlineTestUtils.withCleanup(() -> {
+            SoftAssertions sa = new SoftAssertions();
+
+            // By default, no override is present, so the Operator applies its default of 24 hours.
+            sa.assertThat(OperatorUtils.getEnv(CERTIFICATE_EXPIRY_PERIOD_ENV))
+                .as("By default the proxy-certificate expiry period is unset (Operator defaults to 24 hours)")
+                .isNull();
+
+            // Customize the proxy-certificate expiry period via the Operator's environment variable.
+            OperatorUtils.setEnv(CERTIFICATE_EXPIRY_PERIOD_ENV, customExpiryPeriod);
+            sa.assertThat(OperatorUtils.getEnv(CERTIFICATE_EXPIRY_PERIOD_ENV))
+                .as("Operator should honor the CERTIFICATE_EXPIRY_PERIOD environment variable override")
+                .isEqualTo(customExpiryPeriod);
+
+            // The master certificate is only (re)generated just-in-time; an existing one is not
+            // refreshed just because the env changed. Delete it so the next CR mints a fresh master
+            // at the new expiry period.
+            OperatorUtils.deleteMasterProxySecret();
+
+            // Creating a CR triggers JIT creation of the master cert (Operator ns) and slave cert (CR ns).
+            HawtioOnlineUtils.deployHawtioCR(hawtio);
+            sa.assertThat(HawtioOnlineUtils.findProxyingSecret(hawtio.getMetadata().getNamespace(), hawtio.getMetadata().getName()))
+                .as("Operator should generate the slave proxy-certificate for the CR")
+                .isNotNull();
+
+            // The master certificate's validity window should reflect the configured expiry period.
+            sa.assertThat(OperatorUtils.masterProxyCertValidity().toHours())
+                .as("Master proxy-certificate validity window should match CERTIFICATE_EXPIRY_PERIOD (%s)", customExpiryPeriod)
+                .isBetween(expectedHours - 2, expectedHours + 2);
+
+            sa.assertAll();
+        }, () -> {
+            HawtioOnlineUtils.deleteHawtio(hawtio);
+            // Restore the Operator to its default expiry period and force the master to regenerate at
+            // the default for subsequent tests.
+            OperatorUtils.setEnv(CERTIFICATE_EXPIRY_PERIOD_ENV, "");
+            OperatorUtils.deleteMasterProxySecret();
+        });
     }
 
     @Test
@@ -624,21 +685,5 @@ public class HawtioOperatorTest extends BaseHawtioOnlineTest {
         }, () -> {
             HawtioOnlineUtils.deleteHawtio(hawtio);
         });
-    }
-
-    private static String findTlsProxyingSecret() {
-        final String namespace = hawtio.getMetadata().getNamespace();
-        final String prefix = hawtio.getMetadata().getName() + "-tls-proxying";
-        final AtomicReference<String> secretName = new AtomicReference<>();
-        WaitUtils.waitFor(() -> {
-            String found = OpenshiftClient.get().secrets().inNamespace(namespace)
-                .list().getItems().stream()
-                .map(s -> s.getMetadata().getName())
-                .filter(name -> name.startsWith(prefix))
-                .findFirst().orElse(null);
-            secretName.set(found);
-            return found != null;
-        }, "Waiting for TLS proxying secret to be created", Duration.ofSeconds(60));
-        return secretName.get();
     }
 }

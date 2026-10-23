@@ -13,6 +13,7 @@ import org.openqa.selenium.Keys;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 public class PreferencesStepDefs {
     private final PreferencesPage preferencesPage = new PreferencesPage();
@@ -81,13 +82,13 @@ public class PreferencesStepDefs {
 
     @And("User sees added child logger")
     public void userSeesAddedChildLogger() {
-        $(".pf-v6-c-data-list__item-content").$(byText("hawtio-camel")).shouldBe(visible);
+        $$(".pf-v6-c-form__label-text").findBy(exactText("hawtio-camel")).shouldBe(visible);
     }
 
 
     @And("User is able to delete child logger")
     public void userIsAbleToDeleteChildLogger() {
-        $(".pf-v6-c-data-list__item-action > button:nth-child(1)").click();
+        $(".pf-v6-c-form__section:nth-child(2) > div:nth-child(2) button").click();
     }
 
     @When("User changes Jolokia values")

@@ -6,15 +6,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.SoftAssertions;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
-import io.fabric8.kubernetes.api.model.EnvVarBuilder;
-import io.fabric8.openshift.api.model.operatorhub.v1alpha1.Subscription;
-import io.fabric8.openshift.api.model.operatorhub.v1alpha1.SubscriptionConfig;
 import io.hawt.tests.features.openshift.HawtioOnlineUtils;
 import io.hawt.tests.features.openshift.OpenshiftClient;
+import io.hawt.tests.features.openshift.OperatorUtils;
 import io.hawt.tests.features.openshift.WaitUtils;
 import io.hawt.tests.openshift.utils.BaseHawtioOnlineTest;
 import io.hawt.tests.utils.HawtioOnlineTestUtils;
@@ -36,8 +31,7 @@ import io.hawt.v2.HawtioSpec;
  * Each test configures the operator to the required mode, runs the test, and restores original configuration.
  */
 public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
-    private static final String OPERATOR_NAMESPACE = "openshift-operators";
-    private static final String OPERATOR_DEPLOYMENT_NAME = "hawtio-operator";
+    private static final String OPERATOR_NAMESPACE = OperatorUtils.OPERATOR_NAMESPACE;
     private static final String WATCH_NAMESPACES_ENV = "WATCH_NAMESPACES";
 
     /**
@@ -142,21 +136,12 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             }, "Waiting for ignored CR to be created", Duration.ofSeconds(5));
 
             // Wait for the operator to reconcile the CR in its own namespace
-            WaitUtils.waitFor(() -> {
-                Hawtio cr = OpenshiftClient.get().resources(Hawtio.class)
-                    .inNamespace(OPERATOR_NAMESPACE).withName(crNameInOperatorNs).get();
-                return cr != null
-                    && cr.getStatus() != null
-                    && cr.getStatus().getPhase() != null
-                    && "DEPLOYED".equals(cr.getStatus().getPhase().name())
-                    && cr.getStatus().getURL() != null;
-            }, "Waiting for operator namespace CR to be reconciled", Duration.ofSeconds(20));
+            Hawtio reconciledInOperatorNs =
+                HawtioOnlineUtils.waitForCrDeployed(OPERATOR_NAMESPACE, crNameInOperatorNs, Duration.ofSeconds(20));
 
             SoftAssertions sa = new SoftAssertions();
 
             // Verify CR in operator's own namespace is reconciled
-            Hawtio reconciledInOperatorNs = OpenshiftClient.get().resources(Hawtio.class)
-                .inNamespace(OPERATOR_NAMESPACE).withName(crNameInOperatorNs).get();
             sa.assertThat(reconciledInOperatorNs.getStatus().getPhase().name())
                 .as("CR in operator's own namespace should be Deployed")
                 .isEqualTo("DEPLOYED");
@@ -229,21 +214,12 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
             }, "Waiting for CR in ignored namespace to be created", Duration.ofSeconds(5));
 
             // Wait for the operator to reconcile the CR in the watched namespace
-            WaitUtils.waitFor(() -> {
-                Hawtio cr = OpenshiftClient.get().resources(Hawtio.class)
-                    .inNamespace(watchedNamespace).withName(crNameInWatchedNs).get();
-                return cr != null
-                    && cr.getStatus() != null
-                    && cr.getStatus().getPhase() != null
-                    && "DEPLOYED".equals(cr.getStatus().getPhase().name())
-                    && cr.getStatus().getURL() != null;
-            }, "Waiting for watched namespace CR to be reconciled", Duration.ofSeconds(20));
+            Hawtio reconciledWatched =
+                HawtioOnlineUtils.waitForCrDeployed(watchedNamespace, crNameInWatchedNs, Duration.ofSeconds(20));
 
             SoftAssertions sa = new SoftAssertions();
 
             // Verify watched namespace CR is reconciled
-            Hawtio reconciledWatched = OpenshiftClient.get().resources(Hawtio.class)
-                .inNamespace(watchedNamespace).withName(crNameInWatchedNs).get();
             sa.assertThat(reconciledWatched.getStatus().getPhase().name())
                 .as("CR in watched namespace should be Deployed")
                 .isEqualTo("DEPLOYED");
@@ -279,97 +255,7 @@ public class OperatorNamespaceWatchingTest extends BaseHawtioOnlineTest {
      * @param watchNamespaces Namespace to watch, or null/empty string for AllNamespaces mode (use default)
      */
     private void configureOperatorWatchNamespaces(String watchNamespaces) {
-        updateSubscriptionEnv(WATCH_NAMESPACES_ENV, watchNamespaces);
-        waitForOperatorRollout();
-    }
-
-    /**
-     * Updates an environment variable in the operator Subscription.
-     * @param name Environment variable name
-     * @param value Environment variable value, or null/empty to remove the override
-     */
-    private void updateSubscriptionEnv(String name, String value) {
-        OpenshiftClient.get().resources(Subscription.class)
-            .inNamespace(OPERATOR_NAMESPACE)
-            .withName("red-hat-hawtio-operator")
-            .edit(sub -> {
-                var spec = sub.getSpec();
-                var config = Optional.ofNullable(spec.getConfig()).orElseGet(SubscriptionConfig::new);
-                var envs = Optional.ofNullable(config.getEnv()).orElseGet(ArrayList::new);
-
-                // Clean & Replace
-                envs.removeIf(e -> e.getName().equals(name));
-                if (value != null && !value.isEmpty()) {
-                    envs.add(new EnvVarBuilder().withName(name).withValue(value).build());
-                }
-
-                config.setEnv(envs);
-                spec.setConfig(config);
-                return sub;
-            });
-    }
-
-    /**
-     * Waits for the operator Deployment to complete rollout after configuration changes.
-     */
-    private void waitForOperatorRollout() {
-        // First, wait for any old pods to fully terminate
-        WaitUtils.waitFor(() -> {
-            var pods = OpenshiftClient.get().pods()
-                .inNamespace(OPERATOR_NAMESPACE)
-                .withLabel("name", OPERATOR_DEPLOYMENT_NAME)
-                .list()
-                .getItems();
-
-            // No pods should be in terminating state
-            return pods.stream().noneMatch(pod -> pod.getMetadata().getDeletionTimestamp() != null);
-        }, "Waiting for old operator pods to terminate", Duration.ofSeconds(60));
-
-        // Then wait for deployment to be ready
-        OpenshiftClient.get().apps().deployments()
-            .inNamespace(OPERATOR_NAMESPACE)
-            .withName(OPERATOR_DEPLOYMENT_NAME)
-            .waitUntilReady(3, TimeUnit.MINUTES);
-
-        // Finally, ensure exactly one pod is running and ready
-        WaitUtils.waitFor(() -> {
-            var pods = OpenshiftClient.get().pods()
-                .inNamespace(OPERATOR_NAMESPACE)
-                .withLabel("name", OPERATOR_DEPLOYMENT_NAME)
-                .list()
-                .getItems();
-
-            if (pods.size() != 1) {
-                return false;
-            }
-
-            var pod = pods.get(0);
-            var phase = pod.getStatus().getPhase();
-
-            // Fail fast only on terminal failure states
-            // Do not fail on transient states like "Pending" or "ContainerCreating"
-            if ("Failed".equals(phase)) {
-                throw new AssertionError("Operator pod failed - check pod logs for details");
-            }
-            if ("Unknown".equals(phase)) {
-                throw new AssertionError("Operator pod in unknown state - possible node/kubelet issue");
-            }
-
-            // For non-running states (Pending, ContainerCreating), keep waiting
-            if (!"Running".equals(phase)) {
-                return false;
-            }
-
-            // Pod is terminating
-            if (pod.getMetadata().getDeletionTimestamp() != null) {
-                return false;
-            }
-
-            // Check all containers are ready
-            return pod.getStatus().getContainerStatuses() != null
-                && pod.getStatus().getContainerStatuses().stream()
-                    .allMatch(cs -> Boolean.TRUE.equals(cs.getReady()));
-        }, "Waiting for operator to settle into new watch mode", Duration.ofSeconds(30));
+        OperatorUtils.setEnv(WATCH_NAMESPACES_ENV, watchNamespaces);
     }
 
     /**

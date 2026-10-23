@@ -1,3 +1,142 @@
-#root {
-  height: 100%
+/*
+ * This file can be used to override default Patternfly 6 rules/variables as long as the
+ * rules are "base" rules from @patternfly/react-core/dist/styles/base.css.
+ * If an original rule comes from dynamic components, Hawtio must use rules with higher specificity
+ */
+
+/* Customization of Patternfly variables */
+
+/* Variables from '@patternfly/react-core/dist/styles/base.css' that can be overridden using the same selector */
+
+:root {
+  /* If Patternfly 6 is too round... */
+  --pf-t--global--border--radius--0: 0px;
+  --pf-t--global--border--radius--100: 2px;
+  --pf-t--global--border--radius--200: 4px;
+  --pf-t--global--border--radius--300: 6px;
+  --pf-t--global--border--radius--400: 10px;
+  /* This is the Patternfly 6 default for "circle" rounding, like buttons */
+  --pf-t--global--border--radius--500: 999px;
+}
+
+/* Customization from dynamic style modules, that need to be overridden using selectors with higher specificity */
+
+#hawtio-main-page .pf-v6-c-nav {
+  /* <Nav variant='horizontal-subnav'> */
+  --pf-v6-c-nav--m-horizontal--m-subnav--BorderRadius: var(--pf-t--global--border--radius--200);
+  /* <NavList> */
+  --pf-v6-c-nav--m-horizontal--m-subnav__list--PaddingBlockStart: 0.25rem;
+  --pf-v6-c-nav--m-horizontal--m-subnav__list--PaddingBlockEnd: 0.25rem;
+  --pf-v6-c-nav--m-horizontal--m-subnav__list--PaddingInlineStart: 0.25rem;
+  --pf-v6-c-nav--m-horizontal--m-subnav__list--PaddingInlineEnd: 0.25rem;
+}
+
+#hawtio-main-page .pf-v6-c-masthead {
+  /* <Masthead> - less padding */
+  --pf-v6-c-masthead--PaddingBlock: var(--pf-t--global--spacer--md);
+  --pf-v6-c-masthead--PaddingInline: calc(var(--pf-t--global--spacer--inset--page-chrome) / 2);
+}
+
+#hawtio-main-page .pf-v6-c-nav {
+  /* <PageSidebar> - less padding */
+  --pf-v6-c-nav--PaddingBlockStart: var(--pf-t--global--spacer--100);
+  --pf-v6-c-nav--PaddingBlockEnd: var(--pf-t--global--spacer--sm);
+}
+
+#hawtio-main-page .pf-v6-c-page__sidebar {
+  /* <PageSidebar> - shrink the bottom padding */
+  --pf-v6-c-page__sidebar--PaddingBlockEnd: var(--pf-t--global--spacer--sm);
+}
+#hawtio-main-page .pf-v6-c-page__sidebar-body {
+  /* <PageSidebar> - shrink the left padding */
+  --pf-v6-c-page__sidebar-body--PaddingInlineEnd: calc(var(--pf-t--global--spacer--inset--page-chrome) / 2);
+  --pf-v6-c-page__sidebar-body--PaddingInlineStart: calc(var(--pf-t--global--spacer--inset--page-chrome) / 2);
+}
+
+#hawtio-main-page .pf-v6-c-page__main-container {
+  /* <Page> - shrink the bottom margin */
+  --pf-v6-c-page__main-container--MaxHeight: calc(100% - var(--pf-t--global--spacer--sm));
+  /* Shrink the right padding and left-padding (when sidebar is collapsed) */
+  --pf-v6-c-page__main-container--MarginInlineStart: calc(var(--pf-t--global--spacer--inset--page-chrome) / 2);
+  --pf-v6-c-page__main-container--MarginInlineEnd: calc(var(--pf-t--global--spacer--inset--page-chrome) / 2);
+}
+#hawtio-main-page .pf-v6-c-page__sidebar:not(.pf-m-collapsed) + .pf-v6-c-page__main-container {
+  /* Make this default rule more specific, so main left padding is 0 when sidebar is not collapsed */
+  --pf-v6-c-page__main-container--MarginInlineStart: 0;
+}
+
+#hawtio-main-page .pf-v6-c-toolbar {
+  /* <Toolbar> - shrink the bottom margin. Place toolbars in another symmetrically padded container instead. */
+  --pf-v6-c-toolbar--PaddingBlockEnd: 0;
+}
+
+#hawtio-main-page .pf-v6-c-toolbar__content-section {
+  /* Align toolbar buttons and three-dots menu vertically */
+  align-items: center;
+}
+
+#hawtio-main-page .pf-v6-l-flex.pf-m-align-items-center img {
+  /* Vertically align img icons in a flex with "align-items: center" */
+  vertical-align: center;
+}
+
+#hawtio-main-page .pf-v6-c-panel {
+  /* <Panel>, <PanelHeader>, <PanelMain> - less padding */
+  --pf-v6-c-panel__header--PaddingBlockStart: var(--pf-t--global--spacer--md);
+  --pf-v6-c-panel__header--PaddingBlockEnd: var(--pf-t--global--spacer--md);
+  --pf-v6-c-panel__header--PaddingInlineStart: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__header--PaddingInlineEnd: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__main-body--PaddingBlockStart: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__main-body--PaddingBlockEnd: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__main-body--PaddingInlineStart: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__main-body--PaddingInlineEnd: var(--pf-t--global--spacer--sm);
+}
+
+#hawtio-main-container .pf-v6-c-page__main-section {
+  /* <PageSection> - half the original padding */
+  --pf-v6-c-page__main-section--PaddingBlockStart: 0.5rem;
+  --pf-v6-c-page__main-section--PaddingBlockEnd: 0.5rem;
+  --pf-v6-c-page__main-section--PaddingInlineStart: 0.5rem;
+  --pf-v6-c-page__main-section--PaddingInlineEnd: 0.5rem;
+  /* smaller flex gap inside PageSection */
+  --pf-v6-c-page__main-section--RowGap: 0.25rem;
+}
+
+/* Customization of About dialog - by default uses paddings/margins of 4rem at least */
+
+.pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box {
+  --pf-v6-c-about-modal-box--lg--GridTemplateColumns: 1fr max-content;
+  --pf-v6-c-about-modal-box__brand--PaddingBlockStart: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__brand--PaddingBlockEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__brand--PaddingInlineStart: var(--pf-t--global--spacer--xl);
+  --pf-v6-c-about-modal-box__brand--PaddingInlineEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__header--PaddingBlockStart: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-about-modal-box__header--PaddingBlockEnd: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-about-modal-box__header--PaddingInlineStart: var(--pf-t--global--spacer--xl);
+  --pf-v6-c-about-modal-box__header--PaddingInlineEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__content--MarginBlockStart: var(--pf-t--global--spacer--md);
+  --pf-v6-c-about-modal-box__content--MarginBlockEnd: var(--pf-t--global--spacer--md);
+  --pf-v6-c-about-modal-box__content--MarginInlineStart: var(--pf-t--global--spacer--xl);
+  --pf-v6-c-about-modal-box__content--MarginInlineEnd: var(--pf-t--global--spacer--lg);
+}
+.pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__close {
+  padding-inline-start: var(--pf-v6-c-about-modal-box__close--PaddingInlineStart);
+  --pf-v6-c-about-modal-box__close--PaddingBlockStart: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__close--PaddingBlockEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__close--PaddingInlineEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-about-modal-box__close--PaddingInlineStart: var(--pf-t--global--spacer--lg);
+}
+.pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__brand {
+  align-items: center;
+}
+.pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__header {
+  padding-block-start: var(--pf-v6-c-about-modal-box__header--PaddingBlockStart);
+}
+
+/* Customization of Hawtio variables */
+
+:root {
+  /* Make all trees more compact (vertical and horizontal padding respectively) */
+  --hawtio-v4-tree-block-padding: 0.125rem;
+  --hawtio-v4-tree-inline-padding: 0.0125rem;
 }

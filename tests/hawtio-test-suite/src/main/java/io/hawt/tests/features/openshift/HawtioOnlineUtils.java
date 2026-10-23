@@ -458,6 +458,39 @@ public class HawtioOnlineUtils {
         return OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).withName(hawtioCrName).get().getStatus().getURL();
     }
 
+    /**
+     * Waits until the named Hawtio CR reaches the {@code Deployed} phase with a status URL, then
+     * returns it. Unlike {@link #deployHawtioCR(Hawtio)} this only observes an already-created CR,
+     * which is useful when verifying that the Operator reconciles a CR it is watching.
+     */
+    public static Hawtio waitForCrDeployed(String namespace, String name, Duration timeout) {
+        WaitUtils.waitFor(() -> {
+            final Hawtio cr = OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).withName(name).get();
+            return cr != null
+                && cr.getStatus() != null
+                && cr.getStatus().getPhase() != null
+                && "Deployed".equalsIgnoreCase(cr.getStatus().getPhase().name())
+                && cr.getStatus().getURL() != null;
+        }, "Waiting for Hawtio CR " + name + " in " + namespace + " to be Deployed", timeout);
+
+        return OpenshiftClient.get().resources(Hawtio.class).inNamespace(namespace).withName(name).get();
+    }
+
+    /**
+     * Waits for the Operator-generated {@code <crName>-tls-proxying-<hash>} secret to appear in the
+     * given namespace and returns its name.
+     */
+    public static String findProxyingSecret(String namespace, String crName) {
+        final String prefix = crName + "-tls-proxying";
+        return WaitUtils.withRetry(() -> OpenshiftClient.get().secrets().inNamespace(namespace)
+                .list().getItems().stream()
+                .map(s -> s.getMetadata().getName())
+                .filter(secretName -> secretName.startsWith(prefix))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("TLS proxying secret not yet created for CR " + crName)),
+            60, Duration.ofSeconds(1));
+    }
+
     public static String deployNamespacedHawtio(String name, String namespace) {
         return deployHawtioCR(withBaseHawtio(name, namespace, hawtio -> {
             hawtio.getSpec().setType(HawtioSpec.Type.NAMESPACE);
