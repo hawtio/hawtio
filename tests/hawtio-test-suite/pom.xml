@@ -49,7 +49,7 @@
         <!-- this BOM import ensures that we're not using some old transitive dependencies and we get them more unified -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

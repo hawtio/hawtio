@@ -40,18 +40,15 @@
     <jolokia-version>2.6.3</jolokia-version>
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
-    <quarkus-version>3.33.1.redhat-00006</quarkus-version>
-    <quarkus-extension-version>3.33.1.redhat-00002</quarkus-extension-version>
-    <!-- Spring Boot 3 -->
-    <spring-version>6.2.18</spring-version>
-    <spring-boot-version>3.5.14</spring-boot-version>
+    <quarkus-version>3.40.1.redhat-00002</quarkus-version>
+    <quarkus-extension-version>3.40.1.redhat-00002</quarkus-extension-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
-    <spring7-version>7.0.7</spring7-version>
-    <spring-boot4-version>4.0.6</spring-boot4-version>
+    <spring7-version>7.0.10</spring7-version>
+    <spring-boot4-version>4.1.2</spring-boot4-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
-    <camel-spring-boot-version>4.18.1.redhat-00014</camel-spring-boot-version>
+    <camel-spring-boot-version>4.22.1.redhat-00014</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.13</jetty12-version>
 
@@ -118,8 +115,6 @@
     <module>hawtio-war-minimal</module>
     <module>platforms/jetty-security</module>
     <module>platforms/quarkus</module>
-    <module>platforms/springboot</module>
-    <module>platforms/springboot-security</module>
     <module>platforms/springboot4</module>
     <module>platforms/springboot4-security</module>
     <module>plugins/hawtio-connect</module>

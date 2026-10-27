@@ -11,7 +11,7 @@
 
   <artifactId>hawtio-tests-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Spring Boot 3.x E2E tests</description>
+  <description>Hawtio :: Spring Boot 4.x E2E tests</description>
   <packaging>jar</packaging>
 
   <properties>
@@ -59,22 +59,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-undertow</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>io.undertow</groupId>
-          <artifactId>undertow-websockets-jsr</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -113,7 +97,7 @@
     <!-- hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-springboot</artifactId>
+      <artifactId>hawtio-springboot4</artifactId>
     </dependency>
 
     <!--
@@ -203,7 +187,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <configuration>
           <mainClass>io.hawt.tests.spring.boot.SpringBootService</mainClass>
           <jvmArguments>
