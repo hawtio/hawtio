@@ -72,11 +72,6 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
-        <artifactId>hawtio-springboot-keycloak</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
         <artifactId>hawtio-springboot-security</artifactId>
         <version>${project.version}</version>
       </dependency>
