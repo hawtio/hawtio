@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot-log4j2</artifactId>
   <name>${project.artifactId}</name>
-  <description>Hawtio :: Sample Spring Boot 3.x process with Log4J2</description>
+  <description>Hawtio :: Sample Spring Boot 4.x process with Log4J2</description>
 
   <dependencyManagement>
     <dependencies>
@@ -27,14 +27,14 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>${spring-version}</version>
+        <version>${spring7-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -60,26 +60,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-undertow</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>io.undertow</groupId>
-          <artifactId>undertow-websockets-jsr</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -144,7 +124,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot-version}</version>
+        <version>${spring-boot4-version}</version>
         <configuration>
           <mainClass>io.hawt.example.spring.boot.SampleSpringBootService</mainClass>
           <jvmArguments>
