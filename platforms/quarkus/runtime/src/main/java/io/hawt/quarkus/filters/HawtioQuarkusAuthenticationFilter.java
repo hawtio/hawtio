@@ -133,7 +133,7 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
             chain.doFilter(request, response);
             break;
         case NOT_AUTHORIZED:
-            ServletHelpers.doForbidden(httpResponse);
+            ServletHelpers.doUnauthorized(httpResponse);
             break;
         case NO_CREDENTIALS:
             if (authConfiguration.isNoCredentials401()) {
@@ -143,6 +143,9 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
                 // return forbidden 403 so the browser login does not popup
                 ServletHelpers.doForbidden(httpResponse);
             }
+            break;
+        case FORBIDDEN:
+            ServletHelpers.doForbidden(httpResponse);
             break;
         case THROTTLED:
             ServletHelpers.doTooManyRequests(httpResponse, result.getRetryAfter());

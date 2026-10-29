@@ -15,7 +15,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
@@ -199,6 +198,7 @@ public class Authenticator {
 
     public AuthenticateResult authenticate(Consumer<Subject> callback) {
         if (hasNoCredentials()) {
+            LOG.debug("Authentication failed: No credentials provided");
             return AuthenticateResult.noCredentials();
         }
 
@@ -213,25 +213,27 @@ public class Authenticator {
             return AuthenticateResult.throttled(attempt.retryAfter());
         }
 
-        Subject subject = doAuthenticate();
-        if (subject == null) {
-            throttler.ifPresent(t -> t.increase(username));
-            return AuthenticateResult.notAuthorized();
-        }
-        throttler.ifPresent(t -> t.reset(username));
+        Subject subject = new Subject();
+        AuthenticateResult authResult = doAuthenticate(subject);
 
-        if (callback != null) {
-            try {
-                callback.accept(subject);
-            } catch (Exception e) {
-                LOG.warn("Failed to execute privileged action:", e);
+        if (authResult.getType() == AuthenticateResult.Type.AUTHORIZED) {
+            throttler.ifPresent(t -> t.reset(username));
+            if (callback != null) {
+                try {
+                    callback.accept(subject);
+                } catch (Exception ex) {
+                    LOG.warn("Failed to execute privileged action:", ex);
+                }
             }
+        } else {
+            throttler.ifPresent(t -> t.increase(username));
         }
 
-        return AuthenticateResult.authorized();
+        return authResult;
     }
 
-    protected Subject doAuthenticate() {
+
+    protected AuthenticateResult doAuthenticate(Subject subject) {
         String realm = authConfiguration.getRealm();
         List<String> roles = authConfiguration.getRoles();
         List<Class<Principal>> rolePrincipalClasses = authConfiguration.getRolePrincipalClasses();
@@ -241,19 +243,26 @@ public class Authenticator {
             LOG.debug("doAuthenticate[realm={}, roles={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
                 realm, String.join(", ", roles), rolePrincipalClasses, configuration, username, "******");
 
-            Subject subject = new Subject();
             login(subject, realm, configuration);
             if (checkRoles(subject, roles, rolePrincipalClasses)) {
-                return subject;
+                return AuthenticateResult.authorized();
+            } else {
+                LOG.debug("Login failed due to role mismatch for user: {}", username);
+                return AuthenticateResult.forbidden();
             }
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
+            return AuthenticateResult.notAuthorized();
         } catch (LoginException e) {
             LOG.warn("Login failed due to: {}", e.getMessage());
             LOG.debug("Failed stacktrace:", e);
+            return AuthenticateResult.notAuthorized();
+        } catch (Exception e) {
+            LOG.error("Unexpected error during authentication: {}", e);
+            LOG.debug("Failed stacktrace:", e);
+            return AuthenticateResult.notAuthorized();
         }
 
-        return null;
     }
 
     protected void login(Subject subject, String realm, Configuration configuration) throws LoginException {
