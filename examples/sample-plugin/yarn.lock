@@ -542,9 +542,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hawtio/react@npm:^2.4.0-pre.1":
-  version: 2.4.0-pre.1
-  resolution: "@hawtio/react@npm:2.4.0-pre.1"
+"@hawtio/react@npm:^2.4.0-pre.2":
+  version: 2.4.0-pre.2
+  resolution: "@hawtio/react@npm:2.4.0-pre.2"
   dependencies:
     "@hawtio/camel-model-v4_18": "npm:@hawtio/camel-model@~4.18.5"
     "@hawtio/camel-model-v4_22": "npm:@hawtio/camel-model@~4.22.1"
@@ -553,7 +553,7 @@ __metadata:
     "@monaco-editor/react": "npm:^4.7.0"
     "@thumbmarkjs/thumbmarkjs": "npm:^1.12.0"
     dagre: "npm:^0.8.5"
-    dompurify: "npm:^3.4.16"
+    dompurify: "npm:^3.4.17"
     eventemitter3: "npm:^5.0.4"
     jolokia.js: "npm:^2.6.1"
     js-logger: "npm:^1.6.1"
@@ -578,7 +578,7 @@ __metadata:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
     react-router: ^7
-  checksum: 10/e179b747194c5832b1dc969d63bd4a4043c1131e25c90c2333ce0dbf7ad09de9168087cb523402113a189fdfa6adf81b8c11afeb264f114dac541897c4779f89
+  checksum: 10/7842aca8f2bf67502aebe7347948430b3444c4f7e202cf3a461fa0e565770c6baad97d4604e41239c2e2c086edaec6fa065486770132f176ba002a0d04d90997
   languageName: node
   linkType: hard
 
@@ -4262,15 +4262,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.4.16":
-  version: 3.4.16
-  resolution: "dompurify@npm:3.4.16"
+"dompurify@npm:^3.4.17":
+  version: 3.4.17
+  resolution: "dompurify@npm:3.4.17"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/a571d0e2bede4f739666afd640398a86854abd27c71ce0724910249e2fd2ca7ddb8098a9ab579d3a5b39058419af694421f8fe859a81fd6d8acda16019a8ab9d
+  checksum: 10/ae03c068bd351d1201a24a9667cb302c65939f45a0c357edec8b84133108e19ac74f355c2d8b0f30baadadd7f0be2db300d269aa80d3ee15872712ca9ff4e1a8
   languageName: node
   linkType: hard
 
@@ -4902,7 +4902,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "hawtio-sample-plugin@workspace:."
   dependencies:
-    "@hawtio/react": "npm:^2.4.0-pre.1"
+    "@hawtio/react": "npm:^2.4.0-pre.2"
     "@patternfly/patternfly": "npm:^6.6.1"
     "@patternfly/react-charts": "npm:^8.6.1"
     "@patternfly/react-code-editor": "npm:^6.6.2"
