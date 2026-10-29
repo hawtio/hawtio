@@ -8,7 +8,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@hawtio/react": "^2.4.0-pre.1",
+    "@hawtio/react": "^2.4.0-pre.2",
     "@patternfly/patternfly": "^6.6.1",
     "@patternfly/react-charts": "^8.6.1",
     "@patternfly/react-code-editor": "^6.6.2",
