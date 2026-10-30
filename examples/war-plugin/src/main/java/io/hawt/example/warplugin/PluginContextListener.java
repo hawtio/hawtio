@@ -19,6 +19,10 @@ public class PluginContextListener implements ServletContextListener {
             // url is optional unless it is hosted on a different location
             //.url("http://localhost:8080")
             .scope("samplePlugin")
+                // TODO: there's something wrong with the resolution in a Servlet container
+                //       where hawtio.war and war-plugin.war are deployed side-by-side
+//            .remoteEntryFileName(servletContextEvent.getServletContext().getContextPath() + "/remoteEntry.js")
+//            .remoteEntryFileName("../remoteEntry.js")
             .module("./plugin");
         plugin.init();
 
