@@ -1,102 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2009-2011 Roland Huss
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
 
-<restrict>
+    Copyright 2026 Hawtio Team
 
-  <!-- List of remote hosts which are allowed to access this agent. The name can be
-       given as IP or FQDN. If any of the given hosts matches, access will be allowed
-      (respecting further restrictions, though). If <remote> ... </remote> is given
-      without any host no access is allowed at all (probably not what you want).
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-      You can also specify a subnetmask behind a numeric IP adress in which case any
-      host within the specified subnet is allowed to access the agent. The netmask can
-      be given either in CIDR format (e.g "/16") or as a full netmask (e.g. "/255.255.0.0")
-  -->
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<restrict xmlns="http://www.jolokia.org/jolokia-restrictor/schema/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.jolokia.org/jolokia-restrictor/schema/config https://jolokia.org/jolokia-restrictor.xsd">
+
   <!--
+    List of the remote hosts which are allowed to access this agent. The name can be
+    given as IP4, IP6 or FQDN. If any of the given hosts matches, access will be allowed
+    (respecting further restrictions, though). If <remote> ... </remote> is given
+    without any host no access is allowed at all (probably not what you want).
+
+    You can also specify a sub-netmask behind a numeric IP4 address in which case any
+    host within the specified subnet is allowed to access the agent. The netmask can
+    be given either in CIDR format (e.g "/16") or as a full netmask (e.g. "/255.255.0.0").
+
+    When Hawtio runs behind a reverse-proxy, HTTP headers like X-Forwarded-For, X-Real-IP and Forwarded
+    are also checked and by default all the incoming hosts/addresses specified in these headers
+    must be allowed.
+    Jolokia "trustProxyHeaders" option (defaults to "false") may be used to tell Hawtio that the ultimate
+    HTTP client calling Jolokia is a trusted reverse-proxy, so the first host/address in the proxy
+    header is the only host/address that should be checked. By default all the hosts/addresses are checked.
+
+    The client address of a direct client (whether normal client or the innermost reverse-proxy) is always checked.
+  -->
   <remote>
     <host>127.0.0.1</host>
     <host>localhost</host>
-    <host>10.0.0.0/16</host>
+    <host>[::1]</host>
+
+    <!-- The allowed hosts are also checked for UDP Multicast discovery, so include proper addresses or ranges -->
+    <host>192.168.0.0/16</host>
+    <!-- IP6 addresses can be specified with or without brackets -->
+<!--    <host>[2001:db8::1]</host>-->
+    <!-- IP6 "subnets" are properly handled by Jolokia (no brackets) -->
+<!--    <host>2001:db8::/32</host>-->
   </remote>
-  -->
 
   <!--
-  Access restriction based on the HTTP method with which an Jolokia request was received.
-  The following example allows only HTTP POST requests. If the section is missing, all
-  HTTP requests methods are allowed.
+    Jolokia supports both GET and POST methods for accessing the JMX MBean Server over HTTP.
+    https://jolokia.org/reference/html/manual/jolokia_protocol.html shows differences between these
+    protocols.
+    GET requests may be easier to send using clients like `curl`, for example with:
+
+    $ curl -i http://localhost:7778/jolokia/read/java.lang:type=Runtime/Name
+
+    Hawtio web application always calls Jolokia using POST requests, so GET method should
+    be enabled only when easy `curl` access is needed.
+    The above example could use POST method with this command:
+
+    $ curl -H'Content-Type: application/json' -i \
+      -d '{"type":"read","mbean":"java.lang:type=Runtime","attribute":["Name"]}' http://localhost:7778/jolokia
+
+    If the section is missing, all HTTP requests methods are allowed.
   -->
-  <!--
   <http>
     <method>post</method>
   </http>
-  -->
 
   <!--
-  List of allowed commands.
+    List of allowed Jolokia commands.
 
-  If this sections is present, it influence the following section.
+    If this section is missing entirely, all commands are allowed.
+    If this section is empty, no command is allowed (with special handling of MBean commands).
 
-  For each command type present, the principle behaviour is allow this command for all
-  MBeans. To remove an MBean (attribute/operation), a <deny> section has to be added.
+    For MBean commands "read", "write" and "exec" further customization is possible with
+    <allow> and <deny> elements.
+    When read/write/exec commands are permitted, <deny> element may prevent accessing configured MBeans.
+    When read/write/exec commands are forbidden, <allow> element may allow accessing configured MBeans.
 
-  For each command type missing, the command is disabled by default. For certain MBeans
-  it can be selectively by enabled by using an <allow> section below
+    Known types are:
+    Metadata commands:
+    * config
+    * version
 
-  Known types are:
+    MBean access commands:
+    * read
+    * write
+    * exec
+    * notification
 
-  * read
-  * write
-  * exec
-  * list
-  * version
-  * search
-
-  A missing <commands> section implies that every operation type is allowed (and can
-  be selectively controlled by a <deny> section)
+    MBean discovery commands:
+    * list
+    * search
   -->
 
   <commands>
+    <command>config</command>
+    <command>version</command>
     <command>read</command>
     <command>write</command>
     <command>exec</command>
     <command>list</command>
-    <command>version</command>
     <command>search</command>
   </commands>
 
-  <!-- For each command type missing in a given <commands> section, for certain MBeans (which
-       be a pattern, too) an command be alloed. Note that an <allow> entry e.g. for reading
-       an attribute of an certain MBean has no influence if reading is enabled globally anyway -->
   <!--
-    <allow>
-      <mbean>
-        <name>jolokia:type=Config</name>
-        <operation>*</operation>
-        <attribute>*</attribute>
-      </mbean>
-      <mbean>
-        <name>java.lang:type=Threading</name>
-        <operation>findDeadlockedThreads</operation>
-      </mbean>
-    </allow>
+    If MBean access commands (read/write/exec) are disabled, access to selected MBeans may be allowed
+    by specifying the MBean name patterns here.
+  -->
+  <!--
+  <allow>
+    <mbean>
+      <name>jolokia:type=Config</name>
+      <operation>*</operation>
+      <attribute>*</attribute>
+    </mbean>
+    <mbean>
+      <name>java.lang:type=Threading</name>
+      <operation>findDeadlockedThreads</operation>
+    </mbean>
+  </allow>
   -->
 
-  <!-- MBean access can be restricted by a <deny> section for commands enabled in a <commands> section
-       (or when the <commands> section is missing completely in which case all commands are allowed)
+  <!--
+    If MBean access commands (read/write/exec) are enabled, access to selected MBeans may be prevented
+    by specifying the MBean name patterns here.
   -->
   <deny>
     <mbean>
@@ -106,11 +140,69 @@
     </mbean>
   </deny>
 
+  <!--
+    We can remove selected MBeans (by JMX pattern) from the result of "search" and "list" commands.
+    This section may be used to filter out MBeans are known to be registered very frequently or in a large amounts
+    (like Artemis/ActiveMQ queues for example).
+    This filter does not prevent from accessing matching MBeans using read/write/exec commands - it's only for
+    list/search operations.
+  -->
+  <!--
+  <filter>
+    <mbean>org.apache.logging.log4j2:*</mbean>
+    <mbean>jdk.management.jfr:*</mbean>
+  </filter>
+  -->
 
+  <!--
+    CORS configuration is used both to control CORS protocol HTTP response headers and for additional
+    restriction based on Origin or Referer HTTP headers (with strict-checking enabled).
+    Without any <allow-origin> configured, all origins are allowed.
+
+    1. CORS: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
+
+       CORS headers need to be sent when Jolokia agent is accessed from JavaScript code running in web application
+       of different origin (https://developer.mozilla.org/en-US/docs/Glossary/Origin) than the Jolokia agent.
+       Without proper CORS response headers, the response can not be accessed by the requesting JavaScript code
+       (which may use xhr or fetch API).
+
+       For Hawtio JavaScript client (jolokia.js) is always performing same-site requests, so CORS headers are not
+       required. Even if Jolokia checks that incoming Origin is not allowed and no CORS response headers are sent,
+       Hawtio web application can access the xhr/fetch response without issues.
+
+    2. Restricting access from web applications where JavaScript code can't control the Origin headers.
+
+       This is a mechanism for preventing CSRF attacks, where user is logged into Hawtio in one browser tab and
+       a page loaded from non-trusted Origin is using Jolokia.js (or xhr/fetch) to send requests to the backend.
+
+       This mode is enabled with <strict-checking> and operator should explicitly list all the origins from which
+       Hawtio web application is accessed. In other words, this should include all the origins under which Hawtio
+       is deployed.
+  -->
   <cors>
-    <!-- Allow cross origin access -->
-    <allow-origin>*</allow-origin>
-    <!-- Use if Origin header can use https while the protocol is http (e.g., with TLS proxy) -->
-    <ignore-scheme/>
+    <!--
+      List of Origin headers for which Jolokia will respond with Access-Control-Allow-Origin when handling
+      CORS preflight requests and resource access requests.
+      When <strict-checking> is enabled, this list restrict entire access to Jolokia server and HTTP 403 is returned.
+    -->
+    <allow-origin>http://127.0.0.1:*</allow-origin>
+    <allow-origin>http://localhost:*</allow-origin>
+    <allow-origin>http://[::1]:*</allow-origin>
+
+    <!--
+      With strict-checking the <allow-origin> values are used not only for CORS protocol (preflight requests),
+      but also for rejecting requests entirely based on Origin (and here - also Referer) header.
+      This may be used to restrict access to Jolokia from web pages using Jolokia JS client, where the sender can't
+      control the Origin header.
+      It's not a proper restriction for non-browser HTTP clients.
+    -->
+    <strict-checking />
+
+    <!--
+      Use if Origin header can use https while the protocol used for access the Jolokia Agent
+      is http (e.g., with TLS proxy).
+    -->
+    <ignore-scheme />
   </cors>
+
 </restrict>

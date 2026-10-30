@@ -71,7 +71,10 @@ public class About implements AboutMBean {
     private synchronized String doGetHawtioVersion() {
         // loading the version can be tricky depending on how hawtio has been started, so we try different strategies
 
-        String version = Objects.getVersion(getClass(), "io.hawt", "hawtio-web");
+        String version = Objects.getVersion(getClass(), "io.hawt", "hawtio-system");
+        if (version == null) {
+            version = Objects.getVersion(getClass(), "io.hawt", "hawtio-web");
+        }
         if (version == null) {
             version = Objects.getVersion(getClass(), "io.hawt", "hawtio-app");
         }
@@ -87,7 +90,10 @@ public class About implements AboutMBean {
             Properties p = new Properties();
 
             // try to load from maven properties first as they have the version
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-web/pom.properties");
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream("io.hawt-hawtio-system-version.properties");
+            if (is == null) {
+                is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-web/pom.properties");
+            }
             if (is == null) {
                 is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/META-INF/maven/io.hawt/hawtio-default/pom.properties");
             }
