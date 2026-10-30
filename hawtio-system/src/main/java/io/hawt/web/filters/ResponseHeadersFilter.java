@@ -28,7 +28,6 @@ public class ResponseHeadersFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
         filters.add(new CacheHeadersFilter());
-        filters.add(new CORSFilter());
         filters.add(new XFrameOptionsFilter());
         filters.add(new XXSSProtectionFilter());
         filters.add(new XContentTypeOptionsFilter());
