@@ -59,8 +59,13 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
 
         // CORS preflight requests should be ignored
         if ("OPTIONS".equals(httpRequest.getMethod())) {
-            chain.doFilter(request, response);
-            return;
+            String requestMethod = httpRequest.getHeader("Access-Control-Request-Method");
+            String origin = httpRequest.getHeader("Origin");
+            if (requestMethod != null && !requestMethod.isEmpty() && origin != null && !origin.isEmpty()) {
+                // only this is a real CORS preflight request
+                chain.doFilter(request, response);
+                return;
+            }
         }
 
         String path = httpRequest.getServletPath();
