@@ -128,6 +128,7 @@
   --pf-v6-c-about-modal-box__content--MarginBlockEnd: var(--pf-t--global--spacer--md);
   --pf-v6-c-about-modal-box__content--MarginInlineStart: var(--pf-t--global--spacer--xl);
   --pf-v6-c-about-modal-box__content--MarginInlineEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-content--dl--RowGap: var(--pf-t--global--spacer--sm);
 }
 .pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__close {
   padding-inline-start: var(--pf-v6-c-about-modal-box__close--PaddingInlineStart);
@@ -141,6 +142,9 @@
 }
 .pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__header {
   padding-block-start: var(--pf-v6-c-about-modal-box__header--PaddingBlockStart);
+}
+#hawtio-about-product-info dl {
+  margin: var(--pf-t--global--spacer--sm);
 }
 
 /* Customization of Hawtio variables */
