@@ -32,7 +32,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -43,7 +42,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
@@ -77,11 +75,6 @@ public class ProxyServlet extends HttpServlet {
     /* INIT PARAMETER NAME CONSTANTS */
 
     /**
-     * A boolean parameter name to enable forwarding of the client IP
-     */
-    public static final String P_FORWARDEDFOR = "forwardip";
-
-    /**
      * Whether we accept self-signed SSL certificates
      */
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS = "hawtio.proxyDisableCertificateValidation";
@@ -99,7 +92,6 @@ public class ProxyServlet extends HttpServlet {
 
     protected boolean enabled = true;
 
-    protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
 
     protected ProxyAllowlist allowlist;
@@ -130,11 +122,6 @@ public class ProxyServlet extends HttpServlet {
         String allowlistStr = config.get(PROXY_ALLOWLIST).orElse(servletConfig.getInitParameter(PROXY_ALLOWLIST));
         boolean probeLocal = config.getBoolean(LOCAL_ADDRESS_PROBING, true);
         allowlist = new ProxyAllowlist(allowlistStr, probeLocal);
-
-        String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
-        if (doForwardIPString != null) {
-            this.doForwardIP = Boolean.parseBoolean(doForwardIPString);
-        }
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
             .disableCookieManagement()
@@ -169,7 +156,7 @@ public class ProxyServlet extends HttpServlet {
             }
         } catch (IOException e) {
             log("While destroying servlet, shutting down httpclient: " + e, e);
-            LOG.error("While destroying servlet, shutting down httpclient: " + e, e);
+            LOG.error("While destroying servlet, shutting down httpclient: {}", e.getMessage(), e);
         }
         super.destroy();
     }
@@ -185,6 +172,20 @@ public class ProxyServlet extends HttpServlet {
 
         if (!enabled) {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (!"POST".equalsIgnoreCase(servletRequest.getMethod())) {
+            // ProxyServlet should never answer GET requests
+            servletResponse.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return;
+        }
+
+        String contentType = servletRequest.getContentType();
+        if (contentType == null || !contentType.toLowerCase().startsWith("application/json")) {
+            // @hawtio/react will always send this content type and Jolokia will reject any other value,
+            // so better cut short
+            servletResponse.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             return;
         }
 
@@ -213,7 +214,7 @@ public class ProxyServlet extends HttpServlet {
             targetUriObj = new URI(proxyRequestUri);
         } catch (URISyntaxException e) {
             LOG.error("URL '{}' is not valid: {}", proxyRequestUri, e.getMessage());
-            servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -227,7 +228,8 @@ public class ProxyServlet extends HttpServlet {
             eProxyRequest.setEntity(new InputStreamEntity(servletRequest.getInputStream(), servletRequest.getContentLength()));
             proxyRequest = eProxyRequest;
         } else {
-            proxyRequest = new BasicHttpRequest(method, proxyRequestUri);
+            servletResponse.setStatus(HttpServletResponse.SC_LENGTH_REQUIRED);
+            return;
         }
 
         copyRequestHeaders(servletRequest, proxyRequest, targetUriObj);
@@ -270,16 +272,11 @@ public class ProxyServlet extends HttpServlet {
             copyResponseEntity(proxyResponse, servletResponse);
 
         } catch (Exception e) {
-            // abort request, according to best practice with HttpClient
-            @SuppressWarnings("deprecation")
-            boolean isAbortable = proxyRequest instanceof AbortableHttpRequest;
-            if (isAbortable) {
-                @SuppressWarnings("deprecation")
-                AbortableHttpRequest abortableHttpRequest = (AbortableHttpRequest) proxyRequest;
-                abortableHttpRequest.abort();
-            }
+            // GET requests were org.apache.http.client.methods.AbortableHttpRequest
+            // but we send only POST requests
+
             // Exception needs to be suppressed for security reason
-            LOG.debug("Proxy to " + proxyRequestUri + " failed", e);
+            LOG.debug("Proxy to {} failed", proxyRequestUri, e);
             if (e instanceof ConnectException || e instanceof UnknownHostException) {
                 // Target host refused connection or doesn't exist
                 servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -287,12 +284,12 @@ public class ProxyServlet extends HttpServlet {
                 // Redirect / Not Modified failed
                 servletResponse.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
             } else if (e instanceof SecurityException) {
+                // TODO: This should be not used here
                 servletResponse.setHeader("WWW-Authenticate", "Basic");
                 servletResponse.sendError(statusCode, e.getMessage());
             } else {
                 servletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
-
         } finally {
             if (proxyResponse != null) {
                 // Make sure the entire entity was consumed
@@ -356,8 +353,48 @@ public class ProxyServlet extends HttpServlet {
     static {
         hopByHopHeaders = new HeaderGroup();
         String[] headers = new String[] {
-            "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-            "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie" };
+                // https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1
+                "Connection",
+                "Keep-Alive",
+                "Proxy-Authenticate",
+                "Proxy-Authorization",
+                "TE",
+                "Trailers",
+                "Transfer-Encoding",
+                "Upgrade",
+                // Jolokia Agents are stateless
+                "Cookie",
+                "Set-Cookie",
+                // https://datatracker.ietf.org/doc/html/rfc7230#section-4.4 clarifies one header
+                "Trailer",
+                // while Jolokia reads X-Jolokia-Authorization, Hawtio should take it from web app and translate
+                // into Authorization, so don't copy it. Don't copy Authorization either, because ProxyServlet
+                // will prepare own version from proxy details.
+                "X-Jolokia-Authorization",
+                "Authorization",
+                // other
+                "Proxy-Connection",
+                "Pragma",
+                "Priority",
+                // we don't need to propagate this from Jolokia Agent server
+                "X-Powered-By",
+                // Fetch Metadata - should be skipped, because Hawtio web app calls Proxy Servlet in same-origin
+                // and passing this information "cross origin" to target Jolokia Agent using non-browser HTTP Client
+                // may be misleading
+                "Sec-Fetch-Site",
+                "Sec-Fetch-Mode",
+                "Sec-Fetch-Dest",
+                // CORS headers (request and response) should be skipped, because Proxy Servlet is always accessed
+                // with same-origin. However "Origin" and "Referer" headers are passed.
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Methods",
+                "Access-Control-Allow-Headers",
+                "Access-Control-Allow-Credentials",
+                "Access-Control-Expose-Headers",
+                "Access-Control-Max-Age",
+        };
         for (String header : headers) {
             hopByHopHeaders.addHeader(new BasicHeader(header, null));
         }
@@ -400,14 +437,18 @@ public class ProxyServlet extends HttpServlet {
     private void setXForwardedForHeader(HttpServletRequest servletRequest,
                                         HttpRequest proxyRequest) {
         String headerName = "X-Forwarded-For";
-        if (doForwardIP) {
-            String newHeader = servletRequest.getRemoteAddr();
-            String existingHeader = servletRequest.getHeader(headerName);
-            if (existingHeader != null) {
-                newHeader = existingHeader + ", " + newHeader;
-            }
-            proxyRequest.setHeader(headerName, ServletHelpers.sanitizeHeader(newHeader));
-        }
+        String newHeader = servletRequest.getRemoteAddr();
+        // TODO: Add an option for trusting incoming X-Forwarded-For header as in
+        //       https://github.com/jolokia/jolokia/issues/621
+        // this is not a problem even if the incoming X-Forwarded-For header is not trusted
+        // because Jolokia by default verifies all entries. However we should
+        // not pass this incoming header, as it may be crafted.
+//        String existingHeader = servletRequest.getHeader(headerName);
+//        newHeader = existingHeader + ", " + newHeader;
+
+        // whether or not Hawtio runs behind a reverse proxy (trusted or not), we'll send the incoming IP
+        // address as the forwarded client IP. Jolokia can verify it with its policy configuration.
+        proxyRequest.setHeader(headerName, ServletHelpers.sanitizeHeader(newHeader));
     }
 
     /**
