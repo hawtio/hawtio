@@ -6,6 +6,10 @@ const path = require('path')
 
 const outputPath = path.resolve(__dirname, 'build')
 
+// there's a problem with node_modules/@patternfly/react-icons/dist/esm/package.json which is almost empty
+// (a bug in Patternfly distro?)
+delete dependencies['@patternfly/react-icons']
+
 module.exports = (_, args) => {
   const isProduction = args.mode === 'production'
   return {
@@ -107,6 +111,15 @@ module.exports = (_, args) => {
       alias: {
         '@thumbmarkjs/thumbmarkjs': path.join(__dirname, './node_modules/@thumbmarkjs/thumbmarkjs/dist/thumbmark.esm.js'),
       },
+    },
+    optimization: {
+      runtimeChunk: isProduction ? 'single' : false,
+      // new webpack plugin uses built-in minimizer and we have no reason to optimize htmls
+      // https://webpack.js.org/configuration/optimization/#optimizationminimizer
+      minimize: isProduction ? {
+        // this violates type checking, but works fine.
+        html: false
+      } : false,
     },
     ignoreWarnings: [
       // For suppressing sourcemap warnings coming from some dependencies

@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Hawtio Management Console" />
 
+    <script>
+      ;(() => {
+        if (localStorage && window.matchMedia) {
+          const saved = localStorage.getItem('hawtio.theme')
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const theme = saved ?? (prefersDark ? 'dark' : 'light')
+          if (theme === 'dark') {
+            document.documentElement.classList.add('pf-v6-theme-dark')
+          } else {
+            document.documentElement.classList.remove('pf-v6-theme-dark')
+          }
+        }
+      })()
+    </script>
+
     <!-- Hawtio branding styles placeholder -->
     <link id="branding" rel="stylesheet" type="text/css" href="" />
 

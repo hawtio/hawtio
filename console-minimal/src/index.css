@@ -5,6 +5,7 @@
  */
 
 /* Customization of Patternfly variables */
+/* This file is not about branding, but about adjusting default Patternfly variables roughly for more compact style */
 
 /* Variables from '@patternfly/react-core/dist/styles/base.css' that can be overridden using the same selector */
 
@@ -35,6 +36,11 @@
   /* <Masthead> - less padding */
   --pf-v6-c-masthead--PaddingBlock: var(--pf-t--global--spacer--md);
   --pf-v6-c-masthead--PaddingInline: calc(var(--pf-t--global--spacer--inset--page-chrome) / 2);
+}
+
+#hawtio-main-page.pf-v6-c-page {
+  /* <PageSidebar> customization. Defaults to 18.125rem */
+  --pf-v6-c-page__sidebar--Width--base: 18.125rem;
 }
 
 #hawtio-main-page .pf-v6-c-nav {
@@ -90,6 +96,10 @@
   --pf-v6-c-panel__main-body--PaddingBlockEnd: var(--pf-t--global--spacer--sm);
   --pf-v6-c-panel__main-body--PaddingInlineStart: var(--pf-t--global--spacer--sm);
   --pf-v6-c-panel__main-body--PaddingInlineEnd: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__footer--PaddingBlockStart: var(--pf-t--global--spacer--md);
+  --pf-v6-c-panel__footer--PaddingBlockEnd: var(--pf-t--global--spacer--md);
+  --pf-v6-c-panel__footer--PaddingInlineStart: var(--pf-t--global--spacer--sm);
+  --pf-v6-c-panel__footer--PaddingInlineEnd: var(--pf-t--global--spacer--sm);
 }
 
 #hawtio-main-container .pf-v6-c-page__main-section {
@@ -118,6 +128,7 @@
   --pf-v6-c-about-modal-box__content--MarginBlockEnd: var(--pf-t--global--spacer--md);
   --pf-v6-c-about-modal-box__content--MarginInlineStart: var(--pf-t--global--spacer--xl);
   --pf-v6-c-about-modal-box__content--MarginInlineEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-content--dl--RowGap: var(--pf-t--global--spacer--sm);
 }
 .pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__close {
   padding-inline-start: var(--pf-v6-c-about-modal-box__close--PaddingInlineStart);
@@ -131,6 +142,9 @@
 }
 .pf-v6-c-modal-box.pf-m-lg .pf-v6-c-about-modal-box__header {
   padding-block-start: var(--pf-v6-c-about-modal-box__header--PaddingBlockStart);
+}
+#hawtio-about-product-info dl {
+  margin: var(--pf-t--global--spacer--sm);
 }
 
 /* Customization of Hawtio variables */
