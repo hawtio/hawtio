@@ -61,8 +61,6 @@ import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_KEYCLOAK_ENABL
 import static io.hawt.web.auth.AuthenticationConfiguration.HAWTIO_ROLES;
 import static io.hawt.web.auth.keycloak.KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG;
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
-import static io.hawt.web.filters.CORSFilter.HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN;
-import static io.hawt.web.filters.CORSFilter.HAWTIO_ENABLE_CORS;
 import static io.hawt.web.filters.ContentSecurityPolicyFilter.HAWTIO_CONNECT_SRC;
 import static io.hawt.web.filters.ContentSecurityPolicyFilter.HAWTIO_SCRIPT_SRC;
 import static io.hawt.web.filters.ContentSecurityPolicyFilter.HAWTIO_SCRIPT_SRC_ELEM;
@@ -245,10 +243,6 @@ public class HawtioProcessor {
             .ifPresent(systemProperties::produce);
 
         // hawtio.http
-        systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_ENABLE_CORS, config.http().enableCORS().toString()));
-        config.http().accessControlAllowOrigin()
-            .map(accessControlAllowOrigin -> new SystemPropertyBuildItem(HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN, accessControlAllowOrigin))
-            .ifPresent(systemProperties::produce);
         systemProperties.produce(new SystemPropertyBuildItem(HAWTIO_ALLOW_X_FRAME_SAME_ORIGIN, config.http().allowXFrameSameOrigin().toString()));
         config.http().referrerPolicy()
             .map(referrerPolicy -> new SystemPropertyBuildItem(HAWTIO_REFERRER_POLICY, referrerPolicy))

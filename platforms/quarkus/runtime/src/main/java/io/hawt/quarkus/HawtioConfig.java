@@ -81,19 +81,6 @@ public interface HawtioConfig {
 
     interface Http {
         /**
-         * Whether CORS filter is enabled and checks for permitted Origin HTTP header values.
-         */
-        @WithDefault("false")
-        Boolean enableCORS();
-
-        /**
-         * When hawtio.http.enableCORS option is enabled, Hawtio responds to CORS pre-flight requests with CORS headers.
-         * This option allows to set the value returned in Access-Control-Allow-Origin response header.
-         */
-        @WithDefault("*")
-        Optional<String> accessControlAllowOrigin();
-
-        /**
          * <p>
          * When set to true, Hawtio sends response headers:
          * </p>
