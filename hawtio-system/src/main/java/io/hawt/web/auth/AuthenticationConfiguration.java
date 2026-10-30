@@ -434,6 +434,9 @@ public class AuthenticationConfiguration {
         //
         // set a flag for Jolokia's Agent servlet, so it can return supported authentication method
         // using /jolokia/config endpoint (new in 2.4.0)
+        //
+        // additionally this will allow Jolokia to properly handle CORS Access-Control-Allow-Credentials
+        // response header which should be sent only when authentication is enabled
         context.setAttribute(AgentServlet.EXTERNAL_BASIC_AUTH_REALM, realm);
 
         // some services (Tomcat discovery, OIDC, Spring Boot + Spring Security) may have added extra
