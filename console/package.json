@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hawtio/react": "^2.4.0-pre.2",
-    "@patternfly/patternfly": "^6.6.1",
+    "@patternfly/patternfly": "^6.7.0",
     "@patternfly/react-charts": "^8.6.1",
     "@patternfly/react-code-editor": "^6.6.2",
     "@patternfly/react-core": "^6.6.2",
