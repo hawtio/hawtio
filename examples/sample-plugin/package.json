@@ -20,7 +20,7 @@
     "monaco-editor": "~0.56.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "^7.18.4"
+    "react-router": "^7.18.5"
   },
   "devDependencies": {
     "@swc/core": "^1.16.13",
