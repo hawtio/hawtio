@@ -50,7 +50,7 @@
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
     <camel-spring-boot-version>4.22.1.redhat-00014</camel-spring-boot-version>
     <!-- Jetty -->
-    <jetty12-version>12.1.13</jetty12-version>
+    <jetty12-version>12.1.14</jetty12-version>
 
     <!-- Other dependencies -->
     <assertj-core-version>3.27.7</assertj-core-version>
