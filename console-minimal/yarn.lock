@@ -558,7 +558,7 @@ __metadata:
   dependencies:
     "@hawtio/backend-middleware": "npm:^1.1.0"
     "@hawtio/react": "npm:^2.4.0-pre.2"
-    "@patternfly/patternfly": "npm:^6.6.1"
+    "@patternfly/patternfly": "npm:^6.7.0"
     "@patternfly/react-charts": "npm:^8.6.1"
     "@patternfly/react-code-editor": "npm:^6.6.2"
     "@patternfly/react-core": "npm:^6.6.2"
@@ -1509,10 +1509,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/patternfly@npm:^6.6.1":
-  version: 6.6.1
-  resolution: "@patternfly/patternfly@npm:6.6.1"
-  checksum: 10/c31de161b70d1215aef37b29476cff7e8ded606b872497c164461bbecfe6cbf73a65595661d18e0825c7791716387a3444ea8dca88651368f2fdd57984b93967
+"@patternfly/patternfly@npm:^6.7.0":
+  version: 6.7.0
+  resolution: "@patternfly/patternfly@npm:6.7.0"
+  checksum: 10/a499db6771c686f5abdfe366620c82d855428431c58949a0b83c1e3b533e0b92b83b8afdfd85a480af479b463d884d81df0fe53498baa7e89eaa93f98d10bf1a
   languageName: node
   linkType: hard
 
