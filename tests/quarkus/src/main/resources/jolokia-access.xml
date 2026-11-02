@@ -182,6 +182,8 @@
     <allow-origin>http://127.0.0.1:*</allow-origin>
     <allow-origin>http://localhost:*</allow-origin>
     <allow-origin>http://[::1]:*</allow-origin>
+    <!-- Origin for Hawtio run in a container -->
+    <allow-origin>http://172.*:*</allow-origin>
 
     <!--
       With strict-checking the <allow-origin> values are used not only for CORS protocol (preflight requests),
