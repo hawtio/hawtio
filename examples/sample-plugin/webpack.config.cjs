@@ -113,7 +113,7 @@ module.exports = (_, args) => {
       },
     },
     optimization: {
-      runtimeChunk: isProduction ? 'single' : false,
+      runtimeChunk: false,
       // new webpack plugin uses built-in minimizer and we have no reason to optimize htmls
       // https://webpack.js.org/configuration/optimization/#optimizationminimizer
       minimize: isProduction ? {
