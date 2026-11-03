@@ -417,6 +417,12 @@ public class ProxyServlet extends HttpServlet {
         for (Header header : proxyResponse.getAllHeaders()) {
             if (hopByHopHeaders.containsHeader(header.getName()))
                 continue;
+            if (header.getName().equalsIgnoreCase(HttpHeaders.CACHE_CONTROL)
+                && servletResponse.containsHeader(HttpHeaders.CACHE_CONTROL)) {
+                // Hawtio's CacheHeadersFilter has already set its own (stricter) policy - don't add
+                // a second Cache-Control header with the value from the remote Jolokia agent
+                continue;
+            }
             if (header.getName().equalsIgnoreCase(HttpHeaders.WWW_AUTHENTICATE)) {
                 // for browser purposes we want to avoid using browser native popup for entering credentials
                 // and storing them in browser's password manager. The best way to do it is to ensure that
