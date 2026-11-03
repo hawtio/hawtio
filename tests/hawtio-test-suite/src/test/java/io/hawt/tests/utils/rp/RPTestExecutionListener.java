@@ -5,13 +5,11 @@ import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 
-import com.google.auto.service.AutoService;
-
 import java.util.Stack;
 
 import io.hawt.tests.features.utils.Attachments;
 
-@AutoService(TestExecutionListener.class)
+// Registered via src/test/resources/META-INF/services/org.junit.platform.launcher.TestExecutionListener
 public class RPTestExecutionListener implements TestExecutionListener {
 
     private static String transformReportingName(String name) {
