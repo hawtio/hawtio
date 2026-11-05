@@ -81,12 +81,16 @@ public class LoginServlet extends HttpServlet {
                 // response was sent using the authenticated subject, nothing more to do
                 break;
             case NOT_AUTHORIZED:
-                ServletHelpers.doUnauthorized(response);
-                break;
             case NO_CREDENTIALS:
+                // send 401 as recommended by OWASP and
+                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+                // > A 401 Unauthorized is similar to the 403 Forbidden response, except that
+                // > a 403 is returned when a request contains valid credentials, but the client
+                // > does not have permissions to perform a certain action.
                 ServletHelpers.doUnauthorized(response);
                 break;
             case FORBIDDEN:
+                // send 403
                 ServletHelpers.doForbidden(response);
                 break;
             case THROTTLED:
