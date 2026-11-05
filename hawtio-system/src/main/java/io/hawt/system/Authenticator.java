@@ -232,7 +232,6 @@ public class Authenticator {
         return authResult;
     }
 
-
     protected AuthenticateResult doAuthenticate(Subject subject) {
         String realm = authConfiguration.getRealm();
         List<String> roles = authConfiguration.getRoles();
@@ -243,7 +242,11 @@ public class Authenticator {
             LOG.debug("doAuthenticate[realm={}, roles={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
                 realm, String.join(", ", roles), rolePrincipalClasses, configuration, username, "******");
 
+            // authentication. When failed (javax.security.auth.login.LoginException),
+            // return 401 (not authorized, though it should be called "not authenticated")
             login(subject, realm, configuration);
+            // authorization. When failed (no exception, just result),
+            // return 403 (forbidden)
             if (checkRoles(subject, roles, rolePrincipalClasses)) {
                 return AuthenticateResult.authorized();
             } else {
@@ -258,11 +261,10 @@ public class Authenticator {
             LOG.debug("Failed stacktrace:", e);
             return AuthenticateResult.notAuthorized();
         } catch (Exception e) {
-            LOG.error("Unexpected error during authentication: {}", e);
+            LOG.error("Unexpected error during authentication: {}", e.getMessage());
             LOG.debug("Failed stacktrace:", e);
             return AuthenticateResult.notAuthorized();
         }
-
     }
 
     protected void login(Subject subject, String realm, Configuration configuration) throws LoginException {
