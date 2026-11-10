@@ -15,15 +15,33 @@
   background-size: cover;
 }
 
-/* Example of global style overrides:
+/* Example of global style overrides */
 :root {
-  --pf-t--global--text--color--100: #b21054;
-  --pf-t--global--text--color--200: #b24e78;
-  --pf-t--global--dark--text--color--100: #ff224e;
-  --pf-t--global--dark--text--color--200: #ff9aaf;
-  --pf-t--global--text--color--link--100: #b21054;
-  --pf-t--global--text--color--link--200: #d23678;
-  --pf-t--global--dark--text--color--link--100: #f9d8de;
-  --pf-t--global--dark--text--color--link--200: #ffecf0;
+  /* Hawtio Red palette */
+  --hawtio-global--primary-color--10: #fff0f3; /* hsl(348°, 100%, 97%) - lightest tint */
+  --hawtio-global--primary-color--20: #ffd1da; /* hsl(348°, 100%, 91%) */
+  --hawtio-global--primary-color--30: #ffa3b6; /* hsl(348°, 100%, 82%) */
+  --hawtio-global--primary-color--40: #ff6685; /* hsl(348°, 100%, 70%) */
+  --hawtio-global--primary-color--50: #ff224e; /* hsl(348°, 100%, 57%) - base */
+  --hawtio-global--primary-color--60: #cb1036; /* hsl(348°,  85%, 43%) */
+  --hawtio-global--primary-color--70: #850f26; /* hsl(348°,  80%, 29%) */
+  --hawtio-global--primary-color--80: #470a16; /* hsl(348°,  75%, 16%) - near-black crimson */
+
+  /* Switch tokens that originally use blue palette to Hawtio custom palette */
+  --pf-t--global--color--brand--100: var(--hawtio-global--primary-color--40);
+  --pf-t--global--color--brand--200: var(--hawtio-global--primary-color--50);
+  --pf-t--global--color--brand--300: var(--hawtio-global--primary-color--60);
+  --pf-t--global--color--brand--400: var(--hawtio-global--primary-color--70);
+  --pf-t--global--color--brand--500: var(--hawtio-global--primary-color--80);
+  --pf-t--global--color--brand--subtle--100: var(--hawtio-global--primary-color--10);
+  --pf-t--global--color--brand--subtle--200: var(--hawtio-global--primary-color--20);
+  --pf-t--global--color--brand--subtle--300: var(--hawtio-global--primary-color--40);
+  --pf-t--global--color--brand--subtle--400: var(--hawtio-global--primary-color--50);
+  --pf-t--global--color--severity--none--100: var(--hawtio-global--primary-color--40);
+  --pf-t--global--color--severity--none--200: var(--hawtio-global--primary-color--60);
+  --pf-t--global--focus-ring--color--100: var(--hawtio-global--primary-color--50);
+  --pf-t--global--focus-ring--color--200: var(--hawtio-global--primary-color--60);
+  --pf-t--global--text--color--link--100: var(--hawtio-global--primary-color--50);
+  --pf-t--global--text--color--link--200: var(--hawtio-global--primary-color--60);
+  --pf-t--global--text--color--link--250: var(--hawtio-global--primary-color--70);
 }
-*/

@@ -68,6 +68,16 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-to-slf4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Hawtio -->
@@ -117,6 +127,14 @@
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-debug-starter</artifactId>
     </dependency>
+    <!--
+      This dependency provides a dedicated "cache key provider", so Hawtio with Camel works much faster in the browser
+    -->
+    <dependency>
+      <groupId>org.jolokia.integration</groupId>
+      <artifactId>jolokia-integration-camel</artifactId>
+      <version>${jolokia-integration-version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -165,7 +183,6 @@
           </artifactItems>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 
