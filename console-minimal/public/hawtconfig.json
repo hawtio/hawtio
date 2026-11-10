@@ -16,8 +16,8 @@
     "productInfo": [],
     "additionalInfo": "",
     "copyright": "© Hawtio project & Red Hat",
-    "imgSrc": "img/Logo-RedHat-A-Reverse-RGB.png",
-    "imgDarkModeSrc": "img/Logo-RedHat-A-Reverse-RGB.png",
+    "imgSrc": "img/Logo-RedHat.png",
+    "imgDarkModeSrc": "img/Logo-RedHat-darkmode.png",
     "backgroundImgSrc": "img/background.svg",
     "backgroundDarkModeImgSrc": "img/background-darkmode.svg"
   },

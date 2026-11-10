@@ -14,7 +14,6 @@
   <artifactId>hawtio-example-springboot-authentication</artifactId>
   <name>${project.artifactId}</name>
   <description>Hawtio :: Sample Spring Boot 4.x process with authentication</description>
-  <packaging>jar</packaging>
 
   <dependencyManagement>
     <dependencies>
@@ -57,6 +56,7 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -72,14 +72,11 @@
       <artifactId>spring-boot-starter-jetty</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.annotation</groupId>
-      <artifactId>jakarta.annotation-api</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
+
+    <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot4</artifactId>

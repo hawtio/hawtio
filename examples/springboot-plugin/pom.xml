@@ -64,7 +64,6 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot4</artifactId>
     </dependency>
-
     <!--
       Hawtio example plugin project
       Since static resources are packaged under META-INF/resources in the JAR,

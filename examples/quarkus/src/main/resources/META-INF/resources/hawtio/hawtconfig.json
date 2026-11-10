@@ -30,7 +30,9 @@
     "additionalInfo": "",
     "copyright": "© Hawtio project & Red Hat",
     "imgSrc": "img/Logo-RedHat.png",
-    "imgDarkModeSrc": "img/Logo-RedHat-darkmode.png"
+    "imgDarkModeSrc": "img/Logo-RedHat-darkmode.png",
+    "backgroundImgSrc": "img/background.svg",
+    "backgroundDarkModeImgSrc": "img/background-darkmode.svg"
   },
   "disabledRoutes": []
 }

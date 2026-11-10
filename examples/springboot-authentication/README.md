@@ -51,11 +51,14 @@ See: [src/main/resources/hawtio-static/hawtconfig.json](src/main/resources/hawti
     ]
   },
   "about": {
-    "title": "Hawtio Spring Boot 3 Authentication Example",
+    "title": "Hawtio Spring Boot 4 Authentication Example",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "(c) 2023 Hawtio team",
-    "imgSrc": "img/hawtio-logo.svg"
+    "copyright": "© Hawtio project & Red Hat",
+    "imgSrc": "img/Logo-RedHat.png",
+    "imgDarkModeSrc": "img/Logo-RedHat-darkmode.png",
+    "backgroundImgSrc": "img/background.svg",
+    "backgroundDarkModeImgSrc": "img/background-darkmode.svg"
   },
   "disabledRoutes": []
 }

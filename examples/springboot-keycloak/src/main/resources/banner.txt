@@ -1,7 +1,7 @@
- _______________________________
-/ Hawtio SpringBoot Sample with \
-\ Keycloak Authentication       /
- -------------------------------
+ _________________________________
+/ Hawtio SpringBoot 4 Sample with \
+\ Keycloak Authentication         /
+ ---------------------------------
         \   ^__^
          \  (oo)\_______
             (__)\       )\/\
