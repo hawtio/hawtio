@@ -51,7 +51,7 @@ See: [src/main/resources/hawtio-static/hawtconfig.json](src/main/resources/hawti
     ]
   },
   "about": {
-    "title": "Hawtio Spring Boot 3 Authentication Example",
+    "title": "Hawtio Spring Boot 4 Authentication Example",
     "productInfo": [],
     "additionalInfo": "",
     "copyright": "(c) 2026 Hawtio team",
