@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "webpack serve --mode development",
-    "build": "node ./scripts/investigation.js && webpack --mode production",
+    "build": "webpack --mode production",
     "test": "jest --passWithNoTests",
     "replace-version": "node ./scripts/replace-version.mjs $npm_package_version ./build/static/js/*.js"
   },
