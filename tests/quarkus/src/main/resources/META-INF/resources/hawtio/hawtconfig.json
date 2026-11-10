@@ -23,7 +23,11 @@
       { "name": "ABC", "value": "1.2.3" },
       { "name": "XYZ", "value": "7.8.9" }
     ],
-    "copyright": "© Hawtio project"
+    "copyright": "© Hawtio project & Red Hat",
+    "issueReporting": {
+      "url": "https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&product=Red%20Hat%20build%20of%20Apache%20Camel%20for%20Spring%20Boot",
+      "label": "Report issue"
+    }
   },
   "disabledRoutes": []
 }
