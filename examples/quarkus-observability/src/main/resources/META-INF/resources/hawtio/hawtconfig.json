@@ -1,8 +1,9 @@
 {
   "branding": {
     "appName": "Hawtio Sample Quarkus 3.x Application",
-    "appLogoUrl": "img/hawtio-logo.svg",
-    "appLogoDarkModeUrl": "img/hawtio-logo-darkmode.svg",
+    "showAppName": true,
+    "appLogoUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
+    "appLogoDarkModeUrl": "img/Logo-Red_Hat-build_of_Apache_Camel-Standard-RGB.svg",
     "css": "css/app.css",
     "favicon": "img/favicon.ico"
   },
@@ -27,9 +28,15 @@
     "title": "Hawtio Sample Quarkus 3.x Application",
     "productInfo": [],
     "additionalInfo": "",
-    "copyright": "(c) 2026 Hawtio team",
-    "imgSrc": "img/hawtio-logo.svg",
-    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg"
+    "copyright": "© Hawtio project & Red Hat",
+    "issueReporting": {
+      "url": "https://access.redhat.com/support/cases/#/case/new/get-support?caseCreate=true&product=Red%20Hat%20build%20of%20Apache%20Camel%20for%20Spring%20Boot",
+      "label": "Report issue"
+    },
+    "imgSrc": "img/Logo-RedHat.png",
+    "imgDarkModeSrc": "img/Logo-RedHat-darkmode.png",
+    "backgroundImgSrc": "img/background.svg",
+    "backgroundDarkModeImgSrc": "img/background-darkmode.svg"
   },
   "disabledRoutes": []
 }

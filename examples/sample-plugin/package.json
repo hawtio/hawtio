@@ -8,7 +8,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@hawtio/react": "^2.4.0-pre.2",
+    "@hawtio/react": "^2.4.0",
     "@patternfly/patternfly": "^6.6.1",
     "@patternfly/react-charts": "^8.6.1",
     "@patternfly/react-code-editor": "^6.6.2",
@@ -23,7 +23,7 @@
     "react-router": "^7.18.5"
   },
   "devDependencies": {
-    "@swc/core": "^1.16.13",
+    "@swc/core": "^1.16.22",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "copy-webpack-plugin": "^14.0.0",

@@ -107,6 +107,7 @@
     <module>examples/springboot-keycloak</module>
     <module>examples/springboot-log4j2</module>
     <module>examples/springboot-observability</module>
+    <module>examples/springboot-oidc</module>
     <module>examples/springboot-plugin</module>
     <module>examples/springboot-security</module>
     <module>examples/war-plugin</module>

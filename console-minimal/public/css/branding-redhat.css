@@ -1,11 +1,8 @@
 .pf-v6-c-background-image, .pf-v6-c-about-modal-box {
   background-image: url(../img/background.svg) !important;
+  background-size: cover;
 }
 :where(.pf-v6-theme-dark) .pf-v6-c-background-image, :where(.pf-v6-theme-dark) .pf-v6-c-about-modal-box {
   background-image: url(../img/background-darkmode.svg) !important;
-}
-
-#hawtio-header-brand {
-  /* adjusted to the width of the logo */
-  width: 40px;
+  background-size: cover;
 }

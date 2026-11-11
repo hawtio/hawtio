@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
+import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
 import org.jolokia.json.JSONObject;
 import org.slf4j.Logger;
@@ -81,6 +82,15 @@ public class LoginServlet extends HttpServlet {
                 break;
             case NOT_AUTHORIZED:
             case NO_CREDENTIALS:
+                // send 401 as recommended by OWASP and
+                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+                // > A 401 Unauthorized is similar to the 403 Forbidden response, except that
+                // > a 403 is returned when a request contains valid credentials, but the client
+                // > does not have permissions to perform a certain action.
+                ServletHelpers.doUnauthorized(response);
+                break;
+            case FORBIDDEN:
+                // send 403
                 ServletHelpers.doForbidden(response);
                 break;
             case THROTTLED:

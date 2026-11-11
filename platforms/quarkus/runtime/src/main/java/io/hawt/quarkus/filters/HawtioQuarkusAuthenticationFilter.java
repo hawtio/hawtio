@@ -138,16 +138,27 @@ public class HawtioQuarkusAuthenticationFilter extends AuthenticationFilter {
             chain.doFilter(request, response);
             break;
         case NOT_AUTHORIZED:
-            ServletHelpers.doForbidden(httpResponse);
+            // send 401 as recommended by OWASP and
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401
+            // > A 401 Unauthorized is similar to the 403 Forbidden response, except that
+            // > a 403 is returned when a request contains valid credentials, but the client
+            // > does not have permissions to perform a certain action.
+            ServletHelpers.doUnauthorized(httpResponse);
             break;
         case NO_CREDENTIALS:
             if (authConfiguration.isNoCredentials401()) {
                 // return auth prompt 401
+                // special, legacy way of dealing with no credentials, which sends WWW-Authenticate.
+                // Browser opens native "Basic credentials" popup
                 ServletHelpers.doAuthPrompt(httpResponse, authConfiguration.getRealm());
             } else {
                 // return forbidden 403 so the browser login does not popup
                 ServletHelpers.doForbidden(httpResponse);
             }
+            break;
+        case FORBIDDEN:
+            // send 403
+            ServletHelpers.doForbidden(httpResponse);
             break;
         case THROTTLED:
             ServletHelpers.doTooManyRequests(httpResponse, result.getRetryAfter());
