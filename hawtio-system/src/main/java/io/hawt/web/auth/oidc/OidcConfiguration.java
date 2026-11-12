@@ -18,6 +18,7 @@ package io.hawt.web.auth.oidc;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -58,6 +59,7 @@ import io.hawt.web.auth.oidc.token.ValidAccessToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -95,6 +97,12 @@ public class OidcConfiguration extends Configuration {
     public static final Logger LOG = LoggerFactory.getLogger(OidcConfiguration.class);
 
     public static final String OIDC_JAAS_CONFIGURATION = "OidcConfiguration";
+
+    /**
+     * Copy of the properties passed in the constructor - required if someting goes wrong
+     * at initialization time.
+     */
+    private final Properties hawtioOidcProperties = new Properties();
 
     /**
      * Provider name - used when displaying OIDC as login method in Hawtio client application
@@ -178,6 +186,8 @@ public class OidcConfiguration extends Configuration {
             // means there's no OIDC configuration
             return;
         }
+
+        hawtioOidcProperties.putAll(props);
 
         // client-side configuration
 
@@ -429,7 +439,7 @@ public class OidcConfiguration extends Configuration {
      *
      * @param props
      */
-    private void buildConfiguration(Properties props) throws IOException {
+    private synchronized void buildConfiguration(Properties props) throws MalformedURLException {
         JSONObject json = new JSONObject();
         json.put("method", "oidc");
         json.put("provider", providerURL.toString());
@@ -461,34 +471,36 @@ public class OidcConfiguration extends Configuration {
             LOG.info("OpenID Connect configuration will not be loaded for {}", base);
         } else {
             URL configurationURL = new URL(new URL(base), ".well-known/openid-configuration");
-            JSONObject openidConfiguration = fetchJSON(configurationURL);
+            FetchResult result = fetchJSON(configurationURL);
+            JSONObject openidConfiguration = result.json();
 
-            if (openidConfiguration == null) {
-                LOG.error("Problem getting OpenID Connect configuration. OpenID/OAuth2 authentication disabled.");
-                json = new JSONObject(); // empty config
+            if (result.status() != FetchStatus.OK) {
+                // the provider may be temporarily unavailable or misconfigured. We should not
+                // force to restart Hawtio server
+                LOG.warn("Problem getting OpenID Connect configuration. Hawtio web application will attempt the configuration.");
+                json.put("error", result.message());
             } else {
+                // even if we can't fetch the keys, we can already add the config needed by Hawtio web application
+                // which doesn't need the keys
+                json.put("openid-configuration", openidConfiguration);
+
                 String jwksURI = (String) openidConfiguration.get("jwks_uri");
                 if (jwksURI == null) {
-                    LOG.error("No JWKS endpoint available - it is not possible to validate JWT access tokens. OpenID/OAuth2 authentication disabled.");
-                    json = new JSONObject(); // empty config
+                    // we don't have the keys, but we may try later
+                    LOG.warn("No JWKS endpoint available - currently it is not possible to validate JWT access tokens.");
                 } else {
                     URL url = new URL(jwksURI);
-                    JSONObject jwksConfiguration = fetchJSON(url);
-                    if (jwksConfiguration == null) {
-                        LOG.error("Problem getting JWKS configuration - it is not possible to validate JWT access tokens. OpenID/OAuth2 authentication disabled.");
-                        json = new JSONObject(); // empty config
+                    result = fetchJSON(url);
+                    JSONObject jwksConfiguration = result.json();
+                    if (result.status() != FetchStatus.OK) {
+                        // again - we can try later
+                        LOG.error("Problem getting JWKS configuration - currently it is not possible to validate JWT access tokens.");
                     } else {
                         jwksURL = url;
                         cachePublicKeys(jwksConfiguration);
                         lastCheck = System.currentTimeMillis();
                     }
                 }
-            }
-
-            if (jwksURL != null) {
-                // everything is fine, we can attach entire .well-known/openid-configuration to the JSON
-                // presented to hawtio client side
-                json.put("openid-configuration", openidConfiguration);
             }
         }
 
@@ -511,14 +523,24 @@ public class OidcConfiguration extends Configuration {
     }
 
     public void refreshPublicKeysIfNeeded() {
+        if (jwksURL == null) {
+            // Hawtio may have started when OIDC provider was offline
+            LOG.debug("Attempting to initialize JWKS URI from OIDC configuration");
+            try {
+                buildConfiguration(hawtioOidcProperties);
+            } catch (MalformedURLException e) {
+                LOG.warn("Problem during OIDC re-initialization from {}", hawtioOidcProperties, e);
+            }
+        }
+
         if (lastCheck + cacheTime > System.currentTimeMillis()) {
             return;
         }
 
         if (jwksURL != null) {
-            JSONObject jwksConfiguration = fetchJSON(jwksURL);
-            if (jwksConfiguration != null) {
-                cachePublicKeys(jwksConfiguration);
+            FetchResult result = fetchJSON(jwksURL);
+            if (result.status() == FetchStatus.OK && result.json() != null) {
+                cachePublicKeys(result.json());
             }
         }
 
@@ -599,14 +621,21 @@ public class OidcConfiguration extends Configuration {
      * @param url
      * @return
      */
-    private JSONObject fetchJSON(URL url) {
+    private FetchResult fetchJSON(URL url) {
         try {
             BasicHttpRequest get = new BasicHttpRequest("GET", url.toURI().toString());
             LOG.info("Fetching data: {}", get.getRequestLine());
             try (CloseableHttpResponse res = httpClient.execute(URIUtils.extractHost(url.toURI()), get)) {
-                if (res.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    LOG.error("Invalid response from {}: {}", url, res.getStatusLine());
-                    return null;
+                StatusLine statusLine = res.getStatusLine();
+                String reason = statusLine == null ? "" : ": " + statusLine.getReasonPhrase();
+                if (statusLine == null || statusLine.getStatusCode() != HttpStatus.SC_OK) {
+                    LOG.error("Invalid response from {}: {}", url, statusLine);
+                    if (statusLine != null) {
+                        return new FetchResult(null, FetchStatus.HTTP_ERROR,
+                                String.format("OIDC Provider returned: %d%s", statusLine.getStatusCode(), reason));
+                    } else {
+                        return new FetchResult(null, FetchStatus.HTTP_ERROR, "OIDC Provider returned no metadata");
+                    }
                 }
                 HttpEntity entity = res.getEntity();
                 if (entity != null) {
@@ -614,18 +643,22 @@ public class OidcConfiguration extends Configuration {
                     if (!ct.getMimeType().equals(ContentType.APPLICATION_JSON.getMimeType())) {
                         LOG.warn("Expected {}, got {}", ContentType.APPLICATION_JSON, ct);
                     } else {
-                        return (JSONObject) new JSONParser().parse(EntityUtils.toString(entity,
+                        JSONObject json = (JSONObject) new JSONParser().parse(EntityUtils.toString(entity,
                                 ct.getCharset() == null ? Charset.defaultCharset() : ct.getCharset()));
+                        return new FetchResult(json, FetchStatus.OK, null);
                     }
                 }
-                return null;
+                return new FetchResult(null, FetchStatus.JSON_ERROR, "Invalid OIDC Metadata");
             }
         } catch (URISyntaxException e) {
             LOG.error("Problem with URI {}", url, e);
-            return null;
-        } catch (IOException | org.jolokia.json.parser.ParseException e) {
+            return new FetchResult(null, FetchStatus.HTTP_ERROR, "Invalid OIDC Metadata URL");
+        } catch (org.jolokia.json.parser.ParseException e) {
+            LOG.error("Problem parsing JSON from {}", url, e);
+            return new FetchResult(null, FetchStatus.JSON_ERROR, "Invalid OIDC Metadata");
+        } catch (IOException e) {
             LOG.error("Problem connecting to {}", url, e);
-            return null;
+            return new FetchResult(null, FetchStatus.CONNECTION_ERROR, "OIDC provider unreachable");
         }
     }
 
@@ -813,6 +846,16 @@ public class OidcConfiguration extends Configuration {
         public String asValue() {
             return mode;
         }
+    }
+
+    private enum FetchStatus {
+        OK,
+        CONNECTION_ERROR,
+        HTTP_ERROR,
+        JSON_ERROR
+    }
+
+    private record FetchResult(JSONObject json, FetchStatus status, String message) {
     }
 
 }
