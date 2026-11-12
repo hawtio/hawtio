@@ -85,6 +85,12 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-jetty-security</artifactId>
     </dependency>
+    <dependency>
+      <!-- Only to override transitive dependency from Spring Boot BOM -->
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
   </dependencies>
 
   <build>
