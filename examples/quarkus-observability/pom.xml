@@ -156,6 +156,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <!-- Only to override transitive dependency from Quarkus BOM -->
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
+
     <!-- Minimal test dependencies to *-deployment artifacts for consistent Hawtio project build order -->
     <dependency>
       <groupId>io.hawt</groupId>

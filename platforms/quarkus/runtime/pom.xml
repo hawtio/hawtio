@@ -49,6 +49,12 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <!-- Only to override transitive dependency from Quarkus BOM -->
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
   </dependencies>
 
   <build>
