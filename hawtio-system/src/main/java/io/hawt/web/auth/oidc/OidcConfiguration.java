@@ -25,12 +25,15 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
@@ -38,6 +41,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,6 +49,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
@@ -346,6 +353,7 @@ public class OidcConfiguration extends Configuration {
         String keystorePassword = stringProperty(props, "ssl.keystorePassword", "");
         String keyAlias = stringProperty(props, "ssl.keyAlias", null);
         String keyPassword = stringProperty(props, "ssl.keyPassword", "");
+        boolean loadSystemCertificates = booleanProperty(props, "ssl.loadSystemCertificates", false);
 
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
         requestConfigBuilder.setConnectTimeout(connectionTimeout);
@@ -355,7 +363,7 @@ public class OidcConfiguration extends Configuration {
         ConnectionConfig.Builder connectionConfigBuilder = ConnectionConfig.custom();
 
         SSLConnectionSocketFactory csf;
-        if (truststore == null && keystore == null) {
+        if (truststore == null && keystore == null && !loadSystemCertificates) {
             csf = SSLConnectionSocketFactory.getSystemSocketFactory();
         } else {
             truststore = Strings.resolvePlaceholders(truststore);
@@ -363,18 +371,63 @@ public class OidcConfiguration extends Configuration {
             SSLContextBuilder sslContextBuilder = SSLContexts.custom();
             sslContextBuilder.setProtocol(protocol);
 
+            // truststore - with or without system certificates
             try {
-                sslContextBuilder.loadTrustMaterial((TrustStrategy) null);
-            } catch (NoSuchAlgorithmException | KeyStoreException e) {
-                throw new IllegalArgumentException("Problem loading default truststore", e);
-            }
-            if (truststore != null) {
-                try {
-                    sslContextBuilder.loadTrustMaterial(new File(truststore), truststorePassword.toCharArray());
-                } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
-                    throw new IllegalArgumentException("Problem loading truststore from " + truststore, e);
+                KeyStore trustedCertificates = null;
+                if (truststore != null) {
+                    if (!loadSystemCertificates) {
+                        // just load custom store directly
+                        LOG.info("Loading only custom truststore for accessing OIDC provider: {}", truststore);
+                        trustedCertificates = KeyStore.getInstance(new File(truststore), truststorePassword.toCharArray());
+                    } else {
+                        // initialize with null to add system certificates later
+                        LOG.info("Loading custom truststore for accessing OIDC provider: {}", truststore);
+                        trustedCertificates = KeyStore.getInstance(KeyStore.getDefaultType());
+                        trustedCertificates.load(null, null);
+                        KeyStore customCertificates = KeyStore.getInstance(new File(truststore), truststorePassword.toCharArray());
+                        int i = 0;
+                        for (Enumeration<String> e = customCertificates.aliases(); e.hasMoreElements(); ) {
+                            Certificate cert = customCertificates.getCertificate(e.nextElement());
+                            if (cert != null) {
+                                trustedCertificates.setCertificateEntry("custom-" + i++, cert);
+                            }
+                        }
+                    }
                 }
+                if (loadSystemCertificates && truststore != null) {
+                    // we already loaded custom certificate, so we have to load more into trustedCertificates
+                    LOG.info("Loading system certificates to truststore for accessing OIDC provider");
+                    TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                    tmf.init((KeyStore) null);
+                    final TrustManager[] tms = tmf.getTrustManagers();
+                    if (tms != null) {
+                        int n = 0;
+                        for (TrustManager tm : tms) {
+                            if (tm instanceof X509TrustManager x509tmf) {
+                                for (X509Certificate c : x509tmf.getAcceptedIssuers()) {
+                                    trustedCertificates.setCertificateEntry("system-" + n++, c);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // load all certificates at once - sun.security.ssl.SSLContextImpl#chooseTrustManager()
+                // if there's no truststore configured and user didn't set ssl.loadSystemCertificates
+                // then no trust material will be loaded
+                if (trustedCertificates != null) {
+                    // load potentially merged system and custom certificates
+                    sslContextBuilder.loadTrustMaterial(trustedCertificates, null);
+                } else if (loadSystemCertificates) {
+                    // it will only load system certificates
+                    LOG.info("Using only system truststore for accessing OIDC provider");
+                    sslContextBuilder.loadTrustMaterial((TrustStrategy) null);
+                }
+            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
+                throw new IllegalArgumentException("Problem loading truststore", e);
             }
+
+            // keystore
             if (keystore != null) {
                 try {
                     PrivateKeyStrategy pks = null;
@@ -400,7 +453,7 @@ public class OidcConfiguration extends Configuration {
                 .register("https", csf)
                 .build();
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
         connectionManager.setDefaultConnectionConfig(connectionConfigBuilder.build());
         connectionManager.setDefaultSocketConfig(socketConfigBuilder.build());
         connectionManager.setMaxTotal(20);
@@ -409,7 +462,6 @@ public class OidcConfiguration extends Configuration {
         HttpClientBuilder builder = HttpClients.custom();
         builder.useSystemProperties();
         builder.setDefaultCookieStore(new NopCookieStore());
-        builder.setSSLSocketFactory(csf);
         builder.setConnectionManager(connectionManager);
         builder.setDefaultRequestConfig(requestConfigBuilder.build());
         if (proxy != null) {
