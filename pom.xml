@@ -40,7 +40,7 @@
     <jolokia-version>2.6.5</jolokia-version>
     <jolokia-integration-version>0.9.0</jolokia-integration-version>
     <!-- Quarkus -->
-    <quarkus-version>3.40.1.redhat-00002</quarkus-version>
+    <quarkus-version>3.40.1.redhat-00004</quarkus-version>
     <quarkus-extension-version>3.40.1.redhat-00002</quarkus-extension-version>
     <!-- Spring Boot 4 -->
     <!-- https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html -->
