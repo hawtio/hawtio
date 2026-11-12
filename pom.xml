@@ -98,19 +98,6 @@
     <module>console-minimal</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
-    <module>examples/quarkus</module>
-    <module>examples/quarkus-keycloak</module>
-    <module>examples/quarkus-observability</module>
-    <module>examples/sample-plugin</module>
-    <module>examples/springboot</module>
-    <module>examples/springboot-authentication</module>
-    <module>examples/springboot-keycloak</module>
-    <module>examples/springboot-log4j2</module>
-    <module>examples/springboot-observability</module>
-    <module>examples/springboot-oidc</module>
-    <module>examples/springboot-plugin</module>
-    <module>examples/springboot-security</module>
-    <module>examples/war-plugin</module>
     <module>hawtio-jbang</module>
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
@@ -299,7 +286,27 @@
     <profile>
       <id>e2e</id>
       <modules>
+        <module>examples/sample-plugin</module>
         <module>tests</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>examples</id>
+      <modules>
+        <module>examples/quarkus</module>
+        <module>examples/quarkus-keycloak</module>
+        <module>examples/quarkus-observability</module>
+        <module>examples/sample-plugin</module>
+        <module>examples/springboot</module>
+        <module>examples/springboot-authentication</module>
+        <module>examples/springboot-keycloak</module>
+        <module>examples/springboot-log4j2</module>
+        <module>examples/springboot-observability</module>
+        <module>examples/springboot-oidc</module>
+        <module>examples/springboot-plugin</module>
+        <module>examples/springboot-security</module>
+        <module>examples/war-plugin</module>
       </modules>
     </profile>
 
