@@ -74,6 +74,12 @@
       <artifactId>hawtio-example-sample-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <!-- Only to override transitive dependency from Spring Boot BOM -->
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
   </dependencies>
 
   <build>

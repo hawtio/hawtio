@@ -65,6 +65,12 @@
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <!-- Only to override transitive dependency from Spring Boot BOM -->
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
 
     <!-- Jolokia -->
     <dependency>
