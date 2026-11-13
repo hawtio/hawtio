@@ -38,4 +38,4 @@ jobs:
           cache: 'maven'
       - name: Build & test
         run: |
-          mvn --batch-mode --no-transfer-progress install
+          mvn --batch-mode --no-transfer-progress clean install
