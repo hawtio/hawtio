@@ -58,7 +58,7 @@ jobs:
           echo "module=${{matrix.runtime}}" >> $GITHUB_ENV
       - name: Build Maven projects
         run: |
-          mvn --batch-mode --no-transfer-progress clean install -DskipTests -DskipITs -Pe2e
+          mvn --batch-mode --no-transfer-progress clean install -DskipTests -DskipITs -Pe2e,examples
       - name: Build hawtio-test-suite image
         uses: docker/build-push-action@v7
         with:
