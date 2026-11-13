@@ -40,7 +40,7 @@ jobs:
         uses: docker/setup-qemu-action@v4
       - name: Build Hawtio
         run: |
-          mvn --batch-mode --no-transfer-progress clean install -DskipTests -DskipITs -Pe2e -Pexamples -Pdocker-testsuite -Ptests-docker -Dhawtio-container
+          mvn --batch-mode --no-transfer-progress clean install -DskipTests -DskipITs -Pe2e,examples -Pdocker-testsuite -Ptests-docker -Dhawtio-container
       - name: Setup JBang
         uses: jbangdev/setup-jbang@main
       - name: Install Camel app
