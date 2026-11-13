@@ -2,6 +2,7 @@
 
 [![Test](https://github.com/hawtio/hawtio/actions/workflows/test.yml/badge.svg)](https://github.com/hawtio/hawtio/actions/workflows/test.yml)
 [![E2E Test](https://github.com/hawtio/hawtio/actions/workflows/e2e_test.yml/badge.svg)](https://github.com/hawtio/hawtio/actions/workflows/e2e_test.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.hawt/hawtio-war)](https://repo1.maven.org/maven2/io/hawt/hawtio-war/)
 
 ## Introduction
 
