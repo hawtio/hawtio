@@ -31,7 +31,10 @@
     "backgroundDarkModeImgSrc": "img/background-darkmode.svg",
     "copyright": "(c) 2026 Hawtio team",
     "imgSrc": "img/hawtio-logo.svg",
-    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg"
+    "imgDarkModeSrc": "img/hawtio-logo-darkmode.svg",
+    "issueReporting": {
+      "url": "https://github.com/hawtio/hawtio/issues/new"
+    }
   },
   "disabledRoutes": []
 }
