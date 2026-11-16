@@ -23,7 +23,10 @@
       { "name": "ABC", "value": "1.2.3" },
       { "name": "XYZ", "value": "7.8.9" }
     ],
-    "copyright": "© Hawtio project"
+    "copyright": "© Hawtio project",
+    "issueReporting": {
+      "url": "https://github.com/hawtio/hawtio/issues/new"
+    }
   },
   "disabledRoutes": []
 }
