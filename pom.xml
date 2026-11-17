@@ -365,6 +365,8 @@
             <configuration>
               <encoding>${project.build.sourceEncoding}</encoding>
               <doclint>none</doclint>
+              <source>17</source>
+              <release>17</release>
             </configuration>
             <executions>
               <execution>
