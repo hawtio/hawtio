@@ -48,7 +48,7 @@
     <spring-boot4-version>4.1.2</spring-boot4-version>
     <!-- Camel -->
     <!-- https://access.redhat.com/articles/7021827#headerCSB -->
-    <camel-spring-boot-version>4.22.1.redhat-00014</camel-spring-boot-version>
+    <camel-spring-boot-version>4.22.1.redhat-00016</camel-spring-boot-version>
     <!-- Jetty -->
     <jetty12-version>12.1.14</jetty12-version>
 
