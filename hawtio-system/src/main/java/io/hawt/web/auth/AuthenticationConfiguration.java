@@ -851,7 +851,7 @@ public class AuthenticationConfiguration {
         try {
             Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(roleClass);
             if (clazz.isAssignableFrom(cls)) {
-                return clazz;
+                return (Class<T>) cls;
             } else {
                 LOG.warn("Class {} doesn't implement {}", cls, clazz);
             }
