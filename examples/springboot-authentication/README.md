@@ -1,6 +1,6 @@
-# Hawtio Spring Boot 3 Authentication Example
+# Hawtio Spring Boot 4 Authentication Example
 
-Sample application for Hawtio + Spring Boot 3 with authentication enabled.
+Sample application for Hawtio + Spring Boot 4 with authentication enabled.
 
 ## How to run
 
@@ -27,7 +27,7 @@ See: [src/main/resources/hawtio-static/hawtconfig.json](src/main/resources/hawti
 ```json
 {
   "branding": {
-    "appName": "Hawtio Spring Boot 3 Authentication Example",
+    "appName": "Hawtio Spring Boot 4 Authentication Example",
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg",
     "css": "css/app.css",
